@@ -1,0 +1,8 @@
+Package: gitaptly
+Version: 0.0.0
+Architecture: all
+Depends: bash
+Priority: extra
+Maintainer: Philipp Lengauer <p.lengauer@gmail.com>
+Homepage: https://github.com/plengauer/opentelemetry-bash
+Description: Generating open-telemetry traces from bash scripts
