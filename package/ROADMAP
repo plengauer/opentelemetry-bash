@@ -1,0 +1,7 @@
+ROADMAP
+*) 0.0 basic package without functionality
+*) 0.1 create a single span from a bash script when explicitely set up
+*) 0.2 propagate context to other bash scripts that also have tracing explicitely set up
+*) 0.3 propagate context via curl and wget
+*) 0.4 auto-inject in child scripts
+*) 0.5 create child spans for individual commands within scripts
