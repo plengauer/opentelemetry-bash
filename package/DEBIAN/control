@@ -1,4 +1,4 @@
-Package: gitaptly
+Package: opentelemetry-bash
 Version: 0.0.0
 Architecture: all
 Depends: bash
