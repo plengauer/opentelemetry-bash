@@ -18,7 +18,6 @@ function otel_resource_attributes {
   echo service.name=$OTEL_SERVICE_NAME
   echo service.version=$OTEL_SERVICE_VERSION
 }
-otel_resource_attributes
 
 function otel_init {
   mkfifo $otel_remote_sdk_pipe
