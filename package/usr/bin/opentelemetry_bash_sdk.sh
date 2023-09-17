@@ -23,7 +23,7 @@ otel_resource_attributes
 function otel_init {
   mkfifo $otel_remote_sdk_pipe
   source /opt/opentelemetry_bash/venv/bin/activate
-  python3 /usr/bin/opentelemetry_bash_remote_sdk.py $otel_remote_sdk_pipe "bash" $(apt show opentelemetry-bash 2> /dev/null | grep Version | awk '{ print $2 }') 1>&2 &
+  python3 /usr/bin/opentelemetry_bash_remote_sdk.py $otel_remote_sdk_pipe "bash" $(apt show opentelemetry-bash 2> /dev/null | grep Version | awk '{ print $2 }') 2> /dev/null 1>&2 &
   disown
   deactivate
   otel_resource_attributes | sed 's/^/RESOURCE_ATTRIBUTE /' > $otel_remote_sdk_pipe
