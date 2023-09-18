@@ -12,6 +12,7 @@ from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExport
 from opentelemetry.trace import SpanKind
 from opentelemetry.sdk.trace import Span, StatusCode
 from opentelemetry.sdk.resources import Resource
+from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 
 class AwsEC2ResourceDetector(ResourceDetector):
     def detect(self) -> Resource:
@@ -63,8 +64,17 @@ def main():
                         processor.shutdown()
                         return
                     case 'SPAN_START':
-                        tokens = tokens[1].split(' ', 1)
-                        spans.append(opentelemetry.trace.get_tracer(scope, version).start_span(tokens[1], kind=SpanKind[tokens[0].upper()]))
+                        tokens = tokens[1].split(' ', 3)
+                        response_fifo = tokens[0]
+                        trace_parent = tokens[1]
+                        kind = tokens[2]
+                        name = tokens[3]
+                        span = opentelemetry.trace.get_tracer(scope, version).start_span(name, kind=SpanKind[kind.upper()], context=TraceContextTextMapPropagator().extract({'traceparent': trace_parent}))
+                        spans.append(span)
+                        carrier = {}
+                        TraceContextTextMapPropagator().inject(carrier, opentelemetry.trace.set_span_in_context(span, None))
+                        with open(response_fifo, 'w') as response:
+                            response.write(carrier['traceparent'])
                     case 'SPAN_END':
                         span : Span = spans.pop()
                         if not span:

@@ -35,11 +35,19 @@ function otel_shutdown {
 }
 
 function otel_span_start {
-  echo "SPAN_START $@" > $otel_remote_sdk_pipe
+  local response_pipe=/tmp/opentelemetry_bash_$$_response_$(echo $RANDOM | md5sum | cut -c 1-32).pipe
+  mkfifo $response_pipe
+  echo "SPAN_START $response_pipe $OTEL_TRACE_PARENT $@" > $otel_remote_sdk_pipe
+  local response=$(cat $response_pipe)
+  export OTEL_TRACE_PARENT_STACK=$OTEL_TRACE_PARENT/$OTEL_TRACE_PARENT_STACK
+  export OTEL_TRACE_PARENT=$response
+  rm $response_pipe
 }
 
 function otel_span_end {
   echo "SPAN_END" > $otel_remote_sdk_pipe
+  export OTEL_TRACE_PARENT=$(echo $OTEL_TRACE_PARENT_STACK | cut -d'/' -f1)
+  export OTEL_TRACE_PARENT_STACK=$(echo $OTEL_TRACE_PARENT_STACK | cut -d'/' -f2-)
 }
 
 function otel_span_error {
@@ -52,11 +60,11 @@ function otel_span_attribute {
 
 function otel_observe {
   otel_span_start INTERNAL $@
-  otel_span_attribute subprocess.executable.name=$(echo "$@" | cut -d' ' -f1 | rev | cut -d'/' -f1 | rev)
-  otel_span_attribute subprocess.executable.path​=$(which $(echo "$@" | cut -d' ' -f1))
-  otel_span_attribute subprocess.command="$@"
-  otel_span_attribute subprocess.command_args=$(echo "$@" | cut -d' ' -f2-)
-  eval $@
+  otel_span_attribute subprocess.executable.name=$(echo $@ | cut -d' ' -f1 | rev | cut -d'/' -f1 | rev)
+  otel_span_attribute subprocess.executable.path​=$(which $(echo $@ | cut -d' ' -f1))
+  otel_span_attribute subprocess.command=$@
+  otel_span_attribute subprocess.command_args=$(echo $@ | cut -d' ' -f2-)
+  eval "$@"
   exit_code=$?
   if [ "$exit_code" -ne "0" ]; then
     otel_span_error "subprocess.exit_code=$exit_code"
