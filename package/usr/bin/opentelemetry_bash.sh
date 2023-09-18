@@ -14,3 +14,8 @@ function otel_on_script_end {
   otel_shutdown
 }
 trap otel_on_script_end EXIT
+
+shopt -s expand_aliases
+alias wget='wget --header="traceparent: $OTEL_TRACEPARENT"'
+alias curl='curl -H "traceparent: $OTEL_TRACEPARENT"'
+

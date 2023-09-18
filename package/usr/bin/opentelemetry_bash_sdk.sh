@@ -39,15 +39,15 @@ function otel_span_start {
   mkfifo $response_pipe
   echo "SPAN_START $response_pipe $OTEL_TRACE_PARENT $@" > $otel_remote_sdk_pipe
   local response=$(cat $response_pipe)
-  export OTEL_TRACE_PARENT_STACK=$OTEL_TRACE_PARENT/$OTEL_TRACE_PARENT_STACK
-  export OTEL_TRACE_PARENT=$response
+  OTEL_TRACEPARENT_STACK=$OTEL_TRACEPARENT/$OTEL_TRACEPARENT_STACK
+  export OTEL_TRACEPARENT=$response
   rm $response_pipe
 }
 
 function otel_span_end {
   echo "SPAN_END" > $otel_remote_sdk_pipe
-  export OTEL_TRACE_PARENT=$(echo $OTEL_TRACE_PARENT_STACK | cut -d'/' -f1)
-  export OTEL_TRACE_PARENT_STACK=$(echo $OTEL_TRACE_PARENT_STACK | cut -d'/' -f2-)
+  export OTEL_TRACEPARENT=$(echo $OTEL_TRACEPARENT_STACK | cut -d'/' -f1)
+  OTEL_TRACEPARENT_STACK=$(echo $OTEL_TRACEPARENT_STACK | cut -d'/' -f2-)
 }
 
 function otel_span_error {
