@@ -15,9 +15,15 @@ function otel_on_script_end {
 }
 trap otel_on_script_end EXIT
 
-alias wget='wget --header="traceparent: $OTEL_TRACEPARENT"'
+function otel_instrumented_wget {
+  wget --header="traceparent: $OTEL_TRACEPARENT" "$@"
+}
+alias wget=otel_instrumented_wget
 
-alias curl='curl -H "traceparent: $OTEL_TRACEPARENT"'
+function otel_instrumented_curl {
+  curl -H "traceparent: $OTEL_TRACEPARENT" "$@"
+}
+alias curl=otel_instrumented_curl
 
 function otel_instrumented_bash {
   bash -c "source /usr/bin/opentelemetry_bash.sh; source $@"
