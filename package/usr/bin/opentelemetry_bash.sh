@@ -21,7 +21,7 @@ function otel_instrumented_wget {
 alias wget=otel_instrumented_wget
 
 function otel_instrumented_curl {
-  otel observe curl -H "traceparent: $OTEL_TRACEPARENT" "$@"
+  otel_observe curl -H "traceparent: $OTEL_TRACEPARENT" "$@"
 }
 alias curl=otel_instrumented_curl
 
