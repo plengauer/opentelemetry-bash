@@ -16,12 +16,12 @@ function otel_on_script_end {
 trap otel_on_script_end EXIT
 
 function otel_instrumented_wget {
-  wget --header="traceparent: $OTEL_TRACEPARENT" "$@"
+  otel_observe wget --header="traceparent: $OTEL_TRACEPARENT" "$@"
 }
 alias wget=otel_instrumented_wget
 
 function otel_instrumented_curl {
-  curl -H "traceparent: $OTEL_TRACEPARENT" "$@"
+  otel observe curl -H "traceparent: $OTEL_TRACEPARENT" "$@"
 }
 alias curl=otel_instrumented_curl
 
