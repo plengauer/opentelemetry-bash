@@ -37,7 +37,7 @@ function otel_shutdown {
 function otel_span_start {
   local response_pipe=/tmp/opentelemetry_bash_$$_response_$(echo $RANDOM | md5sum | cut -c 1-32).pipe
   mkfifo $response_pipe
-  echo "SPAN_START $response_pipe $OTEL_TRACE_PARENT $@" > $otel_remote_sdk_pipe
+  echo "SPAN_START $response_pipe $OTEL_TRACEPARENT $@" > $otel_remote_sdk_pipe
   local response=$(cat $response_pipe)
   OTEL_TRACEPARENT_STACK=$OTEL_TRACEPARENT/$OTEL_TRACEPARENT_STACK
   export OTEL_TRACEPARENT=$response
