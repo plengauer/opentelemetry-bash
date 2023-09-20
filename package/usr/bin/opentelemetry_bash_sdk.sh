@@ -88,9 +88,10 @@ function otel_observe {
     fi
   done
   local exit_code=0
-  "$@" || exit_code=$?
+  "$@" || local exit_code=$?
+  otel_span_attribute subprocess.exit_code=$exit_code
   if [ "$exit_code" -ne "0" ]; then
-    attributes=subprocess.exit_code=$exit_code otel_span_error
+    otel_span_error
   fi
   otel_span_end
   return $exit_code
