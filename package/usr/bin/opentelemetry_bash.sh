@@ -19,9 +19,9 @@ function otel_instrumented_wget {
   local target=$(\echo ${url#*//*/}/)
   local host=$(\echo ${url} | \awk -F/ '{print $3}')
   local method=GET
-  name="wget $@" kind=CLIENT \
+  name="wget $*" kind=CLIENT \
     attributes="http.url=$url,http.host=$host,http.target=$target,http.method=$method" \
-    command="wget $@" \
+    command="wget $*" \
     otel_observe \wget --header="traceparent: $OTEL_TRACEPARENT" "$@"
 }
 alias wget=otel_instrumented_wget
@@ -31,9 +31,9 @@ function otel_instrumented_curl {
   local target=$(\echo ${url#*//*/}/)
   local host=$(\echo ${url} | \awk -F/ '{print $3}')
   local method=$(\echo $@ | \awk '{for(i=1;i<=NF;i++) if ($i == "-X") print $(i+1)}')
-  name="curl $@" kind=CLIENT \
+  name="curl $*" kind=CLIENT \
     attributes="http.url=$url,http.host=$host,http.target=$target,http.method=$method" \
-    command="wget $@" \
+    command="curl $*" \
     otel_observe \curl -H "traceparent: $OTEL_TRACEPARENT" "$@"
 }
 alias curl=otel_instrumented_curl
