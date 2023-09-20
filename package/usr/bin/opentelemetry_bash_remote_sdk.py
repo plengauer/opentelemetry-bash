@@ -30,19 +30,19 @@ class AwsEC2ResourceDetector(ResourceDetector):
             'host.name': hostname
         })
 
+spans : [Span] = []
+
 def main():
     fifo_path = sys.argv[1]
     scope = sys.argv[2]
     version = sys.argv[3]
-    processor = BatchSpanProcessor(OTLPSpanExporter())
-    resource = get_aggregated_resources([
-        AwsEC2ResourceDetector(),
-        KubernetesResourceDetector(),
-        DockerResourceDetector(),
-        OTELResourceDetector(),
-    ])
+#    resource = get_aggregated_resources([
+#        AwsEC2ResourceDetector(),
+#        KubernetesResourceDetector(),
+#        DockerResourceDetector(),
+#        OTELResourceDetector(),
+#    ])
     resource = {}
-    spans : [Span] = []
     while True:
         with open(fifo_path, 'r') as fifo:
             for line in fifo:
@@ -51,56 +51,58 @@ def main():
                     continue
                 tokens = line.split(' ', 1)
                 tokens = [token for token in tokens if token]
-                match tokens[0]:
-                    case 'RESOURCE_ATTRIBUTE':
-                        key = tokens[1].split('=', 1)[0]
-                        value = tokens[1].split('=', 1)[1]
-                        resource[key] = value
-                    case 'INIT':
-                        tracer_provider = TracerProvider(sampler=sampling.ALWAYS_ON, resource=Resource.create(resource))
-                        tracer_provider.add_span_processor(processor)
-                        opentelemetry.trace.set_tracer_provider(tracer_provider)
-                    case 'SHUTDOWN':
-                        processor.shutdown()
-                        return
-                    case 'SPAN_START':
-                        tokens = tokens[1].split(' ', 3)
-                        response_path = tokens[0]
-                        trace_parent = tokens[1]
-                        kind = tokens[2]
-                        name = tokens[3]
-                        span = opentelemetry.trace.get_tracer(scope, version).start_span(name, kind=SpanKind[kind.upper()], context=TraceContextTextMapPropagator().extract({'traceparent': trace_parent}))
-                        spans.append(span)
-                        carrier = {}
-                        TraceContextTextMapPropagator().inject(carrier, opentelemetry.trace.set_span_in_context(span, None))
-                        with open(response_path, 'w') as response:
-                            response.write(carrier['traceparent'])
-                    case 'SPAN_END':
-                        span : Span = spans.pop()
-                        if not span:
-                            break
-                        span.end()
-                    case 'SPAN_ERROR':
-                        span : Span = spans.pop()
-                        if not span:
-                            break
-                        if len(tokens) > 1:
-                            key = tokens[1].split('=', 1)[0]
-                            value = tokens[1].split('=', 1)[1]
-                            span.add_event("exception", { key: value })
-                        span.set_status(StatusCode.ERROR)
-                        spans.append(span)
-                        pass
-                    case 'SPAN_ATTRIBUTE':
-                        span : Span = spans.pop()
-                        if not span:
-                            break
-                        key = tokens[1].split('=', 1)[0]
-                        value = tokens[1].split('=', 1)[1]
-                        span.set_attribute(key, value)
-                        spans.append(span)
-                    case '_':
-                        pass
+                try:
+                    handle(scope, version, resource, tokens[0], tokens[1] if len(tokens) > 1 else None)
+                except EOFError:
+                    return
+                except Exception as error:
+                    print(error)
+
+def handle(scope, version, resource, command, arguments):
+    match command:
+        case 'RESOURCE_ATTRIBUTE':
+            key = arguments.split('=', 1)[0]
+            value = arguments.split('=', 1)[1]
+            resource[key] = value
+        case 'INIT':
+            tracer_provider = TracerProvider(sampler=sampling.ALWAYS_ON, resource=Resource.create(resource))
+            tracer_provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
+            opentelemetry.trace.set_tracer_provider(tracer_provider)
+        case 'SHUTDOWN':
+            raise EOFError()
+        case 'SPAN_START':
+            tokens = arguments.split(' ', 3)
+            response_path = tokens[0]
+            trace_parent = tokens[1]
+            kind = tokens[2]
+            name = tokens[3]
+            span = opentelemetry.trace.get_tracer(scope, version).start_span(name, kind=SpanKind[kind.upper()], context=TraceContextTextMapPropagator().extract({'traceparent': trace_parent}))
+            spans.append(span)
+            carrier = {}
+            TraceContextTextMapPropagator().inject(carrier, opentelemetry.trace.set_span_in_context(span, None))
+            with open(response_path, 'w') as response:
+                response.write(carrier['traceparent'])
+        case 'SPAN_END':
+            span : Span = spans.pop()
+            if not span:
+                return
+            span.end()
+        case 'SPAN_ERROR':
+            span : Span = spans.pop()
+            if not span:
+                return
+            span.set_status(StatusCode.ERROR)
+            spans.append(span)
+        case 'SPAN_ATTRIBUTE':
+            span : Span = spans.pop()
+            if not span:
+                return
+            key = arguments.split('=', 1)[0]
+            value = arguments.split('=', 1)[1]
+            span.set_attribute(key, value)
+            spans.append(span)
+        case '_':
+            return
 
 if __name__ == "__main__":
     main()
