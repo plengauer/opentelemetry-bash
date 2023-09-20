@@ -65,7 +65,7 @@ def main():
                         return
                     case 'SPAN_START':
                         tokens = tokens[1].split(' ', 3)
-                        response_fifo = tokens[0]
+                        response_path = tokens[0]
                         trace_parent = tokens[1]
                         kind = tokens[2]
                         name = tokens[3]
@@ -73,7 +73,7 @@ def main():
                         spans.append(span)
                         carrier = {}
                         TraceContextTextMapPropagator().inject(carrier, opentelemetry.trace.set_span_in_context(span, None))
-                        with open(response_fifo, 'w') as response:
+                        with open(response_path, 'w') as response:
                             response.write(carrier['traceparent'])
                     case 'SPAN_END':
                         span : Span = spans.pop()
