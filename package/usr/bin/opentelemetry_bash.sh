@@ -39,7 +39,7 @@ function otel_instrumented_curl {
 alias curl=otel_instrumented_curl
 
 function otel_instrumented_bash {
-  OTEL_BASH_ROOT_SPAN_NAME_OVERRIDE="bash $@" \bash -c "source /usr/bin/opentelemetry_bash.sh; source $@"
+  OTEL_BASH_ROOT_SPAN_NAME_OVERRIDE="bash $@" \bash -c "source /usr/bin/opentelemetry_bash.sh; source $*"
 }
 alias bash=otel_instrumented_bash
 
