@@ -31,6 +31,9 @@ function otel_instrumented_curl {
   local target=$(\echo ${url#*//*/}/)
   local host=$(\echo ${url} | \awk -F/ '{print $3}')
   local method=$(\echo $@ | \awk '{for(i=1;i<=NF;i++) if ($i == "-X") print $(i+1)}')
+  if [ -z "$method" ]; then
+    local method=GET
+  fi
   name="curl $*" kind=CLIENT \
     attributes="http.url=$url,http.host=$host,http.target=$target,http.method=$method" \
     command="curl $*" \
@@ -39,12 +42,21 @@ function otel_instrumented_curl {
 alias curl=otel_instrumented_curl
 
 function otel_instrumented_bash {
-  OTEL_BASH_ROOT_SPAN_NAME_OVERRIDE="bash $@" \bash -c "source /usr/bin/opentelemetry_bash.sh; source $*"
+  OTEL_BASH_COMMAND_OVERRIDE="bash $@" OTEL_BASH_ROOT_SPAN_KIND_OVERRIDE=INTERNAL \bash -c "source /usr/bin/opentelemetry_bash.sh; source $*"
 }
 alias bash=otel_instrumented_bash
 
+function otel_on_script_start {
+  otel_init
+  local kind=SERVER
+  if [ -n "$OTEL_BASH_ROOT_SPAN_KIND_OVERRIDE" ]; then
+    kind=$OTEL_BASH_ROOT_SPAN_KIND_OVERRIDE
+    unexport OTEL_BASH_ROOT_SPAN_KIND_OVERRIDE
+  fi
+  otel_span_start $kind $(otel_command_self)
+}
 function otel_on_script_end {
-  exit_code=$?
+  local exit_code=$?
   if [ "$exit_code" -ne "0" ]; then
     otel_span_error
   fi
@@ -52,5 +64,4 @@ function otel_on_script_end {
   otel_shutdown
 }
 trap otel_on_script_end EXIT
-otel_init
-otel_span_start SERVER $(otel_command_self)
+otel_on_script_start

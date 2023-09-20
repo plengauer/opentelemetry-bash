@@ -2,8 +2,8 @@
 otel_remote_sdk_pipe=/tmp/opentelemetry_bash_$$_$(echo $RANDOM | md5sum | cut -c 1-32).pipe
 
 function otel_command_self {
-  if [ -n "$OTEL_BASH_ROOT_SPAN_NAME_OVERRIDE" ]; then
-    \echo $OTEL_BASH_ROOT_SPAN_NAME_OVERRIDE
+  if [ -n "$OTEL_BASH_COMMAND_OVERRIDE" ]; then
+    \echo $OTEL_BASH_COMMAND_OVERRIDE
   else
     \echo $(ps -p $$ -o args | grep -v COMMAND)
   fi
