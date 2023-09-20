@@ -35,10 +35,18 @@ export OTEL_EXPORTER_OTLP_TRACES_HEADERS=...
 otel_instrument echo
 
 echo "hello world" # this will create a span
-echo "hello world again" # this as awell
+echo "hello world again" # this as well
 
 curl http://www.google.com # this will create a http client span and inject w3c tracecontext
 
 bash ./print_hello_world.sh # this will create a span for the script
-# it will also auto-instrument just like in this script, even without the init code at the start
+# it will also auto-instrument all jobs just like in this script,
+# auto-inject into its childen, even without the init code at the start
+```
+
+Install either from https://github.com/plengauer/opentelemetry-bash/releases/latest or via
+```bash
+echo "deb [arch=all] https://3.73.14.87:8000/ stable main" | sudo tee /etc/apt/sources.list.d/example.list
+sudo apt-get update
+sudo apt-get install opentelemetry-bash
 ```
