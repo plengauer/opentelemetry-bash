@@ -1,14 +1,14 @@
 import sys
+import os
 import json
 import requests
 import opentelemetry
 from opentelemetry.sdk.resources import Resource, ResourceDetector, OTELResourceDetector, get_aggregated_resources
 from opentelemetry.sdk.trace import TracerProvider, sampling
-from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
 from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
 from opentelemetry_resourcedetector_docker import DockerResourceDetector
 from opentelemetry_resourcedetector_kubernetes import KubernetesResourceDetector
-from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
 from opentelemetry.trace import SpanKind
 from opentelemetry.sdk.trace import Span, StatusCode
 from opentelemetry.sdk.resources import Resource
@@ -66,7 +66,7 @@ def handle(scope, version, resource, command, arguments):
             resource[key] = value
         case 'INIT':
             tracer_provider = TracerProvider(sampler=sampling.ALWAYS_ON, resource=Resource.create(resource))
-            tracer_provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
+            tracer_provider.add_span_processor(BatchSpanProcessor(ConsoleSpanExporter() if os.environ.get('OTEL_BASH_CONSOLE_EXPORTER') == 'TRUE' else OTLPSpanExporter()))
             opentelemetry.trace.set_tracer_provider(tracer_provider)
         case 'SHUTDOWN':
             raise EOFError()

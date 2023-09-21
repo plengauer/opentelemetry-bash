@@ -15,7 +15,7 @@ function otel_resource_attributes {
   \echo telemetry.sdk.version=$(\apt show opentelemetry-bash 2> /dev/null | \grep Version | \awk '{ print $2 }')
   \echo process.pid=$$
   \echo process.executable.name=bash
-  \echo process.executable.path​=$(which $(otel_command_self | \cut -d' ' -f1))
+  \echo process.executable.path=$(which $(otel_command_self | \cut -d' ' -f1))
   \echo process.command=$(otel_command_self)
   \echo process.command_args=$(otel_command_self | \cut -d' ' -f2-)
   \echo process.owner=$(whoami)
@@ -23,11 +23,16 @@ function otel_resource_attributes {
   \echo process.runtime.description="Bourne Again Shell"
   \echo process.runtime.version=$(\apt show bash 2> /dev/null | \grep Version | \awk '{ print $2 }')
   \echo host.name=$(\cat /etc/hostname)
-  \echo service.name=$OTEL_SERVICE_NAME
+  if [ -z "$OTEL_SERVICE_NAME" ]; then
+    \echo service.name=$(otel_command_self)
+  else
+    \echo service.name=$OTEL_SERVICE_NAME
+  fi
   \echo service.version=$OTEL_SERVICE_VERSION
 }
 
 function otel_init {
+  # TODO check double init
   \mkfifo $otel_remote_sdk_pipe
   source /opt/opentelemetry_bash/venv/bin/activate
   \python3 /usr/bin/opentelemetry_bash_remote_sdk.py $otel_remote_sdk_pipe "bash" $(\apt show opentelemetry-bash 2> /dev/null | \grep Version | \awk '{ print $2 }') 1>&2 &
@@ -38,6 +43,7 @@ function otel_init {
 }
 
 function otel_shutdown {
+  # TODO check double shutdown
   \echo "SHUTDOWN" > $otel_remote_sdk_pipe
   \rm $otel_remote_sdk_pipe
 }
@@ -78,7 +84,7 @@ function otel_observe {
   fi
   otel_span_start $kind $name
   otel_span_attribute subprocess.executable.name=$(\echo $command | \cut -d' ' -f1 | \rev | \cut -d'/' -f1 | \rev)
-  otel_span_attribute subprocess.executable.path​=$(which $(\echo $command | \cut -d' ' -f1))
+  otel_span_attribute subprocess.executable.path=$(which $(\echo $command | \cut -d' ' -f1))
   otel_span_attribute subprocess.command=$command
   otel_span_attribute subprocess.command_args=$(\echo $command | \cut -d' ' -f2-)
   IFS=',' read -ra attributes_array <<< $attributes

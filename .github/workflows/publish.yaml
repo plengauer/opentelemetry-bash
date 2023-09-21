@@ -19,7 +19,7 @@ jobs:
           name: package.deb
           path: package.deb
 
-  test-install:
+  test:
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -27,9 +27,12 @@ jobs:
         with:
           name: package.deb
       - run: sudo apt-get -y install ./package.deb
+      - uses: actions/checkout@v2
+      - run: cd tests
+      - run: bash run_tests.sh
 
   publish:
-    needs: [build, test-install]
+    needs: [build, test]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
