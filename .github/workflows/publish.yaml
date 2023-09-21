@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./package
+        working-directory: ./src
     steps:
       - uses: actions/checkout@v2
       - run: sudo apt-get install devscripts debhelper
@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: echo "::set-output name=version::$(cat ./package/DEBIAN/control | grep 'Version' | awk -F\  '{print $2}')"
+      - run: echo "::set-output name=version::$(cat ./src/DEBIAN/control | grep 'Version' | awk -F\  '{print $2}')"
         id: version
       - uses: actions/download-artifact@v2
         with:
