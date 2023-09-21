@@ -1,0 +1,15 @@
+check leaking processes
+
+sdk parent child relationship
+otel_instrument (wtih span assertions)
+auto (with span assertions)
+
+failing on alias set
+failing on trap set
+
+wrong number of arguments on otel_span_start
+wrong kind
+twice init
+twice shutdown
+otel_span_start / shutdown without init
+  

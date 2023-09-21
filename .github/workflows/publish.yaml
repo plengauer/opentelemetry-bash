@@ -28,8 +28,7 @@ jobs:
           name: package.deb
       - run: sudo apt-get -y install ./package.deb
       - uses: actions/checkout@v2
-      - run: cd tests
-      - run: bash run_tests.sh
+      - run: bash -c "cd tests && bash run_tests.sh"
 
   publish:
     needs: [build, test]
