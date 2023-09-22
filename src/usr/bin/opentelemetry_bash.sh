@@ -34,6 +34,9 @@ otel_do_instrument cut
 otel_do_instrument sort
 otel_do_instrument tr
 otel_do_instrument wc
+otel_do_instrument grep
+otel_do_instrument egrep
+otel_do_instrument fgrep
 
 otel_do_instrument find
 otel_do_instrument cat
