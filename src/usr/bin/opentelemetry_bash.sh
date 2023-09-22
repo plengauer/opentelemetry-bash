@@ -37,6 +37,8 @@ otel_do_instrument wc
 otel_do_instrument grep
 otel_do_instrument egrep
 otel_do_instrument fgrep
+otel_do_instrument rev
+otel_do_instrument jq
 
 otel_do_instrument find
 otel_do_instrument cat
@@ -44,6 +46,8 @@ otel_do_instrument cp
 otel_do_instrument mv
 otel_do_instrument rm
 otel_do_instrument tee
+otel_do_instrument touch
+otel_do_instrument mkdir
 
 otel_do_instrument scp
 otel_do_instrument rsync
