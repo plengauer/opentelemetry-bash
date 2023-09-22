@@ -43,6 +43,7 @@ otel_do_instrument cat
 otel_do_instrument cp
 otel_do_instrument mv
 otel_do_instrument rm
+otel_do_instrument tee
 
 otel_do_instrument scp
 otel_do_instrument rsync
