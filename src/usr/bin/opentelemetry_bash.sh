@@ -59,7 +59,20 @@ otel_do_instrument zip
 otel_do_instrument unzip
 
 otel_do_instrument ping
+
+otel_do_instrument sh
 otel_do_instrument ssh
+otel_do_instrument perl
+otel_do_instrument python
+otel_do_instrument python3
+otel_do_instrument ruby
+otel_do_instrument node
+otel_do_instrument java
+
+otel_do_instrument pip
+otel_do_instrument pip3
+otel_do_instrument bundle
+otel_do_instrument npm
 
 otel_do_instrument systemctl
 
