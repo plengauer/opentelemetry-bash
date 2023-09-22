@@ -13,11 +13,11 @@ function otel_do_alias {
 }
 
 function otel_do_instrument {
-  otel_do_alias $1 "otel_observe \\$1" || return 1
+  otel_do_alias $1 "otel_observe \\$1" || return $?
 }
 
 function otel_instrument {
-  otel_do_instrument $1
+  otel_do_instrument $1 || return $?
   export OTEL_BASH_CUSTOM_INSTRUMENTATIONS=$OTEL_BASH_CUSTOM_INSTRUMENTATIONS/$1
 }
 IFS='/' read -ra custom_instrumentations_array <<< $OTEL_BASH_CUSTOM_INSTRUMENTATIONS
