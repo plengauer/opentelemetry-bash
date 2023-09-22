@@ -73,6 +73,8 @@ otel_do_instrument pip
 otel_do_instrument pip3
 otel_do_instrument bundle
 otel_do_instrument npm
+otel_do_instrument javac
+otel_do_instrument ant
 
 otel_do_instrument systemctl
 
