@@ -27,7 +27,7 @@ IFS='/' read -ra custom_instrumentations_array <<< $OTEL_BASH_CUSTOM_INSTRUMENTA
     fi
 done
 
-cat /var/lib/opentelemetry_bash/auto_instrumentations | while read cmd; do otel_do_instrument $cmd; done
+\cat /var/lib/opentelemetry_bash/auto_instrumentations | while read cmd; do otel_do_instrument $cmd; done
 
 function otel_instrumented_wget {
   local url=$(\echo $@ | \awk '{for(i=1;i<=NF;i++) if ($i ~ /^http/) print $i}')
