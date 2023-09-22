@@ -1,5 +1,5 @@
 #!/bin/bash
-otel_pipe_dir=~/
+otel_pipe_dir=/var/tmp
 otel_remote_sdk_pipe=$otel_pipe_dir/opentelemetry_bash_$$_$(echo $RANDOM | md5sum | cut -c 1-32).pipe
 
 function otel_command_self {
