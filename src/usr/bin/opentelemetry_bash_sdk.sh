@@ -1,5 +1,6 @@
 #!/bin/bash
-otel_remote_sdk_pipe=/tmp/opentelemetry_bash_$$_$(echo $RANDOM | md5sum | cut -c 1-32).pipe
+otel_pipe_dir=~/
+otel_remote_sdk_pipe=$otel_pipe_dir/opentelemetry_bash_$$_$(echo $RANDOM | md5sum | cut -c 1-32).pipe
 
 function otel_command_self {
   if [ -n "$OTEL_BASH_COMMAND_OVERRIDE" ]; then
@@ -49,7 +50,7 @@ function otel_shutdown {
 }
 
 function otel_span_start {
-  local response_pipe=/tmp/opentelemetry_bash_$$_response_$(\echo $RANDOM | \md5sum | \cut -c 1-32).pipe
+  local response_pipe=$otel_pipe_dir/opentelemetry_bash_$$_response_$(\echo $RANDOM | \md5sum | \cut -c 1-32).pipe
   \mkfifo $response_pipe
   \echo "SPAN_START $response_pipe $OTEL_TRACEPARENT $@" > $otel_remote_sdk_pipe
   local response=$(\cat $response_pipe)
