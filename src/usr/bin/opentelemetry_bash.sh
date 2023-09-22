@@ -27,16 +27,31 @@ IFS='/' read -ra custom_instrumentations_array <<< $OTEL_BASH_CUSTOM_INSTRUMENTA
     fi
 done
 
+# otel_do_instrument echo
+otel_do_instrument sed
+otel_do_instrument awk
+otel_do_instrument cut
+otel_do_instrument sort
+otel_do_instrument tr
+otel_do_instrument wc
+
 otel_do_instrument find
+otel_do_instrument cat
+otel_do_instrument cp
+otel_do_instrument mv
+otel_do_instrument rm
 
 otel_do_instrument scp
 otel_do_instrument rsync
 otel_do_instrument dd
-
 otel_do_instrument tar
 otel_do_instrument gzip
+otel_do_instrument gunzip
 otel_do_instrument zip
 otel_do_instrument unzip
+
+otel_do_instrument ping
+otel_do_instrument ssh
 
 otel_do_instrument systemctl
 
