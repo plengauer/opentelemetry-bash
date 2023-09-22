@@ -81,7 +81,7 @@ def handle(scope, version, resource, command, arguments):
             carrier = {}
             TraceContextTextMapPropagator().inject(carrier, opentelemetry.trace.set_span_in_context(span, None))
             with open(response_path, 'w') as response:
-                response.write(carrier['traceparent'])
+                response.write(carrier.get('traceparent', ''))
         case 'SPAN_END':
             span : Span = spans.pop()
             if not span:

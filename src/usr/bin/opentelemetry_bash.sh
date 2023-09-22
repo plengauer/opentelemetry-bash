@@ -27,56 +27,7 @@ IFS='/' read -ra custom_instrumentations_array <<< $OTEL_BASH_CUSTOM_INSTRUMENTA
     fi
 done
 
-# otel_do_instrument echo
-otel_do_instrument sed
-otel_do_instrument awk
-otel_do_instrument cut
-otel_do_instrument sort
-otel_do_instrument tr
-otel_do_instrument wc
-otel_do_instrument grep
-otel_do_instrument egrep
-otel_do_instrument fgrep
-otel_do_instrument rev
-otel_do_instrument jq
-
-otel_do_instrument find
-otel_do_instrument cat
-otel_do_instrument cp
-otel_do_instrument mv
-otel_do_instrument rm
-otel_do_instrument tee
-otel_do_instrument touch
-otel_do_instrument mkdir
-
-otel_do_instrument scp
-otel_do_instrument rsync
-otel_do_instrument dd
-otel_do_instrument tar
-otel_do_instrument gzip
-otel_do_instrument gunzip
-otel_do_instrument zip
-otel_do_instrument unzip
-
-otel_do_instrument ping
-
-otel_do_instrument sh
-otel_do_instrument ssh
-otel_do_instrument perl
-otel_do_instrument python
-otel_do_instrument python3
-otel_do_instrument ruby
-otel_do_instrument node
-otel_do_instrument java
-
-otel_do_instrument pip
-otel_do_instrument pip3
-otel_do_instrument bundle
-otel_do_instrument npm
-otel_do_instrument javac
-otel_do_instrument ant
-
-otel_do_instrument systemctl
+cat /var/lib/opentelemetry_bash/auto_instrumentations | while read cmd; do otel_do_instrument $cmd; done
 
 function otel_instrumented_wget {
   local url=$(\echo $@ | \awk '{for(i=1;i<=NF;i++) if ($i ~ /^http/) print $i}')

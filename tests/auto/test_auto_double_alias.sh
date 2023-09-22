@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 . ./assert.sh
 . /usr/bin/opentelemetry_bash.sh
 
