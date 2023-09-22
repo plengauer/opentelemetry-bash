@@ -49,6 +49,7 @@ jobs:
           release_name: Release v${{ steps.version.outputs.version }}
           draft: false
           prerelease: false
+        continue-on-error: true
       - uses: actions/upload-release-asset@v1
         id: upload-release-asset
         env:
@@ -58,3 +59,4 @@ jobs:
           asset_path: ./package.deb
           asset_name: opentelemetry-bash_${{ steps.version.outputs.version }}.deb
           asset_content_type: application/octet-stream
+        continue-on-error: true
