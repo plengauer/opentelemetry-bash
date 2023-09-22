@@ -12,8 +12,12 @@ function otel_do_alias {
   alias $1="$2"
 }
 
-function otel_instrument {
+function otel_do_instrument {
   otel_do_alias $1 "otel_observe \\$1" || return 1
+}
+
+function otel_instrument {
+  otel_do_instrument $1
   export OTEL_BASH_CUSTOM_INSTRUMENTATIONS=$OTEL_BASH_CUSTOM_INSTRUMENTATIONS/$1
 }
 IFS='/' read -ra custom_instrumentations_array <<< $OTEL_BASH_CUSTOM_INSTRUMENTATIONS
@@ -22,6 +26,19 @@ IFS='/' read -ra custom_instrumentations_array <<< $OTEL_BASH_CUSTOM_INSTRUMENTA
       otel_instrument $custom_instrumentation
     fi
 done
+
+otel_do_instrument find
+
+otel_do_instrument scp
+otel_do_instrument rsync
+otel_do_instrument dd
+
+otel_do_instrument tar
+otel_do_instrument gzip
+otel_do_instrument zip
+otel_do_instrument unzip
+
+otel_do_instrument systemctl
 
 function otel_instrumented_wget {
   local url=$(\echo $@ | \awk '{for(i=1;i<=NF;i++) if ($i ~ /^http/) print $i}')
