@@ -1,4 +1,9 @@
 #!/bin/bash
+if [ "$OTEL_BASH_AUTO_INJECTED" != "" ]; then
+  return 0
+fi
+OTEL_BASH_AUTO_INJECTED=TRUE
+
 source /usr/bin/opentelemetry_bash_sdk.sh
 
 shopt -s expand_aliases
