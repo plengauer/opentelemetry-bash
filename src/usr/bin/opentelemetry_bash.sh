@@ -9,12 +9,7 @@ source /usr/bin/opentelemetry_bash_sdk.sh
 shopt -s expand_aliases
 
 function otel_do_alias {
-  local exit_code=0
-  \alias $1 &> /dev/null || local exit_code=$?
-  if [ "$exit_code" -eq "0" ]; then
-    return 1
-  fi
-  \alias $1="$2"
+  \alias $1="${@:2}"
 }
 # TODO alias the alias command transparently to print warnings (or just error) if somebody overrides our aliases
 
