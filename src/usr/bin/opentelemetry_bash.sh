@@ -20,7 +20,7 @@ function otel_do_alias {
 
 function otel_do_instrument {
   local new_command=otel_observe
-  local prev_command=$(\alias $1 | \cut -d= -f2- | \tr -d \' 2> /dev/null) || true
+  local prev_command=$(\alias $1 | \cut -d= -f2- | \tr -d \') 2> /dev/null || true
   if [ "$prev_command" == "" ]; then
     local new_command="$new_command \\$1"
   else
