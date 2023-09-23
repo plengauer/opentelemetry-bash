@@ -25,7 +25,7 @@ function otel_resource_attributes {
   \echo process.runtime.version=$(\apt show bash 2> /dev/null | \grep Version | \awk '{ print $2 }')
   \echo host.name=$(\cat /etc/hostname)
   if [ -z "$OTEL_SERVICE_NAME" ]; then
-    \echo service.name=$(otel_command_self)
+    \echo service.name="unknown_service"
   else
     \echo service.name=$OTEL_SERVICE_NAME
   fi
