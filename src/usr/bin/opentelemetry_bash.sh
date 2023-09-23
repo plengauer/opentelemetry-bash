@@ -93,4 +93,5 @@ function otel_on_script_end {
   otel_shutdown
 }
 trap otel_on_script_end EXIT
+# TODO we should alias exec, to be sure we shutdown properly and not leak the companion process
 otel_on_script_start
