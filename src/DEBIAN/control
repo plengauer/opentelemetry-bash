@@ -1,5 +1,5 @@
 Package: opentelemetry-bash
-Version: 0.19.0
+Version: 0.19.1
 Architecture: all
 Depends: bash, awk, apt, python3, python3-pip, python3-venv
 Priority: extra

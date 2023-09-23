@@ -43,7 +43,7 @@ function otel_instrumented_wget {
   name="wget $*" kind=CLIENT \
     attributes="http.url=$url,http.host=$host,http.target=$target,http.method=$method" \
     command="wget $*" \
-    otel_observe \$1 --header="traceparent: $OTEL_TRACEPARENT" "${@:2}"
+    otel_observe $1 --header="traceparent: $OTEL_TRACEPARENT" "${@:2}"
 }
 otel_do_alias wget otel_instrumented_wget
 
@@ -59,7 +59,7 @@ function otel_instrumented_curl {
   name="curl $*" kind=CLIENT \
     attributes="http.url=$url,http.host=$host,http.target=$target,http.method=$method" \
     command="curl $*" \
-    otel_observe \$1 -H "traceparent: $OTEL_TRACEPARENT" "${@:2}"
+    otel_observe $1 -H "traceparent: $OTEL_TRACEPARENT" "${@:2}"
 }
 otel_do_alias curl otel_instrumented_curl
 
@@ -68,7 +68,7 @@ function otel_instrumented_bash {
   for arg in "${@:2}"; do
     local args="$args \"$arg\""
   done
-  OTEL_BASH_COMMAND_OVERRIDE="$*" OTEL_BASH_ROOT_SPAN_KIND_OVERRIDE=INTERNAL \$1 -c "source /usr/bin/opentelemetry_bash.sh; source $args"
+  OTEL_BASH_COMMAND_OVERRIDE="$*" OTEL_BASH_ROOT_SPAN_KIND_OVERRIDE=INTERNAL $1 -c "source /usr/bin/opentelemetry_bash.sh; source $args"
 }
 otel_do_alias bash otel_instrumented_bash
 
