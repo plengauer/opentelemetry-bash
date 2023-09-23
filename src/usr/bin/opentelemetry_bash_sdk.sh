@@ -6,7 +6,7 @@ function otel_command_self {
   if [ -n "$OTEL_BASH_COMMAND_OVERRIDE" ]; then
     \echo $OTEL_BASH_COMMAND_OVERRIDE
   else
-    \echo $(ps -p $$ -o args | grep -v COMMAND)
+    \echo $(\ps -p $$ -o args | \grep -v COMMAND)
   fi
 }
 
