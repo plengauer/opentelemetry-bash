@@ -10,17 +10,23 @@ shopt -s expand_aliases
 
 function otel_do_alias {
   local exit_code=0
-  alias $1 &> /dev/null || local exit_code=$?
-  # TODO instead of failing we could actually _prepend_ our alias
-  # and we should probably also alias the alias command (and trap command) to not be overwritten
+  \alias $1 &> /dev/null || local exit_code=$?
   if [ "$exit_code" -eq "0" ]; then
     return 1
   fi
-  alias $1="$2"
+  \alias $1="$2"
 }
+# TODO alias the alias command transparently to print warnings (or just error) if somebody overrides our aliases
 
 function otel_do_instrument {
-  otel_do_alias $1 "otel_observe \\$1" || return $?
+  local new_command=otel_observe
+  local prev_command=$(\alias $1 | \cut -d= -f2- | \tr -d \' 2> /dev/null) || true
+  if [ "$prev_command" == "" ]; then
+    local new_command="$new_command \\$1"
+  else
+    local new_command="$new_command $prev_command"
+  fi
+  otel_do_alias $1 "$new_command"
 }
 
 function otel_instrument {
@@ -37,6 +43,7 @@ done
 while read cmd; do otel_do_instrument $cmd; done < /etc/opentelemetry_bash_auto_instrumentations.conf
 
 function otel_instrumented_wget {
+  # TODO scheme
   local url=$(\echo $@ | \awk '{for(i=1;i<=NF;i++) if ($i ~ /^http/) print $i}')
   local target=$(\echo ${url#*//*/}/)
   local host=$(\echo ${url} | \awk -F/ '{print $3}')
@@ -49,6 +56,7 @@ function otel_instrumented_wget {
 otel_do_alias wget otel_instrumented_wget
 
 function otel_instrumented_curl {
+  # TODO scheme
   local url=$(\echo $@ | \awk '{for(i=1;i<=NF;i++) if ($i ~ /^http/) print $i}')
   local target=$(\echo ${url#*//*/}/)
   local host=$(\echo ${url} | \awk -F/ '{print $3}')
