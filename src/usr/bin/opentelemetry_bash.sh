@@ -11,6 +11,8 @@ shopt -s expand_aliases
 function otel_do_alias {
   local exit_code=0
   alias $1 &> /dev/null || local exit_code=$?
+  # TODO instead of failing we could actually _prepend_ our alias
+  # and we should probably also alias the alias command (and trap command) to not be overwritten
   if [ "$exit_code" -eq "0" ]; then
     return 1
   fi
@@ -25,14 +27,14 @@ function otel_instrument {
   otel_do_instrument $1 || return $?
   export OTEL_BASH_CUSTOM_INSTRUMENTATIONS=$OTEL_BASH_CUSTOM_INSTRUMENTATIONS/$1
 }
-IFS='/' read -ra custom_instrumentations_array <<< $OTEL_BASH_CUSTOM_INSTRUMENTATIONS
-  for custom_instrumentation in "${custom_instrumentations_array[@]}"; do
-    if [ -n "$custom_instrumentation" ]; then
-      otel_instrument $custom_instrumentation
-    fi
-done
 
-\cat /var/lib/opentelemetry_bash/auto_instrumentations | while read cmd; do otel_do_instrument $cmd; done
+IFS='/' read -ra custom_instrumentations_array <<< $OTEL_BASH_CUSTOM_INSTRUMENTATIONS
+for custom_instrumentation in "${custom_instrumentations_array[@]}"; do
+  if [ -n "$custom_instrumentation" ]; then
+    otel_instrument $custom_instrumentation
+  fi
+done
+while read cmd; do otel_do_instrument $cmd; done < /etc/opentelemetry_bash_auto_instrumentations.conf
 
 function otel_instrumented_wget {
   local url=$(\echo $@ | \awk '{for(i=1;i<=NF;i++) if ($i ~ /^http/) print $i}')
