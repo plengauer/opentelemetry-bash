@@ -1,6 +1,7 @@
 #!/bin/bash
 otel_pipe_dir=/tmp
 otel_remote_sdk_pipe=$otel_pipe_dir/opentelemetry_bash_$$_$(\echo $RANDOM | \md5sum | \cut -c 1-32).pipe
+otel_sdk_version=$(\apt show opentelemetry-bash 2> /dev/null | \grep Version | \awk '{ print $2 }')
 
 function otel_command_self {
   if [ -n "$OTEL_BASH_COMMANDLINE_OVERRIDE" ]; then
@@ -14,7 +15,7 @@ function otel_command_self {
 function otel_resource_attributes {
   \echo telemetry.sdk.name=opentelemetry
   \echo telemetry.sdk.language=bash
-  \echo telemetry.sdk.version=$(\apt show opentelemetry-bash 2> /dev/null | \grep Version | \awk '{ print $2 }')
+  \echo telemetry.sdk.version=$otel_sdk_version
   \echo process.pid=$$
   \echo process.executable.name=bash
   \echo process.executable.path=$(\readlink /proc/$$/exe)
@@ -23,7 +24,7 @@ function otel_resource_attributes {
   \echo process.owner=$(whoami)
   \echo process.runtime.name=bash
   \echo process.runtime.description="Bourne Again Shell"
-  \echo process.runtime.version=$(\apt show bash 2> /dev/null | \grep Version | \awk '{ print $2 }')
+  \echo process.runtime.version=$BASH_VERSINFO # $(\apt show bash 2> /dev/null | \grep Version | \awk '{ print $2 }')
   \echo host.name=$(\cat /etc/hostname)
   if [ -z "$OTEL_SERVICE_NAME" ]; then
     \echo service.name="unknown_service"
@@ -37,7 +38,7 @@ function otel_init {
   # TODO check double init
   \mkfifo $otel_remote_sdk_pipe
   source /opt/opentelemetry_bash/venv/bin/activate
-  \python3 /usr/bin/opentelemetry_bash_remote_sdk.py $otel_remote_sdk_pipe "bash" $(\apt show opentelemetry-bash 2> /dev/null | \grep Version | \awk '{ print $2 }') 1>&2 &
+  \python3 /usr/bin/opentelemetry_bash_remote_sdk.py $otel_remote_sdk_pipe "bash" $otel_sdk_version 1>&2 &
   disown
   deactivate
   otel_resource_attributes | \sed 's/^/RESOURCE_ATTRIBUTE /' > $otel_remote_sdk_pipe
