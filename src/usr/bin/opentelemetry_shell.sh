@@ -68,7 +68,7 @@ function otel_instrumented_bash {
   for arg in "${@:2}"; do
     local args="$args \"$arg\""
   done
-  OTEL_BASH_COMMANDLINE_OVERRIDE="$*" OTEL_BASH_ROOT_SPAN_KIND_OVERRIDE=INTERNAL $1 -c "source /usr/bin/opentelemetry_bash.sh; source $args"
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$*" OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE=INTERNAL $1 -c "source /usr/bin/opentelemetry_shell.sh; source $args"
 }
 otel_do_alias bash otel_instrumented_bash
 
