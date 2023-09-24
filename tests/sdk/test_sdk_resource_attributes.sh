@@ -1,13 +1,13 @@
 #!/bin/bash
 . ./assert.sh
-. /usr/bin/opentelemetry_bash_sdk.sh
+. /usr/bin/opentelemetry_bash_api.sh
 
 export OTEL_SERVICE_NAME=TEST
 
 function test {
   otel_init
-  otel_span_start INTERNAL myspan
-  otel_span_end
+  span_id=$(otel_span_start INTERNAL myspan)
+  otel_span_end $span_id
   otel_shutdown
 }
 data=$(test 2>&1)

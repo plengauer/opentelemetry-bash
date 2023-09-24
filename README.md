@@ -6,7 +6,7 @@ Use it to manually create spans:
 export OTEL_SERVICE_NAME=Test
 export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=...
 export OTEL_EXPORTER_OTLP_TRACES_HEADERS=...
-. /usr/bin/opentelemetry_bash_sdk.sh
+. /usr/bin/opentelemetry_bash_api.sh
 # initialize the sdk
 otel_init
 
@@ -14,10 +14,10 @@ otel_init
 otel_observe echo "hello world"
 
 # create a manual span for the job with a custom attribute
-otel_span_start
-otel_span_attrbibute key=value
+span_id=$(otel_span_start INTERNAL myspan)
+otel_span_attribute $span_id key=value
 echo "hello world again"
-otel_span_end
+otel_span_end $span_id
 
 # flush and shutdown the sdk
 otel_shutdown
@@ -50,14 +50,6 @@ echo "deb [arch=all] https://3.73.14.87:8000/ stable main" | sudo tee /etc/apt/s
 sudo apt-get update
 sudo apt-get install opentelemetry-bash
 ```
-
-Limitations:
-
-*) background jobs / parallel jobs (piping) may cause span attributes to end up on the wrong span - will be fixed soon
-
-*) tests are disabled during build currently because github runners run into bugs with pipes
-
-*) startup is kindof slow because of apt
 
 Future features:
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 . ./assert.sh
-. /usr/bin/opentelemetry_bash_sdk.sh
+. /usr/bin/opentelemetry_bash_api.sh
 
 otel_init
 function fail {

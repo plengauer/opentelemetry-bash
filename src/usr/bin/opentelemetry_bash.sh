@@ -4,7 +4,7 @@ if [ "$OTEL_BASH_AUTO_INJECTED" != "" ]; then
 fi
 OTEL_BASH_AUTO_INJECTED=TRUE
 
-source /usr/bin/opentelemetry_bash_sdk.sh
+source /usr/bin/opentelemetry_bash_api.sh
 
 shopt -s expand_aliases
 
@@ -79,14 +79,16 @@ function otel_on_script_start {
     kind=$OTEL_BASH_ROOT_SPAN_KIND_OVERRIDE
     unset OTEL_BASH_ROOT_SPAN_KIND_OVERRIDE
   fi
-  otel_span_start $kind $(otel_command_self)
+  root_span_id=$(otel_span_start $kind $(otel_command_self))
+  otel_span_activate $root_span_id
 }
 function otel_on_script_end {
   local exit_code=$?
   if [ "$exit_code" -ne "0" ]; then
-    otel_span_error
+    otel_span_error $root_span_id
   fi
-  otel_span_end
+  otel_span_deactivate
+  otel_span_end $root_span_id
   otel_shutdown
 }
 trap otel_on_script_end EXIT

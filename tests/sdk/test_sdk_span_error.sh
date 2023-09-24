@@ -1,14 +1,14 @@
 #!/bin/bash
 . ./assert.sh
-. /usr/bin/opentelemetry_bash_sdk.sh
+. /usr/bin/opentelemetry_bash_api.sh
 
 function test {
   otel_init
-  otel_span_start PRODUCER myspan
+  span_id=$(otel_span_start PRODUCER myspan)
   assert_equals 0 $?
-  otel_span_error
+  otel_span_error $span_id
   assert_equals 0 $?
-  otel_span_end
+  otel_span_end $span_id
   assert_equals 0 $?
   otel_shutdown
 }

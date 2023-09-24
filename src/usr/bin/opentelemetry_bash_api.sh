@@ -38,7 +38,7 @@ function otel_init {
   # TODO check double init
   \mkfifo $otel_remote_sdk_pipe
   source /opt/opentelemetry_bash/venv/bin/activate
-  \python3 /usr/bin/opentelemetry_bash_remote_sdk.py $otel_remote_sdk_pipe "bash" $otel_sdk_version 1>&2 &
+  \python3 /usr/bin/opentelemetry_bash_sdk.py $otel_remote_sdk_pipe "bash" $otel_sdk_version 1>&2 &
   disown
   deactivate
   otel_resource_attributes | \sed 's/^/RESOURCE_ATTRIBUTE /' > $otel_remote_sdk_pipe
@@ -52,27 +52,53 @@ function otel_shutdown {
 }
 
 function otel_span_start {
+  local kind=$1
+  local name="${@:2}"
+  if [ -z "$traceparent" ]; then
+    local traceparent=$OTEL_TRACEPARENT
+  fi
   local response_pipe=$otel_pipe_dir/opentelemetry_bash_$$_response_$(\echo $RANDOM | \md5sum | \cut -c 1-32).pipe
   \mkfifo $response_pipe
-  \echo "SPAN_START $response_pipe $OTEL_TRACEPARENT $@" > $otel_remote_sdk_pipe
-  local response=$(\cat $response_pipe)
-  OTEL_TRACEPARENT_STACK=$OTEL_TRACEPARENT/$OTEL_TRACEPARENT_STACK
-  export OTEL_TRACEPARENT=$response
-  \rm $response_pipe
+  \echo "SPAN_START $response_pipe $traceparent $kind $name" > $otel_remote_sdk_pipe
+  \cat $response_pipe
+  \rm $response_pipe &> /dev/null
 }
 
 function otel_span_end {
-  \echo "SPAN_END" > $otel_remote_sdk_pipe
-  export OTEL_TRACEPARENT=$(\echo $OTEL_TRACEPARENT_STACK | \cut -d'/' -f1)
-  OTEL_TRACEPARENT_STACK=$(\echo $OTEL_TRACEPARENT_STACK | \cut -d'/' -f2-)
+  local span_id=$1
+  \echo "SPAN_END $span_id" > $otel_remote_sdk_pipe
 }
 
 function otel_span_error {
-  \echo "SPAN_ERROR" > $otel_remote_sdk_pipe
+  local span_id=$1
+  \echo "SPAN_ERROR $span_id" > $otel_remote_sdk_pipe
 }
 
 function otel_span_attribute {
-  \echo "SPAN_ATTRIBUTE $@" > $otel_remote_sdk_pipe
+  local span_id=$1
+  local key=$2
+  local value=${@:3}
+  \echo "SPAN_ATTRIBUTE $span_id $key $value" > $otel_remote_sdk_pipe
+}
+
+function otel_span_traceparent {
+  local span_id=$1
+  local response_pipe=$otel_pipe_dir/opentelemetry_bash_$$_response_$(\echo $RANDOM | \md5sum | \cut -c 1-32).pipe
+  \mkfifo $response_pipe
+  \echo "SPAN_TRACEPARENT $response_pipe $span_id" > $otel_remote_sdk_pipe
+  \cat $response_pipe
+  \rm $response_pipe &> /dev/null
+}
+
+function otel_span_activate {
+  local span_id=$1
+  export OTEL_TRACEPARENT_STACK=$OTEL_TRACEPARENT/$OTEL_TRACEPARENT_STACK
+  export OTEL_TRACEPARENT=$(otel_span_traceparent $span_id)
+}
+
+function otel_span_deactivate {
+  export OTEL_TRACEPARENT=$(\echo $OTEL_TRACEPARENT_STACK | \cut -d'/' -f1)
+  export OTEL_TRACEPARENT_STACK=$(\echo $OTEL_TRACEPARENT_STACK | \cut -d'/' -f2-)
 }
 
 function otel_observe {
@@ -85,23 +111,24 @@ function otel_observe {
   if [ -z "$command" ]; then
     local command=$@
   fi
-  otel_span_start $kind $name
-  otel_span_attribute subprocess.executable.name=$(\echo $command | \cut -d' ' -f1 | \rev | \cut -d'/' -f1 | \rev)
-  otel_span_attribute subprocess.executable.path=$(which $(\echo $command | \cut -d' ' -f1))
-  otel_span_attribute subprocess.command=$command
-  otel_span_attribute subprocess.command_args=$(\echo $command | \cut -d' ' -f2-)
+  local span_id=$(otel_span_start $kind $name)
+  otel_span_attribute $span_id subprocess.executable.name=$(\echo $command | \cut -d' ' -f1 | \rev | \cut -d'/' -f1 | \rev)
+  otel_span_attribute $span_id subprocess.executable.path=$(which $(\echo $command | \cut -d' ' -f1))
+  otel_span_attribute $span_id subprocess.command=$command
+  otel_span_attribute $span_id subprocess.command_args=$(\echo $command | \cut -d' ' -f2-)
   IFS=',' read -ra attributes_array <<< $attributes
   for attribute in "${attributes_array[@]}"; do
     if [ -n "$attribute" ]; then
-      otel_span_attribute $attribute
+      otel_span_attribute $span_id $attribute
     fi
   done
+  local traceparent=$(otel_span_traceparent $span_id)
   local exit_code=0
-  "$@" || local exit_code=$?
-  otel_span_attribute subprocess.exit_code=$exit_code
+  OTEL_TRACEPARENT=$traceparent "$@" || local exit_code=$?
+  otel_span_attribute $span_id subprocess.exit_code=$exit_code
   if [ "$exit_code" -ne "0" ]; then
-    otel_span_error
+    otel_span_error $span_id
   fi
-  otel_span_end
+  otel_span_end $span_id
   return $exit_code
 }
