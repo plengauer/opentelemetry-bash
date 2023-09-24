@@ -37,6 +37,9 @@ jobs:
         with:
           name: package.deb
       - run: mv ./package.deb tests
+      - run: sudo apt-get update
+      - run: sudo apt-get remove -y containerd.io
+      - run: sudo apt-get install -y docker.io
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:latest bash"
 
   test-debian-testing:
@@ -48,6 +51,9 @@ jobs:
         with:
           name: package.deb
       - run: mv ./package.deb tests
+      - run: sudo apt-get update
+      - run: sudo apt-get remove -y containerd.io
+      - run: sudo apt-get install -y docker.io
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:testing bash"
 
   test-ubuntu-latest:
@@ -59,6 +65,9 @@ jobs:
         with:
           name: package.deb
       - run: mv ./package.deb tests
+      - run: sudo apt-get update
+      - run: sudo apt-get remove -y containerd.io
+      - run: sudo apt-get install -y docker.io
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:latest bash"
 
   test-ubuntu-rolling:
@@ -70,6 +79,9 @@ jobs:
         with:
           name: package.deb
       - run: mv ./package.deb tests
+      - run: sudo apt-get update
+      - run: sudo apt-get remove -y containerd.io
+      - run: sudo apt-get install -y docker.io
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:rolling bash"
 
   test-ubuntu-devel:
@@ -81,6 +93,9 @@ jobs:
         with:
           name: package.deb
       - run: mv ./package.deb tests
+      - run: sudo apt-get update
+      - run: sudo apt-get remove -y containerd.io
+      - run: sudo apt-get install -y docker.io
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel bash"
 
   publish:
