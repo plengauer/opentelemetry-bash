@@ -19,7 +19,7 @@ jobs:
           name: package.deb
           path: package.deb
 
-  test:
+  test-install:
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -27,12 +27,64 @@ jobs:
         with:
           name: package.deb
       - run: sudo apt-get -y install ./package.deb
+
+  test-debian-latest:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: package.deb
       - uses: actions/checkout@v2
-      # for some reason, the tests always lead to broken pipes only in github runners
-      # - run: bash -c "cd tests && bash run_tests.sh"
+      - run: cp package.deb tests
+      - run: bash -c "cd tests && bash run_tests_containerized.sh debian:latest bash"
+
+  test-debian-testing:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: package.deb
+      - uses: actions/checkout@v2
+      - run: cp package.deb tests
+      - run: bash -c "cd tests && bash run_tests_containerized.sh debian:testing bash"
+
+  test-ubuntu-latest:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: package.deb
+      - uses: actions/checkout@v2
+      - run: cp package.deb tests
+      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:latest bash"
+
+  test-ubuntu-rolling:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: package.deb
+      - uses: actions/checkout@v2
+      - run: cp package.deb tests
+      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:rolling bash"
+
+  test-ubuntu-devel:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: package.deb
+      - uses: actions/checkout@v2
+      - run: cp package.deb tests
+      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel bash"
 
   publish:
-    needs: [build, test]
+    needs: [build, test-install, test-debian-latest, test-debian-testing, test-ubuntu-latest, test-ubuntu-rolling, test-ubuntu-devel]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
