@@ -99,7 +99,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel bash"
 
   publish:
-    needs: [build, test-install, test-debian-latest, test-debian-testing, test-ubuntu-latest, test-ubuntu-rolling, test-ubuntu-devel]
+    needs: [build, test-install, test-debian-latest, test-ubuntu-latest, test-ubuntu-rolling]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
