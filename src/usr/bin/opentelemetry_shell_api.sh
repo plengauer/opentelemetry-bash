@@ -4,8 +4,8 @@ otel_remote_sdk_pipe=$otel_pipe_dir/opentelemetry_shell_$$_$(\echo $RANDOM | \md
 otel_sdk_version=$(\apt show opentelemetry-shell 2> /dev/null | \grep Version | \awk '{ print $2 }')
 
 function otel_command_self {
-  if [ -n "$OTEL_BASH_COMMANDLINE_OVERRIDE" ]; then
-    \echo $OTEL_BASH_COMMANDLINE_OVERRIDE
+  if [ -n "$OTEL_SHELL_COMMANDLINE_OVERRIDE" ]; then
+    \echo $OTEL_SHELL_COMMANDLINE_OVERRIDE
   else
     # \cat /proc/$$/cmdline 2> /dev/null
     \echo $(\ps -p $$ -o args | \grep -v COMMAND)

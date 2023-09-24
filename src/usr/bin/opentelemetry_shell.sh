@@ -1,8 +1,8 @@
 #!/bin/sh
-if [ "$OTEL_BASH_AUTO_INJECTED" != "" ]; then
+if [ "$OTEL_SHELL_AUTO_INJECTED" != "" ]; then
   return 0
 fi
-OTEL_BASH_AUTO_INJECTED=TRUE
+OTEL_SHELL_AUTO_INJECTED=TRUE
 
 source /usr/bin/opentelemetry_shell_api.sh
 
@@ -23,16 +23,16 @@ function otel_do_alias {
 
 function otel_instrument {
   otel_do_alias $1 otel_observe || return $?
-  export OTEL_BASH_CUSTOM_INSTRUMENTATIONS=$OTEL_BASH_CUSTOM_INSTRUMENTATIONS/$1
+  export OTEL_SHELL_CUSTOM_INSTRUMENTATIONS=$OTEL_SHELL_CUSTOM_INSTRUMENTATIONS/$1
 }
 
-IFS='/' read -ra custom_instrumentations_array <<< $OTEL_BASH_CUSTOM_INSTRUMENTATIONS
+IFS='/' read -ra custom_instrumentations_array <<< $OTEL_SHELL_CUSTOM_INSTRUMENTATIONS
 for custom_instrumentation in "${custom_instrumentations_array[@]}"; do
   if [ -n "$custom_instrumentation" ]; then
     otel_instrument $custom_instrumentation
   fi
 done
-while read cmd; do otel_do_alias $cmd otel_observe; done < /etc/opentelemetry_bash_auto_instrumentations.conf
+while read cmd; do otel_do_alias $cmd otel_observe; done < /etc/opentelemetry_shell_auto_instrumentations.conf
 
 function otel_instrumented_wget {
   # TODO scheme
@@ -75,9 +75,9 @@ otel_do_alias bash otel_instrumented_bash
 function otel_on_script_start {
   otel_init || return $?
   local kind=SERVER
-  if [ -n "$OTEL_BASH_ROOT_SPAN_KIND_OVERRIDE" ]; then
-    kind=$OTEL_BASH_ROOT_SPAN_KIND_OVERRIDE
-    unset OTEL_BASH_ROOT_SPAN_KIND_OVERRIDE
+  if [ -n "$OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE" ]; then
+    kind=$OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE
+    unset OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE
   fi
   root_span_id=$(otel_span_start $kind $(otel_command_self))
   otel_span_activate $root_span_id
