@@ -1,6 +1,5 @@
-#!/bin/bash
 . ./assert.sh
-. /usr/bin/opentelemetry_bash_api.sh
+. /usr/bin/opentelemetry_shell_api.sh
 
 export OTEL_SERVICE_NAME=TEST
 

@@ -1,4 +1,4 @@
-This project delivers OpenTelemetry traces from bash scripts. Compared to other similar projects, it delivers not just an SDK to create spans manually, but also provides context propagation via HTTP (wget and curl), auto-instrumentation for selected commands, custom instrumentations, and auto-injection into child bash scripts. Its installable via a debian package from the releases in this repository, or from the apt-repository below.
+This project delivers OpenTelemetry traces from shell scripts (sh, bash, zsh, ...). Compared to other similar projects, it delivers not just an SDK to create spans manually, but also provides context propagation via HTTP (wget and curl), auto-instrumentation for selected commands, custom instrumentations, and auto-injection into child bash scripts. Its installable via a debian package from the releases in this repository, or from the apt-repository below.
 
 Use it to manually create spans:
 ```bash
@@ -6,7 +6,7 @@ Use it to manually create spans:
 export OTEL_SERVICE_NAME=Test
 export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=...
 export OTEL_EXPORTER_OTLP_TRACES_HEADERS=...
-. /usr/bin/opentelemetry_bash_api.sh
+. /usr/bin/opentelemetry_shell_api.sh
 # initialize the sdk
 otel_init
 
@@ -29,7 +29,7 @@ Use it to automatically instrument and inject into child scripts:
 export OTEL_SERVICE_NAME=Test
 export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=...
 export OTEL_EXPORTER_OTLP_TRACES_HEADERS=...
-. /usr/bin/opentelemetry_bash.sh
+. /usr/bin/opentelemetry_shell.sh
 
 # create spans for all echo's, both in this script and all child scripts
 otel_instrument echo
@@ -48,9 +48,6 @@ Install either from https://github.com/plengauer/opentelemetry-bash/releases/lat
 ```bash
 echo "deb [arch=all] https://3.73.14.87:8000/ stable main" | sudo tee /etc/apt/sources.list.d/example.list
 sudo apt-get update
-sudo apt-get install opentelemetry-bash
+sudo apt-get install opentelemetry-shell
 ```
 
-Future features:
-
-*) support for sh and zsh. There is almost no code that is bash specific, but tests are missing

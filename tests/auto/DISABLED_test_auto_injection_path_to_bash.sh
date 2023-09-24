@@ -1,6 +1,5 @@
-#!/bin/bash
 . ./assert.sh
-. /usr/bin/opentelemetry_bash.sh
+. /usr/bin/opentelemetry_shell.sh
 
 data=$(/bin/bash auto/fail_no_auto.sh)
 assert_equals 0 $?
