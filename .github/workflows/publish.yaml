@@ -36,7 +36,7 @@ jobs:
         with:
           name: package.deb
       - uses: actions/checkout@v2
-      - run: cp package.deb tests
+      - run: mv ./package.deb tests
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:latest bash"
 
   test-debian-testing:
@@ -47,7 +47,7 @@ jobs:
         with:
           name: package.deb
       - uses: actions/checkout@v2
-      - run: cp package.deb tests
+      - run: mv ./package.deb tests
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:testing bash"
 
   test-ubuntu-latest:
@@ -58,7 +58,7 @@ jobs:
         with:
           name: package.deb
       - uses: actions/checkout@v2
-      - run: cp package.deb tests
+      - run: mv ./package.deb tests
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:latest bash"
 
   test-ubuntu-rolling:
@@ -69,7 +69,7 @@ jobs:
         with:
           name: package.deb
       - uses: actions/checkout@v2
-      - run: cp package.deb tests
+      - run: mv ./package.deb tests
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:rolling bash"
 
   test-ubuntu-devel:
@@ -80,7 +80,7 @@ jobs:
         with:
           name: package.deb
       - uses: actions/checkout@v2
-      - run: cp package.deb tests
+      - run: mv ./package.deb tests
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel bash"
 
   publish:
