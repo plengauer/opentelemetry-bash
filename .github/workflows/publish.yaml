@@ -32,10 +32,10 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
           name: package.deb
-      - uses: actions/checkout@v2
       - run: mv ./package.deb tests
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:latest bash"
 
@@ -43,10 +43,10 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
           name: package.deb
-      - uses: actions/checkout@v2
       - run: mv ./package.deb tests
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:testing bash"
 
@@ -54,10 +54,10 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
           name: package.deb
-      - uses: actions/checkout@v2
       - run: mv ./package.deb tests
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:latest bash"
 
@@ -65,10 +65,10 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
           name: package.deb
-      - uses: actions/checkout@v2
       - run: mv ./package.deb tests
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:rolling bash"
 
@@ -76,10 +76,10 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
           name: package.deb
-      - uses: actions/checkout@v2
       - run: mv ./package.deb tests
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel bash"
 
