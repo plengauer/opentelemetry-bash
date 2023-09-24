@@ -50,3 +50,15 @@ echo "deb [arch=all] https://3.73.14.87:8000/ stable main" | sudo tee /etc/apt/s
 sudo apt-get update
 sudo apt-get install opentelemetry-bash
 ```
+
+Limitations:
+
+*) background jobs / parallel jobs (piping) may cause span attributes to end up on the wrong span - will be fixed soon
+
+*) tests are disabled during build currently because github runners run into bugs with pipes
+
+*) startup is kindof slow because of apt
+
+Future features:
+
+*) support for sh and zsh. There is almost no code that is bash specific, but tests are missing
