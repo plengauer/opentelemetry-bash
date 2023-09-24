@@ -1,7 +1,7 @@
 #!/bin/sh
 otel_pipe_dir=/tmp
-otel_remote_sdk_pipe=$otel_pipe_dir/opentelemetry_bash_$$_$(\echo $RANDOM | \md5sum | \cut -c 1-32).pipe
-otel_sdk_version=$(\apt show opentelemetry-bash 2> /dev/null | \grep Version | \awk '{ print $2 }')
+otel_remote_sdk_pipe=$otel_pipe_dir/opentelemetry_shell_$$_$(\echo $RANDOM | \md5sum | \cut -c 1-32).pipe
+otel_sdk_version=$(\apt show opentelemetry-shell 2> /dev/null | \grep Version | \awk '{ print $2 }')
 
 function otel_command_self {
   if [ -n "$OTEL_BASH_COMMANDLINE_OVERRIDE" ]; then
@@ -23,7 +23,7 @@ function otel_resource_attributes {
   \echo process.command=$(otel_command_self)
   \echo process.command_args=$(otel_command_self | \cut -d' ' -f2-)
   \echo process.owner=$(whoami)
-  case $($(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)) in
+  case $(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev) in
     sh)
       \echo process.runtime.name=sh
       \echo process.runtime.description="Bourne Shell"
