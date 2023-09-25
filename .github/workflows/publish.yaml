@@ -270,6 +270,7 @@ jobs:
         continue-on-error: true
 
   legacy:
+    needs: publish
     runs-on: ubuntu-latest
     defaults:
       run:
