@@ -31,6 +31,7 @@ jobs:
   test-debian-latest-sh:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -45,6 +46,7 @@ jobs:
   test-debian-latest-bash:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -59,6 +61,7 @@ jobs:
   test-debian-latest-zsh:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -73,6 +76,7 @@ jobs:
   test-debian-testing-sh:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -87,6 +91,7 @@ jobs:
   test-debian-testing-bash:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -101,6 +106,7 @@ jobs:
   test-debian-testing-zsh:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -115,6 +121,7 @@ jobs:
   test-ubuntu-latest-sh:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -129,6 +136,7 @@ jobs:
   test-ubuntu-latest-bash:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -143,6 +151,7 @@ jobs:
   test-ubuntu-latest-zsh:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -157,6 +166,7 @@ jobs:
   test-ubuntu-rolling-sh:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -171,6 +181,7 @@ jobs:
   test-ubuntu-rolling-bash:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -185,6 +196,7 @@ jobs:
   test-ubuntu-rolling-zsh:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -199,6 +211,7 @@ jobs:
   test-ubuntu-devel-sh:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -213,6 +226,7 @@ jobs:
   test-ubuntu-devel-bash:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -227,6 +241,7 @@ jobs:
   test-ubuntu-devel-zsh:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
