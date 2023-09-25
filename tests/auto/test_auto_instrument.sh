@@ -5,7 +5,7 @@ fi
 . /usr/bin/opentelemetry_shell.sh
 
 otel_instrument echo
-data=$($SHELL auto/inner_echo.sh 2>&1 1> /dev/null | jq '. | select(.name == "echo hello world")')
+data=$(bash auto/inner_echo.sh 2>&1 1> /dev/null | jq '. | select(.name == "echo hello world")')
 
 \echo "$data"
 assert_equals "echo hello world" "$(\echo "$data" | jq -r '.name')"
