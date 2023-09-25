@@ -98,9 +98,8 @@ function otel_span_error {
 
 function otel_span_attribute {
   local span_id=$1
-  local key=$2
-  local value=${@:3}
-  \echo "SPAN_ATTRIBUTE $span_id $key $value" > $otel_remote_sdk_pipe
+  local kvp=${@:2}
+  \echo "SPAN_ATTRIBUTE $span_id $kvp" > $otel_remote_sdk_pipe
 }
 
 function otel_span_traceparent {
@@ -138,12 +137,6 @@ function otel_observe {
   otel_span_attribute $span_id subprocess.executable.path=$(which $(\echo $command | \cut -d' ' -f1))
   otel_span_attribute $span_id subprocess.command=$command
   otel_span_attribute $span_id subprocess.command_args=$(\echo $command | \cut -d' ' -f2-)
-  IFS=',' read -ra attributes_array <<< $attributes
-  for attribute in "${attributes_array[@]}"; do
-    if [ -n "$attribute" ]; then
-      otel_span_attribute $span_id $attribute
-    fi
-  done
   local traceparent=$(otel_span_traceparent $span_id)
   local exit_code=0
   OTEL_TRACEPARENT=$traceparent "$@" || local exit_code=$?
@@ -151,6 +144,13 @@ function otel_observe {
   if [ "$exit_code" -ne "0" ]; then
     otel_span_error $span_id
   fi
+  local IFS=','
+  set -- $attributes
+  for attribute in "$@"; do
+    if [ -n "$attribute" ]; then
+      otel_span_attribute $span_id $attribute
+    fi
+  done
   otel_span_end $span_id
   return $exit_code
 }
