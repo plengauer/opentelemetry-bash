@@ -239,7 +239,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel zsh"
 
   publish:
-    needs: [build, test-install, test-debian-latest-sh, test-debian-latest-bash, test-debian-latest-zsh, test-ubuntu-latest-sh, test-ubuntu-latest-bash, test-ubuntu-latest-zsh, test-ubuntu-rolling-sh, test-ubuntu-rolling-bash, test-ubuntu-rolling-zsh]
+    needs: [build, test-install, test-debian-latest-bash, test-ubuntu-latest-bash, test-ubuntu-rolling-bash]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

@@ -1,4 +1,4 @@
-This project delivers OpenTelemetry traces from shell scripts (sh, bash, zsh, ...). Compared to other similar projects, it delivers not just an SDK to create spans manually, but also provides context propagation via HTTP (wget and curl), auto-instrumentation for selected commands, custom instrumentations, and auto-injection into child bash scripts. Its installable via a debian package from the releases in this repository, or from the apt-repository below.
+This project delivers OpenTelemetry traces from shell scripts (bash - sh and zsh coming soon). Compared to other similar projects, it delivers not just an SDK to create spans manually, but also provides context propagation via HTTP (wget and curl), auto-instrumentation for selected commands, custom instrumentations, and auto-injection into child bash scripts. Its installable via a debian package from the releases in this repository, or from the apt-repository below.
 
 Use it to manually create spans:
 ```bash
