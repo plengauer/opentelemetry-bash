@@ -4,7 +4,7 @@ otel_remote_sdk_pipe=$otel_pipe_dir/opentelemetry_shell_$$_$(\echo $RANDOM | \md
 otel_sdk_version=$(\apt show opentelemetry-shell 2> /dev/null | \grep Version | \awk '{ print $2 }')
 otel_shell=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
 
-function otel_command_self {
+otel_command_self() {
   if [ -n "$OTEL_SHELL_COMMANDLINE_OVERRIDE" ]; then
     \echo $OTEL_SHELL_COMMANDLINE_OVERRIDE
   else
@@ -13,7 +13,7 @@ function otel_command_self {
   fi
 }
 
-function otel_resource_attributes {
+otel_resource_attributes() {
   \echo telemetry.sdk.name=opentelemetry
   \echo telemetry.sdk.language=shell
   \echo telemetry.sdk.version=$otel_sdk_version
@@ -27,7 +27,11 @@ function otel_resource_attributes {
   case $otel_shell in
     sh)
       \echo process.runtime.name=sh
-      \echo process.runtime.description="Bourne Shell"
+      \echo process.runtime.description="POSIX Shell"
+      ;;
+    dash)
+      \echo process.runtime.name=dash
+      \echo process.runtime.description="Debian Almquist Shell"
       ;;
     bash)
       \echo process.runtime.name=bash
@@ -45,7 +49,6 @@ function otel_resource_attributes {
       \echo process.runtime.version=$(\apt show $(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev) 2> /dev/null | \grep Version | \awk '{ print $2 }')
       ;;
   esac
-      \echo process.runtime.version=$BASH_VERSINFO # $(\apt show bash 2> /dev/null | \grep Version | \awk '{ print $2 }')
 
   \echo host.name=$(\cat /etc/hostname)
 
@@ -57,10 +60,10 @@ function otel_resource_attributes {
   \echo service.version=$OTEL_SERVICE_VERSION
 }
 
-function otel_init {
+otel_init() {
   # TODO check double init
   \mkfifo $otel_remote_sdk_pipe
-  source /opt/opentelemetry_bash/venv/bin/activate
+  . /opt/opentelemetry_bash/venv/bin/activate
   \python3 /usr/bin/opentelemetry_shell_sdk.py $otel_remote_sdk_pipe "shell" $otel_sdk_version 1>&2 &
   if [ "$otel_shell" = "bash" ]; then
     disown &> /dev/null || true
@@ -70,15 +73,16 @@ function otel_init {
   \echo "INIT" > $otel_remote_sdk_pipe
 }
 
-function otel_shutdown {
+otel_shutdown() {
   # TODO check double shutdown
   \echo "SHUTDOWN" > $otel_remote_sdk_pipe
   \rm $otel_remote_sdk_pipe
 }
 
-function otel_span_start {
+otel_span_start() {
   local kind=$1
-  local name="${@:2}"
+  shift
+  local name="$@"
   if [ -z "$traceparent" ]; then
     local traceparent=$OTEL_TRACEPARENT
   fi
@@ -89,23 +93,24 @@ function otel_span_start {
   \rm $response_pipe &> /dev/null
 }
 
-function otel_span_end {
+otel_span_end() {
   local span_id=$1
   \echo "SPAN_END $span_id" > $otel_remote_sdk_pipe
 }
 
-function otel_span_error {
+otel_span_error() {
   local span_id=$1
   \echo "SPAN_ERROR $span_id" > $otel_remote_sdk_pipe
 }
 
-function otel_span_attribute {
+otel_span_attribute() {
   local span_id=$1
-  local kvp=${@:2}
+  shift
+  local kvp=$@
   \echo "SPAN_ATTRIBUTE $span_id $kvp" > $otel_remote_sdk_pipe
 }
 
-function otel_span_traceparent {
+otel_span_traceparent() {
   local span_id=$1
   local response_pipe=$otel_pipe_dir/opentelemetry_bash_$$_response_$(\echo $RANDOM | \md5sum | \cut -c 1-32).pipe
   \mkfifo $response_pipe
@@ -114,18 +119,18 @@ function otel_span_traceparent {
   \rm $response_pipe &> /dev/null
 }
 
-function otel_span_activate {
+otel_span_activate() {
   local span_id=$1
   export OTEL_TRACEPARENT_STACK=$OTEL_TRACEPARENT/$OTEL_TRACEPARENT_STACK
   export OTEL_TRACEPARENT=$(otel_span_traceparent $span_id)
 }
 
-function otel_span_deactivate {
+otel_span_deactivate() {
   export OTEL_TRACEPARENT=$(\echo $OTEL_TRACEPARENT_STACK | \cut -d'/' -f1)
   export OTEL_TRACEPARENT_STACK=$(\echo $OTEL_TRACEPARENT_STACK | \cut -d'/' -f2-)
 }
 
-function otel_observe {
+otel_observe() {
   if [ -z "$name" ]; then
     local name=$@
   fi

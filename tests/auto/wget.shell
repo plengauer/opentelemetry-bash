@@ -1,2 +1,2 @@
 . /usr/bin/opentelemetry_shell.sh
-wget -O - http://127.0.0.1:54321/ &> /dev/null
+wget -O - http://127.0.0.1:54321/ 2> /dev/null 1> /dev/null

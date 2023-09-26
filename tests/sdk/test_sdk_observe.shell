@@ -1,13 +1,13 @@
 . ./assert.sh
 . /usr/bin/opentelemetry_shell_api.sh
 
-function test {
+func_test() {
   otel_init
   otel_observe echo "hello world"
   assert_equals 0 $?
   otel_shutdown
 }
-data=$(test 2>&1 1> /dev/null)
+data=$(func_test 2>&1 1> /dev/null)
 
 echo "$data"
 assert_equals "echo hello world" "$(echo "$data" | jq -r '.name')"
