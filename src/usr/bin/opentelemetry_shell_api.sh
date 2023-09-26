@@ -61,7 +61,7 @@ function otel_init {
   \mkfifo $otel_remote_sdk_pipe
   source /opt/opentelemetry_bash/venv/bin/activate
   \python3 /usr/bin/opentelemetry_shell_sdk.py $otel_remote_sdk_pipe "shell" $otel_sdk_version 1>&2 &
-  disown
+  disown &> /dev/null || true
   deactivate
   otel_resource_attributes | \sed 's/^/RESOURCE_ATTRIBUTE /' > $otel_remote_sdk_pipe
   \echo "INIT" > $otel_remote_sdk_pipe
