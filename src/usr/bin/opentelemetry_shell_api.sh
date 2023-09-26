@@ -2,13 +2,14 @@
 otel_pipe_dir=/tmp
 otel_remote_sdk_pipe=$otel_pipe_dir/opentelemetry_shell_$$_$(\echo $RANDOM | \md5sum | \cut -c 1-32).pipe
 otel_sdk_version=$(\apt show opentelemetry-shell 2> /dev/null | \grep Version | \awk '{ print $2 }')
+otel_shell=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
 
 function otel_command_self {
   if [ -n "$OTEL_SHELL_COMMANDLINE_OVERRIDE" ]; then
     \echo $OTEL_SHELL_COMMANDLINE_OVERRIDE
   else
     # \cat /proc/$$/cmdline 2> /dev/null
-    \echo $(\ps -p $$ -o args | \grep -v COMMAND)
+    \ps -p $$ -o args | \grep -v COMMAND
   fi
 }
 
@@ -23,7 +24,7 @@ function otel_resource_attributes {
   \echo process.command=$(otel_command_self)
   \echo process.command_args=$(otel_command_self | \cut -d' ' -f2-)
   \echo process.owner=$(whoami)
-  case $(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev) in
+  case $otel_shell in
     sh)
       \echo process.runtime.name=sh
       \echo process.runtime.description="Bourne Shell"
@@ -61,7 +62,9 @@ function otel_init {
   \mkfifo $otel_remote_sdk_pipe
   source /opt/opentelemetry_bash/venv/bin/activate
   \python3 /usr/bin/opentelemetry_shell_sdk.py $otel_remote_sdk_pipe "shell" $otel_sdk_version 1>&2 &
-  disown &> /dev/null || true
+  if [ "$otel_shell" = "bash" ]; then
+    disown &> /dev/null || true
+  fi
   deactivate
   otel_resource_attributes | \sed 's/^/RESOURCE_ATTRIBUTE /' > $otel_remote_sdk_pipe
   \echo "INIT" > $otel_remote_sdk_pipe
@@ -134,7 +137,7 @@ function otel_observe {
   fi
   local span_id=$(otel_span_start $kind $name)
   otel_span_attribute $span_id subprocess.executable.name=$(\echo $command | \cut -d' ' -f1 | \rev | \cut -d'/' -f1 | \rev)
-  otel_span_attribute $span_id subprocess.executable.path=$(which $(\echo $command | \cut -d' ' -f1))
+  otel_span_attribute $span_id subprocess.executable.path=$(which $(\echo \$command | \cut -d' ' -f1))
   otel_span_attribute $span_id subprocess.command=$command
   otel_span_attribute $span_id subprocess.command_args=$(\echo $command | \cut -d' ' -f2-)
   local traceparent=$(otel_span_traceparent $span_id)
@@ -145,7 +148,11 @@ function otel_observe {
     otel_span_error $span_id
   fi
   local IFS=','
-  set -- $attributes
+  if [ "$otel_shell" = "zsh" ]; then
+    set -- ${=attributes}
+  else
+    set -- $attributes
+  fi
   for attribute in "$@"; do
     if [ -n "$attribute" ]; then
       otel_span_attribute $span_id $attribute
