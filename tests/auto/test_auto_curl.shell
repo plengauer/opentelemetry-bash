@@ -1,12 +1,13 @@
 . ./assert.sh
 
-data=$($SHELL auto/curl.shell 2>&1 1> /dev/null | jq '. | select(.name == "curl http://127.0.0.1/")')
+data=$($SHELL auto/curl.shell 2>&1 1> /dev/null | jq '. | select(.name == "curl http://127.0.0.1:54321/")')
 
 echo "$data"
-assert_equals "curl http://127.0.0.1/" "$(\echo "$data" | jq -r '.name')"
+assert_equals "curl http://127.0.0.1:54321/" "$(\echo "$data" | jq -r '.name')"
 assert_equals "SpanKind.CLIENT" $(\echo "$data" | jq -r '.kind')
 assert_not_equals "null" $(\echo "$data" | jq -r '.parent_id')
 assert_equals "ERROR" $(\echo "$data" | jq -r '.status.status_code')
-assert_equals "http://127.0.0.1/" "$(\echo "$data" | jq -r '.attributes."http.url"')"
+assert_equals "http://127.0.0.1:54321/" "$(\echo "$data" | jq -r '.attributes."http.url"')"
+assert_equals "127.0.0.1:54321" "$(\echo "$data" | jq -r '.attributes."http.host"')"
 assert_equals "/" "$(\echo "$data" | jq -r '.attributes."http.target"')"
 assert_not_equals "0" $(\echo "$data" | jq -r '.attributes."subprocess.exit_code"')
