@@ -6,14 +6,14 @@ OTEL_SHELL_AUTO_INJECTED=TRUE
 
 source /usr/bin/opentelemetry_shell_api.sh
 
-shopt -s expand_aliases
+shopt -s expand_aliases &> /dev/null # only available / necessary for bash
 
 # TODO alias the alias command transparently to print warnings (or just error) if somebody overrides our aliases
 
 function otel_do_alias {
   local new_command=$2
   local prev_command=$(\alias $1 2> /dev/null | \cut -d= -f2- | \tr -d \') || true
-  if [ "$prev_command" == "" ]; then
+  if [ -z "$prev_command" ]; then
     local new_command="$2 \\$1"
   else
     local new_command="$2 $prev_command"
@@ -26,12 +26,16 @@ function otel_instrument {
   export OTEL_SHELL_CUSTOM_INSTRUMENTATIONS=$OTEL_SHELL_CUSTOM_INSTRUMENTATIONS/$1
 }
 
-IFS='/' read -ra custom_instrumentations_array <<< $OTEL_SHELL_CUSTOM_INSTRUMENTATIONS
-for custom_instrumentation in "${custom_instrumentations_array[@]}"; do
-  if [ -n "$custom_instrumentation" ]; then
-    otel_instrument $custom_instrumentation
-  fi
-done
+function otel_restore_custom_instrumentations {
+  local IFS='/'
+  set -- $OTEL_SHELL_CUSTOM_INSTRUMENTATIONS
+  for cmd in "$@"; do
+    if [ -n "$cmd" ]; then
+      otel_instrument $cmd
+    fi
+  done
+}
+otel_restore_custom_instrumentations
 while read cmd; do otel_do_alias $cmd otel_observe; done < /etc/opentelemetry_shell_auto_instrumentations.conf
 
 function otel_instrumented_wget {
