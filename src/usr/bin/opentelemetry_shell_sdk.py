@@ -66,7 +66,7 @@ def handle(scope, version, command, arguments):
             resource[key] = value
         case 'INIT':
             tracer_provider = TracerProvider(sampler=sampling.ALWAYS_ON, resource=Resource.create(resource))
-            tracer_provider.add_span_processor(BatchSpanProcessor(ConsoleSpanExporter() if os.environ.get('OTEL_BASH_CONSOLE_EXPORTER') == 'TRUE' else OTLPSpanExporter()))
+            tracer_provider.add_span_processor(BatchSpanProcessor(ConsoleSpanExporter() if os.environ.get('OTEL_TRACES_CONSOLE_EXPORTER') == 'TRUE' else OTLPSpanExporter()))
             opentelemetry.trace.set_tracer_provider(tracer_provider)
         case 'SHUTDOWN':
             raise EOFError()

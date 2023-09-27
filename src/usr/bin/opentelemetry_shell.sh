@@ -80,7 +80,7 @@ otel_instrumented_shell_with_c_flag() {
   done
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE=INTERNAL $cmd -c "source /usr/bin/opentelemetry_shell.sh; source $args"
 }
-otel do_alias bash otel_instrumented_shell_with_c_flag
+otel_do_alias bash otel_instrumented_shell_with_c_flag
 otel_do_alias zsh otel_instrumented_shell_with_c_flag
 
 otel_on_script_start() {

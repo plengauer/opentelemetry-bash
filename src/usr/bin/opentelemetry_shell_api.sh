@@ -61,7 +61,6 @@ otel_resource_attributes() {
 }
 
 otel_init() {
-  # TODO check double init
   \mkfifo $otel_remote_sdk_pipe
   . /opt/opentelemetry_bash/venv/bin/activate
   \python3 /usr/bin/opentelemetry_shell_sdk.py $otel_remote_sdk_pipe "shell" $otel_sdk_version 1>&2 &
@@ -74,7 +73,6 @@ otel_init() {
 }
 
 otel_shutdown() {
-  # TODO check double shutdown
   \echo "SHUTDOWN" > $otel_remote_sdk_pipe
   \rm $otel_remote_sdk_pipe
 }
