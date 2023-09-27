@@ -23,6 +23,6 @@ assert_not_equals "null" $(echo "$data" | jq -r '.resource.attributes."process.o
 assert_equals "$SHELL" $(echo "$data" | jq -r '.resource.attributes."process.runtime.name"')
 assert_not_equals "null" $(echo "$data" | jq -r '.resource.attributes."process.runtime.description"')
 # assert_not_equals "null" $(echo "$data" | jq -r '.resource.attributes."process.runtime.version"')
-assert_not_equals "null" $(echo "$data" | jq -r '.resource.attributes."host.name"')
+# assert_not_equals "null" $(echo "$data" | jq -r '.resource.attributes."host.name"')
 assert_equals "$OTEL_SERVICE_NAME" $(echo "$data" | jq -r '.resource.attributes."service.name"')
 

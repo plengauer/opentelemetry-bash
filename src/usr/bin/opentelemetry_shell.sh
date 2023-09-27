@@ -83,6 +83,22 @@ otel_instrumented_shell_with_c_flag() {
 otel_do_alias bash otel_instrumented_shell_with_c_flag
 otel_do_alias zsh otel_instrumented_shell_with_c_flag
 
+otel_check_populate_cgi() {
+  local span_id=$1
+  if [ -n "$SERVER_SOFTWARE"  ] || [ -n "$SCRIPTNAME" ] || [ -n "$SERVER_NAME" ] || [ -n "$SERVER_PROTOCOL" ]; then
+    return 0
+  fi
+  otel_span_attribute $span_id http.flavor=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f2)
+  otel_span_attribute $span_id http.host=$SERVER_NAME:$SERVER_PORT
+  otel_span_attribute $span_id http.route=$SCRIPT_NAME
+  otel_span_attribute $span_id http.scheme=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f1)
+  otel_span_attribute $span_id http.status_code=200
+  otel_span_attribute $span_id http.status_text=OK
+  otel_span_attribute $span_id http.target=$SCRIPT_NAME
+  otel_span_attribute $span_id http.url=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f1)://$SERVER_NAME:$SERVER_PORT/$SCRIPT_NAME
+  otel_span_attribute $span_id net.peer.ip=$REMOTE_ADDR
+}
+
 otel_on_script_start() {
   otel_init || return $?
   local kind=SERVER
@@ -91,6 +107,7 @@ otel_on_script_start() {
     unset OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE
   fi
   root_span_id=$(otel_span_start $kind $(otel_command_self))
+  otel_check_populate_cgi $root_span_id
   otel_span_activate $root_span_id
 }
 otel_on_script_end() {

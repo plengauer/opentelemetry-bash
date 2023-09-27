@@ -50,8 +50,6 @@ otel_resource_attributes() {
       ;;
   esac
 
-  \echo host.name=$(\cat /etc/hostname)
-
   if [ -z "$OTEL_SERVICE_NAME" ]; then
     \echo service.name="unknown_service"
   else
