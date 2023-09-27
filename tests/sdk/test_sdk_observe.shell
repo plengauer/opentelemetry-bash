@@ -3,11 +3,11 @@
 
 func_test() {
   otel_init
-  otel_observe echo "hello world"
+  otel_observe echo "hello world" > /dev/null
   assert_equals 0 $?
   otel_shutdown
 }
-data=$(func_test 2>&1 1> /dev/null | tee /dev/stderr)
+data=$(func_test 2>&1 | tee /dev/stderr)
 
 assert_equals "echo hello world" "$(echo "$data" | jq -r '.name')"
 assert_equals "SpanKind.INTERNAL" $(echo "$data" | jq -r '.kind')
