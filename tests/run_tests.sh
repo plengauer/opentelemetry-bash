@@ -7,6 +7,7 @@ if [ "$SHELL" == "" ]; then
 fi
 
 export OTEL_TRACES_CONSOLE_EXPORTER=TRUE
+(while sleep 10; do pstree; done) &
 for file in $(find . -iname 'test_*.shell') $(find . -iname 'test_*.'$SHELL); do
   echo "running $file"
   $SHELL $file || (echo "FAILED" && exit 1)

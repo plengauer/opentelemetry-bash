@@ -7,9 +7,8 @@ func_test() {
   assert_equals 0 $?
   otel_shutdown
 }
-data=$(func_test 2>&1 1> /dev/null)
+data=$(func_test 2>&1 1> /dev/null | tee /dev/stderr)
 
-echo "$data"
 assert_equals "echo hello world" "$(echo "$data" | jq -r '.name')"
 assert_equals "SpanKind.INTERNAL" $(echo "$data" | jq -r '.kind')
 assert_equals "null" $(echo "$data" | jq -r '.parent_id')

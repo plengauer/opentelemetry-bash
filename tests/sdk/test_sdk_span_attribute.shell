@@ -11,9 +11,8 @@ func_test() {
   assert_equals 0 $?
   otel_shutdown
 }
-data=$(func_test 2>&1)
+data=$(func_test 2>&1 | tee /dev/stderr)
 
-echo "$data"
 assert_equals "myspan" $(echo "$data" | jq -r '.name')
 assert_equals "SpanKind.SERVER" $(echo "$data" | jq -r '.kind')
 assert_equals "null" $(echo "$data" | jq -r '.parent_id')

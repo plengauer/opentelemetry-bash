@@ -7,7 +7,7 @@ WORKDIR /tests
 
 RUN apt-get update
 COPY . ./
-RUN apt-get install -y jq
+RUN apt-get install -y jq psmisc
 RUN apt-get install -y $shell || true
 RUN apt-get install -y ./package.deb && rm ./package.deb
 ENV shell=$shell

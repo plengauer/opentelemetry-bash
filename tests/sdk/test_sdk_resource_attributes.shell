@@ -9,9 +9,8 @@ func_test() {
   otel_span_end $span_id
   otel_shutdown
 }
-data=$(func_test 2>&1)
+data=$(func_test 2>&1 | tee /dev/stderr)
 
-echo "$data"
 assert_equals "shell" $(echo "$data" | jq -r '.resource.attributes."telemetry.sdk.language"')
 assert_equals "opentelemetry" $(echo "$data" | jq -r '.resource.attributes."telemetry.sdk.name"')
 assert_not_equals "null" $(echo "$data" | jq -r '.resource.attributes."telemetry.sdk.version"')

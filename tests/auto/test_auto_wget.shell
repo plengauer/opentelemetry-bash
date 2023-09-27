@@ -1,9 +1,8 @@
 . ./assert.sh
 
 $SHELL auto/wget.shell
-data=$($SHELL auto/wget.shell 2>&1 1> /dev/null | jq '. | select(.name == "wget -O - http://www.google.com/")')
+data=$($SHELL auto/wget.shell 2>&1 1> /dev/null | tee /dev/stderr | jq '. | select(.name == "wget -O - http://www.google.com/")')
 
-echo "$data"
 assert_equals "wget -O - http://www.google.com/" "$(\echo "$data" | jq -r '.name')"
 assert_equals "SpanKind.CLIENT" $(\echo "$data" | jq -r '.kind')
 assert_not_equals "null" $(\echo "$data" | jq -r '.parent_id')
