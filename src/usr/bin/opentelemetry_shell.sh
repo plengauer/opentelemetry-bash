@@ -70,7 +70,7 @@ otel_instrumented_curl() {
 }
 otel_do_alias curl otel_instrumented_curl
 
-otel_instrumented_bash() {
+otel_instrumented_shell_with_c_flag() {
   local cmdline="$*"
   local cmd=$1
   shift
@@ -80,19 +80,8 @@ otel_instrumented_bash() {
   done
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE=INTERNAL $cmd -c "source /usr/bin/opentelemetry_shell.sh; source $args"
 }
-otel_do_alias bash otel_instrumented_bash
-
-otel_instrumented_zsh() {
-  local cmdline="$*"
-  local cmd=$1
-  shift
-  local args=""
-  for arg in "$@"; do
-    local args="$args \"$arg\""
-  done
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE=INTERNAL $cmd -c "source /usr/bin/opentelemetry_shell.sh; source $args"
-}
-otel_do_alias zsh otel_instrumented_zsh
+otel do_alias bash otel_instrumented_shell_with_c_flag
+otel_do_alias zsh otel_instrumented_shell_with_c_flag
 
 otel_on_script_start() {
   otel_init || return $?
