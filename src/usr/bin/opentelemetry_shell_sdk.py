@@ -69,6 +69,7 @@ def handle(scope, version, command, arguments):
             tracer_provider.add_span_processor(BatchSpanProcessor(ConsoleSpanExporter() if os.environ.get('OTEL_TRACES_CONSOLE_EXPORTER') == 'TRUE' else OTLPSpanExporter()))
             opentelemetry.trace.set_tracer_provider(tracer_provider)
         case 'SHUTDOWN':
+            opentelemetry.trace.get_tracer_provider().force_flush()
             raise EOFError()
         case 'SPAN_START':
             tokens = arguments.split(' ', 3)
