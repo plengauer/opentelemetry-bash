@@ -332,26 +332,38 @@ jobs:
   test-debian:
     needs: [test-debian-latest-sh, test-debian-latest-dash, test-debian-latest-bash, test-debian-latest-zsh]
     runs-on: ubuntu-latest
+    steps:
+      - run: echo debian
 
   test-ubuntu:
     needs: [test-ubuntu-latest-sh, test-ubuntu-latest-dash, test-ubuntu-latest-bash, test-ubuntu-latest-zsh, test-ubuntu-rolling-sh, test-ubuntu-rolling-dash, test-ubuntu-rolling-bash, test-ubuntu-rolling-zsh]
     runs-on: ubuntu-latest
+    steps:
+      - run: echo ubuntu
 
   test-sh:
     needs: [test-debian-latest-sh, test-ubuntu-latest-sh, test-ubuntu-rolling-sh]
     runs-on: ubuntu-latest
+    steps:
+      - run: echo sh
 
   test-dash:
     needs: [test-debian-latest-dash, test-ubuntu-latest-dash, test-ubuntu-rolling-dash]
     runs-on: ubuntu-latest
+    steps:
+      - run: echo dash
 
   test-bash:
     needs: [test-debian-latest-bash, test-ubuntu-latest-bash, test-ubuntu-rolling-bash]
     runs-on: ubuntu-latest
+    steps:
+      - run: echo bash
 
   test-zsh:
     needs: [test-debian-latest-zsh, test-ubuntu-latest-zsh, test-ubuntu-rolling-zsh]
     runs-on: ubuntu-latest
+    steps:
+      - run: echo zsh
 
   publish:
     needs: [build, test-package, test-debian, test-ubuntu, test-sh, test-dash, test-bash, test-zsh]
