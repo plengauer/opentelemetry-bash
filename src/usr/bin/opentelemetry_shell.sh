@@ -87,7 +87,7 @@ otel_do_alias zsh otel_instrumented_shell_with_c_flag
 
 otel_check_populate_cgi() {
   local span_id=$1
-  if [ -n "$SERVER_SOFTWARE"  ] || [ -n "$SCRIPTNAME" ] || [ -n "$SERVER_NAME" ] || [ -n "$SERVER_PROTOCOL" ]; then
+  if [ -z "$SERVER_SOFTWARE"  ] || [ -z "$SCRIPTNAME" ] || [ -z "$SERVER_NAME" ] || [ -z "$SERVER_PROTOCOL" ]; then
     return 0
   fi
   otel_span_attribute $span_id http.flavor=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f2)
