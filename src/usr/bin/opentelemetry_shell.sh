@@ -9,6 +9,9 @@ OTEL_SHELL_AUTO_INJECTED=TRUE
 if [ "$otel_shell" = "bash" ]; then
   shopt -s expand_aliases &> /dev/null
 fi
+if [ "$otel_shell" = "zsh" ]; then
+  setopt aliases &> /dev/null
+fi
 
 # TODO alias the alias command transparently to print warnings (or just error) if somebody overrides our aliases
 
