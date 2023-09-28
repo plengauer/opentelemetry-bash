@@ -1,6 +1,5 @@
 #!/bin/sh
-otel_pipe_dir=/tmp
-otel_remote_sdk_pipe=$otel_pipe_dir/opentelemetry_shell_$$_$(\echo $RANDOM | \md5sum | \cut -c 1-32).pipe
+otel_remote_sdk_pipe=$(mktemp -u)_opentelemetry_shell_$$.pipe
 otel_sdk_version=$(\apt show opentelemetry-shell 2> /dev/null | \grep Version | \awk '{ print $2 }')
 otel_shell=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
 
@@ -82,7 +81,7 @@ otel_span_start() {
   if [ -z "$traceparent" ]; then
     local traceparent=$OTEL_TRACEPARENT
   fi
-  local response_pipe=$otel_pipe_dir/opentelemetry_bash_$$_response_$(\echo $RANDOM | \md5sum | \cut -c 1-32).pipe
+  local response_pipe=$(mktemp -u)_opentelemetry_shell_$$_response.pipe
   \mkfifo $response_pipe
   \echo "SPAN_START $response_pipe $traceparent $kind $name" > $otel_remote_sdk_pipe
   \cat $response_pipe
@@ -108,7 +107,7 @@ otel_span_attribute() {
 
 otel_span_traceparent() {
   local span_id=$1
-  local response_pipe=$otel_pipe_dir/opentelemetry_bash_$$_response_$(\echo $RANDOM | \md5sum | \cut -c 1-32).pipe
+  local response_pipe=$(mktemp -u)_opentelemetry_shell_$$.pipe
   \mkfifo $response_pipe
   \echo "SPAN_TRACEPARENT $response_pipe $span_id" > $otel_remote_sdk_pipe
   \cat $response_pipe

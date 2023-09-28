@@ -78,8 +78,10 @@ otel_instrumented_shell_with_c_flag() {
   for arg in "$@"; do
     local args="$args \"$arg\""
   done
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE=INTERNAL $cmd -c "source /usr/bin/opentelemetry_shell.sh; source $args"
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE=INTERNAL $cmd -c ". /usr/bin/opentelemetry_shell.sh; . $args"
 }
+# otel_do_alias sh otel_instrumented_shell_with_c_flag # cant pass arguments via .
+# otel_do_alias dash otel_instrumented_shell_with_c_flag # cant pass arguments via .
 otel_do_alias bash otel_instrumented_shell_with_c_flag
 otel_do_alias zsh otel_instrumented_shell_with_c_flag
 
