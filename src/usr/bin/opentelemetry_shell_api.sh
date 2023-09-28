@@ -26,7 +26,7 @@ otel_resource_attributes() {
   case $otel_shell in
     sh)
       \echo process.runtime.name=sh
-      \echo process.runtime.description="POSIX Shell"
+      \echo process.runtime.description="Bourne Shell"
       ;;
     dash)
       \echo process.runtime.name=dash
@@ -41,6 +41,26 @@ otel_resource_attributes() {
       \echo process.runtime.name=zsh
       \echo process.runtime.description="Z Shell"
       \echo process.runtime.version=$(\apt show zsh 2> /dev/null | \grep Version | \awk '{ print $2 }')
+      ;;
+    csh)
+      \echo process.runtime.name=csh
+      \echo process.runtime.description="C Shell"
+      \echo process.runtime.version=$(\apt show csh 2> /dev/null | \grep Version | \awk '{ print $2 }')
+      ;;
+    tcsh)
+      \echo process.runtime.name=tcsh
+      \echo process.runtime.description="TENEX C Shell"
+      \echo process.runtime.version=$(\apt show tcsh 2> /dev/null | \grep Version | \awk '{ print $2 }')
+      ;;
+    ksh)
+      \echo process.runtime.name=ksh
+      \echo process.runtime.description="Korn Shell"
+      \echo process.runtime.version=$(\apt show ksh 2> /dev/null | \grep Version | \awk '{ print $2 }')
+      ;;
+    fish)
+      \echo process.runtime.name=fish
+      \echo process.runtime.description="Fish Shell"
+      \echo process.runtime.version=$(\apt show fish 2> /dev/null | \grep Version | \awk '{ print $2 }')
       ;;
     *)
       \echo process.runtime.name=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
