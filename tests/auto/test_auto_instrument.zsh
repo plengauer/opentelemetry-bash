@@ -4,7 +4,7 @@
 otel_instrument echo
 zsh auto/echo.shell
 
-sleep 1
+sleep 3
 data=$(cat $OTEL_TRACES_LOCATION | jq '. | select(.name == "echo hello world")')
 assert_equals "echo hello world" "$(\echo "$data" | jq -r '.name')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$data" | jq -r '.kind')
