@@ -54,7 +54,7 @@ def main():
                 try:
                     handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
                 except EOFError:
-                    return
+                    sys.exit(0)
                 except Exception as error:
                     print(error)
 

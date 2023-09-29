@@ -28,13 +28,11 @@ otel_do_alias() {
 
 otel_instrument() {
   otel_do_alias $1 otel_observe || return $?
-  export OTEL_SHELL_CUSTOM_INSTRUMENTATIONS="$OTEL_SHELL_CUSTOM_INSTRUMENTATIONS $1"
+  export OTEL_SHELL_CUSTOM_INSTRUMENTATIONS=$(\echo "$OTEL_SHELL_CUSTOM_INSTRUMENTATIONS $1" | \xargs)
 }
 
 for cmd in "$OTEL_SHELL_CUSTOM_INSTRUMENTATIONS"; do
-  if [ -n "$cmd" ]; then
-    otel_instrument $cmd
-  fi
+  otel_instrument $cmd
 done
 while read cmd; do otel_do_alias $cmd otel_observe; done < /etc/opentelemetry_shell_auto_instrumentations.conf
 
