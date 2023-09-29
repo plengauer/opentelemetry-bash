@@ -14,6 +14,6 @@ for file in $(find . -iname 'test_*.shell') $(find . -iname 'test_*.'$SHELL); do
   mkfifo $OTEL_SHELL_SDK_OUTPUT_REDIRECT
   cat $OTEL_SHELL_SDK_OUTPUT_REDIRECT > $OTEL_TRACES_LOCATION &
   echo "running $file"
-  timeout 60 $SHELL $file && echo "SUCCEEDED" || (echo "FAILED" && cat $OTEL_TRACES_LOCATION && exit 1)
+  timeout 60 $SHELL -x $file && echo "SUCCEEDED" || (echo "FAILED" && cat $OTEL_TRACES_LOCATION && exit 1)
 done
 echo "ALL TESTS SUCCESSFUL"
