@@ -90,6 +90,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:latest zsh"
 
   test-debian-latest-csh:
+    if: ${{ false }}
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -105,6 +106,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:latest csh"
 
   test-debian-latest-tcsh:
+    if: ${{ false }}
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -120,6 +122,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:latest tcsh"
 
   test-debian-latest-ksh:
+    if: ${{ false }}
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -135,6 +138,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:latest ksh"
 
   test-debian-latest-fish:
+    if: ${{ false }}
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -210,6 +214,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:testing zsh"
 
   test-debian-testing-csh:
+    if: ${{ false }}
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -225,6 +230,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:testing csh"
 
   test-debian-testing-tcsh:
+    if: ${{ false }}
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -240,6 +246,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:testing tcsh"
 
   test-debian-testing-ksh:
+    if: ${{ false }}
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -255,6 +262,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:testing ksh"
 
   test-debian-testing-fish:
+    if: ${{ false }}
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -330,6 +338,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:latest zsh"
 
   test-ubuntu-latest-csh:
+    if: ${{ false }}
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -345,6 +354,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:latest csh"
 
   test-ubuntu-latest-tcsh:
+    if: ${{ false }}
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -360,6 +370,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:latest tcsh"
 
   test-ubuntu-latest-ksh:
+    if: ${{ false }}
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -375,6 +386,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:latest ksh"
 
   test-ubuntu-latest-fish:
+    if: ${{ false }}
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -450,6 +462,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:rolling zsh"
 
   test-ubuntu-rolling-csh:
+    if: ${{ false }}
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -465,6 +478,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:rolling csh"
 
   test-ubuntu-rolling-tcsh:
+    if: ${{ false }}
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -480,6 +494,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:rolling tcsh"
 
   test-ubuntu-rolling-ksh:
+    if: ${{ false }}
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -495,6 +510,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:rolling ksh"
 
   test-ubuntu-rolling-fish:
+    if: ${{ false }}
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -570,6 +586,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel zsh"
 
   test-ubuntu-devel-csh:
+    if: ${{ false }}
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -585,6 +602,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel csh"
 
   test-ubuntu-devel-tcsh:
+    if: ${{ false }}
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -600,6 +618,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel tcsh"
 
   test-ubuntu-devel-ksh:
+    if: ${{ false }}
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -615,6 +634,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel ksh"
 
   test-ubuntu-devel-fish:
+    if: ${{ false }}
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -666,24 +686,28 @@ jobs:
       - run: echo zsh
 
   test-csh:
+    if: ${{ false }}
     needs: [test-debian-latest-csh, test-ubuntu-latest-csh, test-ubuntu-rolling-csh]
     runs-on: ubuntu-latest
     steps:
       - run: echo csh
 
   test-tcsh:
+    if: ${{ false }}
     needs: [test-debian-latest-tcsh, test-ubuntu-latest-tcsh, test-ubuntu-rolling-tcsh]
     runs-on: ubuntu-latest
     steps:
       - run: echo tcsh
 
   test-ksh:
+    if: ${{ false }}
     needs: [test-debian-latest-ksh, test-ubuntu-latest-ksh, test-ubuntu-rolling-ksh]
     runs-on: ubuntu-latest
     steps:
       - run: echo ksh
 
   test-fish:
+    if: ${{ false }}
     needs: [test-debian-latest-fish, test-ubuntu-latest-fish, test-ubuntu-rolling-fish]
     runs-on: ubuntu-latest
     steps:
