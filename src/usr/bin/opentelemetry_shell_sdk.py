@@ -16,19 +16,22 @@ from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapProp
 
 class AwsEC2ResourceDetector(ResourceDetector):
     def detect(self) -> Resource:
-        token = requests.put('http://169.254.169.254/latest/api/token', headers={ 'X-aws-ec2-metadata-token-ttl-seconds': '60' }, timeout=5).text
-        identity = requests.get('http://169.254.169.254/latest/dynamic/instance-identity/document', headers={ 'X-aws-ec2-metadata-token': token }, timeout=5).json()
-        hostname = requests.get('http://169.254.169.254/latest/meta-data/hostname', headers={ 'X-aws-ec2-metadata-token': token }, timeout=5).text
-        return Resource.create({
-            'cloud.provider': 'aws',
-            'cloud.platform': 'aws_ec2',
-            'cloud.account.id': identity['accountId'],
-            'cloud.region': identity['region'],
-            'cloud.availability_zone': identity['availabilityZone'],
-            'host.id': identity['instanceId'],
-            'host.type': identity['instanceType'],
-            'host.name': hostname
-        })
+        try:
+            token = requests.put('http://169.254.169.254/latest/api/token', headers={ 'X-aws-ec2-metadata-token-ttl-seconds': '60' }, timeout=5).text
+            identity = requests.get('http://169.254.169.254/latest/dynamic/instance-identity/document', headers={ 'X-aws-ec2-metadata-token': token }, timeout=5).json()
+            hostname = requests.get('http://169.254.169.254/latest/meta-data/hostname', headers={ 'X-aws-ec2-metadata-token': token }, timeout=5).text
+            return Resource.create({
+                'cloud.provider': 'aws',
+                'cloud.platform': 'aws_ec2',
+                'cloud.account.id': identity['accountId'],
+                'cloud.region': identity['region'],
+                'cloud.availability_zone': identity['availabilityZone'],
+                'host.id': identity['instanceId'],
+                'host.type': identity['instanceType'],
+                'host.name': hostname
+            })
+        except:
+            return Resource.create({})
 
 resource = {}
 spans = {}
@@ -37,12 +40,6 @@ def main():
     fifo_path = sys.argv[1]
     scope = sys.argv[2]
     version = sys.argv[3]
-#    resource = get_aggregated_resources([
-#        AwsEC2ResourceDetector(),
-#        KubernetesResourceDetector(),
-#        DockerResourceDetector(),
-#        OTELResourceDetector(),
-#    ])
     while True:
         with open(fifo_path, 'r') as fifo:
             for line in fifo:
@@ -65,7 +62,12 @@ def handle(scope, version, command, arguments):
             value = arguments.split('=', 1)[1]
             resource[key] = value
         case 'INIT':
-            tracer_provider = TracerProvider(sampler=sampling.ALWAYS_ON, resource=Resource.create(resource))
+            tracer_provider = TracerProvider(sampler=sampling.ALWAYS_ON, resource=get_aggregated_resources([
+                    AwsEC2ResourceDetector(),
+                    KubernetesResourceDetector(),
+                    DockerResourceDetector(),
+                    OTELResourceDetector(),
+                ]).merge(Resource.create(resource)))
             tracer_provider.add_span_processor(BatchSpanProcessor(ConsoleSpanExporter() if os.environ.get('OTEL_TRACES_CONSOLE_EXPORTER') == 'TRUE' else OTLPSpanExporter()))
             opentelemetry.trace.set_tracer_provider(tracer_provider)
         case 'SHUTDOWN':
