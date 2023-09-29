@@ -7,7 +7,7 @@ func_test() {
   assert_not_equals 0 $?
   otel_shutdown
 }
-data=$(func_test 2>&1 | tee /dev/stderr)
+data=$(func_test 2>&1)
 
 assert_equals "cat FILE_THAT_DOES_NOT_EXIST" "$(echo "$data" | jq -r '.name')"
 assert_equals "SpanKind.INTERNAL" $(echo "$data" | jq -r '.kind')

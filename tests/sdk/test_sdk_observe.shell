@@ -7,7 +7,7 @@ func_test() {
   assert_equals 0 $?
   otel_shutdown
 }
-data=$(func_test 2>&1 | tee /dev/stderr)
+data=$(func_test 2>&1)
 
 assert_equals "echo hello world" "$(echo "$data" | jq -r '.name')"
 assert_equals "SpanKind.INTERNAL" $(echo "$data" | jq -r '.kind')

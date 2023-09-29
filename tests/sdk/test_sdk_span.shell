@@ -9,7 +9,7 @@ func_test() {
   assert_equals 0 $?
   otel_shutdown
 }
-data=$(func_test 2>&1 | tee /dev/stderr)
+data=$(func_test 2>&1)
 
 assert_equals "myspan" $(echo "$data" | jq -r '.name')
 assert_equals "SpanKind.CONSUMER" $(echo "$data" | jq -r '.kind')
