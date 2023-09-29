@@ -3,8 +3,8 @@
 
 otel_init
 func_print() {
-  echo "$@" 1>&2
+  echo "$@"
 }
-result=$(otel_observe func_print hello world 2>&1 | tee /dev/stderr)
+result=$(otel_observe func_print hello world)
 assert_equals "hello world" "$result"
 otel_shutdown

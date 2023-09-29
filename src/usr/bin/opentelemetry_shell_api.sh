@@ -78,9 +78,14 @@ otel_resource_attributes() {
 }
 
 otel_init() {
+  if [ -n "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" ]; then
+    local sdk_output=$OTEL_SHELL_SDK_OUTPUT_REDIRECT
+  else
+    local sdk_output=/dev/stderr
+  fi
   \mkfifo $otel_remote_sdk_pipe
   . /opt/opentelemetry_bash/venv/bin/activate
-  \python3 /usr/bin/opentelemetry_shell_sdk.py $otel_remote_sdk_pipe "shell" $otel_sdk_version 1>&2 &
+  \python3 /usr/bin/opentelemetry_shell_sdk.py $otel_remote_sdk_pipe "shell" $otel_sdk_version >> $sdk_output &
   otel_sdk_pid=$!
   if [ "$otel_shell" = "bash" ]; then
     disown $otel_sdk_pid

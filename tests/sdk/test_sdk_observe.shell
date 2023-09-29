@@ -1,14 +1,12 @@
 . ./assert.sh
 . /usr/bin/opentelemetry_shell_api.sh
 
-func_test() {
-  otel_init
-  otel_observe echo "hello world" > /dev/null
-  assert_equals 0 $?
-  otel_shutdown
-}
-data=$(func_test 2>&1)
+otel_init
+otel_observe echo "hello world"
+assert_equals 0 $?
+otel_shutdown
 
+data=$(cat $OTEL_TRACES_LOCATION)
 assert_equals "echo hello world" "$(echo "$data" | jq -r '.name')"
 assert_equals "SpanKind.INTERNAL" $(echo "$data" | jq -r '.kind')
 assert_equals "null" $(echo "$data" | jq -r '.parent_id')

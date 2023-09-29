@@ -1,14 +1,12 @@
 . ./assert.sh
 . /usr/bin/opentelemetry_shell_api.sh
 
-func_test() {
-  otel_init
-  otel_observe cat FILE_THAT_DOES_NOT_EXIST 2> /dev/null 1> /dev/null
-  assert_not_equals 0 $?
-  otel_shutdown
-}
-data=$(func_test 2>&1)
+otel_init
+otel_observe cat FILE_THAT_DOES_NOT_EXIST
+assert_not_equals 0 $?
+otel_shutdown
 
+data=$(cat $OTEL_TRACES_LOCATION)
 assert_equals "cat FILE_THAT_DOES_NOT_EXIST" "$(echo "$data" | jq -r '.name')"
 assert_equals "SpanKind.INTERNAL" $(echo "$data" | jq -r '.kind')
 assert_equals "null" $(echo "$data" | jq -r '.parent_id')

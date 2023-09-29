@@ -3,14 +3,12 @@
 
 export OTEL_SERVICE_NAME=TEST
 
-func_test() {
-  otel_init
-  span_id=$(otel_span_start INTERNAL myspan)
-  otel_span_end $span_id
-  otel_shutdown
-}
-data=$(func_test 2>&1)
+otel_init
+span_id=$(otel_span_start INTERNAL myspan)
+otel_span_end $span_id
+otel_shutdown
 
+data=$(cat $OTEL_TRACES_LOCATION)
 assert_equals "shell" $(echo "$data" | jq -r '.resource.attributes."telemetry.sdk.language"')
 assert_equals "opentelemetry" $(echo "$data" | jq -r '.resource.attributes."telemetry.sdk.name"')
 assert_not_equals "null" $(echo "$data" | jq -r '.resource.attributes."telemetry.sdk.version"')

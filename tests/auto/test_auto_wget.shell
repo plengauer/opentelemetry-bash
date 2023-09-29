@@ -1,8 +1,8 @@
 . ./assert.sh
 
-data=$($SHELL auto/wget.shell 2>&1 1> /dev/null)
-data=$(echo "$data" | jq '. | select(.name == "wget -O - http://www.google.com/")')
+$SHELL auto/wget.shell
 
+data=$(cat $OTEL_TRACES_LOCATION | jq '. | select(.name == "wget -O - http://www.google.com/")')
 assert_equals "wget -O - http://www.google.com/" "$(\echo "$data" | jq -r '.name')"
 assert_equals "SpanKind.CLIENT" $(\echo "$data" | jq -r '.kind')
 assert_not_equals "null" $(\echo "$data" | jq -r '.parent_id')

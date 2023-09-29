@@ -6,10 +6,13 @@ if [ "$SHELL" == "" ]; then
   exit 1
 fi
 
-export OTEL_TRACES_CONSOLE_EXPORTER=TRUE
-(while sleep 10; do pstree -a -c; done) &
+(while sleep 60; do pstree -a -c; done) &
 for file in $(find . -iname 'test_*.shell') $(find . -iname 'test_*.'$SHELL); do
+  export OTEL_TRACES_LOCATION=$(mktemp -u)
+  export OTEL_SHELL_SDK_OUTPUT_REDIRECT=$OTEL_TRACES_LOCATION
+  export OTEL_TRACES_CONSOLE_EXPORTER=TRUE
+  touch $OTEL_TRACES_LOCATION
   echo "running $file"
-  $SHELL $file || (echo "FAILED" && exit 1)
+  $SHELL $file && echo "SUCCEEDED" || (echo "FAILED" && cat $OTEL_TRACES_LOCATION  && exit 1)
 done
 echo "ALL TESTS SUCCESSFUL"
