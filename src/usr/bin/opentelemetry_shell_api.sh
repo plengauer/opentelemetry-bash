@@ -81,8 +81,9 @@ otel_init() {
   \mkfifo $otel_remote_sdk_pipe
   . /opt/opentelemetry_bash/venv/bin/activate
   \python3 /usr/bin/opentelemetry_shell_sdk.py $otel_remote_sdk_pipe "shell" $otel_sdk_version 1>&2 &
+  otel_sdk_pid=$!
   if [ "$otel_shell" = "bash" ]; then
-    disown &> /dev/null
+    disown $otel_sdk_pid
   fi
   deactivate
   otel_resource_attributes | \sed 's/^/RESOURCE_ATTRIBUTE /' > $otel_remote_sdk_pipe
@@ -91,6 +92,7 @@ otel_init() {
 
 otel_shutdown() {
   \echo "SHUTDOWN" > $otel_remote_sdk_pipe
+  wait $otel_sdk_pid
   \rm $otel_remote_sdk_pipe
 }
 
