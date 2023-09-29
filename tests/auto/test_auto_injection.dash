@@ -1,7 +1,7 @@
 . ./assert.sh
 . /usr/bin/opentelemetry_shell.sh
 
-data=$(dash auto/fail_no_auto.shell 2>&1 | tee /dev/stderr)
+data=$(dash auto/fail_no_auto.shell 2>&1)
 assert_equals 0 $?
 assert_not_equals "null" $(echo "$data" | jq '.name')
 dash auto/fail.shell 42

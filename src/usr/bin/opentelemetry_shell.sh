@@ -83,10 +83,31 @@ otel_instrumented_shell_with_c_flag() {
   done
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE=INTERNAL $cmd -c ". /usr/bin/opentelemetry_shell.sh; . $args"
 }
-# otel_do_alias sh otel_instrumented_shell_with_c_flag # cant pass arguments via .
-# otel_do_alias dash otel_instrumented_shell_with_c_flag # cant pass arguments via .
 otel_do_alias bash otel_instrumented_shell_with_c_flag
 otel_do_alias zsh otel_instrumented_shell_with_c_flag
+
+otel_instrumented_shell_with_copy() {
+  local cmdline="$*"
+  local cmd=$1
+  shift
+  local script=$1
+  shift
+  local args=""
+  for arg in "$@"; do
+    local args="$args \"$arg\""
+  done
+  local temporary_script=$(\mktemp -u)
+  \touch $temporary_script
+  \echo "set -- $args" >> $temporary_script
+  \echo ". /usr/bin/opentelemetry_shell.sh" >> $temporary_script
+  \cat $script >> $temporary_script
+  local exit_code=0
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE=INTERNAL $cmd $temporary_script || exit_code=$?
+  rm $temporary_script
+  return $exit_code
+}
+otel_do_alias sh otel_instrumented_shell_with_copy
+otel_do_alias dash otel_instrumented_shell_with_copy
 
 otel_check_populate_cgi() {
   local span_id=$1
