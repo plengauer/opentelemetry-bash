@@ -650,13 +650,13 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel fish"
 
   test-debian:
-    needs: [test-debian-latest-sh, test-debian-latest-dash, test-debian-latest-bash]
+    needs: [test-debian-latest-sh, test-debian-latest-dash, test-debian-latest-bash, test-debian-latest-zsh]
     runs-on: ubuntu-latest
     steps:
       - run: echo debian
 
   test-ubuntu:
-    needs: [test-ubuntu-latest-sh, test-ubuntu-latest-dash, test-ubuntu-latest-bash, test-ubuntu-rolling-sh, test-ubuntu-rolling-dash, test-ubuntu-rolling-bash]
+    needs: [test-ubuntu-latest-sh, test-ubuntu-latest-dash, test-ubuntu-latest-bash, test-ubuntu-latest-zsh, test-ubuntu-rolling-sh, test-ubuntu-rolling-dash, test-ubuntu-rolling-bash, test-ubuntu-rolling-zsh]
     runs-on: ubuntu-latest
     steps:
       - run: echo ubuntu
