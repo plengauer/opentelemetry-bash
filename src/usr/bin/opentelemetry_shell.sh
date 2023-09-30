@@ -83,9 +83,9 @@ otel_injected_shell_with_c_flag() {
     local args="$args \"$arg\""
   done
   if [ "$otel_shell" = "zsh" ]; then
-    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE=INTERNAL ${(z)=cmd} -c ". /usr/bin/opentelemetry_shell.sh; . $args"
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE=INTERNAL name="$command" command="$command" ${(z)=cmd} -c ". /usr/bin/opentelemetry_shell.sh; . $args"
   else
-    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE=INTERNAL $cmd -c ". /usr/bin/opentelemetry_shell.sh; . $args"
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE=INTERNAL name="$command" command="$command" $cmd -c ". /usr/bin/opentelemetry_shell.sh; . $args"
   fi
 }
 otel_do_alias bash otel_injected_shell_with_c_flag
