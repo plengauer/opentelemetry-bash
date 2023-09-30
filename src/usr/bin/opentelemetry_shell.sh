@@ -1,4 +1,11 @@
 #!/bin/sh
+###############################################################################################################
+# This file is doing auto-instrumentation, auto-injection and auto-context-propagation.                        #
+# It should be sourced at the very top of any shell script that should be observed.                            #
+# Only use the "otel_instrument" function directly.                                                            #
+# All other functions and variables are for internal use only and therefore subject to change without notice!  #
+################################################################################################################
+
 if [ "$OTEL_SHELL_AUTO_INJECTED" != "" ]; then
   return 0
 fi
@@ -21,13 +28,15 @@ otel_do_alias() {
   if [ -z "$prev_command" ]; then
     local new_command="$2 \\$1"
   else
+    if [ "${prev_command#OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE=}" != "$prev_command" ]; then
+      local prev_command=$(\printf '%s' "$prev_command" | \cut -d" " -f2-)
+    fi
     local new_command="$2 $prev_command"
   fi
-  \alias $1="$new_command"
+  \alias $1='OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="code.function=$BASH_SOURCE,code.filepath=$0,code.lineno=$LINENO" '"$new_command"
 }
 
 otel_instrument() {
-  # attributes=code.function=$BASH_SOURCE,code.filepath=$0,code.lineno=$LINENO
   otel_do_alias $1 'otel_observe' || return $?
   export OTEL_SHELL_CUSTOM_INSTRUMENTATIONS=$(\echo "$OTEL_SHELL_CUSTOM_INSTRUMENTATIONS $1" | \xargs)
 }
@@ -35,7 +44,6 @@ otel_instrument() {
 for cmd in "$OTEL_SHELL_CUSTOM_INSTRUMENTATIONS"; do
   otel_instrument $cmd
 done
-# attributes=code.function=$BASH_SOURCE,code.filepath=$0,code.lineno=$LINENO
 while read cmd; do otel_do_alias $cmd 'otel_observe'; done < /etc/opentelemetry_shell_auto_instrumentations.conf
 
 otel_propagated_wget() {
@@ -45,8 +53,8 @@ otel_propagated_wget() {
   local target=$(\echo ${url#*//*/}/)
   local host=$(\echo ${url} | \awk -F/ '{print $3}')
   local method=GET
-  name="$command" kind=CLIENT command="$command" \
-    attributes="http.url=$url,http.scheme=$scheme,http.host=$host,http.target=$target,http.method=$method,$attributes" \
+  OTEL_SHELL_SPAN_NAME_OVERRIDE="$command" OTEL_SHELL_SPAN_KIND_OVERRIDE=CLIENT OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" \
+    OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="http.url=$url,http.scheme=$scheme,http.host=$host,http.target=$target,http.method=$method,$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
     "$@" --header="traceparent: $OTEL_TRACEPARENT"
 }
 otel_do_alias wget otel_propagated_wget
@@ -61,8 +69,8 @@ otel_propagated_curl() {
   if [ -z "$method" ]; then
     local method=GET
   fi
-  name="$command" kind=CLIENT command="$command" \
-    attributes="http.url=$url,http.scheme=$scheme,http.host=$host,http.target=$target,http.method=$method,$attributes" \
+  OTEL_SHELL_SPAN_NAME_OVERRIDE="$command" OTEL_SHELL_SPAN_KIND_OVERRIDE=CLIENT OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" \
+    OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="http.url=$url,http.scheme=$scheme,http.host=$host,http.target=$target,http.method=$method,$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
     "$@" -H "traceparent: $OTEL_TRACEPARENT"
 }
 otel_do_alias curl otel_propagated_curl
@@ -83,9 +91,11 @@ otel_injected_shell_with_c_flag() {
     local args="$args \"$arg\""
   done
   if [ "$otel_shell" = "zsh" ]; then
-    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE=INTERNAL name="$command" command="$command" ${(z)=cmd} -c ". /usr/bin/opentelemetry_shell.sh; . $args"
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE=INTERNAL OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
+      ${(z)=cmd} -c ". /usr/bin/opentelemetry_shell.sh; . $args"
   else
-    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE=INTERNAL name="$command" command="$command" $cmd -c ". /usr/bin/opentelemetry_shell.sh; . $args"
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE=INTERNAL OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
+      $cmd -c ". /usr/bin/opentelemetry_shell.sh; . $args"
   fi
 }
 otel_do_alias bash otel_injected_shell_with_c_flag
@@ -113,9 +123,11 @@ otel_injected_shell_with_copy() {
   \echo "set -- $args" >> $temporary_script
   \echo ". /usr/bin/opentelemetry_shell.sh" >> $temporary_script
   \cat $script >> $temporary_script
+  \chmod +x $temporary_script
   local exit_code=0
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE=INTERNAL $cmd $temporary_script || exit_code=$?
-  rm $temporary_script
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE=INTERNAL OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
+    $cmd $temporary_script || exit_code=$?
+  \rm $temporary_script
   return $exit_code
 }
 otel_do_alias sh otel_injected_shell_with_copy
@@ -123,7 +135,7 @@ otel_do_alias dash otel_injected_shell_with_copy
 
 otel_check_populate_cgi() {
   local span_id=$1
-  if [ -z "$SERVER_SOFTWARE"  ] || [ -z "$SCRIPTNAME" ] || [ -z "$SERVER_NAME" ] || [ -z "$SERVER_PROTOCOL" ]; then
+  if [ -z "$SERVER_SOFTWARE"  ] || [ -z "$SCRIPT_NAME" ] || [ -z "$SERVER_NAME" ] || [ -z "$SERVER_PROTOCOL" ]; then
     return 0
   fi
   otel_span_attribute $span_id http.flavor=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f2)

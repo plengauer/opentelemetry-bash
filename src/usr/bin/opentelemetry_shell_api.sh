@@ -1,11 +1,19 @@
 #!/bin/sh
+##################################################################################################
+# This file is providing an API for creating and managing open telemetry spans.                  #
+# It should be sourced at the very top of any shell script where the functions are to be used.   #
+# All variables are for internal use only and therefore subject to change without notice!        #
+##################################################################################################
+
 otel_remote_sdk_pipe=$(mktemp -u)_opentelemetry_shell_$$.pipe
 otel_sdk_version=$(\apt show opentelemetry-shell 2> /dev/null | \grep Version | \awk '{ print $2 }')
 otel_shell=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
+otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"
+unset OTEL_SHELL_COMMANDLINE_OVERRIDE
 
 otel_command_self() {
-  if [ -n "$OTEL_SHELL_COMMANDLINE_OVERRIDE" ]; then
-    \echo $OTEL_SHELL_COMMANDLINE_OVERRIDE
+  if [ -n "$otel_commandline_override" ]; then
+    \echo $otel_commandline_override
   else
     # \cat /proc/$$/cmdline 2> /dev/null
     \ps -p $$ -o args | \grep -v COMMAND
@@ -153,14 +161,29 @@ otel_span_deactivate() {
 }
 
 otel_observe() {
-  if [ -z "$name" ]; then
+  if [ -z "$OTEL_SHELL_SPAN_NAME_OVERRIDE" ]; then
     local name=$@
+  else
+    local name="$OTEL_SHELL_SPAN_NAME_OVERRIDE"
+    unset OTEL_SHELL_SPAN_NAME_OVERRIDE
   fi
-  if [ -z "$kind" ]; then
+  if [ -z "$OTEL_SHELL_SPAN_KIND_OVERRIDE" ]; then
     local kind=INTERNAL
+  else
+    local kind="$OTEL_SHELL_SPAN_KIND_OVERRIDE"
+    unset OTEL_SHELL_SPAN_KIND_OVERRIDE
   fi
-  if [ -z "$command" ]; then
+  if [ -z "$OTEL_SHELL_COMMANDLINE_OVERRIDE" ]; then
     local command=$@
+  else
+    local command="$OTEL_SHELL_COMMANDLINE_OVERRIDE"
+    unset OTEL_SHELL_COMMANDLINE_OVERRIDE
+  fi
+  if [ -z "$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" ]; then
+    local attributes=""
+  else
+    local attributes="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE"
+    unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
   fi
   local span_id=$(otel_span_start $kind $name)
   otel_span_attribute $span_id subprocess.executable.name=$(\echo $command | \cut -d' ' -f1 | \rev | \cut -d'/' -f1 | \rev)
@@ -169,22 +192,25 @@ otel_observe() {
   otel_span_attribute $span_id subprocess.command_args=$(\echo $command | \cut -d' ' -f2-)
   local traceparent=$(otel_span_traceparent $span_id)
   local exit_code=0
-  OTEL_TRACEPARENT=$traceparent "$@" || local exit_code=$?
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE=$OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE \
+    OTEL_TRACEPARENT=$traceparent "$@" || local exit_code=$?
   otel_span_attribute $span_id subprocess.exit_code=$exit_code
   if [ "$exit_code" -ne "0" ]; then
     otel_span_error $span_id
   fi
-  local IFS=','
-  if [ "$otel_shell" = "zsh" ]; then
-    set -- ${=attributes}
-  else
-    set -- $attributes
-  fi
-  for attribute in "$@"; do
-    if [ -n "$attribute" ]; then
-      otel_span_attribute $span_id $attribute
+  if [ -n "$attributes" ]; then
+    local IFS=','
+    if [ "$otel_shell" = "zsh" ]; then
+      set -- ${=attributes}
+    else
+      set -- $attributes
     fi
-  done
+    for attribute in "$@"; do
+      if [ -n "$attribute" ]; then
+        otel_span_attribute $span_id $attribute
+      fi
+    done
+  fi
   otel_span_end $span_id
   return $exit_code
 }
