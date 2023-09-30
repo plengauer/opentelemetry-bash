@@ -710,7 +710,7 @@ jobs:
       - run: echo fish
 
   publish:
-    needs: [build, test-package, test-debian, test-ubuntu, test-sh, test-dash, test-bash]
+    needs: [build, test-package, test-debian, test-ubuntu, test-sh, test-dash, test-bash, test-zsh]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
