@@ -686,28 +686,24 @@ jobs:
       - run: echo zsh
 
   test-csh:
-    if: ${{ false }}
     needs: [test-debian-latest-csh, test-ubuntu-latest-csh, test-ubuntu-rolling-csh]
     runs-on: ubuntu-latest
     steps:
       - run: echo csh
 
   test-tcsh:
-    if: ${{ false }}
     needs: [test-debian-latest-tcsh, test-ubuntu-latest-tcsh, test-ubuntu-rolling-tcsh]
     runs-on: ubuntu-latest
     steps:
       - run: echo tcsh
 
   test-ksh:
-    if: ${{ false }}
     needs: [test-debian-latest-ksh, test-ubuntu-latest-ksh, test-ubuntu-rolling-ksh]
     runs-on: ubuntu-latest
     steps:
       - run: echo ksh
 
   test-fish:
-    if: ${{ false }}
     needs: [test-debian-latest-fish, test-ubuntu-latest-fish, test-ubuntu-rolling-fish]
     runs-on: ubuntu-latest
     steps:
