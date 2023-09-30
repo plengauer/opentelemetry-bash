@@ -81,7 +81,7 @@ otel_init() {
   if [ -n "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" ]; then
     local sdk_output=$OTEL_SHELL_SDK_OUTPUT_REDIRECT
   else
-    local sdk_output=/dev/stderr
+    local sdk_output=/dev/null
   fi
   \mkfifo $otel_remote_sdk_pipe
   . /opt/opentelemetry_bash/venv/bin/activate
