@@ -19,6 +19,14 @@ resolve_span() {
   if [ -n "$selector" ]; then
     local selector=' | select('"$selector"')'
   fi
-  \sleep 5
-  \cat $OTEL_TRACES_LOCATION | jq ".$selector"
+  for i in 1 2 4 8 16 32; do
+    local span="$(\cat $OTEL_TRACES_LOCATION | \jq ".$selector")"
+    if [ -n "$span" ]; then
+      \echo "$span"
+      return 0
+    fi
+    \sleep $i
+  done
+  \echo "could not resolve span!" 1>&2
+  exit 1
 }
