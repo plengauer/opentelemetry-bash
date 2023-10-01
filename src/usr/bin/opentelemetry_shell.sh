@@ -135,17 +135,20 @@ otel_do_alias dash otel_injected_shell_with_copy
 
 otel_check_populate_cgi() {
   local span_id=$1
+  if [ -n "$OTEL_TRACEPARENT" ]; then
+    return 0 # somebody else already created a trace, lets assume they take care of it
+  fi
   if [ -z "$SERVER_SOFTWARE"  ] || [ -z "$SCRIPT_NAME" ] || [ -z "$SERVER_NAME" ] || [ -z "$SERVER_PROTOCOL" ]; then
     return 0
   fi
   otel_span_attribute $span_id http.flavor=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f2)
   otel_span_attribute $span_id http.host=$SERVER_NAME:$SERVER_PORT
   otel_span_attribute $span_id http.route=$SCRIPT_NAME
-  otel_span_attribute $span_id http.scheme=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f1)
+  otel_span_attribute $span_id http.scheme=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f1 | \tr '[:upper:]' '[:lower:]')
   otel_span_attribute $span_id http.status_code=200
   otel_span_attribute $span_id http.status_text=OK
   otel_span_attribute $span_id http.target=$SCRIPT_NAME
-  otel_span_attribute $span_id http.url=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f1)://$SERVER_NAME:$SERVER_PORT/$SCRIPT_NAME
+  otel_span_attribute $span_id http.url=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f1 | tr '[:upper:]' '[:lower:]')://$SERVER_NAME:$SERVER_PORT/$SCRIPT_NAME
   otel_span_attribute $span_id net.peer.ip=$REMOTE_ADDR
 }
 
