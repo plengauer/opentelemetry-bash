@@ -187,7 +187,9 @@ otel_observe() {
   fi
   local span_id=$(otel_span_start $kind $name)
   otel_span_attribute $span_id subprocess.executable.name=$(\echo $command | \cut -d' ' -f1 | \rev | \cut -d'/' -f1 | \rev)
-  otel_span_attribute $span_id subprocess.executable.path=$(which $(\echo \$command | \cut -d' ' -f1))
+  if [ "$otel_shell" != "zsh" ]; then
+    otel_span_attribute $span_id subprocess.executable.path=$(which $(\echo $command | \cut -d' ' -f1))
+  fi
   otel_span_attribute $span_id subprocess.command=$command
   otel_span_attribute $span_id subprocess.command_args=$(\echo $command | \cut -d' ' -f2-)
   local traceparent=$(otel_span_traceparent $span_id)
