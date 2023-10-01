@@ -8,28 +8,27 @@ span_id=$(otel_span_start INTERNAL myspan)
 otel_span_end $span_id
 otel_shutdown
 
-sleep 3
-data=$(cat $OTEL_TRACES_LOCATION)
-assert_equals "shell" $(echo "$data" | jq -r '.resource.attributes."telemetry.sdk.language"')
-assert_equals "opentelemetry" $(echo "$data" | jq -r '.resource.attributes."telemetry.sdk.name"')
-assert_not_equals "null" $(echo "$data" | jq -r '.resource.attributes."telemetry.sdk.version"')
-assert_not_equals "null" $(echo "$data" | jq -r '.resource.attributes."process.pid"')
+span="$(resolve_span)"
+assert_equals "shell" $(echo "$span" | jq -r '.resource.attributes."telemetry.sdk.language"')
+assert_equals "opentelemetry" $(echo "$span" | jq -r '.resource.attributes."telemetry.sdk.name"')
+assert_not_equals "null" $(echo "$span" | jq -r '.resource.attributes."telemetry.sdk.version"')
+assert_not_equals "null" $(echo "$span" | jq -r '.resource.attributes."process.pid"')
 if  [ "$SHELL" = "sh" ]; then
-  assert_equals "dash" $(echo "$data" | jq -r '.resource.attributes."process.executable.name"')
+  assert_equals "dash" $(echo "$span" | jq -r '.resource.attributes."process.executable.name"')
 else
-  assert_equals "$SHELL" $(echo "$data" | jq -r '.resource.attributes."process.executable.name"')
+  assert_equals "$SHELL" $(echo "$span" | jq -r '.resource.attributes."process.executable.name"')
 fi
-assert_not_equals "null" $(echo "$data" | jq -r '.resource.attributes."process.executable.path"')
-assert_not_equals "null" $(echo "$data" | jq -r '.resource.attributes."process.command"')
-assert_not_equals "null" $(echo "$data" | jq -r '.resource.attributes."process.command_args"')
-assert_not_equals "null" $(echo "$data" | jq -r '.resource.attributes."process.owner"')
+assert_not_equals "null" $(echo "$span" | jq -r '.resource.attributes."process.executable.path"')
+assert_not_equals "null" $(echo "$span" | jq -r '.resource.attributes."process.command"')
+assert_not_equals "null" $(echo "$span" | jq -r '.resource.attributes."process.command_args"')
+assert_not_equals "null" $(echo "$span" | jq -r '.resource.attributes."process.owner"')
 if [ "$SHELL" = "sh" ]; then
-  assert_equals "dash" $(echo "$data" | jq -r '.resource.attributes."process.runtime.name"')
+  assert_equals "dash" $(echo "$span" | jq -r '.resource.attributes."process.runtime.name"')
 else
-  assert_equals "$SHELL" $(echo "$data" | jq -r '.resource.attributes."process.runtime.name"')
+  assert_equals "$SHELL" $(echo "$span" | jq -r '.resource.attributes."process.runtime.name"')
 fi
-assert_not_equals "null" $(echo "$data" | jq -r '.resource.attributes."process.runtime.description"')
-# assert_not_equals "null" $(echo "$data" | jq -r '.resource.attributes."process.runtime.version"')
-# assert_not_equals "null" $(echo "$data" | jq -r '.resource.attributes."host.name"')
-assert_equals "$OTEL_SERVICE_NAME" $(echo "$data" | jq -r '.resource.attributes."service.name"')
+assert_not_equals "null" $(echo "$span" | jq -r '.resource.attributes."process.runtime.description"')
+# assert_not_equals "null" $(echo "$span" | jq -r '.resource.attributes."process.runtime.version"')
+# assert_not_equals "null" $(echo "$span" | jq -r '.resource.attributes."host.name"')
+assert_equals "$OTEL_SERVICE_NAME" $(echo "$span" | jq -r '.resource.attributes."service.name"')
 

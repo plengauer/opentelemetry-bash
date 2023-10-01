@@ -13,3 +13,12 @@ assert_not_equals() {
     exit 1
   fi
 }
+
+resolve_span() {
+  local selector="$1"
+  if [ -n "$selector" ]; then
+    local selector=' | select('"$selector"')'
+  fi
+  \sleep 5
+  \cat $OTEL_TRACES_LOCATION | jq ".$selector"
+}

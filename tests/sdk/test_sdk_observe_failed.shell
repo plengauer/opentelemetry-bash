@@ -6,11 +6,10 @@ otel_observe cat FILE_THAT_DOES_NOT_EXIST
 assert_not_equals 0 $?
 otel_shutdown
 
-sleep 3
-data=$(cat $OTEL_TRACES_LOCATION)
-assert_equals "cat FILE_THAT_DOES_NOT_EXIST" "$(echo "$data" | jq -r '.name')"
-assert_equals "SpanKind.INTERNAL" $(echo "$data" | jq -r '.kind')
-assert_equals "null" $(echo "$data" | jq -r '.parent_id')
-assert_equals "ERROR" $(echo "$data" | jq -r '.status.status_code')
-assert_equals "cat FILE_THAT_DOES_NOT_EXIST" "$(echo "$data" | jq -r '.attributes."subprocess.command"')"
-assert_not_equals "0" $(echo "$data" | jq -r '.attribtues."subprocess.exit_code"')
+span="$(resolve_span)"
+assert_equals "cat FILE_THAT_DOES_NOT_EXIST" "$(echo "$span" | jq -r '.name')"
+assert_equals "SpanKind.INTERNAL" $(echo "$span" | jq -r '.kind')
+assert_equals "null" $(echo "$span" | jq -r '.parent_id')
+assert_equals "ERROR" $(echo "$span" | jq -r '.status.status_code')
+assert_equals "cat FILE_THAT_DOES_NOT_EXIST" "$(echo "$span" | jq -r '.attributes."subprocess.command"')"
+assert_not_equals "0" $(echo "$span" | jq -r '.attribtues."subprocess.exit_code"')

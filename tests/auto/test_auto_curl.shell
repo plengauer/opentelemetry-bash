@@ -2,13 +2,12 @@
 
 $SHELL -x auto/curl.shell
 
-sleep 3
-data=$(cat $OTEL_TRACES_LOCATION | jq '. | select(.name == "curl http://www.google.com/")')
-assert_equals "curl http://www.google.com/" "$(\echo "$data" | jq -r '.name')"
-assert_equals "SpanKind.CLIENT" $(\echo "$data" | jq -r '.kind')
-assert_not_equals "null" $(\echo "$data" | jq -r '.parent_id')
-assert_equals "ERROR" $(\echo "$data" | jq -r '.status.status_code')
-assert_equals "http://www.google.com/" "$(\echo "$data" | jq -r '.attributes."http.url"')"
-assert_equals "www.google.com" "$(\echo "$data" | jq -r '.attributes."http.host"')"
-assert_equals "/" "$(\echo "$data" | jq -r '.attributes."http.target"')"
-assert_not_equals "0" $(\echo "$data" | jq -r '.attributes."subprocess.exit_code"')
+span="$(resolve_span '.name == "curl http://www.google.com/"')"
+assert_equals "curl http://www.google.com/" "$(\echo "$span" | jq -r '.name')"
+assert_equals "SpanKind.CLIENT" $(\echo "$span" | jq -r '.kind')
+assert_not_equals "null" $(\echo "$span" | jq -r '.parent_id')
+assert_equals "ERROR" $(\echo "$span" | jq -r '.status.status_code')
+assert_equals "http://www.google.com/" "$(\echo "$span" | jq -r '.attributes."http.url"')"
+assert_equals "www.google.com" "$(\echo "$span" | jq -r '.attributes."http.host"')"
+assert_equals "/" "$(\echo "$span" | jq -r '.attributes."http.target"')"
+assert_not_equals "0" $(\echo "$span" | jq -r '.attributes."subprocess.exit_code"')

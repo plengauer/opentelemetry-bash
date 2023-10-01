@@ -4,14 +4,13 @@
 otel_instrument echo
 zsh auto/echo.shell
 
-sleep 3
-data=$(cat $OTEL_TRACES_LOCATION | jq '. | select(.name == "echo hello world")')
-assert_equals "echo hello world" "$(\echo "$data" | jq -r '.name')"
-assert_equals "SpanKind.INTERNAL" $(\echo "$data" | jq -r '.kind')
-assert_not_equals "null" $(\echo "$data" | jq -r '.parent_id')
-assert_equals "UNSET" $(\echo "$data" | jq -r '.status.status_code')
-assert_equals "echo hello world" "$(\echo "$data" | jq -r '.attributes."subprocess.command"')"
-assert_equals "hello world" "$(\echo "$data" | jq -r '.attributes."subprocess.command_args"')"
-assert_equals "echo" "$(\echo "$data" | jq -r '.attributes."subprocess.executable.name"')"
-# assert_equals "/usr/bin/echo" "$(\echo "$data" | jq -r '.attributes."subprocess.executable.path"')" # identified as alias
-assert_equals "0" $(\echo "$data" | jq -r '.attributes."subprocess.exit_code"')
+span="$(resolve_span '.name == "echo hello world"')"
+assert_equals "echo hello world" "$(\echo "$span" | jq -r '.name')"
+assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
+assert_not_equals "null" $(\echo "$span" | jq -r '.parent_id')
+assert_equals "UNSET" $(\echo "$span" | jq -r '.status.status_code')
+assert_equals "echo hello world" "$(\echo "$span" | jq -r '.attributes."subprocess.command"')"
+assert_equals "hello world" "$(\echo "$span" | jq -r '.attributes."subprocess.command_args"')"
+assert_equals "echo" "$(\echo "$span" | jq -r '.attributes."subprocess.executable.name"')"
+# assert_equals "/usr/bin/echo" "$(\echo "$span" | jq -r '.attributes."subprocess.executable.path"')" # identified as alias
+assert_equals "0" $(\echo "$span" | jq -r '.attributes."subprocess.exit_code"')
