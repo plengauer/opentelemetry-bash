@@ -41,6 +41,10 @@ otel_instrument() {
   export OTEL_SHELL_CUSTOM_INSTRUMENTATIONS=$(\echo "$OTEL_SHELL_CUSTOM_INSTRUMENTATIONS $1" | \xargs)
 }
 
+otel_outstrument() {
+  unalias $1 1> /dev/null 2> /dev/null || true
+}
+
 for cmd in "$OTEL_SHELL_CUSTOM_INSTRUMENTATIONS"; do
   otel_instrument $cmd
 done
@@ -172,6 +176,17 @@ otel_on_script_end() {
   otel_span_end $root_span_id
   otel_shutdown
 }
+otel_on_script_exec() {
+  if [ "$1" = "otel_observe" ]; then
+    shift
+  fi
+  local span_id=$(otel_span_start INTERNAL "exec $*")
+  local traceparent=$(otel_traceparent $span_id)
+  otel_span_end $span_id
+  otel_on_script_end
+  export OTEL_TRACEPARENT=$traceparent
+  exec "$@"
+}
 trap otel_on_script_end EXIT
-# TODO we should alias exec, to be sure we shutdown properly and not leak the companion process
+alias exec=otel_on_script_exec
 otel_on_script_start
