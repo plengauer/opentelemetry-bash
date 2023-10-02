@@ -54,7 +54,7 @@ otel_propagated_wget() {
   local command=$(\echo $* | \sed 's/^otel_observe //')
   local url=$(\echo $@ | \awk '{for(i=1;i<=NF;i++) if ($i ~ /^http/) print $i}')
   local scheme=http # TODO
-  local target=$(\echo ${url#*//*/}/)
+  local target=$(\echo /${url#*//*/})
   local host=$(\echo ${url} | \awk -F/ '{print $3}')
   local method=GET
   OTEL_SHELL_SPAN_NAME_OVERRIDE="$command" OTEL_SHELL_SPAN_KIND_OVERRIDE=CLIENT OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" \
@@ -67,7 +67,7 @@ otel_propagated_curl() {
   local command=$(\echo $* | \sed 's/^otel_observe //')
   local url=$(\echo $@ | \awk '{for(i=1;i<=NF;i++) if ($i ~ /^http/) print $i}')
   local scheme=http # TODO
-  local target=$(\echo ${url#*//*/}/)
+  local target=$(\echo /${url#*//*/})
   local host=$(\echo ${url} | \awk -F/ '{print $3}')
   local method=$(\echo $@ | \awk '{for(i=1;i<=NF;i++) if ($i == "-X") print $(i+1)}')
   if [ -z "$method" ]; then
