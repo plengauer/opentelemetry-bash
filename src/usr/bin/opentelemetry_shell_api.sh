@@ -193,10 +193,10 @@ otel_observe() {
     local attributes="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE"
     unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
   fi
-  if [ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0" ]
+  if [ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0" ]; then
     set -- "$@" "$(eval \echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0)"
   fi
-  if [ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1" ]
+  if [ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1" ]; then
     set -- "$@" "$(eval \echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1)"
   fi
   local span_id=$(otel_span_start $kind $name)
