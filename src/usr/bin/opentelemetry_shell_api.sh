@@ -5,7 +5,6 @@
 # All variables are for internal use only and therefore subject to change without notice!        #
 ##################################################################################################
 
-otel_remote_sdk_pipe=$(mktemp -u)_opentelemetry_shell_$$.pipe
 otel_sdk_version=$(\apt show opentelemetry-shell 2> /dev/null | \grep Version | \awk '{ print $2 }')
 otel_shell=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
 otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"
@@ -85,13 +84,19 @@ otel_resource_attributes() {
   \echo service.version=$OTEL_SERVICE_VERSION
 }
 
+otel_sdk_communicate() {
+  \echo "$@" >&3
+}
+
 otel_init() {
   if [ -n "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" ]; then
     local sdk_output=$OTEL_SHELL_SDK_OUTPUT_REDIRECT
   else
     local sdk_output=/dev/null
   fi
+  local otel_remote_sdk_pipe=$(mktemp -u)_opentelemetry_shell_$$.pipe
   \mkfifo $otel_remote_sdk_pipe
+  \exec 3> $otel_remove_sdk_pipe
   . /opt/opentelemetry_bash/venv/bin/activate
   \python3 /usr/bin/opentelemetry_shell_sdk.py $otel_remote_sdk_pipe "shell" $otel_sdk_version > $sdk_output &
   otel_sdk_pid=$!
@@ -99,12 +104,13 @@ otel_init() {
     disown $otel_sdk_pid
   fi
   deactivate
-  otel_resource_attributes | \sed 's/^/RESOURCE_ATTRIBUTE /' > $otel_remote_sdk_pipe
-  \echo "INIT" > $otel_remote_sdk_pipe
+  otel_sdk_communicate $(otel_resource_attributes | \sed 's/^/RESOURCE_ATTRIBUTE /')
+  otel_sdk_communicate "INIT"
 }
 
 otel_shutdown() {
-  \echo "SHUTDOWN" > $otel_remote_sdk_pipe
+  otel_sdk_communicate "SHUTDOWN"
+  \exec 3>&-
   wait $otel_sdk_pid
   \rm $otel_remote_sdk_pipe
 }
@@ -118,33 +124,33 @@ otel_span_start() {
   fi
   local response_pipe=$(mktemp -u)_opentelemetry_shell_$$_response.pipe
   \mkfifo $response_pipe
-  \echo "SPAN_START $response_pipe $traceparent $kind $name" > $otel_remote_sdk_pipe
+  otel_sdk_communicate "SPAN_START $response_pipe $traceparent $kind $name"
   \cat $response_pipe
   \rm $response_pipe &> /dev/null
 }
 
 otel_span_end() {
   local span_id=$1
-  \echo "SPAN_END $span_id" > $otel_remote_sdk_pipe
+  otel_sdk_communicate "SPAN_END $span_id"
 }
 
 otel_span_error() {
   local span_id=$1
-  \echo "SPAN_ERROR $span_id" > $otel_remote_sdk_pipe
+  otel_sdk_communicate "SPAN_ERROR $span_id"
 }
 
 otel_span_attribute() {
   local span_id=$1
   shift
   local kvp=$@
-  \echo "SPAN_ATTRIBUTE $span_id $kvp" > $otel_remote_sdk_pipe
+  otel_sdk_communicate "SPAN_ATTRIBUTE $span_id $kvp"
 }
 
 otel_span_traceparent() {
   local span_id=$1
   local response_pipe=$(mktemp -u)_opentelemetry_shell_$$.pipe
   \mkfifo $response_pipe
-  \echo "SPAN_TRACEPARENT $response_pipe $span_id" > $otel_remote_sdk_pipe
+  otel_sdk_communicate "SPAN_TRACEPARENT $response_pipe $span_id"
   \cat $response_pipe
   \rm $response_pipe &> /dev/null
 }

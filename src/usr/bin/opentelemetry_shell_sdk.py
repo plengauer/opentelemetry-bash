@@ -40,20 +40,19 @@ def main():
     fifo_path = sys.argv[1]
     scope = sys.argv[2]
     version = sys.argv[3]
-    while True:
-        with open(fifo_path, 'r') as fifo:
-            for line in fifo:
-                line = line.strip()
-                if len(line) == 0:
-                    continue
-                tokens = line.split(' ', 1)
-                tokens = [token for token in tokens if token]
-                try:
-                    handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-                except EOFError:
-                    sys.exit(0)
-                except Exception as error:
-                    print(error)
+    with open(fifo_path, 'r') as fifo:
+        for line in fifo:
+            line = line.strip()
+            if len(line) == 0:
+                continue
+            tokens = line.split(' ', 1)
+            tokens = [token for token in tokens if token]
+            try:
+                handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
+            except EOFError:
+                sys.exit(0)
+            except Exception as error:
+                print(error)
 
 def handle(scope, version, command, arguments):
     match command:
