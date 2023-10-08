@@ -6,10 +6,10 @@
 # All other functions and variables are for internal use only and therefore subject to change without notice!  #
 ################################################################################################################
 
-if [ "$OTEL_SHELL_AUTO_INJECTED" != "" ]; then
+if [ "$OTEL_SHELL_INJECTED" != "" ]; then
   return 0
 fi
-OTEL_SHELL_AUTO_INJECTED=TRUE
+OTEL_SHELL_INJECTED=TRUE
 
 . /usr/bin/opentelemetry_shell_api.sh
 
@@ -97,10 +97,12 @@ otel_injected_shell_with_c_flag() {
     local args="$args \"$arg\""
   done
   if [ "$otel_shell" = "zsh" ]; then
-    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE=INTERNAL OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
+      OTEL_SHELL_AUTO_INJECTED=TRUE \
       ${(z)=cmd} -c ". /usr/bin/opentelemetry_shell.sh; . $args"
   else
-    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE=INTERNAL OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
+      OTEL_SHELL_AUTO_INJECTED=TRUE \
       $cmd -c ". /usr/bin/opentelemetry_shell.sh; . $args"
   fi
 }
@@ -131,7 +133,8 @@ otel_injected_shell_with_copy() {
   \cat $script >> $temporary_script
   \chmod +x $temporary_script
   local exit_code=0
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE=INTERNAL OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
+    OTEL_SHELL_AUTO_INJECTED=TRUE \
     $cmd $temporary_script || exit_code=$?
   \rm $temporary_script
   return $exit_code
@@ -160,12 +163,7 @@ otel_check_populate_cgi() {
 
 otel_on_script_start() {
   otel_init || return $?
-  local kind=SERVER
-  if [ -n "$OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE" ]; then
-    kind=$OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE
-    unset OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE
-  fi
-  root_span_id=$(otel_span_start $kind $(otel_command_self))
+  root_span_id=$(otel_span_start SERVER $(otel_command_self))
   otel_check_populate_cgi $root_span_id
   otel_span_activate $root_span_id
 }
@@ -189,6 +187,9 @@ otel_on_script_exec() {
   export OTEL_TRACEPARENT=$traceparent
   exec "$@"
 }
-trap otel_on_script_end EXIT
-alias exec=otel_on_script_exec
-otel_on_script_start
+if [ "$OTEL_SHELL_AUTO_INJECTED" != "TRUE" ]; then
+  unset OTEL_SHELL_AUTO_INJECTED
+  trap otel_on_script_end EXIT
+  alias exec=otel_on_script_exec
+  otel_on_script_start
+fi
