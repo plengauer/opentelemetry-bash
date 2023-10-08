@@ -741,6 +741,7 @@ jobs:
         continue-on-error: true
 
   build_and_publish_dash:
+    needs: publish
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -756,7 +757,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_RELEASE_TOKEN }}
         with:
-          tag_name: v${{ steps.version.outputs.version }}
+          tag_name: v${{ steps.version.outputs.version }}-dash
           release_name: Release Dash v${{ steps.version.outputs.version }}
           draft: false
           prerelease: false
@@ -773,6 +774,7 @@ jobs:
         continue-on-error: true
 
   build_and_publish_bash:
+    needs: publish
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -788,7 +790,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_RELEASE_TOKEN }}
         with:
-          tag_name: v${{ steps.version.outputs.version }}
+          tag_name: v${{ steps.version.outputs.version }}-bash
           release_name: Release Bash v${{ steps.version.outputs.version }}
           draft: false
           prerelease: false
@@ -805,6 +807,7 @@ jobs:
         continue-on-error: true
 
   build_and_publish_zsh:
+    needs: publish
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -820,7 +823,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_RELEASE_TOKEN }}
         with:
-          tag_name: v${{ steps.version.outputs.version }}
+          tag_name: v${{ steps.version.outputs.version }}-zsh
           release_name: Release Zsh v${{ steps.version.outputs.version }}
           draft: false
           prerelease: false
