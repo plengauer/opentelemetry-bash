@@ -193,12 +193,6 @@ otel_observe() {
     local attributes="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE"
     unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
   fi
-  if [ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0" ]; then
-    set -- "$@" "$(eval \echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0)"
-  fi
-  if [ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1" ]; then
-    set -- "$@" "$(eval \echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1)"
-  fi
   local span_id=$(otel_span_start $kind $name)
   otel_span_attribute $span_id subprocess.executable.name=$(\echo $command | \cut -d' ' -f1 | \rev | \cut -d'/' -f1 | \rev)
   if [ "$otel_shell" != "zsh" ]; then
@@ -207,6 +201,12 @@ otel_observe() {
   otel_span_attribute $span_id subprocess.command=$command
   otel_span_attribute $span_id subprocess.command_args=$(\echo $command | \cut -d' ' -f2-)
   otel_span_activate $span_id
+  if [ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0" ]; then
+    set -- "$@" "$(eval \echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0)"
+  fi
+  if [ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1" ]; then
+    set -- "$@" "$(eval \echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1)"
+  fi
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE=$OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE \
     "$@" || local exit_code=$?
