@@ -163,17 +163,21 @@ otel_check_populate_cgi() {
 
 otel_on_script_start() {
   otel_init || return $?
-  root_span_id=$(otel_span_start SERVER $(otel_command_self))
-  otel_check_populate_cgi $root_span_id
-  otel_span_activate $root_span_id
+  if [ "$otel_create_root_span" = "TRUE" ]; then
+    root_span_id=$(otel_span_start SERVER $(otel_command_self))
+    otel_check_populate_cgi $root_span_id
+    otel_span_activate $root_span_id
+  fi
 }
 otel_on_script_end() {
   local exit_code=$?
-  if [ "$exit_code" -ne "0" ]; then
-    otel_span_error $root_span_id
+  if [ "$otel_create_root_span" = "TRUE" ]; then
+    if [ "$exit_code" -ne "0" ]; then
+      otel_span_error $root_span_id
+    fi
+    otel_span_deactivate
+    otel_span_end $root_span_id
   fi
-  otel_span_deactivate
-  otel_span_end $root_span_id
   otel_shutdown
 }
 otel_on_script_exec() {
@@ -188,8 +192,9 @@ otel_on_script_exec() {
   exec "$@"
 }
 if [ "$OTEL_SHELL_AUTO_INJECTED" != "TRUE" ]; then
+  local otel_create_root_span=TRUE
   unset OTEL_SHELL_AUTO_INJECTED
-  trap otel_on_script_end EXIT
-  alias exec=otel_on_script_exec
-  otel_on_script_start
 fi
+trap otel_on_script_end EXIT
+alias exec=otel_on_script_exec
+otel_on_script_start
