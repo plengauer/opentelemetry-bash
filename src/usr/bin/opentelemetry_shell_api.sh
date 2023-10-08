@@ -203,7 +203,10 @@ otel_observe() {
   otel_span_activate $span_id
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE=$OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE \
-    "$@" $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST || local exit_code=$?
+    "$@" \
+    "$(eval echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0)" \
+    "$(eval echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1)"
+  || local exit_code=$?
   otel_span_deactivate $span_id
   otel_span_attribute $span_id subprocess.exit_code=$exit_code
   if [ "$exit_code" -ne "0" ]; then

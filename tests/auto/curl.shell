@@ -1,2 +1,2 @@
 . /usr/bin/opentelemetry_shell.sh
-curl http://www.google.com/ 2> /dev/null 1> /dev/null
+curl http://www.google.com/
