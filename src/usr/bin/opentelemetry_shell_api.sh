@@ -203,7 +203,7 @@ otel_observe() {
   local traceparent=$(otel_span_traceparent $span_id)
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE=$OTEL_SHELL_ROOT_SPAN_KIND_OVERRIDE \
-    OTEL_TRACEPARENT=$traceparent "$@" || local exit_code=$?
+    OTEL_TRACEPARENT=$traceparent eval "$@" || local exit_code=$?
   otel_span_attribute $span_id subprocess.exit_code=$exit_code
   if [ "$exit_code" -ne "0" ]; then
     otel_span_error $span_id

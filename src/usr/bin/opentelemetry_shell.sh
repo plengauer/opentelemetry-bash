@@ -59,7 +59,7 @@ otel_propagated_wget() {
   local method=GET
   OTEL_SHELL_SPAN_NAME_OVERRIDE="$command" OTEL_SHELL_SPAN_KIND_OVERRIDE=CLIENT OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" \
     OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="http.url=$url,http.scheme=$scheme,http.host=$host,http.target=$target,http.method=$method,$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-    "$@" --header="traceparent: $OTEL_TRACEPARENT"
+    "$@" --header='traceparent: $OTEL_TRACEPARENT'
 }
 otel_do_alias wget otel_propagated_wget
 
@@ -75,7 +75,7 @@ otel_propagated_curl() {
   fi
   OTEL_SHELL_SPAN_NAME_OVERRIDE="$command" OTEL_SHELL_SPAN_KIND_OVERRIDE=CLIENT OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" \
     OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="http.url=$url,http.scheme=$scheme,http.host=$host,http.target=$target,http.method=$method,$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-    "$@" -H "traceparent: $OTEL_TRACEPARENT"
+    "$@" -H 'traceparent: $OTEL_TRACEPARENT'
 }
 otel_do_alias curl otel_propagated_curl
 
