@@ -5,6 +5,7 @@
 # All variables are for internal use only and therefore subject to change without notice!        #
 ##################################################################################################
 
+otel_remote_sdk_pipe=$(mktemp -u)_opentelemetry_shell_$$.pipe
 otel_sdk_version=$(\apt show opentelemetry-shell 2> /dev/null | \grep Version | \awk '{ print $2 }')
 otel_shell=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
 otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"
@@ -94,7 +95,6 @@ otel_init() {
   else
     local sdk_output=/dev/null
   fi
-  local otel_remote_sdk_pipe=$(mktemp -u)_opentelemetry_shell_$$.pipe
   \mkfifo $otel_remote_sdk_pipe
   . /opt/opentelemetry_bash/venv/bin/activate
   \python3 /usr/bin/opentelemetry_shell_sdk.py $otel_remote_sdk_pipe "shell" $otel_sdk_version > $sdk_output &
