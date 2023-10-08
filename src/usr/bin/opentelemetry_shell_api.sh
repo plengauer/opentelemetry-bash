@@ -104,7 +104,9 @@ otel_init() {
   fi
   deactivate
   \exec 3> $otel_remote_sdk_pipe
-  otel_sdk_communicate $(otel_resource_attributes | \sed 's/^/RESOURCE_ATTRIBUTE /')
+  otel_resource_attributes | while IFS= read -r kvp; do
+    otel_sdk_communicate "RESOURCE_ATTRIBUTE" "$kvp"
+  done
   otel_sdk_communicate "INIT"
 }
 
