@@ -15,6 +15,7 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor, ConsoleLogExporter
+from opentelemetry.exporter.otlp.proto.http._log_exporter import OTLPLogExporter
 from opentelemetry._logs import set_logger_provider
 
 class AwsEC2ResourceDetector(ResourceDetector):
