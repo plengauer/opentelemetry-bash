@@ -16,7 +16,6 @@ from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapProp
 from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor, ConsoleLogExporter
 from opentelemetry.exporter.otlp.proto.http._log_exporter import OTLPLogExporter
-from opentelemetry._logs import set_logger_provider
 
 class AwsEC2ResourceDetector(ResourceDetector):
     def detect(self) -> Resource:
@@ -65,20 +64,21 @@ def handle(scope, version, command, arguments):
             value = arguments.split('=', 1)[1]
             resource[key] = value
         case 'INIT':
-            tracer_provider = TracerProvider(sampler=sampling.DEFAULT_ON, resource=get_aggregated_resources([
+            final_resources = get_aggregated_resources([
                     AwsEC2ResourceDetector(),
                     KubernetesResourceDetector(),
                     DockerResourceDetector(),
                     OTELResourceDetector(),
-                ]).merge(Resource.create(resource)))
+                ]).merge(Resource.create(resource))
+            tracer_provider = TracerProvider(sampler=sampling.DEFAULT_ON, resource=final_resources)
             tracer_provider.add_span_processor(BatchSpanProcessor(ConsoleSpanExporter() if os.environ.get('OTEL_TRACES_CONSOLE_EXPORTER') == 'TRUE' else OTLPSpanExporter()))
             opentelemetry.trace.set_tracer_provider(tracer_provider)
-            logger_provider = LoggerProvider(resource=resource)
-            set_logger_provider(logger_provider)
+            logger_provider = LoggerProvider(resource=final_resources)
             logger_provider.add_log_record_processor(ConsoleLogExporter if os.environ.get('OTEL_LOGS_CONSOLE_EXPORTER') == 'TRUE' else BatchLogRecordProcessor(OTLPLogExporter()))
+            opentelemetry._logs.set_logger_provider(logger_provider)
         case 'SHUTDOWN':
             opentelemetry.trace.get_tracer_provider().shutdown()
-            opentelemetry.trace.get_logger_provider().shutdown()
+            opentelemetry._logs.get_logger_provider().shutdown()
             raise EOFError
         case 'SPAN_START':
             tokens = arguments.split(' ', 3)
