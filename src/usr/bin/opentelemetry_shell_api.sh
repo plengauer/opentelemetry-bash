@@ -169,9 +169,9 @@ otel_span_deactivate() {
 }
 
 otel_log_record() {
-  span_id=$1
+  local span_id=$1
   shift
-  line="$*"
+  local line="$*"
   otel_sdk_communicate "LOG_RECORD" "$span_id" "$line"
 }
 
@@ -215,7 +215,11 @@ otel_observe() {
     set -- "$@" "$(eval \echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1)"
   fi
   local exit_code=0
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" "$@" 2> >(while read line; do otel_log_record "$span_id" "$line"; echo "$line" >&2; done) || local exit_code=$?
+  if [ "$otel_shell" = "bash" ] || [ "$otel_shell" = "zsh" ]; then
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" "$@" 2> >(while read line; do otel_log_record "$span_id" "$line"; echo "$line" >&2; done) || local exit_code=$?
+  else
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" "$@" || local exit_code=$?
+  fi
   otel_span_deactivate $span_id
   otel_span_attribute $span_id subprocess.exit_code=$exit_code
   if [ "$exit_code" -ne "0" ]; then
