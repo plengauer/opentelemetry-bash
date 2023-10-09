@@ -1,0 +1,65 @@
+{
+    "name": "cat FILE_THAT_DOES_NOT_EXIST",
+    "context": {
+        "trace_id": "0x2c859c44ac6a0b766a6ba0f8f433c8f2",
+        "span_id": "0x41a4e72d92ae0fd8",
+        "trace_state": "[]"
+    },
+    "kind": "SpanKind.INTERNAL",
+    "parent_id": null,
+    "start_time": "2023-10-09T21:23:56.967771Z",
+    "end_time": "2023-10-09T21:23:57.019395Z",
+    "status": {
+        "status_code": "ERROR"
+    },
+    "attributes": {
+        "subprocess.executable.name": "cat",
+        "subprocess.executable.path": "/usr/bin/cat",
+        "subprocess.command": "cat FILE_THAT_DOES_NOT_EXIST",
+        "subprocess.command_args": "FILE_THAT_DOES_NOT_EXIST",
+        "subprocess.exit_code": "1"
+    },
+    "events": [],
+    "links": [],
+    "resource": {
+        "attributes": {
+            "telemetry.sdk.language": "shell",
+            "telemetry.sdk.name": "opentelemetry",
+            "telemetry.sdk.version": "1.9.0",
+            "service.name": "unknown_service",
+            "cloud.provider": "aws",
+            "cloud.platform": "aws_ec2",
+            "cloud.account.id": "785162395342",
+            "cloud.region": "eu-central-1",
+            "cloud.availability_zone": "eu-central-1b",
+            "host.id": "i-0cc7f3f5704acad32",
+            "host.type": "t2.micro",
+            "host.name": "ip-172-31-38-124.eu-central-1.compute.internal",
+            "container.runtime": "docker",
+            "container.id": "5ecdb00f46c4ecc3b409a3bbf6b4ad00ce91c1cb3c055a911ee49cc93ff019b4",
+            "process.pid": "946",
+            "process.executable.name": "bash",
+            "process.executable.path": "/usr/bin/bash",
+            "process.command": "bash -x ./sdk/test_sdk_observe_failed.shell",
+            "process.command_args": "-x ./sdk/test_sdk_observe_failed.shell",
+            "process.owner": "root",
+            "process.runtime.name": "bash",
+            "process.runtime.description": "Bourne Again Shell",
+            "process.runtime.version": "5",
+            "service.version": ""
+        },
+        "schema_url": ""
+    }
+}
+{
+    "body": "cat: FILE_THAT_DOES_NOT_EXIST: No such file or directory",
+    "severity_number": "<SeverityNumber.UNSPECIFIED: 0>",
+    "severity_text": "unspecified",
+    "attributes": null,
+    "dropped_attributes": 0,
+    "timestamp": "2023-10-09T21:23:57.007636Z",
+    "trace_id": "0x2c859c44ac6a0b766a6ba0f8f433c8f2",
+    "span_id": "0x41a4e72d92ae0fd8",
+    "trace_flags": 1,
+    "resource": "BoundedAttributes({'telemetry.sdk.language': 'shell', 'telemetry.sdk.name': 'opentelemetry', 'telemetry.sdk.version': '1.9.0', 'service.name': 'unknown_service', 'cloud.provider': 'aws', 'cloud.platform': 'aws_ec2', 'cloud.account.id': '785162395342', 'cloud.region': 'eu-central-1', 'cloud.availability_zone': 'eu-central-1b', 'host.id': 'i-0cc7f3f5704acad32', 'host.type': 't2.micro', 'host.name': 'ip-172-31-38-124.eu-central-1.compute.internal', 'container.runtime': 'docker', 'container.id': '5ecdb00f46c4ecc3b409a3bbf6b4ad00ce91c1cb3c055a911ee49cc93ff019b4', 'process.pid': '946', 'process.executable.name': 'bash', 'process.executable.path': '/usr/bin/bash', 'process.command': 'bash -x ./sdk/test_sdk_observe_failed.shell', 'process.command_args': '-x ./sdk/test_sdk_observe_failed.shell', 'process.owner': 'root', 'process.runtime.name': 'bash', 'process.runtime.description': 'Bourne Again Shell', 'process.runtime.version': '5', 'service.version': ''}, maxlen=None)"
+}

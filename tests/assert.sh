@@ -20,7 +20,7 @@ resolve_span() {
     local selector=' | select('"$selector"')'
   fi
   for i in 1 2 4 8 16 32; do
-    local span="$(\cat $OTEL_TRACES_LOCATION | \jq ".$selector")"
+    local span="$(\cat $OTEL_TRACES_LOCATION | \jq ". | select(.name != null)$selector")"
     if [ -n "$span" ]; then
       \echo "$span"
       return 0

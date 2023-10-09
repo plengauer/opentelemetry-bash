@@ -97,7 +97,7 @@ otel_init() {
   fi
   \mkfifo $otel_remote_sdk_pipe
   . /opt/opentelemetry_bash/venv/bin/activate
-  \python3 /usr/bin/opentelemetry_shell_sdk.py $otel_remote_sdk_pipe "shell" $otel_sdk_version > $sdk_output &
+  \python3 /usr/bin/opentelemetry_shell_sdk.py $otel_remote_sdk_pipe "shell" $otel_sdk_version > $sdk_output 2> $sdk_output &
   otel_sdk_pid=$!
   if [ "$otel_shell" = "bash" ]; then
     disown $otel_sdk_pid
@@ -124,7 +124,7 @@ otel_span_start() {
   if [ -z "$traceparent" ]; then
     local traceparent=$OTEL_TRACEPARENT
   fi
-  local response_pipe=$(mktemp -u)_opentelemetry_shell_$$_response.pipe
+  local response_pipe=$(mktemp -u)_opentelemetry_shell_$$.pipe
   \mkfifo $response_pipe
   otel_sdk_communicate "SPAN_START $response_pipe $traceparent $kind $name"
   \cat $response_pipe
@@ -200,6 +200,7 @@ otel_observe() {
     local attributes="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE"
     unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
   fi
+
   local span_id=$(otel_span_start $kind $name)
   otel_span_attribute $span_id subprocess.executable.name=$(\echo $command | \cut -d' ' -f1 | \rev | \cut -d'/' -f1 | \rev)
   if [ "$otel_shell" != "zsh" ]; then
@@ -208,18 +209,21 @@ otel_observe() {
   otel_span_attribute $span_id subprocess.command=$command
   otel_span_attribute $span_id subprocess.command_args=$(\echo $command | \cut -d' ' -f2-)
   otel_span_activate $span_id
+
   if [ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0" ]; then
     set -- "$@" "$(eval \echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0)"
   fi
   if [ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1" ]; then
     set -- "$@" "$(eval \echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1)"
   fi
+  local stderr_pipe=$(mktemp -u).opentelemetry_shell_$$.pipe
+  (while IFS= read -r line; do otel_log_record $span_id "$line"; echo "$line" >&2; done < $stderr_pipe) &
+  local stderr_pid=$!
   local exit_code=0
-  if [ "$otel_shell" = "bash" ] || [ "$otel_shell" = "zsh" ]; then
-    OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" "$@" 2> >(while read line; do otel_log_record "$span_id" "$line"; echo "$line" >&2; done) || local exit_code=$?
-  else
-    OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" "$@" || local exit_code=$?
-  fi
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" "$@" 2> $stderr_pipe || local exit_code=$?
+  wait $stderr_pid
+  \rm $stderr_pipe
+
   otel_span_deactivate $span_id
   otel_span_attribute $span_id subprocess.exit_code=$exit_code
   if [ "$exit_code" -ne "0" ]; then

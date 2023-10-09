@@ -1,5 +1,6 @@
 import sys
 import os
+import time
 import json
 import requests
 import opentelemetry
@@ -13,7 +14,8 @@ from opentelemetry.trace import SpanKind
 from opentelemetry.sdk.trace import Span, StatusCode
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
-from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
+from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler, LogRecord
+from opentelemetry.sdk._logs._internal import SeverityNumber
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor, ConsoleLogExporter
 from opentelemetry.exporter.otlp.proto.http._log_exporter import OTLPLogExporter
 
@@ -70,11 +72,13 @@ def handle(scope, version, command, arguments):
                     DockerResourceDetector(),
                     OTELResourceDetector(),
                 ]).merge(Resource.create(resource))
+
             tracer_provider = TracerProvider(sampler=sampling.DEFAULT_ON, resource=final_resources)
             tracer_provider.add_span_processor(BatchSpanProcessor(ConsoleSpanExporter() if os.environ.get('OTEL_TRACES_CONSOLE_EXPORTER') == 'TRUE' else OTLPSpanExporter()))
             opentelemetry.trace.set_tracer_provider(tracer_provider)
+
             logger_provider = LoggerProvider(resource=final_resources)
-            logger_provider.add_log_record_processor(ConsoleLogExporter if os.environ.get('OTEL_LOGS_CONSOLE_EXPORTER') == 'TRUE' else BatchLogRecordProcessor(OTLPLogExporter()))
+            logger_provider.add_log_record_processor(BatchLogRecordProcessor(ConsoleLogExporter() if os.environ.get('OTEL_LOGS_CONSOLE_EXPORTER') == 'TRUE' else OTLPLogExporter()))
             opentelemetry._logs.set_logger_provider(logger_provider)
         case 'SHUTDOWN':
             opentelemetry.trace.get_tracer_provider().shutdown()
@@ -121,13 +125,21 @@ def handle(scope, version, command, arguments):
             span_id = tokens[0]
             line = tokens[1]
             span : Span = spans[span_id]
-            # opentelemetry.log.get_logger(scope, version).emit(LogRecord(
-            #  trace_id=span.get_span_context().trace_id,
-            #  span_id=span.get_span_context().span_id,
-            #  body=line
-            #))
+            logger = opentelemetry._logs.get_logger(scope, version)
+            record = LogRecord(
+              timestamp=int(time.time() * 1e9),
+              trace_id=span.get_span_context().trace_id,
+              span_id=span.get_span_context().span_id,
+              trace_flags=span.get_span_context().trace_flags,
+              severity_text='unspecified',
+              severity_number=SeverityNumber.UNSPECIFIED,
+              body=line,
+              resource=logger.resource,
+            )
+            logger.emit(record)
         case '_':
             return
 
 if __name__ == "__main__":
     main()
+
