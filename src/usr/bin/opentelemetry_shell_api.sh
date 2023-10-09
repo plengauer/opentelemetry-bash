@@ -168,6 +168,13 @@ otel_span_deactivate() {
   export OTEL_TRACEPARENT_STACK=$(\echo $OTEL_TRACEPARENT_STACK | \cut -d'/' -f2-)
 }
 
+otel_log_record() {
+  span_id=$1
+  shift
+  line="$*"
+  otel_sdk_communicate "LOG_RECORD" "$span_id" "$line"
+}
+
 otel_observe() {
   if [ -z "$OTEL_SHELL_SPAN_NAME_OVERRIDE" ]; then
     local name=$@
@@ -208,7 +215,7 @@ otel_observe() {
     set -- "$@" "$(eval \echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1)"
   fi
   local exit_code=0
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" "$@" || local exit_code=$?
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" "$@" 2> >(while read line; do otel_log_record "$span_id" "$line"; echo "$line" >&2; done) || local exit_code=$?
   otel_span_deactivate $span_id
   otel_span_attribute $span_id subprocess.exit_code=$exit_code
   if [ "$exit_code" -ne "0" ]; then

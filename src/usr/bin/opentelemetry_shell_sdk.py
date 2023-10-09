@@ -13,6 +13,9 @@ from opentelemetry.trace import SpanKind
 from opentelemetry.sdk.trace import Span, StatusCode
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
+from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
+from opentelemetry.sdk._logs.export import BatchLogRecordProcessor, ConsoleLogExporter
+from opentelemetry._logs import set_logger_provider
 
 class AwsEC2ResourceDetector(ResourceDetector):
     def detect(self) -> Resource:
@@ -69,8 +72,12 @@ def handle(scope, version, command, arguments):
                 ]).merge(Resource.create(resource)))
             tracer_provider.add_span_processor(BatchSpanProcessor(ConsoleSpanExporter() if os.environ.get('OTEL_TRACES_CONSOLE_EXPORTER') == 'TRUE' else OTLPSpanExporter()))
             opentelemetry.trace.set_tracer_provider(tracer_provider)
+            logger_provider = LoggerProvider(resource=resource)
+            set_logger_provider(logger_provider)
+            logger_provider.add_log_record_processor(ConsoleLogExporter if os.environ.get('OTEL_LOGS_CONSOLE_EXPORTER') == 'TRUE' else BatchLogRecordProcessor(OTLPLogExporter()))
         case 'SHUTDOWN':
             opentelemetry.trace.get_tracer_provider().shutdown()
+            opentelemetry.trace.get_logger_provider().shutdown()
             raise EOFError
         case 'SPAN_START':
             tokens = arguments.split(' ', 3)
@@ -108,6 +115,16 @@ def handle(scope, version, command, arguments):
             TraceContextTextMapPropagator().inject(carrier, opentelemetry.trace.set_span_in_context(span, None))
             with open(response_path, 'w') as response:
                 response.write(carrier.get('traceparent', ''))
+        case 'LOG_RECORD':
+            tokens = arguments.split(' ', 1)
+            span_id = tokens[0]
+            line = tokens[1]
+            span : Span = spans[span_id]
+            # opentelemetry.log.get_logger(scope, version).emit(LogRecord(
+            #  trace_id=span.get_span_context().trace_id,
+            #  span_id=span.get_span_context().span_id,
+            #  body=line
+            #))
         case '_':
             return
 
