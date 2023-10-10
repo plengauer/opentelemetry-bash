@@ -123,7 +123,9 @@ def handle(scope, version, command, arguments):
         case 'LOG_RECORD':
             tokens = arguments.split(' ', 1)
             span_id = tokens[0]
-            line = tokens[1]
+            line = tokens[1] if len(tokens) > 1 else ""
+            if len(line) == 0:
+                return
             span : Span = spans[span_id]
             logger = opentelemetry._logs.get_logger(scope, version)
             record = LogRecord(
