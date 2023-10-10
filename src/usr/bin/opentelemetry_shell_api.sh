@@ -6,7 +6,6 @@
 ##################################################################################################
 
 otel_remote_sdk_pipe=$(mktemp -u)_opentelemetry_shell_$$.pipe
-otel_sdk_version=$(\apt show opentelemetry-shell 2> /dev/null | \grep Version | \awk '{ print $2 }')
 otel_shell=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
 otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE
@@ -15,15 +14,18 @@ otel_command_self() {
   if [ -n "$otel_commandline_override" ]; then
     \echo $otel_commandline_override
   else
-    # \cat /proc/$$/cmdline 2> /dev/null
     \ps -p $$ -o args | \grep -v COMMAND
   fi
+}
+
+otel_package_version() {
+  \apt-cache policy "$1" 2> /dev/null | \grep Installed | \awk '{ print $2 }'
 }
 
 otel_resource_attributes() {
   \echo telemetry.sdk.name=opentelemetry
   \echo telemetry.sdk.language=shell
-  \echo telemetry.sdk.version=$otel_sdk_version
+  \echo telemetry.sdk.version=$(otel_package_version opentelemetry-shell)
 
   \echo process.pid=$$
   \echo process.executable.name=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
@@ -39,41 +41,42 @@ otel_resource_attributes() {
     dash)
       \echo process.runtime.name=dash
       \echo process.runtime.description="Debian Almquist Shell"
+      \echo process.runtime.version=$(otel_package_version dash)
       ;;
     bash)
       \echo process.runtime.name=bash
       \echo process.runtime.description="Bourne Again Shell"
-      \echo process.runtime.version=$BASH_VERSINFO
+      \echo process.runtime.version=$(otel_package_version bash)
       ;;
     zsh)
       \echo process.runtime.name=zsh
       \echo process.runtime.description="Z Shell"
-      \echo process.runtime.version=$(\apt show zsh 2> /dev/null | \grep Version | \awk '{ print $2 }')
+      \echo process.runtime.version=$(otel_package_version zsh)
       ;;
     csh)
       \echo process.runtime.name=csh
       \echo process.runtime.description="C Shell"
-      \echo process.runtime.version=$(\apt show csh 2> /dev/null | \grep Version | \awk '{ print $2 }')
+      \echo process.runtime.version=$(otel_package_version csh)
       ;;
     tcsh)
       \echo process.runtime.name=tcsh
       \echo process.runtime.description="TENEX C Shell"
-      \echo process.runtime.version=$(\apt show tcsh 2> /dev/null | \grep Version | \awk '{ print $2 }')
+      \echo process.runtime.version=$(otel_package_version tcsh)
       ;;
     ksh)
       \echo process.runtime.name=ksh
       \echo process.runtime.description="Korn Shell"
-      \echo process.runtime.version=$(\apt show ksh 2> /dev/null | \grep Version | \awk '{ print $2 }')
+      \echo process.runtime.version=$(otel_package_version ksh)
       ;;
     fish)
       \echo process.runtime.name=fish
       \echo process.runtime.description="Fish Shell"
-      \echo process.runtime.version=$(\apt show fish 2> /dev/null | \grep Version | \awk '{ print $2 }')
+      \echo process.runtime.version=$(otel_package_version fish)
       ;;
     *)
       \echo process.runtime.name=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
       \echo process.runtime.description=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
-      \echo process.runtime.version=$(\apt show $(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev) 2> /dev/null | \grep Version | \awk '{ print $2 }')
+      \echo process.runtime.version=$(otel_package_version $(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev))
       ;;
   esac
 
@@ -97,7 +100,7 @@ otel_init() {
   fi
   \mkfifo $otel_remote_sdk_pipe
   . /opt/opentelemetry_bash/venv/bin/activate
-  \python3 /usr/bin/opentelemetry_shell_sdk.py $otel_remote_sdk_pipe "shell" $otel_sdk_version > $sdk_output 2> $sdk_output &
+  \python3 /usr/bin/opentelemetry_shell_sdk.py $otel_remote_sdk_pipe "shell" $(otel_package_version opentelemetry-shell) > $sdk_output 2> $sdk_output &
   otel_sdk_pid=$!
   if [ "$otel_shell" = "bash" ]; then
     disown $otel_sdk_pid
