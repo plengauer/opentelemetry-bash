@@ -1,4 +1,4 @@
-This project delivers OpenTelemetry traces from shell scripts (POSIX sh, dash, bash, zsh, ...). Compared to other similar projects, it delivers not just an SDK to create spans manually, but also provides context propagation via HTTP (wget and curl), auto-instrumentation for selected commands, custom instrumentations, and auto-injection into child scripts. Its installable via a debian package from the releases in this repository, or from the apt-repository below.
+This project delivers OpenTelemetry traces and logs from shell scripts (POSIX sh, dash, bash, zsh, ...). Compared to other similar projects, it delivers not just an SDK to create spans manually, but also provides context propagation via HTTP (wget and curl), auto-instrumentation for selected commands, custom instrumentations, auto-injection into child scripts and automatic log collection from stderr. Its installable via a debian package from the releases in this repository, or from the apt-repository below.
 
 Use it to manually create spans:
 ```bash
@@ -6,11 +6,15 @@ Use it to manually create spans:
 export OTEL_SERVICE_NAME=Test
 export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=...
 export OTEL_EXPORTER_OTLP_TRACES_HEADERS=...
+export OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=...
+export OTEL_EXPORTER_OTLP_LOGS_HEADERS=...
 . /usr/bin/opentelemetry_shell_api.sh
 # initialize the sdk
 otel_init
 
-# create a default span for the job
+# create a default span for the command and collect all output to stderr as logs
+# the span will contain all the information about the command, including the code location in the script, and error information
+# every line written to stderr will be collected as a log
 otel_observe echo "hello world"
 
 # create a manual span for the job with a custom attribute
@@ -29,6 +33,8 @@ Use it to automatically instrument and inject into child scripts:
 export OTEL_SERVICE_NAME=Test
 export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=...
 export OTEL_EXPORTER_OTLP_TRACES_HEADERS=...
+export OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=...
+export OTEL_EXPORTER_OTLP_LOGS_HEADERS=...
 . /usr/bin/opentelemetry_shell.sh
 
 # create spans for all echo's, both in this script and all child scripts
