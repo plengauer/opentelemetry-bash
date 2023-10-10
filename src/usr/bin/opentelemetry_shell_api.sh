@@ -217,6 +217,7 @@ otel_observe() {
     set -- "$@" "$(eval \echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1)"
   fi
   local stderr_pipe=$(mktemp -u).opentelemetry_shell_$$.pipe
+  \mkfifo $stderr_pipe
   (while IFS= read -r line; do otel_log_record $span_id "$line"; echo "$line" >&2; done < $stderr_pipe) &
   local stderr_pid=$!
   local exit_code=0
