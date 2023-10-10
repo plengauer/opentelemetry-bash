@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-python3 -m venv /opt/opentelemetry_bash/venv
-source /opt/opentelemetry_bash/venv/bin/activate
-pip3 install opentelemetry-sdk opentelemetry-exporter-otlp-proto-http opentelemetry-resourcedetector-docker opentelemetry-resourcedetector-kubernetes
+python3 -m venv /opt/opentelemetry_shell/venv
+source /opt/opentelemetry_shell/venv/bin/activate
+pip3 install -r /opt/opentelemetry_shell/requirements.txt
 deactivate

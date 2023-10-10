@@ -99,7 +99,7 @@ otel_init() {
     local sdk_output=/dev/null
   fi
   \mkfifo $otel_remote_sdk_pipe
-  . /opt/opentelemetry_bash/venv/bin/activate
+  . /opt/opentelemetry_shell/venv/bin/activate
   \python3 /usr/bin/opentelemetry_shell_sdk.py $otel_remote_sdk_pipe "shell" $(otel_package_version opentelemetry-shell) > $sdk_output 2> $sdk_output &
   otel_sdk_pid=$!
   if [ "$otel_shell" = "bash" ]; then

@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
+rm -rf /opt/opentelemetry_bash &> /dev/null || true # clean the old install directory
 if [ "$1" = "remove" ] || [ "$1" = "purge" ]; then
-  rm -rf /opt/opentelemetry_bash
+  rm -rf /opt/opentelemetry_shell
 fi
 exit 0
