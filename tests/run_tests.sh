@@ -11,6 +11,7 @@ for file in $(find . -iname 'test_*.shell') $(find . -iname 'test_*.'$SHELL); do
   export OTEL_TRACES_LOCATION=$(mktemp -u).sdk.out
   export OTEL_SHELL_SDK_OUTPUT_REDIRECT=$(mktemp -u).pipe
   export OTEL_TRACES_CONSOLE_EXPORTER=TRUE
+  export OTEL_METRICS_CONSOLE_EXPORTER=TRUE
   export OTEL_LOGS_CONSOLE_EXPORTER=TRUE
   mkfifo $OTEL_SHELL_SDK_OUTPUT_REDIRECT
   cat $OTEL_SHELL_SDK_OUTPUT_REDIRECT > $OTEL_TRACES_LOCATION &
