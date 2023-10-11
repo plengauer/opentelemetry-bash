@@ -152,22 +152,6 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:latest ksh"
 
-  test-debian-latest-fish:
-    if: ${{ false }}
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: package.deb
-      - run: mv ./package.deb tests
-      - run: sudo apt-get update
-      - run: sudo apt-get remove -y containerd.io
-      - run: sudo apt-get install -y docker.io runc
-      - run: bash -c "cd tests && bash run_tests_containerized.sh debian:latest fish"
-
   test-debian-testing-sh:
     needs: build
     runs-on: ubuntu-latest
@@ -290,22 +274,6 @@ jobs:
       - run: sudo apt-get remove -y containerd.io
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:testing ksh"
-
-  test-debian-testing-fish:
-    if: ${{ false }}
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: package.deb
-      - run: mv ./package.deb tests
-      - run: sudo apt-get update
-      - run: sudo apt-get remove -y containerd.io
-      - run: sudo apt-get install -y docker.io runc
-      - run: bash -c "cd tests && bash run_tests_containerized.sh debian:testing fish"
 
   test-ubuntu-latest-sh:
     needs: build
@@ -430,22 +398,6 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:latest ksh"
 
-  test-ubuntu-latest-fish:
-    if: ${{ false }}
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: package.deb
-      - run: mv ./package.deb tests
-      - run: sudo apt-get update
-      - run: sudo apt-get remove -y containerd.io
-      - run: sudo apt-get install -y docker.io runc
-      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:latest fish"
-
   test-ubuntu-rolling-sh:
     needs: build
     runs-on: ubuntu-latest
@@ -569,22 +521,6 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:rolling ksh"
 
-  test-ubuntu-rolling-fish:
-    if: ${{ false }}
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: package.deb
-      - run: mv ./package.deb tests
-      - run: sudo apt-get update
-      - run: sudo apt-get remove -y containerd.io
-      - run: sudo apt-get install -y docker.io runc
-      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:rolling fish"
-
   test-ubuntu-devel-sh:
     needs: build
     runs-on: ubuntu-latest
@@ -707,22 +643,6 @@ jobs:
       - run: sudo apt-get remove -y containerd.io
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel ksh"
-
-  test-ubuntu-devel-fish:
-    if: ${{ false }}
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: package.deb
-      - run: mv ./package.deb tests
-      - run: sudo apt-get update
-      - run: sudo apt-get remove -y containerd.io
-      - run: sudo apt-get install -y docker.io runc
-      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel fish"
 
   test-debian:
     needs: [test-debian-latest-sh, test-debian-latest-ash, test-debian-latest-dash, test-debian-latest-bash, test-debian-latest-zsh]
