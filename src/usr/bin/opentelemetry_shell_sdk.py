@@ -16,7 +16,6 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExport
 from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 
-# from opentelemetry import metrics
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader, ConsoleMetricExporter
 from opentelemetry.exporter.otlp.proto.http.metric_exporter import OTLPMetricExporter
@@ -84,7 +83,7 @@ def handle(scope, version, command, arguments):
             tracer_provider = TracerProvider(sampler=sampling.DEFAULT_ON, resource=final_resources)
             tracer_provider.add_span_processor(BatchSpanProcessor(ConsoleSpanExporter() if os.environ.get('OTEL_TRACES_CONSOLE_EXPORTER') == 'TRUE' else OTLPSpanExporter()))
             opentelemetry.trace.set_tracer_provider(tracer_provider)
-            
+
             os.environ['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'] = 'delta'
             meter_provider = MeterProvider(metric_readers = [ PeriodicExportingMetricReader(ConsoleMetricExporter() if os.environ.get('OTEL_METRICS_CONSOLE_EXPORTER') == 'TRUE' else OTLPMetricExporter()) ], resource=final_resources)
             opentelemetry.metrics.set_meter_provider(meter_provider)
@@ -94,7 +93,7 @@ def handle(scope, version, command, arguments):
             opentelemetry._logs.set_logger_provider(logger_provider)
         case 'SHUTDOWN':
             opentelemetry.trace.get_tracer_provider().shutdown()
-            opentelemetry.trace.get_meter_provider().shutdown()
+            opentelemetry.metrics.get_meter_provider().shutdown()
             opentelemetry._logs.get_logger_provider().shutdown()
             raise EOFError
         case 'SPAN_START':
