@@ -1,4 +1,4 @@
-This project delivers OpenTelemetry traces and logs from shell scripts (POSIX sh, dash, bash, zsh, ...). Compared to other similar projects, it delivers not just an SDK to create spans manually, but also provides context propagation via HTTP (wget and curl), auto-instrumentation for selected commands, custom instrumentations, auto-injection into child scripts and automatic log collection from stderr. Its installable via a debian package from the releases in this repository, or from the apt-repository below.
+This project delivers OpenTelemetry traces, metrics and logs from shell scripts (POSIX sh, dash, bash, zsh, ...). Compared to other similar projects, it delivers not just an SDK to create spans manually, but also provides context propagation via HTTP (wget and curl), auto-instrumentation for selected commands, custom instrumentations, auto-injection into child scripts and automatic log collection from stderr. Its installable via a debian package from the releases in this repository, or from the apt-repository below.
 
 Use it to manually create spans:
 ```bash
@@ -6,6 +6,8 @@ Use it to manually create spans:
 export OTEL_SERVICE_NAME=Test
 export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=...
 export OTEL_EXPORTER_OTLP_TRACES_HEADERS=...
+export OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=...
+export OTEL_EXPORTER_OTLP_METRICS_HEADERS=...
 export OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=...
 export OTEL_EXPORTER_OTLP_LOGS_HEADERS=...
 . /usr/bin/opentelemetry_shell_api.sh
@@ -14,7 +16,7 @@ otel_init
 
 # create a default span for the command and collect all output to stderr as logs
 # the span will contain all the information about the command, including the code location in the script, and error information
-# every line written to stderr will be collected as a log
+# every line written to stderr will be collected as logs
 otel_observe echo "hello world"
 
 # create a manual span for the job with a custom attribute
@@ -22,6 +24,11 @@ span_id=$(otel_span_start INTERNAL myspan)
 otel_span_attribute $span_id key=value
 echo "hello world again"
 otel_span_end $span_id
+
+# write a metric data point with custom attributes
+metric_id=$(otel_metric_create my.metric)
+otel_metric_attribute $metric_id foo=bar
+otel_metric_add $metric_id 42
 
 # flush and shutdown the sdk
 otel_shutdown
