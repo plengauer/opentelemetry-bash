@@ -1,19 +1,26 @@
 import sys
 import os
 import time
+import traceback
 import json
 import requests
 import opentelemetry
+
 from opentelemetry.sdk.resources import Resource, ResourceDetector, OTELResourceDetector, get_aggregated_resources
-from opentelemetry.sdk.trace import TracerProvider, sampling
-from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
-from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
 from opentelemetry_resourcedetector_docker import DockerResourceDetector
 from opentelemetry_resourcedetector_kubernetes import KubernetesResourceDetector
+
 from opentelemetry.trace import SpanKind
-from opentelemetry.sdk.trace import Span, StatusCode
-from opentelemetry.sdk.resources import Resource
+from opentelemetry.sdk.trace import Span, StatusCode, TracerProvider, sampling
+from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
+from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
+
+# from opentelemetry import metrics
+from opentelemetry.sdk.metrics import MeterProvider
+from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader, ConsoleMetricExporter
+from opentelemetry.exporter.otlp.proto.http.metric_exporter import OTLPMetricExporter
+
 from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler, LogRecord
 from opentelemetry.sdk._logs._internal import SeverityNumber
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor, ConsoleLogExporter
@@ -40,6 +47,7 @@ class AwsEC2ResourceDetector(ResourceDetector):
 
 resource = {}
 spans = {}
+metrics = {}
 
 def main():
     fifo_path = sys.argv[1]
@@ -56,8 +64,8 @@ def main():
                 handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
             except EOFError:
                 sys.exit(0)
-            except Exception as error:
-                print(error)
+            except:
+                traceback.print_exc()
 
 def handle(scope, version, command, arguments):
     match command:
@@ -76,12 +84,17 @@ def handle(scope, version, command, arguments):
             tracer_provider = TracerProvider(sampler=sampling.DEFAULT_ON, resource=final_resources)
             tracer_provider.add_span_processor(BatchSpanProcessor(ConsoleSpanExporter() if os.environ.get('OTEL_TRACES_CONSOLE_EXPORTER') == 'TRUE' else OTLPSpanExporter()))
             opentelemetry.trace.set_tracer_provider(tracer_provider)
+            
+            os.environ['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'] = 'delta'
+            meter_provider = MeterProvider(metric_readers = [ PeriodicExportingMetricReader(ConsoleMetricExporter() if os.environ.get('OTEL_METRICS_CONSOLE_EXPORTER') == 'TRUE' else OTLPMetricExporter()) ], resource=final_resources)
+            opentelemetry.metrics.set_meter_provider(meter_provider)
 
             logger_provider = LoggerProvider(resource=final_resources)
             logger_provider.add_log_record_processor(BatchLogRecordProcessor(ConsoleLogExporter() if os.environ.get('OTEL_LOGS_CONSOLE_EXPORTER') == 'TRUE' else OTLPLogExporter()))
             opentelemetry._logs.set_logger_provider(logger_provider)
         case 'SHUTDOWN':
             opentelemetry.trace.get_tracer_provider().shutdown()
+            opentelemetry.trace.get_meter_provider().shutdown()
             opentelemetry._logs.get_logger_provider().shutdown()
             raise EOFError
         case 'SPAN_START':
@@ -120,6 +133,29 @@ def handle(scope, version, command, arguments):
             TraceContextTextMapPropagator().inject(carrier, opentelemetry.trace.set_span_in_context(span, None))
             with open(response_path, 'w') as response:
                 response.write(carrier.get('traceparent', ''))
+        case 'METRIC_CREATE':
+            tokens = arguments.split(' ', 1)
+            response_path = tokens[0]
+            metric_name = tokens[1]
+            metric_id = "0"
+            metrics[metric_id] = { 'name': metric_name, 'attributes': {} }
+            with open(response_path, 'w') as response:
+                response.write(metric_id)
+        case 'METRIC_ATTRIBUTE':
+            tokens = arguments.split(' ', 1)
+            metric_id = tokens[0]
+            keyvaluepair = tokens[1]
+            tokens = keyvaluepair.split('=', 1)
+            key = tokens[0]
+            value = tokens[1]
+            metrics[metric_id]['attributes'][key] = value
+        case 'METRIC_ADD':
+            tokens = arguments.split(' ', 1)
+            metric_id = tokens[0]
+            value = float(tokens[1])
+            metric = metrics[metric_id]
+            opentelemetry.metrics.get_meter(scope, version).create_counter(metric['name']).add(value, metric['attributes'])
+            del metrics[metric_id]
         case 'LOG_RECORD':
             tokens = arguments.split(' ', 1)
             span_id = tokens[0]

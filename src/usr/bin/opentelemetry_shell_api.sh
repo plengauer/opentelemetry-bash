@@ -171,6 +171,28 @@ otel_span_deactivate() {
   export OTEL_TRACEPARENT_STACK=$(\echo $OTEL_TRACEPARENT_STACK | \cut -d'/' -f2-)
 }
 
+otel_metric_create() {
+  local metric_name=$1
+  local response_pipe=$(mktemp -u)_opentelemetry_shell_$$.pipe
+  \mkfifo $response_pipe
+  otel_sdk_communicate "METRIC_CREATE" "$response_pipe" "$metric_name"
+  \cat $response_pipe
+  \rm $response_pipe &> /dev/null
+}
+
+otel_metric_attribute() {
+  local metric_id=$1
+  shift
+  local kvp="$*"
+  otel_sdk_communicate "METRIC_ATTRIBUTE" "$metric_id" "$kvp"
+}
+
+otel_metric_add() {
+  local metric_id=$1
+  local value=$2
+  otel_sdk_communicate "METRIC_ADD" "$metric_id" "$value"
+}
+
 otel_log_record() {
   local span_id=$1
   shift
