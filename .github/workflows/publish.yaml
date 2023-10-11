@@ -44,6 +44,21 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:latest sh"
 
+  test-debian-latest-ash:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: package.deb
+      - run: mv ./package.deb tests
+      - run: sudo apt-get update
+      - run: sudo apt-get remove -y containerd.io
+      - run: sudo apt-get install -y docker.io runc
+      - run: bash -c "cd tests && bash run_tests_containerized.sh debian:latest ash"
+
   test-debian-latest-dash:
     needs: build
     runs-on: ubuntu-latest
@@ -167,6 +182,21 @@ jobs:
       - run: sudo apt-get remove -y containerd.io
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:testing sh"
+
+  test-debian-testing-ash:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: package.deb
+      - run: mv ./package.deb tests
+      - run: sudo apt-get update
+      - run: sudo apt-get remove -y containerd.io
+      - run: sudo apt-get install -y docker.io runc
+      - run: bash -c "cd tests && bash run_tests_containerized.sh debian:testing ash"
 
   test-debian-testing-dash:
     needs: build
@@ -292,6 +322,21 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:latest sh"
 
+  test-ubuntu-latest-ash:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: package.deb
+      - run: mv ./package.deb tests
+      - run: sudo apt-get update
+      - run: sudo apt-get remove -y containerd.io
+      - run: sudo apt-get install -y docker.io runc
+      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:latest ash"
+
   test-ubuntu-latest-dash:
     needs: build
     runs-on: ubuntu-latest
@@ -415,6 +460,21 @@ jobs:
       - run: sudo apt-get remove -y containerd.io
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:rolling sh"
+
+  test-ubuntu-rolling-ash:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: package.deb
+      - run: mv ./package.deb tests
+      - run: sudo apt-get update
+      - run: sudo apt-get remove -y containerd.io
+      - run: sudo apt-get install -y docker.io runc
+      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:rolling ash"
 
   test-ubuntu-rolling-dash:
     needs: build
@@ -540,6 +600,21 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel sh"
 
+  test-ubuntu-devel-ash:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: package.deb
+      - run: mv ./package.deb tests
+      - run: sudo apt-get update
+      - run: sudo apt-get remove -y containerd.io
+      - run: sudo apt-get install -y docker.io runc
+      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel ash"
+
   test-ubuntu-devel-dash:
     needs: build
     runs-on: ubuntu-latest
@@ -650,13 +725,13 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel fish"
 
   test-debian:
-    needs: [test-debian-latest-sh, test-debian-latest-dash, test-debian-latest-bash, test-debian-latest-zsh]
+    needs: [test-debian-latest-sh, test-debian-latest-ash, test-debian-latest-dash, test-debian-latest-bash, test-debian-latest-zsh]
     runs-on: ubuntu-latest
     steps:
       - run: echo debian
 
   test-ubuntu:
-    needs: [test-ubuntu-latest-sh, test-ubuntu-latest-dash, test-ubuntu-latest-bash, test-ubuntu-latest-zsh, test-ubuntu-rolling-sh, test-ubuntu-rolling-dash, test-ubuntu-rolling-bash, test-ubuntu-rolling-zsh]
+    needs: [test-ubuntu-latest-sh, test-ubuntu-latest-ash, test-ubuntu-latest-dash, test-ubuntu-latest-bash, test-ubuntu-latest-zsh, test-ubuntu-rolling-sh, test-ubuntu-rolling-ash, test-ubuntu-rolling-dash, test-ubuntu-rolling-bash, test-ubuntu-rolling-zsh]
     runs-on: ubuntu-latest
     steps:
       - run: echo ubuntu
@@ -666,6 +741,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo sh
+
+  test-ash:
+    needs: [test-debian-latest-ash, test-ubuntu-latest-ash, test-ubuntu-rolling-ash]
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo ash
 
   test-dash:
     needs: [test-debian-latest-dash, test-ubuntu-latest-dash, test-ubuntu-rolling-dash]
@@ -710,7 +791,7 @@ jobs:
       - run: echo fish
 
   publish:
-    needs: [build, test-package, test-debian, test-ubuntu, test-sh, test-dash, test-bash, test-zsh]
+    needs: [build, test-package, test-debian, test-ubuntu, test-sh, test-ash, test-dash, test-bash, test-zsh]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

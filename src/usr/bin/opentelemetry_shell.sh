@@ -140,6 +140,7 @@ otel_injected_shell_with_copy() {
   return $exit_code
 }
 otel_do_alias sh otel_injected_shell_with_copy
+otel_do_alias ash otel_injected_shell_with_copy
 otel_do_alias dash otel_injected_shell_with_copy
 
 otel_check_populate_cgi() {
