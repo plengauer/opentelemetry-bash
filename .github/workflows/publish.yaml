@@ -686,14 +686,14 @@ jobs:
     steps:
       - run: echo zsh
 
-  test-csh:
-    needs: [test-debian-latest-csh, test-ubuntu-latest-csh, test-ubuntu-rolling-csh]
+  test-tcsh:
+    needs: [test-debian-latest-tcsh, test-ubuntu-latest-tcsh, test-ubuntu-rolling-tcsh]
     runs-on: ubuntu-latest
     steps:
       - run: echo csh
 
-  test-tcsh:
-    needs: [test-debian-latest-tcsh, test-ubuntu-latest-tcsh, test-ubuntu-rolling-tcsh]
+  test-pdksh:
+    needs: [test-debian-latest-pdksh, test-ubuntu-latest-pdksh, test-ubuntu-rolling-pdksh]
     runs-on: ubuntu-latest
     steps:
       - run: echo tcsh
@@ -703,12 +703,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo ksh
-
-  test-fish:
-    needs: [test-debian-latest-fish, test-ubuntu-latest-fish, test-ubuntu-rolling-fish]
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo fish
 
   publish:
     needs: [build, test-package, test-debian, test-ubuntu, test-sh, test-ash, test-dash, test-bash, test-zsh]
