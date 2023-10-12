@@ -102,11 +102,7 @@ otel_init() {
   fi
   \mkfifo $otel_remote_sdk_pipe
   . /opt/opentelemetry_shell/venv/bin/activate
-  \python3 /usr/bin/opentelemetry_shell_sdk.py $otel_remote_sdk_pipe "shell" $(otel_package_version opentelemetry-shell) > $sdk_output 2> $sdk_output &
-  otel_sdk_pid=$!
-  if [ "$otel_shell" = "bash" ]; then
-    disown $otel_sdk_pid
-  fi
+  (\python3 /usr/bin/opentelemetry_shell_sdk.py $otel_remote_sdk_pipe "shell" $(otel_package_version opentelemetry-shell) > $sdk_output 2> $sdk_output &)
   deactivate
   \exec 3> $otel_remote_sdk_pipe
   otel_resource_attributes | while IFS= read -r kvp; do
@@ -118,7 +114,6 @@ otel_init() {
 otel_shutdown() {
   otel_sdk_communicate "SHUTDOWN"
   \exec 3>&-
-  wait $otel_sdk_pid
   \rm $otel_remote_sdk_pipe
 }
 
@@ -245,11 +240,9 @@ otel_observe() {
   fi
   local stderr_pipe=$(mktemp -u).opentelemetry_shell_$$.pipe
   \mkfifo $stderr_pipe
-  (while IFS= read -r line; do otel_log_record $span_id "$line"; echo "$line" >&2; done < $stderr_pipe) &
-  local stderr_pid=$!
+  ((while IFS= read -r line; do otel_log_record $span_id "$line"; echo "$line" >&2; done < $stderr_pipe) &)
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" "$@" 2> $stderr_pipe || local exit_code=$?
-  wait $stderr_pid
   \rm $stderr_pipe
 
   otel_span_deactivate $span_id
