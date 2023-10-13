@@ -177,7 +177,7 @@ def handle(scope, version, command, arguments):
               severity_text='unspecified',
               severity_number=SeverityNumber.UNSPECIFIED,
               body=line,
-              resource=logger.resource if hasattr(obj, "resource") else Resource.create({}),
+              resource=logger.resource if hasattr(logger, "resource") else Resource.create({}),
             )
             logger.emit(record)
         case '_':
