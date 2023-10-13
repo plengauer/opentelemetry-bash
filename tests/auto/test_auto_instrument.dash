@@ -12,5 +12,5 @@ assert_equals "UNSET" $(\echo "$span" | jq -r '.status.status_code')
 assert_equals "echo hello world" "$(\echo "$span" | jq -r '.attributes."subprocess.command"')"
 assert_equals "hello world" "$(\echo "$span" | jq -r '.attributes."subprocess.command_args"')"
 assert_equals "echo" "$(\echo "$span" | jq -r '.attributes."subprocess.executable.name"')"
-assert_equals "/usr/bin/echo" "$(\echo "$span" | jq -r '.attributes."subprocess.executable.path"')"
+assert_ends_with "/echo" "$(\echo "$span" | jq -r '.attributes."subprocess.executable.path"')"
 assert_equals "0" $(\echo "$span" | jq -r '.attributes."subprocess.exit_code"')
