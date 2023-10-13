@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: sudo apt-get install devscripts debhelper
-      - run: dpkg-deb --root-owner-group --build . ../package.deb
+      - run: dpkg-deb --root-owner-group -Zgzip --build . ../package.deb
       - uses: actions/upload-artifact@v2
         with:
           name: package.deb
