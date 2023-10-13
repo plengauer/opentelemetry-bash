@@ -106,7 +106,7 @@ otel_injected_shell_with_c_flag() {
       $cmd -c ". /usr/bin/opentelemetry_shell.sh; . $args"
   fi
 }
-if [ -z "$PS1" ]; then
+if [[ $- != *i* ]]; then
   otel_do_alias bash otel_injected_shell_with_c_flag
   otel_do_alias zsh otel_injected_shell_with_c_flag
 fi
@@ -141,7 +141,7 @@ otel_injected_shell_with_copy() {
   \rm $temporary_script
   return $exit_code
 }
-if [ -z "$PS1" ]; then
+if [[ $- != *i* ]]; then
   otel_do_alias sh otel_injected_shell_with_copy
   otel_do_alias ash otel_injected_shell_with_copy
   otel_do_alias dash otel_injected_shell_with_copy
