@@ -29,6 +29,81 @@ jobs:
       - run: sudo apt-get -y install ./package.deb
       - run: sudo apt-get -y remove opentelemetry-shell
 
+  test-debian-stable-sh:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: package.deb
+      - run: mv ./package.deb tests
+      - run: sudo apt-get update
+      - run: sudo apt-get remove -y containerd.io
+      - run: sudo apt-get install -y docker.io runc
+      - run: bash -c "cd tests && bash run_tests_containerized.sh debian:stable sh"
+
+  test-debian-stable-ash:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: package.deb
+      - run: mv ./package.deb tests
+      - run: sudo apt-get update
+      - run: sudo apt-get remove -y containerd.io
+      - run: sudo apt-get install -y docker.io runc
+      - run: bash -c "cd tests && bash run_tests_containerized.sh debian:stable ash"
+
+  test-debian-stable-dash:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: package.deb
+      - run: mv ./package.deb tests
+      - run: sudo apt-get update
+      - run: sudo apt-get remove -y containerd.io
+      - run: sudo apt-get install -y docker.io runc
+      - run: bash -c "cd tests && bash run_tests_containerized.sh debian:stable dash"
+
+  test-debian-stable-bash:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: package.deb
+      - run: mv ./package.deb tests
+      - run: sudo apt-get update
+      - run: sudo apt-get remove -y containerd.io
+      - run: sudo apt-get install -y docker.io runc
+      - run: bash -c "cd tests && bash run_tests_containerized.sh debian:stable bash"
+
+  test-debian-stable-zsh:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: package.deb
+      - run: mv ./package.deb tests
+      - run: sudo apt-get update
+      - run: sudo apt-get remove -y containerd.io
+      - run: sudo apt-get install -y docker.io runc
+      - run: bash -c "cd tests && bash run_tests_containerized.sh debian:stable zsh"
+
   test-debian-latest-sh:
     needs: build
     runs-on: ubuntu-latest
@@ -103,54 +178,6 @@ jobs:
       - run: sudo apt-get remove -y containerd.io
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:latest zsh"
-
-  test-debian-latest-tcsh:
-    if: ${{ false }}
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: package.deb
-      - run: mv ./package.deb tests
-      - run: sudo apt-get update
-      - run: sudo apt-get remove -y containerd.io
-      - run: sudo apt-get install -y docker.io runc
-      - run: bash -c "cd tests && bash run_tests_containerized.sh debian:latest tcsh"
-
-  test-debian-latest-pdksh:
-    if: ${{ false }}
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: package.deb
-      - run: mv ./package.deb tests
-      - run: sudo apt-get update
-      - run: sudo apt-get remove -y containerd.io
-      - run: sudo apt-get install -y docker.io runc
-      - run: bash -c "cd tests && bash run_tests_containerized.sh debian:latest pdksh"
-
-  test-debian-latest-ksh:
-    if: ${{ false }}
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: package.deb
-      - run: mv ./package.deb tests
-      - run: sudo apt-get update
-      - run: sudo apt-get remove -y containerd.io
-      - run: sudo apt-get install -y docker.io runc
-      - run: bash -c "cd tests && bash run_tests_containerized.sh debian:latest ksh"
 
   test-debian-testing-sh:
     needs: build
@@ -227,54 +254,6 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:testing zsh"
 
-  test-debian-testing-tcsh:
-    if: ${{ false }}
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: package.deb
-      - run: mv ./package.deb tests
-      - run: sudo apt-get update
-      - run: sudo apt-get remove -y containerd.io
-      - run: sudo apt-get install -y docker.io runc
-      - run: bash -c "cd tests && bash run_tests_containerized.sh debian:testing tcsh"
-
-  test-debian-testing-pdksh:
-    if: ${{ false }}
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: package.deb
-      - run: mv ./package.deb tests
-      - run: sudo apt-get update
-      - run: sudo apt-get remove -y containerd.io
-      - run: sudo apt-get install -y docker.io runc
-      - run: bash -c "cd tests && bash run_tests_containerized.sh debian:testing pdksh"
-
-  test-debian-testing-ksh:
-    if: ${{ false }}
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: package.deb
-      - run: mv ./package.deb tests
-      - run: sudo apt-get update
-      - run: sudo apt-get remove -y containerd.io
-      - run: sudo apt-get install -y docker.io runc
-      - run: bash -c "cd tests && bash run_tests_containerized.sh debian:testing ksh"
-
   test-ubuntu-latest-sh:
     needs: build
     runs-on: ubuntu-latest
@@ -349,54 +328,6 @@ jobs:
       - run: sudo apt-get remove -y containerd.io
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:latest zsh"
-
-  test-ubuntu-latest-tcsh:
-    if: ${{ false }}
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: package.deb
-      - run: mv ./package.deb tests
-      - run: sudo apt-get update
-      - run: sudo apt-get remove -y containerd.io
-      - run: sudo apt-get install -y docker.io runc
-      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:latest tcsh"
-
-  test-ubuntu-latest-pdksh:
-    if: ${{ false }}
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: package.deb
-      - run: mv ./package.deb tests
-      - run: sudo apt-get update
-      - run: sudo apt-get remove -y containerd.io
-      - run: sudo apt-get install -y docker.io runc
-      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:latest pdksh"
-
-  test-ubuntu-latest-ksh:
-    if: ${{ false }}
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: package.deb
-      - run: mv ./package.deb tests
-      - run: sudo apt-get update
-      - run: sudo apt-get remove -y containerd.io
-      - run: sudo apt-get install -y docker.io runc
-      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:latest ksh"
 
   test-ubuntu-rolling-sh:
     needs: build
@@ -473,54 +404,6 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:rolling zsh"
 
-  test-ubuntu-rolling-tcsh:
-    if: ${{ false }}
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: package.deb
-      - run: mv ./package.deb tests
-      - run: sudo apt-get update
-      - run: sudo apt-get remove -y containerd.io
-      - run: sudo apt-get install -y docker.io runc
-      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:rolling tcsh"
-
-  test-ubuntu-rolling-pdksh:
-    if: ${{ false }}
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: package.deb
-      - run: mv ./package.deb tests
-      - run: sudo apt-get update
-      - run: sudo apt-get remove -y containerd.io
-      - run: sudo apt-get install -y docker.io runc
-      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:rolling pdksh"
-
-  test-ubuntu-rolling-ksh:
-    if: ${{ false }}
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: package.deb
-      - run: mv ./package.deb tests
-      - run: sudo apt-get update
-      - run: sudo apt-get remove -y containerd.io
-      - run: sudo apt-get install -y docker.io runc
-      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:rolling ksh"
-
   test-ubuntu-devel-sh:
     needs: build
     runs-on: ubuntu-latest
@@ -596,56 +479,8 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel zsh"
 
-  test-ubuntu-devel-tcsh:
-    if: ${{ false }}
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: package.deb
-      - run: mv ./package.deb tests
-      - run: sudo apt-get update
-      - run: sudo apt-get remove -y containerd.io
-      - run: sudo apt-get install -y docker.io runc
-      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel tcsh"
-
-  test-ubuntu-devel-pdksh:
-    if: ${{ false }}
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: package.deb
-      - run: mv ./package.deb tests
-      - run: sudo apt-get update
-      - run: sudo apt-get remove -y containerd.io
-      - run: sudo apt-get install -y docker.io runc
-      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel pdksh"
-
-  test-ubuntu-devel-ksh:
-    if: ${{ false }}
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: package.deb
-      - run: mv ./package.deb tests
-      - run: sudo apt-get update
-      - run: sudo apt-get remove -y containerd.io
-      - run: sudo apt-get install -y docker.io runc
-      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel ksh"
-
   test-debian:
-    needs: [test-debian-latest-sh, test-debian-latest-ash, test-debian-latest-dash, test-debian-latest-bash, test-debian-latest-zsh]
+    needs: [test-debian-stable-sh, test-debian-stable-ash, test-debian-stable-dash, test-debian-stable-bash, test-debian-stable-zsh, test-debian-latest-sh, test-debian-latest-ash, test-debian-latest-dash, test-debian-latest-bash, test-debian-latest-zsh]
     runs-on: ubuntu-latest
     steps:
       - run: echo debian
@@ -657,55 +492,49 @@ jobs:
       - run: echo ubuntu
 
   test-sh:
-    needs: [test-debian-latest-sh, test-ubuntu-latest-sh, test-ubuntu-rolling-sh]
+    needs: [test-debian-stable-sh, test-debian-latest-sh, test-ubuntu-latest-sh, test-ubuntu-rolling-sh]
     runs-on: ubuntu-latest
     steps:
       - run: echo sh
 
   test-ash:
-    needs: [test-debian-latest-ash, test-ubuntu-latest-ash, test-ubuntu-rolling-ash]
+    needs: [test-debian-stable-ash, test-debian-latest-ash, test-ubuntu-latest-ash, test-ubuntu-rolling-ash]
     runs-on: ubuntu-latest
     steps:
       - run: echo ash
 
   test-dash:
-    needs: [test-debian-latest-dash, test-ubuntu-latest-dash, test-ubuntu-rolling-dash]
+    needs: [test-debian-stable-dash, test-debian-latest-dash, test-ubuntu-latest-dash, test-ubuntu-rolling-dash]
     runs-on: ubuntu-latest
     steps:
       - run: echo dash
 
   test-bash:
-    needs: [test-debian-latest-bash, test-ubuntu-latest-bash, test-ubuntu-rolling-bash]
+    needs: [test-debian-stable-bash, test-debian-latest-bash, test-ubuntu-latest-bash, test-ubuntu-rolling-bash]
     runs-on: ubuntu-latest
     steps:
       - run: echo bash
 
   test-zsh:
-    needs: [test-debian-latest-zsh, test-ubuntu-latest-zsh, test-ubuntu-rolling-zsh]
+    needs: [test-debian-stable-zsh, test-debian-latest-zsh, test-ubuntu-latest-zsh, test-ubuntu-rolling-zsh]
     runs-on: ubuntu-latest
     steps:
       - run: echo zsh
 
-  test-tcsh:
-    needs: [test-debian-latest-tcsh, test-ubuntu-latest-tcsh, test-ubuntu-rolling-tcsh]
+  test-shell:
+    needs: [test-sh, test-ash, test-dash, test-bash, test-zsh]
     runs-on: ubuntu-latest
     steps:
-      - run: echo csh
+      - run: echo shell
 
-  test-pdksh:
-    needs: [test-debian-latest-pdksh, test-ubuntu-latest-pdksh, test-ubuntu-rolling-pdksh]
+  test-os:
+    needs: [test-debian, test-ubuntu]
     runs-on: ubuntu-latest
     steps:
-      - run: echo tcsh
-
-  test-ksh:
-    needs: [test-debian-latest-ksh, test-ubuntu-latest-ksh, test-ubuntu-rolling-ksh]
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo ksh
+      - run: echo os
 
   publish:
-    needs: [build, test-package, test-debian, test-ubuntu, test-sh, test-ash, test-dash, test-bash, test-zsh]
+    needs: [build, test-package, test-shell, test-os]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
