@@ -29,7 +29,7 @@ otel_do_alias() {
     local new_command="$2 \\$1"
   else
     if [ "${prev_command#OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE=}" != "$prev_command" ]; then
-      local prev_command=$(\printf '%s' "$prev_command" | \cut -d" " -f2-)
+      local prev_command="$(\printf '%s' "$prev_command" | \cut -d" " -f2-)"
     fi
     local new_command="$2 $prev_command"
   fi
@@ -38,7 +38,7 @@ otel_do_alias() {
 
 otel_instrument() {
   otel_do_alias $1 'otel_observe' || return $?
-  export OTEL_SHELL_CUSTOM_INSTRUMENTATIONS=$(\echo "$OTEL_SHELL_CUSTOM_INSTRUMENTATIONS $1" | \xargs)
+  export OTEL_SHELL_CUSTOM_INSTRUMENTATIONS="$(\echo "$OTEL_SHELL_CUSTOM_INSTRUMENTATIONS $1" | \xargs)"
 }
 
 otel_outstrument() {
