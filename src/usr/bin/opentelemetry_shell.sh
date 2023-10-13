@@ -158,7 +158,7 @@ otel_check_populate_cgi() {
   otel_span_attribute $span_id http.status_code=200
   otel_span_attribute $span_id http.status_text=OK
   otel_span_attribute $span_id http.target=$SCRIPT_NAME
-  otel_span_attribute $span_id http.url=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f1 | tr '[:upper:]' '[:lower:]')://$SERVER_NAME:$SERVER_PORT$SCRIPT_NAME
+  otel_span_attribute $span_id http.url=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f1 | \tr '[:upper:]' '[:lower:]')://$SERVER_NAME:$SERVER_PORT$SCRIPT_NAME
   otel_span_attribute $span_id net.peer.ip=$REMOTE_ADDR
 }
 
