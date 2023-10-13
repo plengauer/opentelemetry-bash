@@ -1,7 +1,7 @@
 Package: opentelemetry-shell
-Version: 1.12.5
+Version: 1.12.6
 Architecture: all
-Depends: awk, apt, procps, python3.11, python3.11-pip, python3.11-venv
+Depends: awk, apt, procps, python3.11, python3-pip, python3-venv
 Priority: extra
 Maintainer: Philipp Lengauer <p.lengauer@gmail.com>
 Homepage: https://github.com/plengauer/opentelemetry-bash
