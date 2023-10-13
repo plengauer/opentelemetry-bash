@@ -230,10 +230,10 @@ otel_observe() {
   local span_id=$(otel_span_start $kind "$name")
   otel_span_attribute $span_id subprocess.executable.name=$(\echo "$command" | \cut -d' ' -f1 | \rev | \cut -d'/' -f1 | \rev)
   if [ "$otel_shell" != "zsh" ]; then
-    otel_span_attribute $span_id subprocess.executable.path=$(which $(\echo "$command" | \cut -d' ' -f1))
+    otel_span_attribute $span_id subprocess.executable.path="$(which $(\echo "$command" | \cut -d' ' -f1))"
   fi
   otel_span_attribute $span_id subprocess.command="$command"
-  otel_span_attribute $span_id subprocess.command_args=$(\echo "$command" | \cut -d' ' -f2-)
+  otel_span_attribute $span_id subprocess.command_args="$(\echo "$command" | \cut -d' ' -f2-)"
   otel_span_activate $span_id
 
   if [ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0" ]; then
