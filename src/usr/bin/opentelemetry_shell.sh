@@ -106,8 +106,10 @@ otel_injected_shell_with_c_flag() {
       $cmd -c ". /usr/bin/opentelemetry_shell.sh; . $args"
   fi
 }
-otel_do_alias bash otel_injected_shell_with_c_flag
-otel_do_alias zsh otel_injected_shell_with_c_flag
+if [ -z "$PS1" ];
+  otel_do_alias bash otel_injected_shell_with_c_flag
+  otel_do_alias zsh otel_injected_shell_with_c_flag
+then
 
 otel_injected_shell_with_copy() {
   if [ "$1" = "otel_observe" ]; then
@@ -139,9 +141,11 @@ otel_injected_shell_with_copy() {
   \rm $temporary_script
   return $exit_code
 }
-otel_do_alias sh otel_injected_shell_with_copy
-otel_do_alias ash otel_injected_shell_with_copy
-otel_do_alias dash otel_injected_shell_with_copy
+if [ -z "$PS1" ]; then
+  otel_do_alias sh otel_injected_shell_with_copy
+  otel_do_alias ash otel_injected_shell_with_copy
+  otel_do_alias dash otel_injected_shell_with_copy
+fi
 
 otel_check_populate_cgi() {
   local span_id=$1
