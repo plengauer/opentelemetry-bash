@@ -329,7 +329,82 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:unstable zsh"
 
-  test-ubuntu-latest-sh:
+  test-ubuntu-oldstable-sh:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: package.deb
+      - run: mv ./package.deb tests
+      - run: sudo apt-get update
+      - run: sudo apt-get remove -y containerd.io
+      - run: sudo apt-get install -y docker.io runc
+      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:focal sh"
+
+  test-ubuntu-oldstable-ash:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: package.deb
+      - run: mv ./package.deb tests
+      - run: sudo apt-get update
+      - run: sudo apt-get remove -y containerd.io
+      - run: sudo apt-get install -y docker.io runc
+      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:focal ash"
+
+  test-ubuntu-oldstable-dash:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: package.deb
+      - run: mv ./package.deb tests
+      - run: sudo apt-get update
+      - run: sudo apt-get remove -y containerd.io
+      - run: sudo apt-get install -y docker.io runc
+      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:focal dash"
+
+  test-ubuntu-oldstable-bash:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: package.deb
+      - run: mv ./package.deb tests
+      - run: sudo apt-get update
+      - run: sudo apt-get remove -y containerd.io
+      - run: sudo apt-get install -y docker.io runc
+      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:focal bash"
+
+  test-ubuntu-oldstable-zsh:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: package.deb
+      - run: mv ./package.deb tests
+      - run: sudo apt-get update
+      - run: sudo apt-get remove -y containerd.io
+      - run: sudo apt-get install -y docker.io runc
+      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:focal zsh"
+
+  test-ubuntu-stable-sh:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -344,7 +419,7 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:latest sh"
 
-  test-ubuntu-latest-ash:
+  test-ubuntu-stable-ash:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -359,7 +434,7 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:latest ash"
 
-  test-ubuntu-latest-dash:
+  test-ubuntu-stable-dash:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -374,7 +449,7 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:latest dash"
 
-  test-ubuntu-latest-bash:
+  test-ubuntu-stable-bash:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -389,7 +464,7 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:latest bash"
 
-  test-ubuntu-latest-zsh:
+  test-ubuntu-stable-zsh:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -404,7 +479,7 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:latest zsh"
 
-  test-ubuntu-rolling-sh:
+  test-ubuntu-testing-sh:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -419,7 +494,7 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:rolling sh"
 
-  test-ubuntu-rolling-ash:
+  test-ubuntu-testing-ash:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -434,7 +509,7 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:rolling ash"
 
-  test-ubuntu-rolling-dash:
+  test-ubuntu-testing-dash:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -449,7 +524,7 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:rolling dash"
 
-  test-ubuntu-rolling-bash:
+  test-ubuntu-testing-bash:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -464,7 +539,7 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:rolling bash"
 
-  test-ubuntu-rolling-zsh:
+  test-ubuntu-testing-zsh:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -479,7 +554,7 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:rolling zsh"
 
-  test-ubuntu-devel-sh:
+  test-ubuntu-unstable-sh:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -494,7 +569,7 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel sh"
 
-  test-ubuntu-devel-ash:
+  test-ubuntu-unstable-ash:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -509,7 +584,7 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel ash"
 
-  test-ubuntu-devel-dash:
+  test-ubuntu-unstable-dash:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -524,7 +599,7 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel dash"
 
-  test-ubuntu-devel-bash:
+  test-ubuntu-unstable-bash:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -539,7 +614,7 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel bash"
 
-  test-ubuntu-devel-zsh:
+  test-ubuntu-unstable-zsh:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -561,37 +636,37 @@ jobs:
       - run: echo debian
 
   test-ubuntu:
-    needs: [test-ubuntu-latest-sh, test-ubuntu-latest-ash, test-ubuntu-latest-dash, test-ubuntu-latest-bash, test-ubuntu-latest-zsh, test-ubuntu-rolling-sh, test-ubuntu-rolling-ash, test-ubuntu-rolling-dash, test-ubuntu-rolling-bash, test-ubuntu-rolling-zsh]
+    needs: [test-ubuntu-oldstable-sh, test-ubuntu-oldstable-ash, test-ubuntu-oldstable-dash, test-ubuntu-oldstable-bash, test-ubuntu-oldstable-zsh, test-ubuntu-stable-sh, test-ubuntu-stable-ash, test-ubuntu-stable-dash, test-ubuntu-stable-bash, test-ubuntu-stable-zsh, test-ubuntu-testing-sh, test-ubuntu-testing-ash, test-ubuntu-testing-dash, test-ubuntu-testing-bash, test-ubuntu-testing-zsh]
     runs-on: ubuntu-latest
     steps:
       - run: echo ubuntu
 
   test-sh:
-    needs: [test-debian-oldstable-sh, test-debian-stable-sh, test-debian-testing-sh, test-ubuntu-latest-sh, test-ubuntu-rolling-sh]
+    needs: [test-debian-oldstable-sh, test-debian-stable-sh, test-debian-testing-sh, test-ubuntu-oldstable-sh, test-ubuntu-stable-sh, test-ubuntu-testing-sh]
     runs-on: ubuntu-latest
     steps:
       - run: echo sh
 
   test-ash:
-    needs: [test-debian-oldstable-ash, test-debian-stable-ash, test-debian-testing-ash, test-ubuntu-latest-ash, test-ubuntu-rolling-ash]
+    needs: [test-debian-oldstable-ash, test-debian-stable-ash, test-debian-testing-ash, test-ubuntu-oldstable-ash, test-ubuntu-stable-ash, test-ubuntu-testing-ash]
     runs-on: ubuntu-latest
     steps:
       - run: echo ash
 
   test-dash:
-    needs: [test-debian-oldstable-dash, test-debian-stable-dash, test-debian-testing-dash, test-ubuntu-latest-dash, test-ubuntu-rolling-dash]
+    needs: [test-debian-oldstable-dash, test-debian-stable-dash, test-debian-testing-dash, test-ubuntu-oldstable-dash, test-ubuntu-stable-dash, test-ubuntu-testing-dash]
     runs-on: ubuntu-latest
     steps:
       - run: echo dash
 
   test-bash:
-    needs: [test-debian-oldstable-bash, test-debian-stable-bash, test-debian-testing-bash, test-ubuntu-latest-bash, test-ubuntu-rolling-bash]
+    needs: [test-debian-oldstable-bash, test-debian-stable-bash, test-debian-testing-bash, test-ubuntu-oldstable-bash, test-ubuntu-stable-bash, test-ubuntu-testing-bash]
     runs-on: ubuntu-latest
     steps:
       - run: echo bash
 
   test-zsh:
-    needs: [test-debian-oldstable-zsh, test-debian-stable-zsh, test-debian-testing-zsh, test-ubuntu-latest-zsh, test-ubuntu-rolling-zsh]
+    needs: [test-debian-oldstable-zsh, test-debian-stable-zsh, test-debian-testing-zsh, test-ubuntu-oldstable-zsh, test-ubuntu-stable-zsh, test-ubuntu-testing-zsh]
     runs-on: ubuntu-latest
     steps:
       - run: echo zsh
