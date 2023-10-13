@@ -148,7 +148,7 @@ otel_span_error() {
 otel_span_attribute() {
   local span_id=$1
   shift
-  local kvp=$@
+  local kvp="$@"
   otel_sdk_communicate "SPAN_ATTRIBUTE $span_id $kvp"
 }
 
@@ -203,7 +203,7 @@ otel_log_record() {
 
 otel_observe() {
   if [ -z "$OTEL_SHELL_SPAN_NAME_OVERRIDE" ]; then
-    local name=$@
+    local name="$@"
   else
     local name="$OTEL_SHELL_SPAN_NAME_OVERRIDE"
     unset OTEL_SHELL_SPAN_NAME_OVERRIDE
@@ -215,7 +215,7 @@ otel_observe() {
     unset OTEL_SHELL_SPAN_KIND_OVERRIDE
   fi
   if [ -z "$OTEL_SHELL_COMMANDLINE_OVERRIDE" ]; then
-    local command=$@
+    local command="$@"
   else
     local command="$OTEL_SHELL_COMMANDLINE_OVERRIDE"
     unset OTEL_SHELL_COMMANDLINE_OVERRIDE
@@ -227,13 +227,13 @@ otel_observe() {
     unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
   fi
 
-  local span_id=$(otel_span_start $kind $name)
-  otel_span_attribute $span_id subprocess.executable.name=$(\echo $command | \cut -d' ' -f1 | \rev | \cut -d'/' -f1 | \rev)
+  local span_id=$(otel_span_start $kind "$name")
+  otel_span_attribute $span_id subprocess.executable.name=$(\echo "$command" | \cut -d' ' -f1 | \rev | \cut -d'/' -f1 | \rev)
   if [ "$otel_shell" != "zsh" ]; then
-    otel_span_attribute $span_id subprocess.executable.path=$(which $(\echo $command | \cut -d' ' -f1))
+    otel_span_attribute $span_id subprocess.executable.path=$(which $(\echo "$command" | \cut -d' ' -f1))
   fi
-  otel_span_attribute $span_id subprocess.command=$command
-  otel_span_attribute $span_id subprocess.command_args=$(\echo $command | \cut -d' ' -f2-)
+  otel_span_attribute $span_id subprocess.command="$command"
+  otel_span_attribute $span_id subprocess.command_args=$(\echo "$command" | \cut -d' ' -f2-)
   otel_span_activate $span_id
 
   if [ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0" ]; then
@@ -263,7 +263,7 @@ otel_observe() {
     fi
     for attribute in "$@"; do
       if [ -n "$attribute" ]; then
-        otel_span_attribute $span_id $attribute
+        otel_span_attribute $span_id "$attribute"
       fi
     done
   fi
