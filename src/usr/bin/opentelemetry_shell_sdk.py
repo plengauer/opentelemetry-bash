@@ -95,9 +95,12 @@ def handle(scope, version, command, arguments):
                 logger_provider.add_log_record_processor(BatchLogRecordProcessor(ConsoleLogExporter() if os.environ.get('OTEL_LOGS_CONSOLE_EXPORTER') == 'TRUE' else OTLPLogExporter()))
                 opentelemetry._logs.set_logger_provider(logger_provider)
         case 'SHUTDOWN':
-            opentelemetry.trace.get_tracer_provider().shutdown()
-            opentelemetry.metrics.get_meter_provider().shutdown()
-            opentelemetry._logs.get_logger_provider().shutdown()
+            if os.environ.get('OTEL_SHELL_TRACES_ENABLE') == 'TRUE':
+                opentelemetry.trace.get_tracer_provider().shutdown()
+            if os.environ.get('OTEL_SHELL_METRICS_ENABLE') == 'TRUE':
+                opentelemetry.metrics.get_meter_provider().shutdown()
+            if os.environ.get('OTEL_SHELL_LOGS_ENABLE') == 'TRUE':
+                opentelemetry._logs.get_logger_provider().shutdown()
             raise EOFError
         case 'SPAN_START':
             tokens = arguments.split(' ', 3)
