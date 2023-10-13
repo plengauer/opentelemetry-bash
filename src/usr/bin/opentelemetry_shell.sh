@@ -20,8 +20,8 @@ if [ "$otel_shell" = "zsh" ]; then
   setopt aliases &> /dev/null
 fi
 case "$-" in
-  *i*) local otel_is_interactive=TRUE;;
-  *)   local otel_is_interactive=FALSE;;
+  *i*) otel_is_interactive=TRUE;;
+  *)   otel_is_interactive=FALSE;;
 esac
 
 otel_do_alias() {
