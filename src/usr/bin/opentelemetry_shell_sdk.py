@@ -80,17 +80,20 @@ def handle(scope, version, command, arguments):
                     OTELResourceDetector(),
                 ]).merge(Resource.create(resource))
 
-            tracer_provider = TracerProvider(sampler=sampling.DEFAULT_ON, resource=final_resources)
-            tracer_provider.add_span_processor(BatchSpanProcessor(ConsoleSpanExporter() if os.environ.get('OTEL_TRACES_CONSOLE_EXPORTER') == 'TRUE' else OTLPSpanExporter()))
-            opentelemetry.trace.set_tracer_provider(tracer_provider)
+            if os.environ.get('OTEL_SHELL_TRACES_ENABLE') == 'TRUE':
+                tracer_provider = TracerProvider(sampler=sampling.DEFAULT_ON, resource=final_resources)
+                tracer_provider.add_span_processor(BatchSpanProcessor(ConsoleSpanExporter() if os.environ.get('OTEL_TRACES_CONSOLE_EXPORTER') == 'TRUE' else OTLPSpanExporter()))
+                opentelemetry.trace.set_tracer_provider(tracer_provider)
 
-            os.environ['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'] = 'delta'
-            meter_provider = MeterProvider(metric_readers = [ PeriodicExportingMetricReader(ConsoleMetricExporter() if os.environ.get('OTEL_METRICS_CONSOLE_EXPORTER') == 'TRUE' else OTLPMetricExporter()) ], resource=final_resources)
-            opentelemetry.metrics.set_meter_provider(meter_provider)
+            if os.environ.get('OTEL_SHELL_METRICS_ENABLE') == 'TRUE':
+                os.environ['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'] = 'delta'
+                meter_provider = MeterProvider(metric_readers = [ PeriodicExportingMetricReader(ConsoleMetricExporter() if os.environ.get('OTEL_METRICS_CONSOLE_EXPORTER') == 'TRUE' else OTLPMetricExporter()) ], resource=final_resources)
+                opentelemetry.metrics.set_meter_provider(meter_provider)
 
-            logger_provider = LoggerProvider(resource=final_resources)
-            logger_provider.add_log_record_processor(BatchLogRecordProcessor(ConsoleLogExporter() if os.environ.get('OTEL_LOGS_CONSOLE_EXPORTER') == 'TRUE' else OTLPLogExporter()))
-            opentelemetry._logs.set_logger_provider(logger_provider)
+            if os.environ.get('OTEL_SHELL_LOGS_ENABLE') == 'TRUE':
+                logger_provider = LoggerProvider(resource=final_resources)
+                logger_provider.add_log_record_processor(BatchLogRecordProcessor(ConsoleLogExporter() if os.environ.get('OTEL_LOGS_CONSOLE_EXPORTER') == 'TRUE' else OTLPLogExporter()))
+                opentelemetry._logs.set_logger_provider(logger_provider)
         case 'SHUTDOWN':
             opentelemetry.trace.get_tracer_provider().shutdown()
             opentelemetry.metrics.get_meter_provider().shutdown()
