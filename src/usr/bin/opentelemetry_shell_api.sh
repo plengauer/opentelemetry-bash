@@ -91,7 +91,7 @@ otel_resource_attributes() {
 }
 
 otel_sdk_communicate() {
-  \echo "$@" >&3
+  \echo "$*" >&3
 }
 
 otel_init() {
@@ -124,7 +124,7 @@ otel_shutdown() {
 otel_span_start() {
   local kind=$1
   shift
-  local name="$@"
+  local name="$*"
   if [ -z "$traceparent" ]; then
     local traceparent=$OTEL_TRACEPARENT
   fi
@@ -203,7 +203,7 @@ otel_log_record() {
 
 otel_observe() {
   if [ -z "$OTEL_SHELL_SPAN_NAME_OVERRIDE" ]; then
-    local name="$@"
+    local name="$*"
   else
     local name="$OTEL_SHELL_SPAN_NAME_OVERRIDE"
     unset OTEL_SHELL_SPAN_NAME_OVERRIDE
@@ -215,7 +215,7 @@ otel_observe() {
     unset OTEL_SHELL_SPAN_KIND_OVERRIDE
   fi
   if [ -z "$OTEL_SHELL_COMMANDLINE_OVERRIDE" ]; then
-    local command="$@"
+    local command="$*"
   else
     local command="$OTEL_SHELL_COMMANDLINE_OVERRIDE"
     unset OTEL_SHELL_COMMANDLINE_OVERRIDE
