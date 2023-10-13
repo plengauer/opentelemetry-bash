@@ -2,7 +2,8 @@ name: Publish
 
 on:
   push:
-    branches: main
+    branches:
+      - '**'
 
 jobs:
   build:
@@ -685,6 +686,7 @@ jobs:
 
   publish:
     needs: [build, test-package, test-shell, test-os]
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -716,6 +718,7 @@ jobs:
 
   build_and_publish_dash:
     needs: publish
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -749,6 +752,7 @@ jobs:
 
   build_and_publish_bash:
     needs: publish
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -782,6 +786,7 @@ jobs:
 
   build_and_publish_zsh:
     needs: publish
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     defaults:
       run:
