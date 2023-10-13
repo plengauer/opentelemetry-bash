@@ -19,8 +19,10 @@ fi
 if [ "$otel_shell" = "zsh" ]; then
   setopt aliases &> /dev/null
 fi
-
-# TODO alias the alias command transparently to print warnings (or just error) if somebody overrides our aliases
+case "$-" in
+  *i*) local otel_is_interactive=TRUE;;
+  *)   local otel_is_interactive=FALSE;;
+esac
 
 otel_do_alias() {
   local new_command=$2
@@ -106,7 +108,7 @@ otel_injected_shell_with_c_flag() {
       $cmd -c ". /usr/bin/opentelemetry_shell.sh; . $args"
   fi
 }
-if [[ $- != *i* ]]; then
+if [ "$otel_is_interactive" != "TRUE" ]; then
   otel_do_alias bash otel_injected_shell_with_c_flag
   otel_do_alias zsh otel_injected_shell_with_c_flag
 fi
@@ -141,7 +143,7 @@ otel_injected_shell_with_copy() {
   \rm $temporary_script
   return $exit_code
 }
-if [[ $- != *i* ]]; then
+if [ "$otel_is_interactive" != "TRUE" ]; then
   otel_do_alias sh otel_injected_shell_with_copy
   otel_do_alias ash otel_injected_shell_with_copy
   otel_do_alias dash otel_injected_shell_with_copy
