@@ -24,7 +24,7 @@ fi
 
 otel_do_alias() {
   local new_command=$2
-  local prev_command=$(\alias $1 2> /dev/null | \cut -d= -f2- | \tr -d \') || true
+  local prev_command="$(\alias $1 2> /dev/null | \cut -d= -f2- | \tr -d \')" || true
   if [ -z "$prev_command" ]; then
     local new_command="$2 \\$1"
   else
