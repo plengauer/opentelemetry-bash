@@ -106,10 +106,10 @@ otel_injected_shell_with_c_flag() {
       $cmd -c ". /usr/bin/opentelemetry_shell.sh; . $args"
   fi
 }
-if [ -z "$PS1" ];
+if [ -z "$PS1" ]; then
   otel_do_alias bash otel_injected_shell_with_c_flag
   otel_do_alias zsh otel_injected_shell_with_c_flag
-then
+fi
 
 otel_injected_shell_with_copy() {
   if [ "$1" = "otel_observe" ]; then
