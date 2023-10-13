@@ -35,50 +35,42 @@ otel_resource_attributes() {
   \echo process.command=$(otel_command_self)
   \echo process.command_args=$(otel_command_self | \cut -d' ' -f2-)
   \echo process.owner=$(whoami)
+  \echo process.runtime.name=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
+  \echo process.runtime.version=$(otel_package_version $(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev))
+  \echo process.runtime.options=$-
   case $otel_shell in
     sh)
-      \echo process.runtime.name=sh
       \echo process.runtime.description="Bourne Shell"
       ;;
     dash)
-      \echo process.runtime.name=dash
       \echo process.runtime.description="Debian Almquist Shell"
-      \echo process.runtime.version=$(otel_package_version dash)
       ;;
     bash)
-      \echo process.runtime.name=bash
       \echo process.runtime.description="Bourne Again Shell"
-      \echo process.runtime.version=$(otel_package_version bash)
       ;;
     zsh)
-      \echo process.runtime.name=zsh
       \echo process.runtime.description="Z Shell"
-      \echo process.runtime.version=$(otel_package_version zsh)
-      ;;
-    csh)
-      \echo process.runtime.name=csh
-      \echo process.runtime.description="C Shell"
-      \echo process.runtime.version=$(otel_package_version csh)
-      ;;
-    tcsh)
-      \echo process.runtime.name=tcsh
-      \echo process.runtime.description="TENEX C Shell"
-      \echo process.runtime.version=$(otel_package_version tcsh)
       ;;
     ksh)
-      \echo process.runtime.name=ksh
       \echo process.runtime.description="Korn Shell"
-      \echo process.runtime.version=$(otel_package_version ksh)
+      ;;
+    pdksh)
+      \echo process.runtime.description="Public Domain Korn Shell"
+      ;;
+    posh)
+      \echo process.runtime.description="Policy-compliant Ordinary Shell"
+      ;;
+    yash)
+      \echo process.runtime.description="Yet Another Shell"
+      ;;
+    bosh)
+      \echo process.runtime.description="Bourne Shell"
       ;;
     fish)
-      \echo process.runtime.name=fish
-      \echo process.runtime.description="Fish Shell"
-      \echo process.runtime.version=$(otel_package_version fish)
+      \echo process.runtime.description="Friendly Interactive Shell"
       ;;
     *)
-      \echo process.runtime.name=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
       \echo process.runtime.description=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
-      \echo process.runtime.version=$(otel_package_version $(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev))
       ;;
   esac
 
@@ -88,6 +80,8 @@ otel_resource_attributes() {
     \echo service.name=$OTEL_SERVICE_NAME
   fi
   \echo service.version=$OTEL_SERVICE_VERSION
+  \echo service.namespace=$OTEL_SERVICE_NAMESPACE
+  \echo service.instance.id=$OTEL_SERVICE_INSTANCE_ID
 }
 
 otel_sdk_communicate() {
