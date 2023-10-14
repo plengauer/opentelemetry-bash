@@ -92,7 +92,7 @@ otel_init() {
   if [ -n "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" ]; then
     local sdk_output=$OTEL_SHELL_SDK_OUTPUT_REDIRECT
   else
-    if [ -f "/dev/stderr" ]; then
+    if [ -e "/dev/stderr" ] && [ -e "$(\ls -l /dev/stderr)" ]; then
       local std_output=/dev/stderr
     else
       local sdk_output=/dev/null
@@ -100,7 +100,7 @@ otel_init() {
   fi
   \mkfifo $otel_remote_sdk_pipe
   . /opt/opentelemetry_shell/venv/bin/activate
-  (\python3 /usr/bin/opentelemetry_shell_sdk.py $otel_remote_sdk_pipe "shell" $(otel_package_version opentelemetry-shell) > $sdk_output 2> $sdk_output &)
+  (\python3 /usr/bin/opentelemetry_shell_sdk.py $otel_remote_sdk_pipe "shell" $(otel_package_version opentelemetry-shell) > "$sdk_output" 2> "$sdk_output" &)
   deactivate
   \exec 3> $otel_remote_sdk_pipe
   otel_resource_attributes | while IFS= read -r kvp; do
