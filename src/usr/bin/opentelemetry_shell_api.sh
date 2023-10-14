@@ -189,10 +189,10 @@ otel_metric_add() {
 }
 
 otel_log_record() {
-  local span_id=$1
+  local traceparent=$1
   shift
   local line="$*"
-  otel_sdk_communicate "LOG_RECORD" "$span_id" "$line"
+  otel_sdk_communicate "LOG_RECORD" "$traceparent" "$line"
 }
 
 otel_observe() {
@@ -229,6 +229,7 @@ otel_observe() {
   otel_span_attribute $span_id subprocess.command="$command"
   otel_span_attribute $span_id subprocess.command_args="$(\echo "$command" | \cut -d' ' -f2-)"
   otel_span_activate $span_id
+  local traceparent=$OTEL_TRACEPARENT
 
   if [ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0" ]; then
     set -- "$@" "$(eval \echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0)"
@@ -238,7 +239,7 @@ otel_observe() {
   fi
   local stderr_pipe=$(mktemp -u).opentelemetry_shell_$$.pipe
   \mkfifo $stderr_pipe
-  ((while IFS= read -r line; do otel_log_record $span_id "$line"; echo "$line" >&2; done < $stderr_pipe) &)
+  ((while IFS= read -r line; do otel_log_record $traceparent "$line"; echo "$line" >&2; done < $stderr_pipe) &)
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_AUTO_INJECTED=$OTEL_SHELL_AUTO_INJECTED "$@" 2> $stderr_pipe || local exit_code=$?
   \rm $stderr_pipe
