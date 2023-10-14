@@ -162,17 +162,17 @@ def handle(scope, version, command, arguments):
         del metrics[metric_id]
     elif command == 'LOG_RECORD':
         tokens = arguments.split(' ', 1)
-        span_id = tokens[0]
+        traceparent = tokens[0]
         line = tokens[1] if len(tokens) > 1 else ""
         if len(line) == 0:
             return
-        span : Span = spans[span_id]
+        context = opentelemetry.trace.get_current_span(TraceContextTextMapPropagator().extract({'traceparent': traceparent})).get_span_context()
         logger = opentelemetry._logs.get_logger(scope, version)
         record = LogRecord(
             timestamp=int(time.time() * 1e9),
-            trace_id=span.get_span_context().trace_id,
-            span_id=span.get_span_context().span_id,
-            trace_flags=span.get_span_context().trace_flags,
+            trace_id=context.trace_id,
+            span_id=context.span_id,
+            trace_flags=context.trace_flags,
             severity_text='unspecified',
             severity_number=SeverityNumber.UNSPECIFIED,
             body=line,
