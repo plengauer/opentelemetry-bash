@@ -47,6 +47,7 @@ class AwsEC2ResourceDetector(ResourceDetector):
 resource = {}
 spans = {}
 metrics = {}
+next_metric_id = 0
 
 def main():
     fifo_path = sys.argv[1]
@@ -141,7 +142,8 @@ def handle(scope, version, command, arguments):
         tokens = arguments.split(' ', 1)
         response_path = tokens[0]
         metric_name = tokens[1]
-        metric_id = "0"
+        metric_id = str(next_metric_id)
+        next_metric_id = next_metric_id + 1
         metrics[metric_id] = { 'name': metric_name, 'attributes': {} }
         with open(response_path, 'w') as response:
             response.write(metric_id)
