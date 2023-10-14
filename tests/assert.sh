@@ -29,7 +29,7 @@ resolve_span() {
     local selector=' | select('"$selector"')'
   fi
   for i in 1 2 4 8 16 32; do
-    local span="$(\cat $OTEL_TRACES_LOCATION | \jq ". | select(.name != null)$selector")"
+    local span="$(\cat $OTEL_EXPORT_LOCATION | \jq ". | select(.name != null)$selector")"
     if [ -n "$span" ]; then
       \echo "$span"
       return 0
@@ -37,5 +37,22 @@ resolve_span() {
     \sleep $i
   done
   \echo "could not resolve span!" 1>&2
+  exit 1
+}
+
+resolve_log() {
+  local selector="$1"
+  if [ -n "$selector" ]; then
+    local selector=' | select('"$selector"')'
+  fi
+  for i in 1 2 4 8 16 32; do
+    local log="$(\cat $OTEL_EXPORT_LOCATION | \jq ". | select(.body != null)$selector")"
+    if [ -n "$log" ]; then
+      \echo "$log"
+      return 0
+    fi
+    \sleep $i
+  done
+  \echo "could not resolve log!" 1>&2
   exit 1
 }
