@@ -166,7 +166,7 @@ def handle(scope, version, command, arguments):
         line = tokens[1] if len(tokens) > 1 else ""
         if len(line) == 0:
             return
-        context = TraceContextTextMapPropagator().extract({'traceparent': trace_parent})
+        context = TraceContextTextMapPropagator().extract({'traceparent': traceparent})
         logger = opentelemetry._logs.get_logger(scope, version)
         record = LogRecord(
             timestamp=int(time.time() * 1e9),
