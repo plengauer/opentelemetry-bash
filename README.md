@@ -69,7 +69,11 @@ bash ./print_hello_world.sh # this will create a span for the script
 # auto-inject into its children, even without the init code at the start
 ```
 
-Install either from https://github.com/plengauer/opentelemetry-bash/releases/latest or via
+Install either via
+```bash
+wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh -E
+```
+or via
 ```bash
 echo "deb [arch=all] https://3.73.14.87:8000/ stable main" | sudo tee /etc/apt/sources.list.d/example.list
 sudo apt-get update
