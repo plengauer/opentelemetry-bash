@@ -53,8 +53,8 @@ done
 while read cmd; do otel_do_alias $cmd 'otel_observe'; done < /etc/opentelemetry_shell_auto_instrumentations.conf
 
 otel_propagated_wget() {
-  local command="$(\echo $* | \sed 's/^otel_observe //')"
-  local url=$(\echo $@ | \awk '{for(i=1;i<=NF;i++) if ($i ~ /^http/) print $i}')
+  local command="$(\echo "$*" | \sed 's/^otel_observe //')"
+  local url=$(\echo "$@" | \awk '{for(i=1;i<=NF;i++) if ($i ~ /^http/) print $i}')
   local scheme=http # TODO
   local target=$(\echo /${url#*//*/})
   local host=$(\echo ${url} | \awk -F/ '{print $3}')
@@ -67,12 +67,12 @@ otel_propagated_wget() {
 otel_do_alias wget otel_propagated_wget
 
 otel_propagated_curl() {
-  local command="$(\echo $* | \sed 's/^otel_observe //')"
-  local url=$(\echo $@ | \awk '{for(i=1;i<=NF;i++) if ($i ~ /^http/) print $i}')
+  local command="$(\echo "$*" | \sed 's/^otel_observe //')"
+  local url=$(\echo "$@" | \awk '{for(i=1;i<=NF;i++) if ($i ~ /^http/) print $i}')
   local scheme=http # TODO
   local target=$(\echo /${url#*//*/})
   local host=$(\echo ${url} | \awk -F/ '{print $3}')
-  local method=$(\echo $@ | \awk '{for(i=1;i<=NF;i++) if ($i == "-X") print $(i+1)}')
+  local method=$(\echo "$@" | \awk '{for(i=1;i<=NF;i++) if ($i == "-X") print $(i+1)}')
   if [ -z "$method" ]; then
     local method=GET
   fi
