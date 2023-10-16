@@ -109,9 +109,9 @@ def handle(scope, version, command, arguments):
         kind = tokens[2]
         name = tokens[3]
         span = opentelemetry.trace.get_tracer(scope, version).start_span(name, kind=SpanKind[kind.upper()], context=TraceContextTextMapPropagator().extract({'traceparent': trace_parent}))
-        spans[str(span.context.span_id)] = span
+        spans[str(span.get_span_context().span_id)] = span
         with open(response_path, 'w') as response:
-            response.write(str(span.context.span_id))
+            response.write(str(span.get_span_context().span_id))
     elif command == 'SPAN_END':
         span_id = arguments
         span : Span = spans[span_id]
