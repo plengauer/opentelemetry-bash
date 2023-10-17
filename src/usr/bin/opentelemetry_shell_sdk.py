@@ -139,6 +139,7 @@ def handle(scope, version, command, arguments):
         with open(response_path, 'w') as response:
             response.write(carrier.get('traceparent', ''))
     elif command == 'METRIC_CREATE':
+        global next_metric_id
         tokens = arguments.split(' ', 1)
         response_path = tokens[0]
         metric_name = tokens[1]
