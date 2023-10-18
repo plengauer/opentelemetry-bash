@@ -39,18 +39,12 @@ otel_do_alias() {
 }
 
 otel_instrument() {
-  otel_do_alias $1 'otel_observe' || return $?
-  export OTEL_SHELL_CUSTOM_INSTRUMENTATIONS="$(\echo "$OTEL_SHELL_CUSTOM_INSTRUMENTATIONS $1" | \xargs)"
+  otel_do_alias $1 'otel_observe'
 }
 
 otel_outstrument() {
   unalias $1 1> /dev/null 2> /dev/null || true
 }
-
-for cmd in "$OTEL_SHELL_CUSTOM_INSTRUMENTATIONS"; do
-  otel_instrument $cmd
-done
-while read cmd; do otel_do_alias $cmd 'otel_observe'; done < /etc/opentelemetry_shell_auto_instrumentations.conf
 
 otel_propagated_wget() {
   local command="$(\echo "$*" | \sed 's/^otel_observe //')"
@@ -201,4 +195,6 @@ otel_on_script_exec() {
 }
 trap otel_on_script_end EXIT
 alias exec=otel_on_script_exec
+
+IFS=: ; for dir in $PATH; do \find "$dir" -maxdepth 1 -type f -executable 2> /dev/null; done | \rev | \cut -d / -f1 | \rev | \sort -u | while read -r executable; do otel_instrument $executable; done
 otel_on_script_start
