@@ -46,7 +46,7 @@ otel_outstrument() {
   unalias $1 1> /dev/null 2> /dev/null || true
 }
 
-otel_executables=$(IFS=': ' ; for dir in $PATH; do \find $dir -maxdepth 1 -type f,l -executable; done | \rev | \cut -d / -f1 | \rev | \sort -u | \grep -v '[' | \xargs)
+otel_executables=$(IFS=': ' ; for dir in $PATH; do \find $dir -maxdepth 1 -type f,l -executable; done | \rev | \cut -d / -f1 | \rev | \sort -u | \grep -vF '[' | \xargs)
 for cmd in $otel_executables; do
   otel_instrument $cmd
 done
