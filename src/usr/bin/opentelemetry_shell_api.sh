@@ -34,7 +34,7 @@ otel_resource_attributes() {
   \echo process.executable.path=$(\readlink /proc/$$/exe)
   \echo process.command=$(otel_command_self)
   \echo process.command_args=$(otel_command_self | \cut -d' ' -f2-)
-  \echo process.owner=$(whoami)
+  \echo process.owner=$(\whoami)
   \echo process.runtime.name=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
   \echo process.runtime.version=$(otel_package_version $(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev))
   \echo process.runtime.options=$-
