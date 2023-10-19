@@ -46,7 +46,7 @@ otel_outstrument() {
   unalias $1 1> /dev/null 2> /dev/null || true
 }
 
-IFS=: ; for dir in $PATH; do \find "$dir" -maxdepth 1 -type fl -executable 2> /dev/null; done | \rev | \cut -d / -f1 | \rev | \sort -u | while read -r executable; do otel_instrument $executable; done
+IFS=': ' ; for dir in $PATH; do \find $dir -maxdepth 1 -type f,l -executable; done | \rev | \cut -d / -f1 | \rev | \sort -u | while read -r executable; do otel_instrument $executable; done
 
 otel_propagated_wget() {
   local command="$(\echo "$*" | \sed 's/^otel_observe //')"
