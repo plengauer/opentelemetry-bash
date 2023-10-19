@@ -48,7 +48,7 @@ otel_outstrument() {
 
 if [ "$otel_shell" = "zsh" ]; then
   otel_executables=$(for dir in ${(s/:/)PATH}; do \find $dir -maxdepth 1 -type f,l -executable; done | \rev | \cut -d / -f1 | \rev | \sort -u | \grep -vF '[' | \xargs)
-  for cmd in $otel_executables; do
+  for cmd in ${(s/ /)otel_executables}; do
     otel_instrument $cmd
   done
   unset otel_executables  
