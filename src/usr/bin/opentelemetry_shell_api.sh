@@ -5,7 +5,7 @@
 # All variables are for internal use only and therefore subject to change without notice!        #
 ##################################################################################################
 
-otel_remote_sdk_pipe=$(mktemp -u)_opentelemetry_shell_$$.pipe
+otel_remote_sdk_pipe=$(\mktemp -u)_opentelemetry_shell_$$.pipe
 otel_shell=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
 otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE
@@ -122,7 +122,7 @@ otel_span_start() {
   if [ -z "$traceparent" ]; then
     local traceparent=$OTEL_TRACEPARENT
   fi
-  local response_pipe=$(mktemp -u)_opentelemetry_shell_$$.pipe
+  local response_pipe=$(\mktemp -u)_opentelemetry_shell_$$.pipe
   \mkfifo $response_pipe
   otel_sdk_communicate "SPAN_START $response_pipe $traceparent $kind $name"
   \cat $response_pipe
@@ -148,7 +148,7 @@ otel_span_attribute() {
 
 otel_span_traceparent() {
   local span_id=$1
-  local response_pipe=$(mktemp -u)_opentelemetry_shell_$$.pipe
+  local response_pipe=$(\mktemp -u)_opentelemetry_shell_$$.pipe
   \mkfifo $response_pipe
   otel_sdk_communicate "SPAN_TRACEPARENT $response_pipe $span_id"
   \cat $response_pipe
@@ -168,7 +168,7 @@ otel_span_deactivate() {
 
 otel_metric_create() {
   local metric_name=$1
-  local response_pipe=$(mktemp -u)_opentelemetry_shell_$$.pipe
+  local response_pipe=$(\mktemp -u)_opentelemetry_shell_$$.pipe
   \mkfifo $response_pipe
   otel_sdk_communicate "METRIC_CREATE" "$response_pipe" "$metric_name"
   \cat $response_pipe
@@ -237,7 +237,7 @@ otel_observe() {
   if [ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1" ]; then
     set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1)"
   fi
-  local stderr_pipe=$(mktemp -u).opentelemetry_shell_$$.pipe
+  local stderr_pipe=$(\mktemp -u).opentelemetry_shell_$$.pipe
   \mkfifo $stderr_pipe
   ((while IFS= read -r line; do otel_log_record $traceparent "$line"; \echo "$line" >&2; done < $stderr_pipe) &)
   local exit_code=0
