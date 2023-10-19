@@ -46,11 +46,17 @@ otel_outstrument() {
   unalias $1 1> /dev/null 2> /dev/null || true
 }
 
-otel_executables=$(IFS=': ' ; for dir in $PATH; do \find $dir -maxdepth 1 -type f,l -executable; done | \rev | \cut -d / -f1 | \rev | \sort -u | \grep -vF '[' | \xargs)
-for cmd in $otel_executables; do
-  otel_instrument $cmd
-done
-unset otel_executables
+if [ "$otel_shell" = "zsh" ]; then
+  otel_executables=$(for dir in ${(s/:/)PATH}; do \find $dir -maxdepth 1 -type f,l -executable; done | \rev | \cut -d / -f1 | \rev | \sort -u | \grep -vF '[' | \xargs)
+  for cmd in $otel_executables; do
+    otel_instrument $cmd
+  done
+  unset otel_executables  
+else
+  for cmd in $(IFS=': ' ; for dir in $PATH; do \find $dir -maxdepth 1 -type f,l -executable; done | \rev | \cut -d / -f1 | \rev | \sort -u | \grep -vF '[' | \xargs); do
+    otel_instrument $cmd
+  done
+fi
 
 otel_propagated_wget() {
   local command="$(\echo "$*" | \sed 's/^otel_observe //')"
