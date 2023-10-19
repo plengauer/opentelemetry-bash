@@ -46,6 +46,7 @@ class AwsEC2ResourceDetector(ResourceDetector):
 
 resource = {}
 spans = {}
+next_span_id = 0
 metrics = {}
 next_metric_id = 0
 
@@ -103,15 +104,18 @@ def handle(scope, version, command, arguments):
             opentelemetry._logs.get_logger_provider().shutdown()
         raise EOFError
     elif command == 'SPAN_START':
+        global next_span_id
         tokens = arguments.split(' ', 3)
         response_path = tokens[0]
         trace_parent = tokens[1]
         kind = tokens[2]
         name = tokens[3]
+        span_id = next_span_id
+        next_span_id = next_span_id + 1
         span = opentelemetry.trace.get_tracer(scope, version).start_span(name, kind=SpanKind[kind.upper()], context=TraceContextTextMapPropagator().extract({'traceparent': trace_parent}))
-        spans[str(span.context.span_id)] = span
+        spans[str(span_id)] = span
         with open(response_path, 'w') as response:
-            response.write(str(span.context.span_id))
+            response.write(str(span_id))
     elif command == 'SPAN_END':
         span_id = arguments
         span : Span = spans[span_id]
