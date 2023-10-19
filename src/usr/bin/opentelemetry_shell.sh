@@ -47,7 +47,7 @@ otel_outstrument() {
 }
 
 otel_executables=$(IFS=': ' ; for dir in $PATH; do \find $dir -maxdepth 1 -type f,l -executable; done | \rev | \cut -d / -f1 | \rev | \sort -u | \xargs)
-IFS=' ' for cmd in "$otel_executables"; do
+for cmd in $otel_executables; do
   otel_instrument $cmd
 done
 unset otel_executables
