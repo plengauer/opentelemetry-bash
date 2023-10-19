@@ -2,7 +2,7 @@
 ###############################################################################################################
 # This file is doing auto-instrumentation, auto-injection and auto-context-propagation.                        #
 # It should be sourced at the very top of any shell script that should be observed.                            #
-# Only use the "otel_instrument" function directly.                                                            #
+# Only use the "otel_instrument" and "otel_outstrument" function directly.                                     #
 # All other functions and variables are for internal use only and therefore subject to change without notice!  #
 ################################################################################################################
 
@@ -45,6 +45,8 @@ otel_instrument() {
 otel_outstrument() {
   unalias $1 1> /dev/null 2> /dev/null || true
 }
+
+IFS=: ; for dir in $PATH; do \find "$dir" -maxdepth 1 -type fl -executable 2> /dev/null; done | \rev | \cut -d / -f1 | \rev | \sort -u | while read -r executable; do otel_instrument $executable; done
 
 otel_propagated_wget() {
   local command="$(\echo "$*" | \sed 's/^otel_observe //')"
@@ -195,6 +197,4 @@ otel_on_script_exec() {
 }
 trap otel_on_script_end EXIT
 alias exec=otel_on_script_exec
-
-IFS=: ; for dir in $PATH; do \find "$dir" -maxdepth 1 -type f -executable 2> /dev/null; done | \rev | \cut -d / -f1 | \rev | \sort -u | while read -r executable; do otel_instrument $executable; done
 otel_on_script_start
