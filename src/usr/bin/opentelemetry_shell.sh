@@ -2,7 +2,7 @@
 ###############################################################################################################
 # This file is doing auto-instrumentation, auto-injection and auto-context-propagation.                        #
 # It should be sourced at the very top of any shell script that should be observed.                            #
-# Only use the "otel_instrument" function directly.                                                            #
+# Only use the "otel_instrument" and "otel_outstrument" function directly.                                     #
 # All other functions and variables are for internal use only and therefore subject to change without notice!  #
 ################################################################################################################
 
@@ -39,18 +39,24 @@ otel_do_alias() {
 }
 
 otel_instrument() {
-  otel_do_alias $1 'otel_observe' || return $?
-  export OTEL_SHELL_CUSTOM_INSTRUMENTATIONS="$(\echo "$OTEL_SHELL_CUSTOM_INSTRUMENTATIONS $1" | \xargs)"
+  otel_do_alias $1 'otel_observe'
 }
 
 otel_outstrument() {
   unalias $1 1> /dev/null 2> /dev/null || true
 }
 
-for cmd in "$OTEL_SHELL_CUSTOM_INSTRUMENTATIONS"; do
-  otel_instrument $cmd
-done
-while read cmd; do otel_do_alias $cmd 'otel_observe'; done < /etc/opentelemetry_shell_auto_instrumentations.conf
+if [ "$otel_shell" = "zsh" ]; then
+  otel_executables=$(for dir in ${(s/:/)PATH}; do \find $dir -maxdepth 1 -type f,l -executable; done | \rev | \cut -d / -f1 | \rev | \sort -u | \grep -vF '[' | \xargs)
+  for cmd in ${(s/ /)otel_executables}; do
+    otel_instrument $cmd
+  done
+  unset otel_executables  
+else
+  for cmd in $(IFS=': ' ; for dir in $PATH; do \find $dir -maxdepth 1 -type f,l -executable; done | \rev | \cut -d / -f1 | \rev | \sort -u | \grep -vF '[' | \xargs); do
+    otel_instrument $cmd
+  done
+fi
 
 otel_propagated_wget() {
   local command="$(\echo "$*" | \sed 's/^otel_observe //')"
