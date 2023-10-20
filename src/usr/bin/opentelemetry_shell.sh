@@ -115,6 +115,8 @@ otel_injected_shell_with_c_flag() {
   fi
 }
 if [ "$otel_is_interactive" != "TRUE" ]; then
+  otel_do_alias ash otel_injected_shell_with_c_flag
+  otel_do_alias dash otel_injected_shell_with_c_flag
   otel_do_alias bash otel_injected_shell_with_c_flag
   otel_do_alias zsh otel_injected_shell_with_c_flag
 fi
@@ -157,8 +159,6 @@ otel_injected_shell_with_copy() {
 }
 if [ "$otel_is_interactive" != "TRUE" ]; then
   otel_do_alias sh otel_injected_shell_with_copy
-  otel_do_alias ash otel_injected_shell_with_copy
-  otel_do_alias dash otel_injected_shell_with_copy
 fi
 
 otel_check_populate_cgi() {
