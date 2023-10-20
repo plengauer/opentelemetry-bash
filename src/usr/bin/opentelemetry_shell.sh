@@ -143,18 +143,18 @@ otel_injected_shell_with_c_flag() {
   for arg in "$@"; do
     if [ "$arg" = "-c" ]; then
       local is_next_command_string="TRUE"
-    else if [ "$is_next_command_string" = "TRUE" ]; then
+    elif [ "$is_next_command_string" = "TRUE" ]; then
       local cmd="$arg"
       local is_next_command_string="FALSE"
-    else if [ "$is_parsing_command" = "TRUE" ]; then
+    elif [ "$is_parsing_command" = "TRUE" ]; then
       local cmd="$cmd \"$arg\""
-    else if [ "$is_next_option_argument" = "TRUE" ]; then
+    elif [ "$is_next_option_argument" = "TRUE" ]; then
       local options="$options $arg"
       local is_next_option_argument="FALSE"
     else
       case "$arg" in
-        -*) local options="$options $arg" ;;
         -*file) local options="$options $arg"; local is_next_option_argument="TRUE" ;;
+        -*) local options="$options $arg" ;;
         *) local is_parsing_command="TRUE"; local cmd="$cmd \"$arg\"" ;;
       esac
     fi
