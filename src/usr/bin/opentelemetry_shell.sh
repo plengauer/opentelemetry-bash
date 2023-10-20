@@ -122,26 +122,41 @@ otel_injected_shell_with_copy() {
   fi
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-      OTEL_SHELL_AUTO_INJECTED=TRUE "$@" || exit_code=$?
+    OTEL_SHELL_AUTO_INJECTED=TRUE "$@" || exit_code=$?
   \rm $temporary_script
   return $exit_code
 }
 
 otel_injected_shell_with_c_flag() {
+  # type 0 - interactive or from stdin: bash, bash -x
+  # type 1 - script: bash +x script.sh foo bar baz
+  # type 2 - "-c": bash +x -c "echo $0" foo
   # resolve executable
   if [ "$1" = "otel_observe" ]; then
     shift; local cmdline="$*"; local executable="otel_observe $1"; shift
   else
     local cmdline="$*"; local executable=$1; shift
   fi
-  # parse arguments
-  # type 0 - interactive or from stdin: bash, bash -x
-  # type 1 - script: bash +x script.sh foo bar baz
-  # type 2 - "-c": bash +x -c "echo $0" foo
-  local options=""
-  local cmd="."
+  # decompile command
+  local options=""; local cmd=""
+  local is_next_command_string="FALSE"; local is_parsing_command="FALSE"; local is_next_option_argument="FALSE";
   for arg in "$@"; do
-    local cmd="$cmd \"$arg\""
+    if [ "$arg" = "-c" ]; then
+      local is_next_command_string="TRUE"
+    else if [ "$is_next_command_string" = "TRUE" ]; then
+      local cmd="$arg"
+      local is_next_command_string="FALSE"
+    else if [ "$is_parsing_command" = "TRUE" ]; then
+      local cmd="$cmd \"$arg\""
+    else if [ "$is_next_option_argument" = "TRUE" ]; then
+      local options="$options $arg"
+      local is_next_option_argument="FALSE"
+    else
+      case "$arg" in
+        -*) local options="$options $arg" ;;
+        *) local is_parsing_command="TRUE"; local cmd="$cmd \"$arg\"" ;;
+      esac
+    fi
   done
   # compile command
   if [ "$otel_shell" = "zsh" ]; then
@@ -152,7 +167,7 @@ otel_injected_shell_with_c_flag() {
   # run command
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-      OTEL_SHELL_AUTO_INJECTED=TRUE "$@" || exit_code=$?
+    OTEL_SHELL_AUTO_INJECTED=TRUE "$@" || exit_code=$?
   return $exit_code
 }
 
