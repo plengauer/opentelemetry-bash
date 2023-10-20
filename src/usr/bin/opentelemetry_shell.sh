@@ -173,9 +173,9 @@ otel_injected_shell_with_c_flag() {
 }
 
 if [ "$otel_is_interactive" != "TRUE" ]; then
-  otel_do_alias sh otel_injected_shell_with_copy
-  otel_do_alias ash otel_injected_shell_with_c_flag
-  otel_do_alias dash otel_injected_shell_with_c_flag
+  otel_do_alias sh otel_injected_shell_with_copy # cant really rely what kind of shell it actually is, so lets play it safe
+  otel_do_alias ash otel_injected_shell_with_copy # sourced files do not support arguments
+  otel_do_alias dash otel_injected_shell_with_copy # sourced files do not support arguments
   otel_do_alias bash otel_injected_shell_with_c_flag
   otel_do_alias zsh otel_injected_shell_with_c_flag
 fi
