@@ -105,14 +105,12 @@ otel_injected_shell_with_c_flag() {
     local args="$args \"$arg\""
   done
   if [ "$otel_shell" = "zsh" ]; then
-    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-      OTEL_SHELL_AUTO_INJECTED=TRUE \
-      ${(z)=cmd} -c ". /usr/bin/opentelemetry_shell.sh; . $args"
+    set -- ${(z)=cmd} -c ". /usr/bin/opentelemetry_shell.sh; . $args"
   else
-    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-      OTEL_SHELL_AUTO_INJECTED=TRUE \
-      $cmd -c ". /usr/bin/opentelemetry_shell.sh; . $args"
+    set --  $cmd -c ". /usr/bin/opentelemetry_shell.sh; . $args"
   fi
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
+      OTEL_SHELL_AUTO_INJECTED=TRUE "$@"
 }
 if [ "$otel_is_interactive" != "TRUE" ]; then
   otel_do_alias ash otel_injected_shell_with_c_flag
@@ -146,14 +144,13 @@ otel_injected_shell_with_copy() {
   \chmod +x $temporary_script
   local exit_code=0
   if [ "$otel_shell" = "zsh" ]; then
-    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-      OTEL_SHELL_AUTO_INJECTED=TRUE \
-       ${(z)=cmd} $temporary_script || exit_code=$?
+    set -- ${(z)=cmd} $temporary_script
   else
-    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-      OTEL_SHELL_AUTO_INJECTED=TRUE \
-      $cmd $temporary_script || exit_code=$?
+    set -- $cmd $temporary_script
   fi
+  local exit_code=0
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
+      OTEL_SHELL_AUTO_INJECTED=TRUE "$@" || exit_code=$?
   \rm $temporary_script
   return $exit_code
 }
