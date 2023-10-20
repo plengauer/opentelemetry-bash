@@ -155,7 +155,7 @@ otel_injected_shell_with_c_flag() {
       case "$arg" in
         -*file) local options="$options $arg"; local is_next_option_argument="TRUE" ;;
         -*) local options="$options $arg" ;;
-        *) local is_parsing_command="TRUE"; local cmd="$cmd \"$arg\"" ;;
+        *) local is_parsing_command="TRUE"; local cmd="$cmd . \"$arg\"" ;;
       esac
     fi
   done
