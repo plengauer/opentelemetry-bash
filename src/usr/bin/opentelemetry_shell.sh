@@ -150,8 +150,10 @@ otel_injected_shell_with_c_flag() {
     set -- $executable $options -c ". /usr/bin/opentelemetry_shell.sh; $cmd"
   fi
   # run command
+  local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-      OTEL_SHELL_AUTO_INJECTED=TRUE "$@"
+      OTEL_SHELL_AUTO_INJECTED=TRUE "$@" || exit_code=$?
+  return $exit_code
 }
 
 if [ "$otel_is_interactive" != "TRUE" ]; then
