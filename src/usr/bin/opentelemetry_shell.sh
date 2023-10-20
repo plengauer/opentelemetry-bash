@@ -143,9 +143,15 @@ otel_injected_shell_with_copy() {
   \cat $script >> $temporary_script
   \chmod +x $temporary_script
   local exit_code=0
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-    OTEL_SHELL_AUTO_INJECTED=TRUE \
-    $cmd $temporary_script || exit_code=$?
+  if [ "$otel_shell" = "zsh" ]; then
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
+      OTEL_SHELL_AUTO_INJECTED=TRUE \
+       ${(z)=cmd} $temporary_script || exit_code=$?
+  else
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
+      OTEL_SHELL_AUTO_INJECTED=TRUE \
+      $cmd $temporary_script || exit_code=$?
+  fi
   \rm $temporary_script
   return $exit_code
 }
