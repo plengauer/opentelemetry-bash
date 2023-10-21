@@ -46,14 +46,23 @@ otel_outstrument() {
   unalias $1 1> /dev/null 2> /dev/null || true
 }
 
+otel_filter_instrumentations() {
+  if [ "-f" "$0" ] && [ "$(\grep -v '. /usr/bin/opentelemetry_shell.sh' "$0" | \grep -qF '. 
+source ' && \echo 'TRUE' || \echo 'FALSE')" = "FALSE" ]; then
+    \grep -xF "$(\tr -s ' ' '\n' < "$0" | \grep -E '^[a-zA-Z0-9 ._-]*$')"
+  else
+    \cat
+  fi
+}
+
 if [ "$otel_shell" = "zsh" ]; then
-  otel_executables=$(for dir in ${(s/:/)PATH}; do \find $dir -maxdepth 1 -type f,l -executable 2> /dev/null; done | \rev | \cut -d / -f1 | \rev | \sort -u | \grep -vF '[' | \xargs)
+  otel_executables=$(for dir in ${(s/:/)PATH}; do \find $dir -maxdepth 1 -type f,l -executable 2> /dev/null; done | \rev | \cut -d / -f1 | \rev | \sort -u | \grep -vF '[' | otel_filter_instrumentations | \xargs)
   for cmd in ${(s/ /)otel_executables}; do
     otel_instrument $cmd
   done
-  unset otel_executables  
+  unset otel_executables
 else
-  for cmd in $(IFS=': ' ; for dir in $PATH; do \find $dir -maxdepth 1 -type f,l -executable 2> /dev/null; done | \rev | \cut -d / -f1 | \rev | \sort -u | \grep -vF '[' | \xargs); do
+  for cmd in $(IFS=': ' ; for dir in $PATH; do \find $dir -maxdepth 1 -type f,l -executable 2> /dev/null; done | \rev | \cut -d / -f1 | \rev | \sort -u | \grep -vF '[' | otel_filter_instrumentations | \xargs); do
     otel_instrument $cmd
   done
 fi
