@@ -48,7 +48,7 @@ otel_outstrument() {
 
 otel_filter_instrumentations() {
   if [ "-f" "$0" ] && [ "$(\grep -v '. /usr/bin/opentelemetry_shell.sh' "$0" | \grep -qF '. 
-source ' && \echo 'TRUE' || \echo 'FALSE')" = "FALSE"]; then
+source ' && \echo 'TRUE' || \echo 'FALSE')" = "FALSE" ]; then
     \grep -xF "$(\tr -s ' ' '\n' < "$0" | \grep -E '^[a-zA-Z0-9 ._-]*$')"
   else
     \cat
