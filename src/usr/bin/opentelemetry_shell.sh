@@ -70,6 +70,7 @@ otel_propagated_wget() {
     OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0='--header=traceparent: $OTEL_TRACEPARENT' \
     "$@"
 }
+
 otel_do_alias wget otel_propagated_wget
 
 otel_propagated_curl() {
@@ -87,72 +88,117 @@ otel_propagated_curl() {
     OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0='-H' OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1='traceparent: $OTEL_TRACEPARENT' \
     "$@"
 }
+
 otel_do_alias curl otel_propagated_curl
 
-otel_injected_shell_with_c_flag() {
-  if [ "$1" = "otel_observe" ]; then
-    shift
-    local cmdline="$*"
-    local cmd="otel_observe $1"
-    shift
-  else
-    local cmdline="$*"
-    local cmd=$1
-    shift
-  fi
-  local args=""
-  for arg in "$@"; do
-    local args="$args \"$arg\""
-  done
-  if [ "$otel_shell" = "zsh" ]; then
-    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-      OTEL_SHELL_AUTO_INJECTED=TRUE \
-      ${(z)=cmd} -c ". /usr/bin/opentelemetry_shell.sh; . $args"
-  else
-    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-      OTEL_SHELL_AUTO_INJECTED=TRUE \
-      $cmd -c ". /usr/bin/opentelemetry_shell.sh; . $args"
-  fi
-}
-if [ "$otel_is_interactive" != "TRUE" ]; then
-  otel_do_alias bash otel_injected_shell_with_c_flag
-  otel_do_alias zsh otel_injected_shell_with_c_flag
-fi
-
 otel_injected_shell_with_copy() {
+  # resolve executable
   if [ "$1" = "otel_observe" ]; then
-    shift
-    local cmdline="$*"
-    local cmd="otel_observe $1"
-    shift
+    shift; local cmdline="$*"; local executable="otel_observe $1"; shift
   else
-    local cmdline="$*"
-    local cmd=$1
-    shift
+    local cmdline="$*"; local executable=$1; shift
   fi
-  local script=$1
-  shift
-  local args=""
+  # decompile command
+  local options=""; local cmd=""; local args=""
+  local is_next_command_string="FALSE"; local is_parsing_arguments="FALSE"; local is_next_option="FALSE";
   for arg in "$@"; do
-    local args="$args \"$arg\""
+    if [ "$arg" = "-c" ]; then
+      local is_next_command_string="TRUE"
+    elif [ "$is_next_command_string" = "TRUE" ]; then
+      local cmd="$arg"
+      local is_next_command_string="FALSE"
+    elif [ "$is_parsing_command" = "TRUE" ]; then
+      local args="$args \"$arg\""
+    elif [ "$is_next_option" = "TRUE" ]; then
+      local options="$options $arg"
+      local is_next_option="FALSE"
+    else
+      case "$arg" in
+        -*file) local options="$options $arg"; local is_next_option="TRUE" ;;
+        -*) local options="$options $arg" ;;
+        *) local is_parsing_command="TRUE"; local cmd="$arg" ;;
+      esac
+    fi
   done
+  # prepare temporary script
   local temporary_script=$(\mktemp -u)
   \touch $temporary_script
   \echo "set -- $args" >> $temporary_script
   \echo ". /usr/bin/opentelemetry_shell.sh" >> $temporary_script
-  \cat $script >> $temporary_script
+  if [ -f "$cmd" ]; then
+    \cat $cmd >> $temporary_script
+  else
+    \echo "$cmd" >> $temporary_script
+  fi
   \chmod +x $temporary_script
+  # compile command
+  if [ "$otel_shell" = "zsh" ]; then
+    set -- ${(z)=executable} ${(z)=options} $temporary_script
+  else
+    set -- $executable $options $temporary_script
+  fi
+  # run command
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-    OTEL_SHELL_AUTO_INJECTED=TRUE \
-    $cmd $temporary_script || exit_code=$?
+    OTEL_SHELL_AUTO_INJECTED=TRUE "$@" || exit_code=$?
   \rm $temporary_script
   return $exit_code
 }
+
+otel_injected_shell_with_c_flag() {
+  # type 0 - interactive or from stdin: bash, bash -x
+  # type 1 - script: bash +x script.sh foo bar baz
+  # type 2 - "-c": bash +x -c "echo $0" foo
+  # resolve executable
+  if [ "$1" = "otel_observe" ]; then
+    shift; local cmdline="$*"; local executable="otel_observe $1"; shift
+  else
+    local cmdline="$*"; local executable=$1; shift
+  fi
+  # decompile command
+  local options=""; local cmd=""; local args=""
+  local is_next_command_string="FALSE"; local is_parsing_arguments="FALSE"; local is_next_option="FALSE";
+  for arg in "$@"; do
+    if [ "$arg" = "-c" ]; then
+      local is_next_command_string="TRUE"
+    elif [ "$is_next_command_string" = "TRUE" ]; then
+      local cmd="$arg"
+      local is_next_command_string="FALSE"
+    elif [ "$is_parsing_command" = "TRUE" ]; then
+      local args="$args \"$arg\""
+    elif [ "$is_next_option" = "TRUE" ]; then
+      local options="$options $arg"
+      local is_next_option="FALSE"
+    else
+      case "$arg" in
+        -*file) local options="$options $arg"; local is_next_option="TRUE" ;;
+        -*) local options="$options $arg" ;;
+        *) local is_parsing_command="TRUE"; local cmd="$arg" ;;
+      esac
+    fi
+  done
+  # compile command
+  if [ -f "$cmd" ]; then
+    local cmd=". $cmd"
+  fi
+  if [ "$otel_shell" = "zsh" ]; then
+    set -- ${(z)=executable} ${(z)=options} -c ". /usr/bin/opentelemetry_shell.sh; $cmd $args"
+  else
+    set -- $executable $options -c ". /usr/bin/opentelemetry_shell.sh; $cmd $args"
+  fi
+  # run command
+  local exit_code=0
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
+    OTEL_SHELL_AUTO_INJECTED=TRUE "$@" || exit_code=$?
+  return $exit_code
+}
+
 if [ "$otel_is_interactive" != "TRUE" ]; then
-  otel_do_alias sh otel_injected_shell_with_copy
-  otel_do_alias ash otel_injected_shell_with_copy
-  otel_do_alias dash otel_injected_shell_with_copy
+  otel_do_alias sh otel_injected_shell_with_copy # cant really rely what kind of shell it actually is, so lets play it safe
+  otel_do_alias ash otel_injected_shell_with_copy # sourced files do not support arguments
+  otel_do_alias dash otel_injected_shell_with_copy # sourced files do not support arguments
+  otel_do_alias bash otel_injected_shell_with_c_flag
+  otel_do_alias zsh otel_injected_shell_with_c_flag
 fi
 
 otel_check_populate_cgi() {
@@ -183,6 +229,7 @@ otel_on_script_start() {
     otel_span_activate $otel_root_span_id
   fi
 }
+
 otel_on_script_end() {
   local exit_code=$?
   if [ -n "$otel_root_span_id" ]; then
@@ -194,6 +241,7 @@ otel_on_script_end() {
   fi
   otel_shutdown
 }
+
 otel_on_script_exec() {
   if [ "$1" = "otel_observe" ]; then
     shift
@@ -203,8 +251,9 @@ otel_on_script_exec() {
   otel_span_end $span_id
   otel_on_script_end
   export OTEL_TRACEPARENT=$traceparent
-  exec "$@"
+  \exec "$@"
 }
+
 trap otel_on_script_end EXIT
 alias exec=otel_on_script_exec
 otel_on_script_start
