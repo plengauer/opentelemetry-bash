@@ -47,6 +47,7 @@ otel_outstrument() {
 }
 
 otel_filter_instrumentations() {
+  # TODO $0 is not correct when auto-injecting into a script
   if [ "-f" "$0" ] && [ "$(\grep -v '. /usr/bin/opentelemetry_shell.sh' "$0" | \grep -qF '. 
 source ' && \echo 'TRUE' || \echo 'FALSE')" = "FALSE" ]; then
     \grep -xF "$(\tr -s ' ' '\n' < "$0" | \grep -E '^[a-zA-Z0-9 ._-]*$')"
@@ -202,7 +203,7 @@ otel_injected_shell_with_c_flag() {
   return $exit_code
 }
 
-if [ "$otel_is_interactive" != "TRUE" ]; then
+if [ "$otel_is_interactive" != "TRUE" ]; then # TODO do this always, not just when non-interactive. but then interactive injection must be handled properly!
   otel_do_alias sh otel_injected_shell_with_copy # cant really rely what kind of shell it actually is, so lets play it safe
   otel_do_alias ash otel_injected_shell_with_copy # sourced files do not support arguments
   otel_do_alias dash otel_injected_shell_with_copy # sourced files do not support arguments
