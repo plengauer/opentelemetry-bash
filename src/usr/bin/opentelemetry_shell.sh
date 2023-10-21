@@ -108,7 +108,7 @@ otel_injected_shell_with_copy() {
     local cmdline="$*"; local executable=$1; shift
   fi
   # decompile command
-  local options=""; local cmd=""; local args=""
+  local options=""; local cmd=""; local args=""; local dollar_zero="$1"
   local is_next_command_string="FALSE"; local is_parsing_arguments="FALSE"; local is_next_option="FALSE";
   for arg in "$@"; do
     if [ "$arg" = "-c" ]; then
@@ -125,7 +125,7 @@ otel_injected_shell_with_copy() {
       case "$arg" in
         -*file) local options="$options $arg"; local is_next_option="TRUE" ;;
         -*) local options="$options $arg" ;;
-        *) local is_parsing_command="TRUE"; local cmd="$arg" ;;
+        *) local is_parsing_command="TRUE"; local cmd="$arg"; local dollar_zero="$arg" ;;
       esac
     fi
   done
@@ -165,7 +165,7 @@ otel_injected_shell_with_c_flag() {
     local cmdline="$*"; local executable=$1; shift
   fi
   # decompile command
-  local options=""; local cmd=""; local args=""
+  local options=""; local cmd=""; local args=""; local dollar_zero="$1"
   local is_next_command_string="FALSE"; local is_parsing_arguments="FALSE"; local is_next_option="FALSE";
   for arg in "$@"; do
     if [ "$arg" = "-c" ]; then
@@ -182,7 +182,7 @@ otel_injected_shell_with_c_flag() {
       case "$arg" in
         -*file) local options="$options $arg"; local is_next_option="TRUE" ;;
         -*) local options="$options $arg" ;;
-        *) local is_parsing_command="TRUE"; local cmd="$arg" ;;
+        *) local is_parsing_command="TRUE"; local cmd="$arg"; local dollar_zero="$arg" ;;
       esac
     fi
   done
@@ -191,9 +191,9 @@ otel_injected_shell_with_c_flag() {
     local cmd=". $cmd"
   fi
   if [ "$otel_shell" = "zsh" ]; then
-    set -- ${(z)=executable} ${(z)=options} -c ". /usr/bin/opentelemetry_shell.sh; $cmd $args"
+    set -- ${(z)=executable} ${(z)=options} -c ". /usr/bin/opentelemetry_shell.sh; $cmd $args" "$dollar_zero"
   else
-    set -- $executable $options -c ". /usr/bin/opentelemetry_shell.sh; $cmd $args"
+    set -- $executable $options -c ". /usr/bin/opentelemetry_shell.sh; $cmd $args" "$dollar_zero"
   fi
   # run command
   local exit_code=0
@@ -202,7 +202,7 @@ otel_injected_shell_with_c_flag() {
   return $exit_code
 }
 
-if [ "$otel_is_interactive" != "TRUE" ]; then
+if [ "$otel_is_interactive" != "TRUE" ]; then # TODO do this always, not just when non-interactive. but then interactive injection must be handled properly!
   otel_do_alias sh otel_injected_shell_with_copy # cant really rely what kind of shell it actually is, so lets play it safe
   otel_do_alias ash otel_injected_shell_with_copy # sourced files do not support arguments
   otel_do_alias dash otel_injected_shell_with_copy # sourced files do not support arguments
