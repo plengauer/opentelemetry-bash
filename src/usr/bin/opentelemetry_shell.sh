@@ -178,6 +178,9 @@ otel_injected_shell_with_c_flag() {
     fi
   done
   # compile command
+  if [ -f "$cmd" ]; then
+    local cmd=". $cmd"
+  fi
   if [ "$otel_shell" = "zsh" ]; then
     set -- ${(z)=executable} ${(z)=options} -c ". /usr/bin/opentelemetry_shell.sh; $cmd $args"
   else
