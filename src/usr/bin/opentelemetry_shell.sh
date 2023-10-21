@@ -99,8 +99,8 @@ otel_injected_shell_with_copy() {
     local cmdline="$*"; local executable=$1; shift
   fi
   # decompile command
-  local options=""; local cmd=""
-  local is_next_command_string="FALSE"; local is_parsing_command="FALSE"; local is_next_option_argument="FALSE";
+  local options=""; local cmd=""; local args=""
+  local is_next_command_string="FALSE"; local is_parsing_arguments="FALSE"; local is_next_option="FALSE";
   for arg in "$@"; do
     if [ "$arg" = "-c" ]; then
       local is_next_command_string="TRUE"
@@ -108,26 +108,29 @@ otel_injected_shell_with_copy() {
       local cmd="$arg"
       local is_next_command_string="FALSE"
     elif [ "$is_parsing_command" = "TRUE" ]; then
-      local cmd="$cmd \"$arg\""
-    elif [ "$is_next_option_argument" = "TRUE" ]; then
+      local args="$args \"$arg\""
+    elif [ "$is_next_option" = "TRUE" ]; then
       local options="$options $arg"
-      local is_next_option_argument="FALSE"
+      local is_next_option="FALSE"
     else
       case "$arg" in
-        -*file) local options="$options $arg"; local is_next_option_argument="TRUE" ;;
+        -*file) local options="$options $arg"; local is_next_option="TRUE" ;;
         -*) local options="$options $arg" ;;
-        *) local is_parsing_command="TRUE"; local cmd="$cmd . \"$arg\"" ;;
+        *) local is_parsing_command="TRUE"; local cmd="$arg" ;;
       esac
     fi
   done
-  
+  # prepare temporary script
   local temporary_script=$(\mktemp -u)
   \touch $temporary_script
   \echo "set -- $args" >> $temporary_script
   \echo ". /usr/bin/opentelemetry_shell.sh" >> $temporary_script
-  \cat $script >> $temporary_script
+  if [ -f "$cmd" ]; then
+    \cat $cmd >> $temporary_script
+  else
+    \echo "$cmd" >> $temporary_script
+  fi
   \chmod +x $temporary_script
-  
   # compile command
   if [ "$otel_shell" = "zsh" ]; then
     set -- ${(z)=executable} ${(z)=options} $temporary_script
@@ -153,8 +156,8 @@ otel_injected_shell_with_c_flag() {
     local cmdline="$*"; local executable=$1; shift
   fi
   # decompile command
-  local options=""; local cmd=""
-  local is_next_command_string="FALSE"; local is_parsing_command="FALSE"; local is_next_option_argument="FALSE";
+  local options=""; local cmd=""; local args=""
+  local is_next_command_string="FALSE"; local is_parsing_arguments="FALSE"; local is_next_option="FALSE";
   for arg in "$@"; do
     if [ "$arg" = "-c" ]; then
       local is_next_command_string="TRUE"
@@ -162,23 +165,23 @@ otel_injected_shell_with_c_flag() {
       local cmd="$arg"
       local is_next_command_string="FALSE"
     elif [ "$is_parsing_command" = "TRUE" ]; then
-      local cmd="$cmd \"$arg\""
-    elif [ "$is_next_option_argument" = "TRUE" ]; then
+      local args="$args \"$arg\""
+    elif [ "$is_next_option" = "TRUE" ]; then
       local options="$options $arg"
-      local is_next_option_argument="FALSE"
+      local is_next_option="FALSE"
     else
       case "$arg" in
-        -*file) local options="$options $arg"; local is_next_option_argument="TRUE" ;;
+        -*file) local options="$options $arg"; local is_next_option="TRUE" ;;
         -*) local options="$options $arg" ;;
-        *) local is_parsing_command="TRUE"; local cmd="$cmd . \"$arg\"" ;;
+        *) local is_parsing_command="TRUE"; local cmd="$arg" ;;
       esac
     fi
   done
   # compile command
   if [ "$otel_shell" = "zsh" ]; then
-    set -- ${(z)=executable} ${(z)=options} -c ". /usr/bin/opentelemetry_shell.sh; $cmd"
+    set -- ${(z)=executable} ${(z)=options} -c ". /usr/bin/opentelemetry_shell.sh; $cmd $args"
   else
-    set -- $executable $options -c ". /usr/bin/opentelemetry_shell.sh; $cmd"
+    set -- $executable $options -c ". /usr/bin/opentelemetry_shell.sh; $cmd $args"
   fi
   # run command
   local exit_code=0
