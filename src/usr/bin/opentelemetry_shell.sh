@@ -47,8 +47,11 @@ otel_outstrument() {
 }
 
 otel_filter_instrumentations() {
-  if [ "-f" "$0" ] && [ "$(\grep -qF '. 
-source ' "$0" && \echo 'TRUE' || \echo 'FALSE')" = "FALSE" ]; then
+#  if [ "-f" "$0" ] && [ "$(\grep -qF '. 
+#source ' "$0" && \echo 'TRUE' || \echo 'FALSE')" = "FALSE" ]; then
+  if [ "-f" "${BASH_SOURCE[1]}" ]; then
+    \grep -xF "$(\tr -s ' ' '\n' < "${BASH_SOURCE[1]}" | \grep -E '^[a-zA-Z0-9 ._-]*$')"
+  elif [ "-f" "$0" ]; then
     \grep -xF "$(\tr -s ' ' '\n' < "$0" | \grep -E '^[a-zA-Z0-9 ._-]*$')"
   else
     \cat
