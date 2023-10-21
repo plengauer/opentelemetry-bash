@@ -47,7 +47,6 @@ otel_outstrument() {
 }
 
 otel_filter_instrumentations() {
-  # TODO $0 is not correct when auto-injecting into a script
   if [ "-f" "$0" ] && [ "$(\grep -v '. /usr/bin/opentelemetry_shell.sh' "$0" | \grep -qF '. 
 source ' && \echo 'TRUE' || \echo 'FALSE')" = "FALSE" ]; then
     \grep -xF "$(\tr -s ' ' '\n' < "$0" | \grep -E '^[a-zA-Z0-9 ._-]*$')"
