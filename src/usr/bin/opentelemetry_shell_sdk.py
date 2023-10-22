@@ -66,6 +66,7 @@ def main():
             except EOFError:
                 sys.exit(0)
             except:
+                print('SDK Error: ' + line, file=sys.stderr)
                 traceback.print_exc()
 
 def handle(scope, version, command, arguments):
