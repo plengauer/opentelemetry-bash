@@ -93,7 +93,7 @@ otel_init() {
     local sdk_output=$OTEL_SHELL_SDK_OUTPUT_REDIRECT
   else
     if [ -e "/dev/stderr" ] && [ -e "$(\readlink /dev/stderr)" ]; then
-      local std_output=/dev/stderr
+      local sdk_output=/dev/stderr
     else
       local sdk_output=/dev/null
     fi
