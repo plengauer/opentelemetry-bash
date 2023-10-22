@@ -33,6 +33,10 @@ otel_do_alias() {
     if [ "${prev_command#OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE=}" != "$prev_command" ]; then
       local prev_command="$(\printf '%s' "$prev_command" | \cut -d" " -f2-)"
     fi
+    case "$prev_command" in
+      *"$new_command"*) return 0 ;;
+      *) ;;
+    esac
     local new_command="$2 $prev_command"
   fi
   \alias $1='OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="code.function=$BASH_SOURCE,code.filepath=$0,code.lineno=$LINENO" '"$new_command"
@@ -47,24 +51,42 @@ otel_outstrument() {
 }
 
 otel_filter_instrumentations() {
-  if [ "-f" "$0" ] && [ "$(\grep -v '. /usr/bin/opentelemetry_shell.sh' "$0" | \grep -qF '. 
-source ' && \echo 'TRUE' || \echo 'FALSE')" = "FALSE" ]; then
-    \grep -xF "$(\tr -s ' ' '\n' < "$0" | \grep -E '^[a-zA-Z0-9 ._-]*$')"
+  local file_hint="$1"
+  if [ "-f" "$file_hint" ]; then
+    \grep -xF "$(\tr -s ' ' '\n' < "$file_hint" | \grep -E '^[a-zA-Z0-9 ._-]*$')"
   else
     \cat
   fi
 }
 
-if [ "$otel_shell" = "zsh" ]; then
-  otel_executables=$(for dir in ${(s/:/)PATH}; do \find $dir -maxdepth 1 -type f,l -executable 2> /dev/null; done | \rev | \cut -d / -f1 | \rev | \sort -u | \grep -vF '[' | otel_filter_instrumentations | \xargs)
-  for cmd in ${(s/ /)otel_executables}; do
-    otel_instrument $cmd
-  done
-  unset otel_executables
-else
-  for cmd in $(IFS=': ' ; for dir in $PATH; do \find $dir -maxdepth 1 -type f,l -executable 2> /dev/null; done | \rev | \cut -d / -f1 | \rev | \sort -u | \grep -vF '[' | otel_filter_instrumentations | \xargs); do
-    otel_instrument $cmd
-  done
+otel_auto_instrument() {
+  local file_hint="$1"
+  if [ "$otel_shell" = "zsh" ]; then
+    otel_executables=$(for dir in ${(s/:/)PATH}; do \find $dir -maxdepth 1 -type f,l -executable 2> /dev/null; done | \rev | \cut -d / -f1 | \rev | \sort -u | \grep -vF '[' | otel_filter_instrumentations "$file_hint" | \xargs)
+    for cmd in ${(s/ /)otel_executables}; do
+      otel_instrument $cmd
+    done
+    unset otel_executables
+  else
+    for cmd in $(IFS=': ' ; for dir in $PATH; do \find $dir -maxdepth 1 -type f,l -executable 2> /dev/null; done | \rev | \cut -d / -f1 | \rev | \sort -u | \grep -vF '[' | otel_filter_instrumentations "$file_hint" | \xargs); do
+      otel_instrument $cmd
+    done
+  fi
+}
+
+otel_auto_instrument "$0"
+
+otel_injected_source() {
+  local file="$1"
+  if [ -f "$file" ]; then
+    otel_auto_instrument "$file"
+  fi
+  \. "$file"
+}
+
+alias .=otel_injected_source
+if [ "$otel_shell" = "bash" ] || [ "$otel_shell" = "zsh" ]; then
+  alias source=otel_injected_source
 fi
 
 otel_propagated_wget() {
