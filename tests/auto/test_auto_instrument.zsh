@@ -2,7 +2,7 @@
 . /usr/bin/opentelemetry_shell.sh
 
 otel_instrument echo
-zsh +x auto/echo.shell
+zsh -x auto/echo.shell
 
 span="$(resolve_span '.name == "echo hello world"')"
 assert_equals "echo hello world" "$(\echo "$span" | jq -r '.name')"
