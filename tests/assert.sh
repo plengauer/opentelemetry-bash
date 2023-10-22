@@ -17,7 +17,7 @@ assert_not_equals() {
 assert_ends_with() {
   reverse_string=$(\echo "$2" | \rev)
   reverse_suffix=$(\echo "$1" | \rev)
-  if [ "${reverse_string#"$reverse_suffix"}" == "$reverse_string" ] ; then
+  if [ "${reverse_string#"$reverse_suffix"}" = "$reverse_string" ] ; then
     \echo "$1 !~= $2"
     exit 1
   fi
