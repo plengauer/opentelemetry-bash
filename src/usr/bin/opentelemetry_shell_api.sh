@@ -19,9 +19,7 @@ otel_command_self() {
 }
 
 otel_package_version() {
-  # \apt show "$1" 2> /dev/null | \grep Version | \awk '{ print $2 }'
-  # \apt-cache policy "$1" 2> /dev/null | \grep Installed | \awk '{ print $2 }'
-  \dpkg -s "$1" | \grep Version | \awk '{ print $2 }'
+  \dpkg -s "$1" 2> /dev/null | \grep Version | \awk '{ print $2 }' || \apt-cache policy "$1" 2> /dev/null | \grep Installed | \awk '{ print $2 }' || \apt show "$1" 2> /dev/null | \grep Version | \awk '{ print $2 }'
 }
 
 otel_resource_attributes() {
