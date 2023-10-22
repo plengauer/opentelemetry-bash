@@ -220,7 +220,7 @@ otel_injected_shell_with_c_flag() {
     set -- ${(z)=executable} ${(z)=options} -c ". /usr/bin/opentelemetry_shell.sh
 $cmd $args" "$dollar_zero"
   else
-    set -- $executable $options -c ". /usr/bin/opentelemetry_shell.sh $cmd $args" "$dollar_zero"
+    set -- $executable $options -c ". /usr/bin/opentelemetry_shell.sh; $cmd $args" "$dollar_zero"
   fi
   # run command
   local exit_code=0
