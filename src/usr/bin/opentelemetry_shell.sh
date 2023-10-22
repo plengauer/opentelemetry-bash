@@ -74,7 +74,11 @@ otel_auto_instrument() {
   fi
 }
 
-otel_auto_instrument "$0"
+if [ "$0" != "/usr/bin/opentelemetry_shell.sh" ]; then
+  otel_auto_instrument "$0"
+else
+  otel_auto_instrument
+fi
 
 otel_injected_source() {
   local file="$1"
