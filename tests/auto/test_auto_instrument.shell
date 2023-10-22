@@ -38,7 +38,7 @@ assert_equals "grep world" "$(\echo "$span" | jq -r '.attributes."subprocess.com
 assert_equals "world" "$(\echo "$span" | jq -r '.attributes."subprocess.command_args"')"
 assert_equals "grep" "$(\echo "$span" | jq -r '.attributes."subprocess.executable.name"')"
 assert_ends_with "/grep" "$(\echo "$span" | jq -r '.attributes."subprocess.executable.path"')"
-assert_equals "0" $(\grep "$span" | jq -r '.attributes."subprocess.exit_code"')
+assert_equals "0" $(\echo "$span" | jq -r '.attributes."subprocess.exit_code"')
 
 echo first; echo hello world in a command list; echo second
 
