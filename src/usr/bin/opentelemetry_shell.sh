@@ -252,11 +252,12 @@ otel_check_populate_cgi() {
 }
 
 otel_on_script_start() {
+  unset OTEL_SHELL_SPAN_NAME_OVERRIDE
+  unset OTEL_SHELL_SPAN_KIND_OVERRIDE
+  unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
   otel_init || return $?
   if [ "$OTEL_SHELL_AUTO_INJECTED" != "TRUE" ]; then
     unset OTEL_SHELL_AUTO_INJECTED
-    unset OTEL_SHELL_SPAN_NAME_OVERRIDE
-    unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
     otel_root_span_id=$(otel_span_start SERVER $(otel_command_self))
     otel_check_populate_cgi $otel_root_span_id
     otel_span_activate $otel_root_span_id
