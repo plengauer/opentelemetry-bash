@@ -103,9 +103,9 @@ otel_do_alias curl otel_propagated_curl
 otel_injected_shell_with_copy() {
   # resolve executable
   if [ "$1" = "otel_observe" ]; then
-    shift; local cmdline="$*"; local executable="otel_observe $1"; local dollar_zero="$1" shift
+    shift; local cmdline="$*"; local executable="otel_observe $1"; local dollar_zero="$1"; shift
   else
-    local cmdline="$*"; local executable=$1; local dollar_zero="$1" shift
+    local cmdline="$*"; local executable=$1; local dollar_zero="$1"; shift
   fi
   # decompile command
   local options=""; local cmd=""; local args="";
@@ -160,9 +160,9 @@ otel_injected_shell_with_c_flag() {
   # type 2 - "-c": bash +x -c "echo $0" foo
   # resolve executable
   if [ "$1" = "otel_observe" ]; then
-    shift; local cmdline="$*"; local executable="otel_observe $1"; local dollar_zero="$1" shift
+    shift; local cmdline="$*"; local executable="otel_observe $1"; local dollar_zero="$1"; shift
   else
-    local cmdline="$*"; local executable=$1; local dollar_zero="$1" shift
+    local cmdline="$*"; local executable=$1; local dollar_zero="$1"; shift
   fi
   # decompile command
   local options=""; local cmd=""; local args="";
