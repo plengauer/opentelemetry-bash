@@ -1,0 +1,10 @@
+if [ "$SHELL" = "zsh" ]; then
+  return 0
+fi
+
+. /usr/bin/opentelemetry_shell.sh
+
+count=$(alias | wc -l)
+if [ "$count" -gt "25" ]; then
+  exit 1
+fi
