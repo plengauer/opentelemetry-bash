@@ -1,0 +1,7 @@
+set -e
+. ./assert.sh
+
+$SHELL -x auto/curl_subshell.shell
+
+span="$(resolve_span '.name == "curl http://www.google.com/"')"
+assert_equals "curl http://www.google.com/" "$(\echo "$span" | jq -r '.name')"

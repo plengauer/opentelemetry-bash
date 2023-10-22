@@ -53,7 +53,7 @@ otel_outstrument() {
 otel_filter_instrumentations() {
   local file_hint="$1"
   if [ "-f" "$file_hint" ]; then
-    \grep -xF "$(\tr -s ' ' '\n' < "$file_hint" | \grep -E '^[a-zA-Z0-9 ._-]*$')"
+    \grep -xF "$(\tr -s ' $=";(){}[]/\\!#~^'"'" '\n' < "$file_hint" | \grep -E '^[a-zA-Z0-9 ._-]*$')"
   else
     \cat
   fi
@@ -129,12 +129,12 @@ otel_do_alias curl otel_propagated_curl
 otel_injected_shell_with_copy() {
   # resolve executable
   if [ "$1" = "otel_observe" ]; then
-    shift; local cmdline="$*"; local executable="otel_observe $1"; shift
+    shift; local cmdline="$*"; local executable="otel_observe $1"; local dollar_zero="$1"; shift
   else
-    local cmdline="$*"; local executable=$1; shift
+    local cmdline="$*"; local executable=$1; local dollar_zero="$1"; shift
   fi
   # decompile command
-  local options=""; local cmd=""; local args=""; local dollar_zero="$1"
+  local options=""; local cmd=""; local args="";
   local is_next_command_string="FALSE"; local is_parsing_arguments="FALSE"; local is_next_option="FALSE";
   for arg in "$@"; do
     if [ "$arg" = "-c" ]; then
@@ -186,12 +186,12 @@ otel_injected_shell_with_c_flag() {
   # type 2 - "-c": bash +x -c "echo $0" foo
   # resolve executable
   if [ "$1" = "otel_observe" ]; then
-    shift; local cmdline="$*"; local executable="otel_observe $1"; shift
+    shift; local cmdline="$*"; local executable="otel_observe $1"; local dollar_zero="$1"; shift
   else
-    local cmdline="$*"; local executable=$1; shift
+    local cmdline="$*"; local executable=$1; local dollar_zero="$1"; shift
   fi
   # decompile command
-  local options=""; local cmd=""; local args=""; local dollar_zero="$1"
+  local options=""; local cmd=""; local args="";
   local is_next_command_string="FALSE"; local is_parsing_arguments="FALSE"; local is_next_option="FALSE";
   for arg in "$@"; do
     if [ "$arg" = "-c" ]; then
@@ -217,9 +217,11 @@ otel_injected_shell_with_c_flag() {
     local cmd=". $cmd"
   fi
   if [ "$otel_shell" = "zsh" ]; then
-    set -- ${(z)=executable} ${(z)=options} -c ". /usr/bin/opentelemetry_shell.sh; $cmd $args" "$dollar_zero"
+    set -- ${(z)=executable} ${(z)=options} -c ". /usr/bin/opentelemetry_shell.sh
+$cmd $args" "$dollar_zero"
   else
-    set -- $executable $options -c ". /usr/bin/opentelemetry_shell.sh; $cmd $args" "$dollar_zero"
+    set -- $executable $options -c ". /usr/bin/opentelemetry_shell.sh
+$cmd $args" "$dollar_zero"
   fi
   # run command
   local exit_code=0

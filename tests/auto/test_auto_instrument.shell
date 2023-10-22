@@ -1,0 +1,62 @@
+. ./assert.sh
+. /usr/bin/opentelemetry_shell.sh
+
+echo hello world
+
+span="$(resolve_span '.name == "echo hello world"')"
+assert_equals "echo hello world" "$(\echo "$span" | jq -r '.name')"
+assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
+assert_not_equals "null" $(\echo "$span" | jq -r '.parent_id')
+assert_equals "UNSET" $(\echo "$span" | jq -r '.status.status_code')
+assert_equals "echo hello world" "$(\echo "$span" | jq -r '.attributes."subprocess.command"')"
+assert_equals "hello world" "$(\echo "$span" | jq -r '.attributes."subprocess.command_args"')"
+assert_equals "echo" "$(\echo "$span" | jq -r '.attributes."subprocess.executable.name"')"
+if [ "$SHELL" != "zsh" ]; then
+  assert_ends_with "/echo" "$(\echo "$span" | jq -r '.attributes."subprocess.executable.path"')"
+fi
+assert_equals "0" $(\echo "$span" | jq -r '.attributes."subprocess.exit_code"')
+
+(echo hello world in a subshell)
+
+span="$(resolve_span '.name == "echo hello world in a subshell"')"
+assert_equals "echo hello world in a subshell" "$(\echo "$span" | jq -r '.name')"
+assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
+assert_not_equals "null" $(\echo "$span" | jq -r '.parent_id')
+assert_equals "UNSET" $(\echo "$span" | jq -r '.status.status_code')
+assert_equals "echo hello world in a subshell" "$(\echo "$span" | jq -r '.attributes."subprocess.command"')"
+assert_equals "hello world in a subshell" "$(\echo "$span" | jq -r '.attributes."subprocess.command_args"')"
+assert_equals "echo" "$(\echo "$span" | jq -r '.attributes."subprocess.executable.name"')"
+if [ "$SHELL" != "zsh" ]; then
+  assert_ends_with "/echo" "$(\echo "$span" | jq -r '.attributes."subprocess.executable.path"')"
+fi
+assert_equals "0" $(\echo "$span" | jq -r '.attributes."subprocess.exit_code"')
+
+echo hello world in a pipe | grep world | cat
+
+span="$(resolve_span '.name == "grep world"')"
+assert_equals "grep world" "$(\echo "$span" | jq -r '.name')"
+assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
+assert_not_equals "null" $(\echo "$span" | jq -r '.parent_id')
+assert_equals "UNSET" $(\echo "$span" | jq -r '.status.status_code')
+assert_equals "grep world" "$(\echo "$span" | jq -r '.attributes."subprocess.command"')"
+assert_equals "world" "$(\echo "$span" | jq -r '.attributes."subprocess.command_args"')"
+assert_equals "grep" "$(\echo "$span" | jq -r '.attributes."subprocess.executable.name"')"
+if [ "$SHELL" != "zsh" ]; then
+  assert_ends_with "/grep" "$(\echo "$span" | jq -r '.attributes."subprocess.executable.path"')"
+fi
+assert_equals "0" $(\echo "$span" | jq -r '.attributes."subprocess.exit_code"')
+
+echo first; echo hello world in a command list; echo second
+
+span="$(resolve_span '.name == "echo hello world in a command list"')"
+assert_equals "echo hello world in a command list" "$(\echo "$span" | jq -r '.name')"
+assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
+assert_not_equals "null" $(\echo "$span" | jq -r '.parent_id')
+assert_equals "UNSET" $(\echo "$span" | jq -r '.status.status_code')
+assert_equals "echo hello world in a command list" "$(\echo "$span" | jq -r '.attributes."subprocess.command"')"
+assert_equals "hello world in a command list" "$(\echo "$span" | jq -r '.attributes."subprocess.command_args"')"
+assert_equals "echo" "$(\echo "$span" | jq -r '.attributes."subprocess.executable.name"')"
+if [ "$SHELL" != "zsh" ]; then
+  assert_ends_with "/echo" "$(\echo "$span" | jq -r '.attributes."subprocess.executable.path"')"
+fi
+assert_equals "0" $(\echo "$span" | jq -r '.attributes."subprocess.exit_code"')
