@@ -1,3 +1,4 @@
 set -e
-otel_span_error $root_span_id
+my_span_id=$(otel_span_start INTERNAL myspan)
+otel_span_end $my_span_id
 echo $#
