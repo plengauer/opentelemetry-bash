@@ -52,8 +52,8 @@ otel_outstrument() {
 
 otel_filter_instrumentations() {
   local file_hint="$1"
-  if [ "-f" "$file_hint" ]; then
-    \grep -xF "$(\tr -s ' $=";(){}[]/\\!#~^'"'" '\n' < "$file_hint" | \grep -E '^[a-zA-Z0-9 ._-]*$')"
+  if [ -f "$file_hint" ]; then
+    \grep -xF "$(\tr -s ' $=";(){}[]/\\!#~^'\' '\n' < "$file_hint" | \grep -E '^[a-zA-Z0-9 ._-]*$')"
   else
     \cat
   fi
