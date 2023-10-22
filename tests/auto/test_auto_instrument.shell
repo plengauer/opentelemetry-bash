@@ -1,8 +1,7 @@
 . ./assert.sh
 . /usr/bin/opentelemetry_shell.sh
 
-otel_instrument echo
-dash auto/echo.shell
+echo hello world
 
 span="$(resolve_span '.name == "echo hello world"')"
 assert_equals "echo hello world" "$(\echo "$span" | jq -r '.name')"
