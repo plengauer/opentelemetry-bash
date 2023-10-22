@@ -1,9 +1,8 @@
 . ./assert.sh
-export OTEL_SHELL_LOGS_ENABLE='FALSE'
 . /usr/bin/opentelemetry_shell.sh
 
 otel_instrument echo
-zsh -x auto/echo.shell
+zsh auto/echo.shell
 
 span="$(resolve_span '.name == "echo hello world"')"
 assert_equals "echo hello world" "$(\echo "$span" | jq -r '.name')"
