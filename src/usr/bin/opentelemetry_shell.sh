@@ -258,6 +258,17 @@ otel_check_populate_cgi() {
   otel_span_attribute $span_id net.peer.ip=$REMOTE_ADDR
 }
 
+otel_check_populate_ssh() {
+  local span_id=$1
+  if [ -z "$SSH_CLIENT"  ] || [ -z "$SSH_CONNECTION" ]; then
+    return 0
+  fi
+  otel_span_attribute $span_id ssh.ip=$(\echo $SSH_CONNECTION | \cut -d' ' -f3)
+  otel_span_attribute $span_id ssh.port=$(\echo $SSH_CONNECTION | \cut -d' ' -f4)
+  otel_span_attribute $span_id net.peer.ip=$(\echo $SSH_CLIENT | \cut -d' ' -f1)
+  otel_span_attribute $span_id net.peer.port=$(\echo $SSH_CLIENT | \cut -d' ' -f2)
+}
+
 otel_on_script_start() {
   unset OTEL_SHELL_SPAN_NAME_OVERRIDE
   unset OTEL_SHELL_SPAN_KIND_OVERRIDE
@@ -267,6 +278,7 @@ otel_on_script_start() {
     unset OTEL_SHELL_AUTO_INJECTED
     otel_root_span_id=$(otel_span_start SERVER $(otel_command_self))
     otel_check_populate_cgi $otel_root_span_id
+    otel_check_populate_ssh $otel_root_span_id
     otel_span_activate $otel_root_span_id
   fi
 }
