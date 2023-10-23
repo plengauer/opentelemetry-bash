@@ -263,8 +263,8 @@ otel_check_populate_ssh() {
   if [ -z "$SSH_CLIENT"  ] || [ -z "$SSH_CONNECTION" ]; then
     return 0
   fi
-  otel_span_attribute $span_id ssh.ip=$(\echo $SSH_CLIENT | \cut -d' ' -f3)
-  otel_span_attribute $span_id ssh.port=$(\echo $SSH_CLIENT | \cut -d' ' -f4)
+  otel_span_attribute $span_id ssh.ip=$(\echo $SSH_CONNECTION | \cut -d' ' -f3)
+  otel_span_attribute $span_id ssh.port=$(\echo $SSH_CONNECTION | \cut -d' ' -f4)
   otel_span_attribute $span_id net.peer.ip=$(\echo $SSH_CLIENT | \cut -d' ' -f1)
   otel_span_attribute $span_id net.peer.port=$(\echo $SSH_CLIENT | \cut -d' ' -f2)
 }
