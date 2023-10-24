@@ -15,6 +15,8 @@ export OTEL_EXPORTER_OTLP_METRICS_HEADERS=...
 export OTEL_SHELL_LOGS_ENABLE=TRUE
 export OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=...
 export OTEL_EXPORTER_OTLP_LOGS_HEADERS=...
+
+# import API
 . /usr/bin/opentelemetry_shell_api.sh
 
 # initialize the sdk
@@ -54,10 +56,9 @@ export OTEL_EXPORTER_OTLP_METRICS_HEADERS=...
 export OTEL_SHELL_LOGS_ENABLE=TRUE
 export OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=...
 export OTEL_EXPORTER_OTLP_LOGS_HEADERS=...
-. /usr/bin/opentelemetry_shell.sh
 
-# create spans for all echo's, both in this script and all child scripts
-otel_instrument echo
+# init automatic instrumentation, automatic context propagation, and automatic log collection
+. /usr/bin/opentelemetry_shell.sh
 
 echo "hello world" # this will create a span
 echo "hello world again" # this as well
