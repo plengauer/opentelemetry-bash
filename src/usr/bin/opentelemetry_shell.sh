@@ -235,36 +235,6 @@ if [ "$otel_is_interactive" != "TRUE" ]; then # TODO do this always, not just wh
   otel_do_alias zsh otel_injected_shell_with_c_flag
 fi
 
-otel_check_populate_cgi() {
-  local span_id=$1
-  if [ -n "$OTEL_TRACEPARENT" ]; then
-    return 0 # somebody else already created a trace, lets assume they take care of it
-  fi
-  if [ -z "$SERVER_SOFTWARE"  ] || [ -z "$SCRIPT_NAME" ] || [ -z "$SERVER_NAME" ] || [ -z "$SERVER_PROTOCOL" ]; then
-    return 0
-  fi
-  otel_span_attribute $span_id http.flavor=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f2)
-  otel_span_attribute $span_id http.host=$SERVER_NAME:$SERVER_PORT
-  otel_span_attribute $span_id http.route=$SCRIPT_NAME
-  otel_span_attribute $span_id http.scheme=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f1 | \tr '[:upper:]' '[:lower:]')
-  otel_span_attribute $span_id http.status_code=200
-  otel_span_attribute $span_id http.status_text=OK
-  otel_span_attribute $span_id http.target=$SCRIPT_NAME
-  otel_span_attribute $span_id http.url=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f1 | \tr '[:upper:]' '[:lower:]')://$SERVER_NAME:$SERVER_PORT$SCRIPT_NAME
-  otel_span_attribute $span_id net.peer.ip=$REMOTE_ADDR
-}
-
-otel_check_populate_ssh() {
-  local span_id=$1
-  if [ -z "$SSH_CLIENT"  ] || [ -z "$SSH_CONNECTION" ]; then
-    return 0
-  fi
-  otel_span_attribute $span_id ssh.ip=$(\echo $SSH_CONNECTION | \cut -d' ' -f3)
-  otel_span_attribute $span_id ssh.port=$(\echo $SSH_CONNECTION | \cut -d' ' -f4)
-  otel_span_attribute $span_id net.peer.ip=$(\echo $SSH_CLIENT | \cut -d' ' -f1)
-  otel_span_attribute $span_id net.peer.port=$(\echo $SSH_CLIENT | \cut -d' ' -f2)
-}
-
 otel_on_script_start() {
   unset OTEL_SHELL_SPAN_NAME_OVERRIDE
   unset OTEL_SHELL_SPAN_KIND_OVERRIDE
@@ -273,8 +243,22 @@ otel_on_script_start() {
   if [ "$OTEL_SHELL_AUTO_INJECTED" != "TRUE" ]; then
     unset OTEL_SHELL_AUTO_INJECTED
     otel_root_span_id=$(otel_span_start SERVER $(otel_command_self))
-    otel_check_populate_cgi $otel_root_span_id
-    otel_check_populate_ssh $otel_root_span_id
+    if [ -n "$SSH_CLIENT"  ] && [ -n "$SSH_CONNECTION" ]; then
+      otel_span_attribute $otel_root_span_id ssh.ip=$(\echo $SSH_CONNECTION | \cut -d' ' -f3)
+      otel_span_attribute $otel_root_span_id ssh.port=$(\echo $SSH_CONNECTION | \cut -d' ' -f4)
+      otel_span_attribute $otel_root_span_id net.peer.ip=$(\echo $SSH_CLIENT | \cut -d' ' -f1)
+      otel_span_attribute $otel_root_span_id net.peer.port=$(\echo $SSH_CLIENT | \cut -d' ' -f2)
+    elif [ -n "$SERVER_SOFTWARE"  ] && [ -n "$SCRIPT_NAME" ] && [ -n "$SERVER_NAME" ] && [ -n "$SERVER_PROTOCOL" ]; then
+      otel_span_attribute $otel_root_span_id http.flavor=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f2)
+      otel_span_attribute $otel_root_span_id http.host=$SERVER_NAME:$SERVER_PORT
+      otel_span_attribute $otel_root_span_id http.route=$SCRIPT_NAME
+      otel_span_attribute $otel_root_span_id http.scheme=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f1 | \tr '[:upper:]' '[:lower:]')
+      otel_span_attribute $otel_root_span_id http.status_code=200
+      otel_span_attribute $otel_root_span_id http.status_text=OK
+      otel_span_attribute $otel_root_span_id http.target=$SCRIPT_NAME
+      otel_span_attribute $otel_root_span_id http.url=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f1 | \tr '[:upper:]' '[:lower:]')://$SERVER_NAME:$SERVER_PORT$SCRIPT_NAME
+      otel_span_attribute $otel_root_span_id net.peer.ip=$REMOTE_ADDR
+    fi
     otel_span_activate $otel_root_span_id
   fi
 }
