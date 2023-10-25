@@ -63,7 +63,7 @@ assert_equals "0" $(\echo "$span" | jq -r '.attributes."subprocess.exit_code"')
 
 echo first && echo hello world in a chain && echo second
 
-span="$(resolve_span '.name == "echo hello world in chain"')"
+span="$(resolve_span '.name == "echo hello world in a chain"')"
 assert_equals "echo hello world in a chain" "$(\echo "$span" | jq -r '.name')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
 assert_not_equals "null" $(\echo "$span" | jq -r '.parent_id')
