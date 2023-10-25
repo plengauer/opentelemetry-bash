@@ -52,7 +52,7 @@ otel_outstrument() {
 
 otel_filter_instrumentations() {
   local file_hint="$1"
-  if [ -f "$file_hint" ] && [ "$(\readlink /proc/$$/exe)" != "$(\readlink -f $file_hint)" ]; then
+  if [ "$file_hint" != "" ] && [ -f "$file_hint" ] && [ "$(\readlink -f /proc/$$/exe)" != "$(\readlink -f $file_hint)" ] && [ "$file_hint" != "/usr/bin/opentelemetry_shell.sh" ]; then
     \grep -xF "$(\tr -s ' $=";(){}[]/\\!#~^'\' '\n' < "$file_hint" | \grep -E '^[a-zA-Z0-9 ._-]*$')"
   else
     \cat
@@ -74,11 +74,7 @@ otel_auto_instrument() {
   fi
 }
 
-if [ "$0" != "/usr/bin/opentelemetry_shell.sh" ]; then
-  otel_auto_instrument "$0"
-else
-  otel_auto_instrument
-fi
+otel_auto_instrument "$0"
 
 otel_injected_source() {
   local file="$1"
