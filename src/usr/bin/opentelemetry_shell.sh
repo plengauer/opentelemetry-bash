@@ -99,10 +99,19 @@ otel_auto_instrument "$0"
 
 otel_instrumented_alias() {
   \alias "$@"
-  # TODO
+  otel_instrument $(\echo "$@" | \tr ' ' '\n' | \grep -m1 '=' | \cut -d= -f1)
+}
+
+otel_instrumented_unalias() {
+  \unalias "$@"
+  local command=$(\echo "$@" | \tr ' ' '\n' | \grep -m1 '=' | \cut -d= -f1)
+  if [ -n "$(otel_list_path_commands | \grep $command)" ]; then
+    otel_instrument $command
+  fi
 }
 
 \alias alias=otel_instrumented_alias
+\alias unalias=otel_instrumented_unalias
 
 otel_injected_source() {
   local file="$1"
