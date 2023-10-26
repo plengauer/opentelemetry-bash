@@ -59,16 +59,37 @@ otel_filter_instrumentations() {
   fi
 }
 
+otel_list_path_executables() {
+  if [ "$otel_shell" = "zsh" ]; then
+    for dir in ${(s/:/)PATH}; do \find $dir -maxdepth 1 -type f,l -executable 2> /dev/null; done
+  else
+    IFS=': ' ; for dir in $PATH; do \find $dir -maxdepth 1 -type f,l -executable 2> /dev/null; done
+  fi
+}
+
+otel_list_path_commands() {
+  otel_list_path_executables | \rev | \cut -d / -f1 | \rev | \grep -vF '['
+}
+
+otel_list_aliases() {
+  \alias | \cut -d' ' -f2 | \cut -d= -f1
+}
+
+otel_list_available_commands() {
+  otel_list_path_executables
+  otel_list_aliases
+}
+
 otel_auto_instrument() {
   local file_hint="$1"
+  local executables=$(otel_list_available_commands | \sort -u | otel_filter_instrumentations "$file_hint" | \xargs)
   if [ "$otel_shell" = "zsh" ]; then
-    otel_executables=$(for dir in ${(s/:/)PATH}; do \find $dir -maxdepth 1 -type f,l -executable 2> /dev/null; done | \rev | \cut -d / -f1 | \rev | \sort -u | \grep -vF '[' | otel_filter_instrumentations "$file_hint" | \xargs)
-    for cmd in ${(s/ /)otel_executables}; do
+    for cmd in ${(s/ /)executables}; do
       otel_instrument $cmd
     done
     unset otel_executables
   else
-    for cmd in $(IFS=': ' ; for dir in $PATH; do \find $dir -maxdepth 1 -type f,l -executable 2> /dev/null; done | \rev | \cut -d / -f1 | \rev | \sort -u | \grep -vF '[' | otel_filter_instrumentations "$file_hint" | \xargs); do
+    for cmd in $executables; do
       otel_instrument $cmd
     done
   fi
