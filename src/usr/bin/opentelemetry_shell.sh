@@ -24,7 +24,7 @@ case "$-" in
   *)   otel_is_interactive=FALSE;;
 esac
 
-otel_do_alias() {
+otel_alias_prepend() {
   local new_command=$2
   local prev_command="$(\alias $1 2> /dev/null | \cut -d= -f2- | \tr -d \')" || true
   if [ -z "$prev_command" ]; then
@@ -43,11 +43,11 @@ otel_do_alias() {
 }
 
 otel_instrument() {
-  otel_do_alias $1 'otel_observe'
+  otel_alias_prepend $1 'otel_observe'
 }
 
 otel_outstrument() {
-  unalias $1 1> /dev/null 2> /dev/null || true
+  \unalias $1 1> /dev/null 2> /dev/null || true
 }
 
 otel_filter_instrumentations() {
@@ -59,22 +59,59 @@ otel_filter_instrumentations() {
   fi
 }
 
+otel_list_path_executables() {
+  if [ "$otel_shell" = "zsh" ]; then
+    for dir in ${(s/:/)PATH}; do \find $dir -maxdepth 1 -type f,l -executable 2> /dev/null; done
+  else
+    IFS=': ' ; for dir in $PATH; do \find $dir -maxdepth 1 -type f,l -executable 2> /dev/null; done
+  fi
+}
+
+otel_list_path_commands() {
+  otel_list_path_executables | \rev | \cut -d / -f1 | \rev | \grep -vF '['
+}
+
+otel_list_alias_commands() {
+  \alias | \cut -d' ' -f2 | \cut -d= -f1
+}
+
+otel_list_all_commands() {
+  otel_list_path_commands
+  otel_list_alias_commands
+}
+
 otel_auto_instrument() {
   local file_hint="$1"
+  local executables="$(otel_list_all_commands | \sort -u | otel_filter_instrumentations "$file_hint" | \xargs)"
   if [ "$otel_shell" = "zsh" ]; then
-    otel_executables=$(for dir in ${(s/:/)PATH}; do \find $dir -maxdepth 1 -type f,l -executable 2> /dev/null; done | \rev | \cut -d / -f1 | \rev | \sort -u | \grep -vF '[' | otel_filter_instrumentations "$file_hint" | \xargs)
-    for cmd in ${(s/ /)otel_executables}; do
+    for cmd in ${(s/ /)executables}; do
       otel_instrument $cmd
     done
     unset otel_executables
   else
-    for cmd in $(IFS=': ' ; for dir in $PATH; do \find $dir -maxdepth 1 -type f,l -executable 2> /dev/null; done | \rev | \cut -d / -f1 | \rev | \sort -u | \grep -vF '[' | otel_filter_instrumentations "$file_hint" | \xargs); do
+    for cmd in $executables; do
       otel_instrument $cmd
     done
   fi
 }
 
 otel_auto_instrument "$0"
+
+otel_instrumented_alias() {
+  \alias "$@"
+  otel_instrument $(\echo "$@" | \tr ' ' '\n' | \grep -m1 '=' | \cut -d= -f1)
+}
+
+otel_instrumented_unalias() {
+  \unalias "$@"
+  local command=$(\echo "$@" | \tr ' ' '\n' | \grep -m1 '=' | \cut -d= -f1)
+  if [ -n "$(otel_list_path_commands | \grep $command)" ]; then
+    otel_instrument $command
+  fi
+}
+
+\alias alias=otel_instrumented_alias
+\alias unalias=otel_instrumented_unalias
 
 otel_injected_source() {
   local file="$1"
@@ -84,9 +121,9 @@ otel_injected_source() {
   \. "$file"
 }
 
-alias .=otel_injected_source
+\alias .=otel_injected_source
 if [ "$otel_shell" = "bash" ] || [ "$otel_shell" = "zsh" ]; then
-  alias source=otel_injected_source
+  \alias source=otel_injected_source
 fi
 
 otel_propagated_wget() {
@@ -102,7 +139,7 @@ otel_propagated_wget() {
     "$@"
 }
 
-otel_do_alias wget otel_propagated_wget
+otel_alias_prepend wget otel_propagated_wget
 
 otel_propagated_curl() {
   local command="$(\echo "$*" | \sed 's/^otel_observe //')"
@@ -120,7 +157,7 @@ otel_propagated_curl() {
     "$@"
 }
 
-otel_do_alias curl otel_propagated_curl
+otel_alias_prepend curl otel_propagated_curl
 
 otel_injected_shell_with_copy() {
   # resolve executable
@@ -228,11 +265,11 @@ $arg"
 }
 
 if [ "$otel_is_interactive" != "TRUE" ]; then # TODO do this always, not just when non-interactive. but then interactive injection must be handled properly!
-  otel_do_alias sh otel_injected_shell_with_copy # cant really rely what kind of shell it actually is, so lets play it safe
-  otel_do_alias ash otel_injected_shell_with_copy # sourced files do not support arguments
-  otel_do_alias dash otel_injected_shell_with_copy # sourced files do not support arguments
-  otel_do_alias bash otel_injected_shell_with_c_flag
-  otel_do_alias zsh otel_injected_shell_with_c_flag
+  otel_alias_prepend sh otel_injected_shell_with_copy # cant really rely what kind of shell it actually is, so lets play it safe
+  otel_alias_prepend ash otel_injected_shell_with_copy # sourced files do not support arguments
+  otel_alias_prepend dash otel_injected_shell_with_copy # sourced files do not support arguments
+  otel_alias_prepend bash otel_injected_shell_with_c_flag
+  otel_alias_prepend zsh otel_injected_shell_with_c_flag
 fi
 
 otel_on_script_start() {
@@ -288,5 +325,5 @@ otel_on_script_exec() {
 }
 
 trap otel_on_script_end EXIT
-alias exec=otel_on_script_exec
+\alias exec=otel_on_script_exec
 otel_on_script_start
