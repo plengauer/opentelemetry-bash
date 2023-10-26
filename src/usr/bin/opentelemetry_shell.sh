@@ -75,14 +75,14 @@ otel_list_alias_commands() {
   \alias | \cut -d' ' -f2 | \cut -d= -f1
 }
 
-otel_list_available_commands() {
+otel_list_all_commands() {
   otel_list_path_commands
   otel_list_alias_commands
 }
 
 otel_auto_instrument() {
   local file_hint="$1"
-  local executables=$(otel_list_available_commands | \sort -u | otel_filter_instrumentations "$file_hint" | \xargs)
+  local executables="$(otel_list_all_commands | \sort -u | otel_filter_instrumentations "$file_hint" | \xargs)"
   if [ "$otel_shell" = "zsh" ]; then
     for cmd in ${(s/ /)executables}; do
       otel_instrument $cmd
