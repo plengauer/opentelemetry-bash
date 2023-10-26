@@ -47,7 +47,7 @@ otel_instrument() {
 }
 
 otel_outstrument() {
-  unalias $1 1> /dev/null 2> /dev/null || true
+  \unalias $1 1> /dev/null 2> /dev/null || true
 }
 
 otel_filter_instrumentations() {
@@ -97,6 +97,13 @@ otel_auto_instrument() {
 
 otel_auto_instrument "$0"
 
+otel_instrumented_alias() {
+  \alias "$@"
+  # TODO
+}
+
+\alias alias=otel_instrumented_alias
+
 otel_injected_source() {
   local file="$1"
   if [ -f "$file" ]; then
@@ -105,9 +112,9 @@ otel_injected_source() {
   \. "$file"
 }
 
-alias .=otel_injected_source
+\alias .=otel_injected_source
 if [ "$otel_shell" = "bash" ] || [ "$otel_shell" = "zsh" ]; then
-  alias source=otel_injected_source
+  \alias source=otel_injected_source
 fi
 
 otel_propagated_wget() {
@@ -309,5 +316,5 @@ otel_on_script_exec() {
 }
 
 trap otel_on_script_end EXIT
-alias exec=otel_on_script_exec
+\alias exec=otel_on_script_exec
 otel_on_script_start
