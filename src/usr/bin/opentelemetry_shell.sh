@@ -71,13 +71,13 @@ otel_list_path_commands() {
   otel_list_path_executables | \rev | \cut -d / -f1 | \rev | \grep -vF '['
 }
 
-otel_list_aliases() {
+otel_list_alias_commands() {
   \alias | \cut -d' ' -f2 | \cut -d= -f1
 }
 
 otel_list_available_commands() {
-  otel_list_path_executables
-  otel_list_aliases
+  otel_list_path_commands
+  otel_list_alias_commands
 }
 
 otel_auto_instrument() {
