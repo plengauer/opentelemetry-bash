@@ -24,7 +24,7 @@ case "$-" in
   *)   otel_is_interactive=FALSE;;
 esac
 
-otel_do_alias() {
+otel_alias_prepend() {
   local new_command=$2
   local prev_command="$(\alias $1 2> /dev/null | \cut -d= -f2- | \tr -d \')" || true
   if [ -z "$prev_command" ]; then
@@ -43,7 +43,7 @@ otel_do_alias() {
 }
 
 otel_instrument() {
-  otel_do_alias $1 'otel_observe'
+  otel_alias_prepend $1 'otel_observe'
 }
 
 otel_outstrument() {
@@ -102,7 +102,7 @@ otel_propagated_wget() {
     "$@"
 }
 
-otel_do_alias wget otel_propagated_wget
+otel_alias_prepend wget otel_propagated_wget
 
 otel_propagated_curl() {
   local command="$(\echo "$*" | \sed 's/^otel_observe //')"
@@ -120,7 +120,7 @@ otel_propagated_curl() {
     "$@"
 }
 
-otel_do_alias curl otel_propagated_curl
+otel_alias_prepend curl otel_propagated_curl
 
 otel_injected_shell_with_copy() {
   # resolve executable
@@ -228,11 +228,11 @@ $arg"
 }
 
 if [ "$otel_is_interactive" != "TRUE" ]; then # TODO do this always, not just when non-interactive. but then interactive injection must be handled properly!
-  otel_do_alias sh otel_injected_shell_with_copy # cant really rely what kind of shell it actually is, so lets play it safe
-  otel_do_alias ash otel_injected_shell_with_copy # sourced files do not support arguments
-  otel_do_alias dash otel_injected_shell_with_copy # sourced files do not support arguments
-  otel_do_alias bash otel_injected_shell_with_c_flag
-  otel_do_alias zsh otel_injected_shell_with_c_flag
+  otel_alias_prepend sh otel_injected_shell_with_copy # cant really rely what kind of shell it actually is, so lets play it safe
+  otel_alias_prepend ash otel_injected_shell_with_copy # sourced files do not support arguments
+  otel_alias_prepend dash otel_injected_shell_with_copy # sourced files do not support arguments
+  otel_alias_prepend bash otel_injected_shell_with_c_flag
+  otel_alias_prepend zsh otel_injected_shell_with_c_flag
 fi
 
 otel_on_script_start() {
