@@ -73,6 +73,7 @@ otel_list_path_commands() {
 
 otel_list_alias_commands() {
   \alias | \cut -d' ' -f2 | \cut -d= -f1
+  # TODO filter aliases that are just otel_* and \<original_command> to avoid double aliasing that may be triggered by . and source instrumentation
 }
 
 otel_list_builtin_commands() {
