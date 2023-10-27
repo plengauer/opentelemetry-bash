@@ -13,7 +13,7 @@ if [ -n "$(alias alias | grep otel_observe)" ] || [ -n "$(alias unalias | grep o
 fi
 
 if [ -n "$(alias | grep ech | grep cho)" ]; then exit 1; fi
-. auto/shell.shell
+. auto/count_fail_no_auto.shell
 if [ -z "$(alias | grep ech | grep cho)" ]; then exit 1; fi
 
 exit 0
