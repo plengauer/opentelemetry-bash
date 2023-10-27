@@ -14,6 +14,6 @@ fi
 
 if [ -n "$(alias | grep ech | grep cho)" ]; then exit 1; fi
 . auto/shell.shell
-if [ -n "$(alias | grep ech | grep cho)" ]; then exit 1; fi
+if [ -z "$(alias | grep ech | grep cho)" ]; then exit 1; fi
 
 exit 0
