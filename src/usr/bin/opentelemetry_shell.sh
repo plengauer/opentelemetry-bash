@@ -72,8 +72,11 @@ otel_list_path_commands() {
 }
 
 otel_list_alias_commands() {
-  \alias | \cut -d' ' -f2 | \cut -d= -f1
-  # TODO filter aliases that are just otel_* and \<original_command> to avoid double aliasing that may be triggered by . and source instrumentation
+  \alias | \cut -d' ' -f2- | while read alias_entry; do
+    local alias_key="$(\echo "$alias_entry" | \cut -d= -f1)"
+    local alias_val="$(\echo "$alias_entry" | \cut -d= -f2- | sed "s/^'\(.*\)'$/\1/")"
+    if [ "$(\echo "$alias_val" | \tr ' ' '\n' | \grep -vP '\b(OTEL_|otel_)\w*\b')" != "\\$alias_key" ]; then \echo $alias_key; fi
+  done
 }
 
 otel_list_builtin_commands() {
@@ -81,7 +84,6 @@ otel_list_builtin_commands() {
   if [ "$otel_shell" = "bash" ] || [ "$otel_shell" = "zsh" ]; then
     \echo history
   fi
-  return 0
 }
 
 otel_list_all_commands() {
@@ -98,7 +100,6 @@ otel_auto_instrument() {
   else
     for cmd in $executables; do otel_instrument $cmd; done
   fi
-  return 0
 }
 
 otel_auto_instrument "$0"
@@ -111,7 +112,6 @@ otel_alias_and_instrument() {
   else
     for cmd in $commands; do otel_instrument $cmd; done
   fi
-  return 0
 }
 
 otel_unalias_and_reinstrument() {
@@ -122,7 +122,6 @@ otel_unalias_and_reinstrument() {
   else
     for cmd in $commands; do otel_instrument $cmd; done
   fi
-  return 0
 }
 
 \alias alias=otel_alias_and_instrument
