@@ -83,7 +83,7 @@ otel_resource_attributes() {
 }
 
 otel_sdk_communicate() {
-  \echo "$*" >&3
+  \echo "$*" >&7
 }
 
 otel_init() {
@@ -100,7 +100,7 @@ otel_init() {
   . /opt/opentelemetry_shell/venv/bin/activate
   (\python3 /usr/bin/opentelemetry_shell_sdk.py $otel_remote_sdk_pipe "shell" $(otel_package_version opentelemetry-shell) > "$sdk_output" 2> "$sdk_output" &)
   deactivate
-  \exec 3> $otel_remote_sdk_pipe
+  \exec 7> $otel_remote_sdk_pipe
   otel_resource_attributes | while IFS= read -r kvp; do
     otel_sdk_communicate "RESOURCE_ATTRIBUTE" "$kvp"
   done
@@ -109,7 +109,7 @@ otel_init() {
 
 otel_shutdown() {
   otel_sdk_communicate "SHUTDOWN"
-  \exec 3>&-
+  \exec 7>&-
   \rm $otel_remote_sdk_pipe
 }
 
