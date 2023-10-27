@@ -12,8 +12,8 @@ if [ -n "$(alias alias | grep otel_observe)" ] || [ -n "$(alias unalias | grep o
   exit 1
 fi
 
-if [ -n "$(alias echo)" ]; then exit 1; fi
+if [ -n "$(alias | grep ech | grep cho)" ]; then exit 1; fi
 . auto/shell.shell
-if [ -n "$(alias echo)" ]; then exit 1; fi
+if [ -n "$(alias | grep ech | grep cho)" ]; then exit 1; fi
 
 exit 0
