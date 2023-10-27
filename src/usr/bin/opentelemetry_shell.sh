@@ -93,7 +93,7 @@ otel_auto_instrument() {
   local file_hint="$1"
   local executables="$(otel_list_all_commands | \sort -u | otel_filter_instrumentations "$file_hint" | \xargs)"
   if [ "$otel_shell" = "zsh" ]; then
-    for cmd in ${(s/ /)executables}; do otel_instrument $cmd: done
+    for cmd in ${(s/ /)executables}; do otel_instrument $cmd; done
   else
     for cmd in $executables; do otel_instrument $cmd; done
   fi
