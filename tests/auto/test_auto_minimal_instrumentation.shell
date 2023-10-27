@@ -4,7 +4,12 @@ fi
 
 . /usr/bin/opentelemetry_shell.sh
 
-count=$(alias | wc -l)
-if [ "$count" -gt "25" ]; then
+if [ "$(alias | wc -l)" -gt "25" ]; then
   exit 1
 fi
+
+if [ -n "$(alias alias | grep otel_observe)" ] || [ -n "$(alias unalias | grep otel_observe)" ] || [ -n "$(alias . | grep otel_observe)" ]; then
+  exit 1
+fi
+
+exit 0
