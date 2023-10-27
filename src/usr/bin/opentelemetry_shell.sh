@@ -75,45 +75,59 @@ otel_list_alias_commands() {
   \alias | \cut -d' ' -f2 | \cut -d= -f1
 }
 
+otel_list_builtin_commands() {
+  \echo type
+  if [ "$otel_shell" = "bash" ] || [ "$otel_shell" = "zsh" ]; then
+    \echo history
+  fi
+  return 0
+}
+
 otel_list_all_commands() {
   otel_list_path_commands
   otel_list_alias_commands
+  otel_list_builtin_commands
 }
 
 otel_auto_instrument() {
   local file_hint="$1"
   local executables="$(otel_list_all_commands | \sort -u | otel_filter_instrumentations "$file_hint" | \xargs)"
   if [ "$otel_shell" = "zsh" ]; then
-    for cmd in ${(s/ /)executables}; do
-      otel_instrument $cmd
-    done
-    unset otel_executables
+    for cmd in ${(s/ /)executables}; do otel_instrument $cmd: done
   else
-    for cmd in $executables; do
-      otel_instrument $cmd
-    done
+    for cmd in $executables; do otel_instrument $cmd; done
   fi
+  return 0
 }
 
 otel_auto_instrument "$0"
 
-otel_instrumented_alias() {
+otel_alias_and_instrument() {
   \alias "$@"
-  otel_instrument $(\echo "$@" | \tr ' ' '\n' | \grep -m1 '=' | \cut -d= -f1)
-}
-
-otel_instrumented_unalias() {
-  \unalias "$@"
-  local command=$(\echo "$@" | \tr ' ' '\n' | \grep -m1 '=' | \cut -d= -f1)
-  if [ -n "$(otel_list_path_commands | \grep $command)" ]; then
-    otel_instrument $command
+  local commands="$(\echo "$@" | \tr ' ' '\n' | \grep -m1 '=' 2> /dev/null | \cut -d= -f1)"
+  if [ "$otel_shell" = "zsh" ]; then
+    for cmd in ${(s/ /)commands}; do otel_instrument $cmd; done
+  else
+    for cmd in $commands; do otel_instrument $cmd; done
   fi
+  return 0
 }
 
-\alias alias=otel_instrumented_alias
-\alias unalias=otel_instrumented_unalias
+otel_unalias_and_reinstrument() {
+  \unalias "$@"
+  local commands="$(otel_list_all_commands | \grep -F "$(\echo "$@" | \tr ' ' '\n' | \grep -vx '-a' 2> /dev/null | \cut -d= -f1)" 2> /dev/null)"
+  if [ "$otel_shell" = "zsh" ]; then
+    for cmd in ${(s/ /)commands}; do otel_instrument $cmd; done
+  else
+    for cmd in $commands; do otel_instrument $cmd; done
+  fi
+  return 0
+}
 
-otel_injected_source() {
+\alias alias=otel_alias_and_instrument
+\alias unalias=otel_unalias_and_reinstrument
+
+otel_instrument_and_source() {
   local file="$1"
   if [ -f "$file" ]; then
     otel_auto_instrument "$file"
@@ -121,12 +135,12 @@ otel_injected_source() {
   \. "$file"
 }
 
-\alias .=otel_injected_source
+\alias .=otel_instrument_and_source
 if [ "$otel_shell" = "bash" ] || [ "$otel_shell" = "zsh" ]; then
-  \alias source=otel_injected_source
+  \alias source=otel_instrument_and_source
 fi
 
-otel_propagated_wget() {
+otel_propagate_wget() {
   local command="$(\echo "$*" | \sed 's/^otel_observe //')"
   local url=$(\echo "$@" | \awk '{for(i=1;i<=NF;i++) if ($i ~ /^http/) print $i}')
   local scheme=http # TODO
@@ -139,9 +153,9 @@ otel_propagated_wget() {
     "$@"
 }
 
-otel_alias_prepend wget otel_propagated_wget
+otel_alias_prepend wget otel_propagate_wget
 
-otel_propagated_curl() {
+otel_propagate_curl() {
   local command="$(\echo "$*" | \sed 's/^otel_observe //')"
   local url=$(\echo "$@" | \awk '{for(i=1;i<=NF;i++) if ($i ~ /^http/) print $i}')
   local scheme=http # TODO
@@ -157,9 +171,9 @@ otel_propagated_curl() {
     "$@"
 }
 
-otel_alias_prepend curl otel_propagated_curl
+otel_alias_prepend curl otel_propagate_curl
 
-otel_injected_shell_with_copy() {
+otel_inject_shell_with_copy() {
   # resolve executable
   if [ "$1" = "otel_observe" ]; then
     shift; local cmdline="$*"; local executable="otel_observe $1"; local dollar_zero="$1"; shift
@@ -213,7 +227,7 @@ otel_injected_shell_with_copy() {
   return $exit_code
 }
 
-otel_injected_shell_with_c_flag() {
+otel_inject_shell_with_c_flag() {
   # type 0 - interactive or from stdin: bash, bash -x
   # type 1 - script: bash +x script.sh foo bar baz
   # type 2 - "-c": bash +x -c "echo $0" foo
@@ -265,14 +279,14 @@ $arg"
 }
 
 if [ "$otel_is_interactive" != "TRUE" ]; then # TODO do this always, not just when non-interactive. but then interactive injection must be handled properly!
-  otel_alias_prepend sh otel_injected_shell_with_copy # cant really rely what kind of shell it actually is, so lets play it safe
-  otel_alias_prepend ash otel_injected_shell_with_copy # sourced files do not support arguments
-  otel_alias_prepend dash otel_injected_shell_with_copy # sourced files do not support arguments
-  otel_alias_prepend bash otel_injected_shell_with_c_flag
-  otel_alias_prepend zsh otel_injected_shell_with_c_flag
+  otel_alias_prepend sh otel_inject_shell_with_copy # cant really rely what kind of shell it actually is, so lets play it safe
+  otel_alias_prepend ash otel_inject_shell_with_copy # sourced files do not support arguments
+  otel_alias_prepend dash otel_inject_shell_with_copy # sourced files do not support arguments
+  otel_alias_prepend bash otel_inject_shell_with_c_flag
+  otel_alias_prepend zsh otel_inject_shell_with_c_flag
 fi
 
-otel_on_script_start() {
+otel_start_script() {
   unset OTEL_SHELL_SPAN_NAME_OVERRIDE
   unset OTEL_SHELL_SPAN_KIND_OVERRIDE
   unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
@@ -300,7 +314,7 @@ otel_on_script_start() {
   fi
 }
 
-otel_on_script_end() {
+otel_end_script() {
   local exit_code=$?
   if [ -n "$otel_root_span_id" ]; then
     if [ "$exit_code" -ne "0" ]; then
@@ -312,18 +326,18 @@ otel_on_script_end() {
   otel_shutdown
 }
 
-otel_on_script_exec() {
+otel_end_script_and_exec() {
   if [ "$1" = "otel_observe" ]; then
     shift
   fi
   local span_id=$(otel_span_start INTERNAL "exec $*")
   local traceparent=$(otel_traceparent $span_id)
   otel_span_end $span_id
-  otel_on_script_end
+  otel_end_script
   export OTEL_TRACEPARENT=$traceparent
   \exec "$@"
 }
 
-trap otel_on_script_end EXIT
-\alias exec=otel_on_script_exec
-otel_on_script_start
+trap otel_end_script EXIT
+\alias exec=otel_end_script_and_exec
+otel_start_script
