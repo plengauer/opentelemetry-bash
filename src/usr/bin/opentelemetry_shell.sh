@@ -343,5 +343,4 @@ otel_auto_instrument "$0"
 otel_alias_prepend exec otel_end_script_and_exec
 trap otel_end_script EXIT
 
-\alias >&2
 otel_start_script
