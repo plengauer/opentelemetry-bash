@@ -4,32 +4,18 @@ fi
 
 . /usr/bin/opentelemetry_shell.sh
 
-echo 1
 count_0=$(alias | wc -l)
-echo 2
 alias la='ls -a'
-echo 3
 count_1=$(alias | wc -l)
-echo 4
 unalias la
-echo 5
 count_2=$(alias | wc -l)
-echo 6
-if [ "$((count_0 + 1))" -eq "$count_1" ] && [ "$((count_1 - 1))" -eq "$count_2" ]; then exit 1; fi
-echo 7
+if [ "$((count_0 + 1))" -ne "$count_1" ] || [ "$((count_1 - 1))" -ne "$count_2" ]; then exit 1; fi
 
-echo 8
 count_0=$(alias | wc -l)
-echo 9
 alias grep='grep --color=auto'
-echo 10
 count_1=$(alias | wc -l)
-echo 12
 unalias grep
-echo 13
 count_2=$(alias | wc -l)
-echo 14
-if [ "$count_0" -eq "$count_1" ] && [ "$count_1" -eq "$count_2" ]; then exit 1; fi
-echo 15
+if [ "$count_0" -ne "$count_1" ] || [ "$count_1" -ne "$count_2" ]; then exit 1; fi
 
 exit 0
