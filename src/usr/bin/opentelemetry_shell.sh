@@ -29,7 +29,7 @@ otel_alias_prepend() {
   local prepend_command=$2
   
   local previous_command="$(\alias $original_command 2> /dev/null | \cut -d= -f2- | \tr -d \')"
-  if [ -z "$previous_command" ]; then local previous_command="\\$original_command"; fi
+  if [ -z "$previous_command" ]; then local previous_command='\\'"$original_command"; fi
   if [ "${previous_command#OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE=}" != "$previous_command" ]; then local previous_command="$(\printf '%s' "$previous_command" | \cut -d" " -f2-)"; fi
   case "$previous_command" in
     *"$prepend_command"*) return 0 ;;
