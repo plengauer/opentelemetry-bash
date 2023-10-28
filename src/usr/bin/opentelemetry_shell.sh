@@ -105,6 +105,7 @@ otel_auto_instrument() {
 otel_alias_and_instrument() {
   local exit_code=0
   "$@" || exit_code=$?
+  shift
   local commands="$(\echo "$@" | \tr ' ' '\n' | \grep -m1 '=' 2> /dev/null | \cut -d= -f1)"
   if [ "$otel_shell" = "zsh" ]; then
     for cmd in ${(s/ /)commands}; do otel_instrument $cmd; done
@@ -117,8 +118,12 @@ otel_alias_and_instrument() {
 otel_unalias_and_reinstrument() {
   local exit_code=0
   "$@" || exit_code=$?
+  shift
+  \echo "DEBUG #1" >&2
+  \echo "DEBUG #2 $(\echo "$@" | \tr ' ' '\n' | \grep -vx '-a')" >&2
+  \echo "DEBUG #3 $(otel_list_all_commands | \grep -F "$(\echo "$@" | \tr ' ' '\n' | \grep -vx '-a')")" >&2
   local commands="$(otel_list_all_commands | \grep -F "$(\echo "$@" | \tr ' ' '\n' | \grep -vx '-a' 2> /dev/null)" 2> /dev/null)"
-  # this seems to re-instrument the world
+  \echo "DEBUG #4 $commands" >&2
   if [ "$otel_shell" = "zsh" ]; then
     for cmd in ${(s/ /)commands}; do otel_instrument $cmd; done
   else
