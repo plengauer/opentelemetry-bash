@@ -90,6 +90,11 @@ otel_list_all_commands() {
   otel_list_path_commands
   otel_list_alias_commands
   otel_list_builtin_commands
+  \echo "sh"
+  \echo "ash"
+  \echo "dash"
+  \echo "bash"
+  \echo "zsh"
 }
 
 otel_auto_instrument() {
