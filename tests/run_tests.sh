@@ -7,7 +7,7 @@ if [ "$SHELL" == "" ]; then
 fi
 
 (while sleep 15; do pstree -a -c -p; done) &
-for file in $(find . -iname 'test_*.shell') $(find . -iname 'test_*.'$SHELL); do
+for file in "sdk/test_sdk_init_shutdown.shell" $(find . -iname 'test_*.shell') $(find . -iname 'test_*.'$SHELL); do
   export OTEL_EXPORT_LOCATION=$(mktemp -u).sdk.out
   export OTEL_SHELL_SDK_OUTPUT_REDIRECT=$(mktemp -u).pipe
   export OTEL_SHELL_TRACES_ENABLE=TRUE
