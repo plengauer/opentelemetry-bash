@@ -121,9 +121,9 @@ otel_unalias_and_reinstrument() {
   shift
   \echo "DEBUG #1" >&2
   \echo "DEBUG #2 $*" >&2
-  \echo "DEBUG #3 $(\echo "$@" | \tr ' ' '\n' | \grep -vFx '-a' | \grep .)" >&2
-  \echo "DEBUG #4 $(otel_list_all_commands | \grep -Fx "$(\echo "$@" | \tr ' ' '\n' | \grep -vFx '-a')")" >&2
-  local commands="$(otel_list_all_commands | \grep -Fx "$(\echo "$@" | \tr ' ' '\n' | \grep -vFx '-a' 2> /dev/null)" 2> /dev/null)"
+  \echo "DEBUG #3 $(\echo "$@" | \tr ' ' '\n')" >&2
+  \echo "DEBUG #4 $(otel_list_all_commands | \grep -Fx "$(\echo "$@" | \tr ' ' '\n')")" >&2
+  local commands="$(otel_list_all_commands | \grep -Fx "$(\echo "$@" | \tr ' ' '\n' 2> /dev/null)" 2> /dev/null)"
   \echo "DEBUG #5 $commands" >&2
   if [ "$otel_shell" = "zsh" ]; then
     for cmd in ${(s/ /)commands}; do otel_instrument $cmd; done
