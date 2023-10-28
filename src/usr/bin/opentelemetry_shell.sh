@@ -74,7 +74,7 @@ otel_list_path_commands() {
 otel_list_alias_commands() {
   \alias | \cut -d' ' -f2- | while read alias_entry; do
     local alias_key="$(\echo "$alias_entry" | \cut -d= -f1)"
-    local alias_val="$(\echo "$alias_entry" | \cut -d= -f2- | \sed "s/^'\(.*\)'$/\1/")"
+    local alias_val="$(\echo "$alias_entry" | \cut -d= -f2- | sed "s/^'\(.*\)'$/\1/")"
     if [ "$(\echo "$alias_val" | \tr ' ' '\n' | \grep -vP '\b(OTEL_|otel_)\w*\b')" != "\\$alias_key" ]; then \echo $alias_key; fi
   done
 }
@@ -90,11 +90,6 @@ otel_list_all_commands() {
   otel_list_path_commands
   otel_list_alias_commands
   otel_list_builtin_commands
-  \echo "sh"
-  \echo "ash"
-  \echo "dash"
-  \echo "bash"
-  \echo "zsh"
 }
 
 otel_auto_instrument() {
