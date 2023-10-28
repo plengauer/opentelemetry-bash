@@ -333,9 +333,9 @@ fi
 # otel_alias_prepend alias otel_alias_and_instrument 
 # otel_alias_prepend unalias otel_unalias_and_reinstrument
 # otel_alias_prepend . otel_instrument_and_source
-if [ "$otel_shell" = "bash" ] || [ "$otel_shell" = "zsh" ]; then
+# if [ "$otel_shell" = "bash" ] || [ "$otel_shell" = "zsh" ]; then
 #  otel_alias_prepend source otel_instrument_and_source
-fi
+# fi
 otel_auto_instrument "$0"
 
 otel_alias_prepend exec otel_end_script_and_exec
