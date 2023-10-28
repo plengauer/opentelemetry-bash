@@ -36,8 +36,8 @@ otel_alias_prepend() {
     *) ;;
   esac
 
-  local previous_otel_command="$(\echo -n "$previous_command" | \tr ' ' '\n' | \grep '^otel_' | \sed -e '/^$/d' | \tr '\n' ' ')"
-  local previous_alias_command="$(\echo -n "$previous_command" | \tr ' ' '\n' | \grep -v '^otel_' | \sed -e '/^$/d' | \tr '\n' ' ')"
+  local previous_otel_command="$(\echo -n "$previous_command" | \tr ' ' '\n' | \grep '^otel_' | \xargs)"
+  local previous_alias_command="$(\echo -n "$previous_command" | \tr ' ' '\n' | \grep -v '^otel_' | \xargs)"
   local new_command="$previous_otel_command $prepend_command $previous_alias_command"
   \alias $original_command='OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="code.function=$BASH_SOURCE,code.filepath=$0,code.lineno=$LINENO" '"$new_command"
 }
