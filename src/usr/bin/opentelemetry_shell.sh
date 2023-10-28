@@ -118,6 +118,7 @@ otel_unalias_and_reinstrument() {
   local exit_code=0
   "$@" || exit_code=$?
   local commands="$(otel_list_all_commands | \grep -F "$(\echo "$@" | \tr ' ' '\n' | \grep -vx '-a' 2> /dev/null)" 2> /dev/null)"
+  # this seems to re-instrument the world
   if [ "$otel_shell" = "zsh" ]; then
     for cmd in ${(s/ /)commands}; do otel_instrument $cmd; done
   else
