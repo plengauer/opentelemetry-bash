@@ -75,7 +75,7 @@ otel_list_alias_commands() {
   \alias | \cut -d' ' -f2- | while read alias_entry; do
     local alias_key="$(\echo "$alias_entry" | \cut -d= -f1)"
     local alias_val="$(\echo "$alias_entry" | \cut -d= -f2- | \sed "s/^'\(.*\)'$/\1/")"
-    if [ "$(\echo "$alias_val" | \tr ' ' '\n' | \grep -vP '\b(OTEL_|otel_)\w*\b')" != "\\$alias_key" ]; then \echo $alias_key; fi
+    if [ "$(\echo "$alias_val" | \tr ' ' '\n' | \grep -vP '\b(OTEL_|otel_)\w*\b' | \xargs)" != "\\$alias_key" ]; then \echo $alias_key; fi
   done
 }
 
