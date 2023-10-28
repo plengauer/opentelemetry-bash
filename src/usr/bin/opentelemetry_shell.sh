@@ -25,21 +25,19 @@ case "$-" in
 esac
 
 otel_alias_prepend() {
-  local new_command=$2
-  local prev_command="$(\alias $1 2> /dev/null | \cut -d= -f2- | \tr -d \')" || true
-  if [ -z "$prev_command" ]; then
-    local new_command="$2 \\$1"
-  else
-    if [ "${prev_command#OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE=}" != "$prev_command" ]; then
-      local prev_command="$(\printf '%s' "$prev_command" | \cut -d" " -f2-)"
-    fi
-    case "$prev_command" in
-      *"$new_command"*) return 0 ;;
-      *) ;;
-    esac
-    local new_command="$2 $prev_command"
-  fi
-  \alias $1='OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="code.function=$BASH_SOURCE,code.filepath=$0,code.lineno=$LINENO" '"$new_command"
+  local original_command=$1
+  local prepend_command=$2
+  
+  local previous_command="$(\alias $1 2> /dev/null | \cut -d= -f2- | \tr -d \')" || true
+  if [ -z "$previous_command" ]; then local previous_command="\\$original_command"; fi
+  if [ "${previous_command#OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE=}" != "$previous_command" ]; then local previous_command="$(\printf '%s' "$previous_command" | \cut -d" " -f2-)"; fi
+  case "$previous_command" in
+    *"$prepend_command"*) return 0 ;;
+    *) ;;
+  esac
+  
+  local new_command="$prepend_command $previous_command"
+  \alias $original_command='OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="code.function=$BASH_SOURCE,code.filepath=$0,code.lineno=$LINENO" '"$new_command"
 }
 
 otel_instrument() {
@@ -74,7 +72,7 @@ otel_list_path_commands() {
 otel_list_alias_commands() {
   \alias | \cut -d' ' -f2- | while read alias_entry; do
     local alias_key="$(\echo "$alias_entry" | \cut -d= -f1)"
-    local alias_val="$(\echo "$alias_entry" | \cut -d= -f2- | sed "s/^'\(.*\)'$/\1/")"
+    local alias_val="$(\echo "$alias_entry" | \cut -d= -f2- | \sed "s/^'\(.*\)'$/\1/")"
     if [ "$(\echo "$alias_val" | \tr ' ' '\n' | \grep -vP '\b(OTEL_|otel_)\w*\b')" != "\\$alias_key" ]; then \echo $alias_key; fi
   done
 }
