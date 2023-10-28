@@ -19,6 +19,6 @@ for file in $(find sdk -iname 'test_*.shell') $(find . -iname 'test_*.shell') $(
   mkfifo $OTEL_SHELL_SDK_OUTPUT_REDIRECT
   cat $OTEL_SHELL_SDK_OUTPUT_REDIRECT > $OTEL_EXPORT_LOCATION &
   echo "running $file"
-  (timeout 60 $SHELL $file && echo "SUCCEEDED") || (timeout 90 $SHELL -x $file && echo "SUCCEEDED") || (echo "FAILED" && cat $OTEL_EXPORT_LOCATION && exit 1)
+  (timeout 90 $SHELL -x $file && echo "SUCCEEDED") || (echo "FAILED" && cat $OTEL_EXPORT_LOCATION && exit 1)
 done
 echo "ALL TESTS SUCCESSFUL"
