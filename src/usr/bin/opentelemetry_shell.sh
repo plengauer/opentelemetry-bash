@@ -24,11 +24,23 @@ case "$-" in
   *)   otel_is_interactive=FALSE;;
 esac
 
+otel_unquote() {
+  \sed "s/^'\(.*\)'$/\1/"
+}
+
+otel_line_join() {
+  \xargs
+}
+
+otel_line_split() {
+  \tr ' ' '\n'
+}
+
 otel_alias_prepend() {
   local original_command=$1
   local prepend_command=$2
   
-  local previous_command="$(\alias $original_command 2> /dev/null | \cut -d= -f2- | \sed "s/^'\(.*\)'$/\1/")"
+  local previous_command="$(\alias $original_command 2> /dev/null | \cut -d= -f2- | otel_unquote)"
   if [ -z "$previous_command" ]; then local previous_command="$original_command"; fi
   if [ "${previous_command#OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE=}" != "$previous_command" ]; then local previous_command="$(\printf '%s' "$previous_command" | \cut -d" " -f2-)"; fi
   case "$previous_command" in
@@ -36,8 +48,8 @@ otel_alias_prepend() {
     *) ;;
   esac
 
-  local previous_otel_command="$(\printf '%s' "$previous_command" | \tr ' ' '\n' | \grep '^otel_' | \xargs)"
-  local previous_alias_command="$(\printf '%s' "$previous_command" | \tr ' ' '\n' | \grep -v '^otel_' | \xargs)"
+  local previous_otel_command="$(\printf '%s' "$previous_command" | otel_line_split | \grep '^otel_' | otel_line_join)"
+  local previous_alias_command="$(\printf '%s' "$previous_command" | otel_line_split | \grep -v '^otel_' | otel_line_join)"
   local new_command="$previous_otel_command $prepend_command \\$previous_alias_command"
   \alias $original_command='OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="code.function=$BASH_SOURCE,code.filepath=$0,code.lineno=$LINENO" '"$new_command"
 }
@@ -72,13 +84,10 @@ otel_list_path_commands() {
 }
 
 otel_list_alias_commands() {
-  \echo 'DEBUG' >&2
-  \alias >&2
   \alias | \sed 's/^alias //' | while read alias_entry; do
     local alias_key="$(\printf '%s' "$alias_entry" | \cut -d= -f1)"
-    local alias_val="$(\printf '%s' "$alias_entry" | \cut -d= -f2- | \sed "s/^'\(.*\)'$/\1/")"
-    # I do not understand why the \ is not preserved.
-    if [ "$(\printf '%s' "$alias_val" | \tr ' ' '\n' | \grep -vP '\b(OTEL_|otel_)\w*\b' | \xargs 2> /dev/null)" != "$alias_key" ]; then \echo $alias_key; fi
+    local alias_val="$(\printf '%s' "$alias_entry" | \cut -d= -f2- | otel_unquote)"
+    if [ "$(\printf '%s' "$alias_val" | otel_line_split | \grep -vP '\b(OTEL_|otel_)\w*\b' | otel_line_join)" != "$alias_key" ]; then \echo $alias_key; fi
   done
 }
 
@@ -97,7 +106,7 @@ otel_list_all_commands() {
 
 otel_auto_instrument() {
   local file_hint="$1"
-  local executables="$(otel_list_all_commands | \sort -u | otel_filter_instrumentations "$file_hint" | \xargs)"
+  local executables="$(otel_list_all_commands | \sort -u | otel_filter_instrumentations "$file_hint" | otel_line_join)"
   if [ "$otel_shell" = "zsh" ]; then
     for cmd in ${(s/ /)executables}; do otel_instrument $cmd; done
   else
@@ -109,7 +118,7 @@ otel_alias_and_instrument() {
   local exit_code=0
   "$@" || exit_code=$?
   shift
-  local commands="$(\echo "$@" | \tr ' ' '\n' | \grep -m1 '=' 2> /dev/null | \cut -d= -f1)"
+  local commands="$(\echo "$@" | otel_line_split | \grep -m1 '=' 2> /dev/null | \cut -d= -f1)"
   if [ "$otel_shell" = "zsh" ]; then
     for cmd in ${(s/ /)commands}; do otel_instrument $cmd; done
   else
@@ -122,7 +131,7 @@ otel_unalias_and_reinstrument() {
   local exit_code=0
   "$@" || exit_code=$?
   shift
-  local commands="$(otel_list_all_commands | \grep -Fx "$(\echo "$@" | \tr ' ' '\n' 2> /dev/null)" 2> /dev/null)"
+  local commands="$(otel_list_all_commands | \grep -Fx "$(\echo "$@" | otel_line_split 2> /dev/null)" 2> /dev/null)"
   if [ "$otel_shell" = "zsh" ]; then
     for cmd in ${(s/ /)commands}; do otel_instrument $cmd; done
   else
