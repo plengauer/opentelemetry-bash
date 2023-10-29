@@ -78,7 +78,7 @@ otel_list_alias_commands() {
     local alias_key="$(\printf '%s' "$alias_entry" | \cut -d= -f1)"
     local alias_val="$(\printf '%s' "$alias_entry" | \cut -d= -f2- | \sed "s/^'\(.*\)'$/\1/")"
     # also look for this error message: xargs: unmatched single quote; by default quotes are special to xargs unless you use the -0 option
-    if [ "$(\printf '%s' "$alias_val" | \tr ' ' '\n' | \grep -vP '\b(OTEL_|otel_)\w*\b' | \xargs)" != "\\$alias_key" ]; then \echo $alias_key; fi
+    if [ "$(\printf '%s' "$alias_val" | \tr ' ' '\n' | \grep -vP '\b(OTEL_|otel_)\w*\b' | \xargs)" != "$alias_key" ]; then \echo $alias_key; fi
   done
 }
 
