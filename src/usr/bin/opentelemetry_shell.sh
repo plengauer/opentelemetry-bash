@@ -345,7 +345,7 @@ if [ "$otel_is_interactive" != "TRUE" ]; then # TODO do this always, not just wh
   otel_alias_prepend zsh otel_inject_shell_with_c_flag
 fi
 
-otel_alias_prepend alias otel_alias_and_instrument 
+otel_alias_prepend alias otel_alias_and_instrument
 otel_alias_prepend unalias otel_unalias_and_reinstrument
 otel_alias_prepend . otel_instrument_and_source
 if [ "$otel_shell" = "bash" ] || [ "$otel_shell" = "zsh" ]; then
