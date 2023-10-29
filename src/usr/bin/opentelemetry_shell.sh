@@ -37,8 +37,7 @@ otel_alias_prepend() {
   esac
 
   local previous_otel_command="$(\printf '%s' "$previous_command" | \tr ' ' '\n' | \grep '^otel_' | \xargs)"
-  local previous_alias_command="$(\printf '%s' "$previous_command" | \tr ' ' '\n' | \grep -v '^otel_' | \xargs)" # TODO for some reason, on dash this is empty
-  # also look for this error message: xargs: unmatched single quote; by default quotes are special to xargs unless you use the -0 option
+  local previous_alias_command="$(\printf '%s' "$previous_command" | \tr ' ' '\n' | \grep -v '^otel_' | \xargs)"
   local new_command="$previous_otel_command $prepend_command \\$previous_alias_command"
   \alias $original_command='OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="code.function=$BASH_SOURCE,code.filepath=$0,code.lineno=$LINENO" '"$new_command"
 }
@@ -74,9 +73,10 @@ otel_list_path_commands() {
 
 otel_list_alias_commands() {
   \alias | \cut -d' ' -f2- | while read alias_entry; do
-    local alias_key="$(\echo "$alias_entry" | \cut -d= -f1)"
-    local alias_val="$(\echo "$alias_entry" | \cut -d= -f2- | \sed "s/^'\(.*\)'$/\1/")"
-    if [ "$(\echo "$alias_val" | \tr ' ' '\n' | \grep -vP '\b(OTEL_|otel_)\w*\b' | \xargs)" != "$alias_key" ]; then \echo $alias_key; fi
+    local alias_key="$(\printf '%s' "$alias_entry" | \cut -d= -f1)"
+    local alias_val="$(\printf '%s' "$alias_entry" | \cut -d= -f2- | \sed "s/^'\(.*\)'$/\1/")"
+    # also look for this error message: xargs: unmatched single quote; by default quotes are special to xargs unless you use the -0 option
+    if [ "$(\printf '%s' "$alias_val" | \tr ' ' '\n' | \grep -vP '\b(OTEL_|otel_)\w*\b' | \xargs)" != "$alias_key" ]; then \echo $alias_key; fi
   done
 }
 
