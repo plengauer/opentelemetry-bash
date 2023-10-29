@@ -306,6 +306,10 @@ otel_start_script() {
       otel_span_attribute $otel_root_span_id http.target=$SCRIPT_NAME
       otel_span_attribute $otel_root_span_id http.url=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f1 | \tr '[:upper:]' '[:lower:]')://$SERVER_NAME:$SERVER_PORT$SCRIPT_NAME
       otel_span_attribute $otel_root_span_id net.peer.ip=$REMOTE_ADDR
+    elif [ "$(otel_command_self | cut -d' ' -f2 | rev | cut -d/ -f2- | rev)" = "/var/lib/dpkg/info" ]; then
+      otel_span_attribute $otel_root_span_id debian.package.operation=$(otel_command_self | cut -d' ' -f2 | rev | cut -d/ -f1 | rev | cut -d. -f2) $(otel_command_self | cut -d' ' -f3)
+      otel_span_attribute $otel_root_span_id debian.package.name=$(otel_command_self | cut -d' ' -f2 | rev | cut -d/ -f1 | rev | cut -d. -f1)
+      # TODO endpoint
     fi
     otel_span_activate $otel_root_span_id
   fi
