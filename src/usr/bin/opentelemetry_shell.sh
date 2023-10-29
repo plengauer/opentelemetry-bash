@@ -143,6 +143,7 @@ otel_unalias_and_reinstrument() {
 
 otel_instrument_and_source() {
   local file="$2"
+  # sourcing /usr/share/debconf/confmodule will exec and restart the script 
   if [ -f "$file" ]; then
     otel_auto_instrument "$file"
   fi
