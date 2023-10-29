@@ -78,8 +78,7 @@ otel_list_alias_commands() {
     local alias_key="$(\printf '%s' "$alias_entry" | \cut -d= -f1)"
     local alias_val="$(\printf '%s' "$alias_entry" | \cut -d= -f2- | \sed "s/^'\(.*\)'$/\1/")"
     # I do not understand why the \ is not preserved.
-    # if [ "$(\printf '%s' "$alias_val" | \tr ' ' '\n' | \grep -vP '\b(OTEL_|otel_)\w*\b' | \xargs 2> /dev/null)" != "$alias_key" ]; then \echo $alias_key; fi
-    if [ "$(\printf '%s' "$alias_val" | \tr ' ' '\n' | \grep -vP '\b(OTEL_|otel_)\w*\b' | tr '\n' ' ')" != "$alias_key" ]; then \echo $alias_key; fi
+    if [ "$(\printf '%s' "$alias_val" | \tr ' ' '\n' | \grep -vP '\b(OTEL_|otel_)\w*\b' | \xargs 2> /dev/null)" != "$alias_key" ]; then \echo $alias_key; fi
   done
 }
 
