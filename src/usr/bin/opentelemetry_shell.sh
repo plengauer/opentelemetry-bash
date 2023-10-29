@@ -72,6 +72,8 @@ otel_list_path_commands() {
 }
 
 otel_list_alias_commands() {
+  \echo 'DEBUG' >&2
+  \alias >&2
   \alias | \cut -d' ' -f2- | \sed "s/^'\(.*\)'$/\1/" | while read alias_entry; do #   # TODO we should sed somewhere! and in sh there is no alias prefix so the split by whitespace looks fishy!
     local alias_key="$(\printf '%s' "$alias_entry" | \cut -d= -f1)"
     local alias_val="$(\printf '%s' "$alias_entry" | \cut -d= -f2-)"
