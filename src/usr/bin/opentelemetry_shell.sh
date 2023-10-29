@@ -29,8 +29,7 @@ otel_unquote() {
 }
 
 otel_line_join() {
-  # \tr '\n' ' '
-  xargs
+  \tr '\n' ' '
 }
 
 otel_line_split() {
