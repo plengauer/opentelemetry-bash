@@ -1,0 +1,3 @@
+. /usr/bin/opentelemetry_shell.sh
+. /usr/share/debconf/confmodule
+echo hello world
