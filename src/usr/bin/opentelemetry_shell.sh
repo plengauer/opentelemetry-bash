@@ -85,7 +85,7 @@ otel_list_path_commands() {
 }
 
 otel_list_alias_commands() {
-  \alias | \sed 's/^alias //' | \awk -F '=' '! ($2 ~ "^((OTEL_|otel_).* )* " $1 "$")' | \cut -d= -f1
+  \alias | \sed 's/^alias //' | \awk -F '=' '! ($2 ~ "^'\''((OTEL_|otel_).* )* " $1 "'\''$")' | \cut -d= -f1
 #  \alias | \sed 's/^alias //' | while read alias_entry; do
 #    local alias_key="$(\printf '%s' "$alias_entry" | \cut -d= -f1)"
 #    local alias_val="$(\printf '%s' "$alias_entry" | \cut -d= -f2- | otel_unquote)"
