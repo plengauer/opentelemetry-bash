@@ -85,12 +85,12 @@ otel_list_path_commands() {
 }
 
 otel_list_alias_commands() {
-  # TODO add an awk to replace the if below
-  \alias | \sed 's/^alias //' | \awk -F '=' '! ($2 ~ "^((OTEL_|otel_).* )*" $1) ' | while read alias_entry; do
-    local alias_key="$(\printf '%s' "$alias_entry" | \cut -d= -f1)"
-    local alias_val="$(\printf '%s' "$alias_entry" | \cut -d= -f2- | otel_unquote)"
-    if [ "$(\printf '%s' "$alias_val" | otel_line_split | \grep -vP '\b(OTEL_|otel_)\w*\b' | otel_line_join)" != "$alias_key" ]; then \echo $alias_key; fi
-  done
+  \alias | \sed 's/^alias //' | \awk -F '=' '! ($2 ~ "^((OTEL_|otel_).* )* $1$")' | \cut -d= -f1
+#  \alias | \sed 's/^alias //' | while read alias_entry; do
+#    local alias_key="$(\printf '%s' "$alias_entry" | \cut -d= -f1)"
+#    local alias_val="$(\printf '%s' "$alias_entry" | \cut -d= -f2- | otel_unquote)"
+#    if [ "$(\printf '%s' "$alias_val" | otel_line_split | \grep -vP '\b(OTEL_|otel_)\w*\b' | otel_line_join)" != "$alias_key" ]; then \echo $alias_key; fi
+#  done
 }
 
 otel_list_builtin_commands() {
