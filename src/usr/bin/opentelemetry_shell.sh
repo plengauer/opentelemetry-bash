@@ -29,7 +29,7 @@ otel_unquote() {
 }
 
 otel_line_join() {
-  \tr '\n' ' '
+  \tr '\n' ' ' | \sed '/^$/d'
 }
 
 otel_line_split() {
