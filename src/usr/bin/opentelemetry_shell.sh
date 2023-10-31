@@ -328,7 +328,7 @@ otel_end_script_and_exec() {
   if [ "$1" = "otel_observe" ]; then shift; fi
   if [ -n "$2" ]; then
     local span_id=$(otel_span_start INTERNAL "$*")
-    local traceparent=$(otel_traceparent $span_id)
+    local traceparent=$(otel_span_traceparent $span_id)
     otel_span_end $span_id
     otel_end_script
     export OTEL_TRACEPARENT=$traceparent
