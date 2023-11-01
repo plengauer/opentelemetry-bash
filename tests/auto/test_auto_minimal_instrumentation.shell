@@ -3,6 +3,7 @@ if [ "$SHELL" = "zsh" ]; then
 fi
 
 . /usr/bin/opentelemetry_shell.sh
+\alias
 
 if [ "$(alias | wc -l)" -gt "25" ]; then
   exit 1
