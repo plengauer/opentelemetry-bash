@@ -334,9 +334,9 @@ otel_end_script_and_exec() {
     unset OTEL_SHELL_INJECTED
     unset OTEL_SHELL_AUTO_INJECTED
     shift
-    set -- \exec env OTEL_TRACEPARENT=$traceparent "$@"
+    set -- env OTEL_TRACEPARENT=$traceparent "$@"
   fi
-  "$@"
+  \exec "$@"
 }
 
 otel_alias_prepend wget otel_propagate_wget
