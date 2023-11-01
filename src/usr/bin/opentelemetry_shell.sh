@@ -50,7 +50,7 @@ otel_alias_prepend() {
 
   local previous_otel_command="$(\printf '%s' "$previous_command" | otel_line_split | \grep '^otel_' | otel_line_join)"
   local previous_alias_command="$(\printf '%s' "$previous_command" | otel_line_split | \grep -v '^otel_' | otel_line_join)"
-  local new_command="$previous_otel_command $prepend_command \\$previous_alias_command"
+  local new_command="$previous_otel_command $prepend_command $previous_alias_command"
   \alias $original_command='OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="code.function=$BASH_SOURCE,code.filepath=$0,code.lineno=$LINENO" '"$new_command"
 }
 
