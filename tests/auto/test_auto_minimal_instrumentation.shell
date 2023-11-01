@@ -3,6 +3,7 @@ if [ "$SHELL" = "zsh" ]; then
 fi
 
 . /usr/bin/opentelemetry_shell.sh
+alias
 
 if [ "$(alias | wc -l)" -gt "25" ]; then
   exit 1
@@ -14,6 +15,7 @@ fi
 
 if [ -n "$(alias | grep ech | grep cho)" ]; then exit 1; fi
 . auto/count_fail_no_auto.shell
+alias
 if [ -z "$(alias | grep ech | grep cho)" ]; then exit 1; fi
 
 exit 0
