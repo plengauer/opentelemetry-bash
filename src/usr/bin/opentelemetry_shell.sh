@@ -81,11 +81,7 @@ otel_list_path_commands() {
 }
 
 otel_list_alias_commands() {
-  \alias | \sed 's/^alias //' | while read alias_entry; do
-    local alias_key="$(\printf '%s' "$alias_entry" | \cut -d= -f1)"
-    local alias_val="$(\printf '%s' "$alias_entry" | \cut -d= -f2- | otel_unquote)"
-    if [ "$(\printf '%s' "$alias_val" | otel_line_split | \grep -vP '\b(OTEL_|otel_)\w*\b' | otel_line_join)" != "$alias_key" ]; then \echo $alias_key; fi
-  done
+  \alias | \sed 's/^alias //' | \awk -F'=' '{ var=$1; sub($1 FS,""); } ! ($0 ~ "^'\''((OTEL_|otel_).* )*\\\\" var "'\''$") { print var }'
 }
 
 otel_list_builtin_commands() {
@@ -345,7 +341,7 @@ if [ "$otel_is_interactive" != "TRUE" ]; then # TODO do this always, not just wh
   otel_alias_prepend zsh otel_inject_shell_with_c_flag
 fi
 
-otel_alias_prepend alias otel_alias_and_instrument 
+otel_alias_prepend alias otel_alias_and_instrument
 otel_alias_prepend unalias otel_unalias_and_reinstrument
 otel_alias_prepend . otel_instrument_and_source
 if [ "$otel_shell" = "bash" ] || [ "$otel_shell" = "zsh" ]; then
