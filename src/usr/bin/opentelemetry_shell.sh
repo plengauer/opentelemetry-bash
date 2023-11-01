@@ -6,7 +6,7 @@
 # All other functions and variables are for internal use only and therefore subject to change without notice!  #
 ################################################################################################################
 
-if [ "$OTEL_SHELL_INJECTED" != "" ]; then
+if [ "$OTEL_SHELL_INJECTED" = "TRUE" ]; then
   return 0
 fi
 OTEL_SHELL_INJECTED=TRUE
@@ -30,7 +30,6 @@ otel_unquote() {
 
 otel_line_join() {
   \sed '/^$/d' | \tr '\n' ' ' | sed 's/ $//'
-  # \xargs
 }
 
 otel_line_split() {
