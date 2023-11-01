@@ -40,7 +40,7 @@ jobs:
         with:
           name: package.deb
       - run: sudo apt-get -y install ./package.deb
-      - run: bash -c "cd tests && bash run_tests.sh bash"
+      - run: bash -c "cd tests && sudo bash run_tests.sh bash"
 
   test-debian-stable-oldest-sh:
     needs: test-smoke

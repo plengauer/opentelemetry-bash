@@ -139,6 +139,7 @@ otel_unalias_and_reinstrument() {
 
 otel_instrument_and_source() {
   local file="$2"
+  # sourcing /usr/share/debconf/confmodule will exec and restart the script 
   if [ -f "$file" ]; then
     otel_auto_instrument "$file"
   fi
@@ -321,14 +322,17 @@ otel_end_script() {
 
 otel_end_script_and_exec() {
   if [ "$1" = "otel_observe" ]; then shift; fi
-  if [ -n "$*" ]; then
+  shift
+  if [ -n "$1" ]; then
     local span_id=$(otel_span_start INTERNAL "exec $*")
-    local traceparent=$(otel_traceparent $span_id)
+    local traceparent=$(otel_span_traceparent $span_id)
     otel_span_end $span_id
     otel_end_script
-    export OTEL_TRACEPARENT=$traceparent
+    unset OTEL_SHELL_INJECTED
+    unset OTEL_SHELL_AUTO_INJECTED
+    set -- env OTEL_TRACEPARENT=$traceparent "$@"
   fi
-  "$@"
+  \exec "$@"
 }
 
 otel_alias_prepend wget otel_propagate_wget
