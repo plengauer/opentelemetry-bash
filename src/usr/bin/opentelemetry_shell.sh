@@ -331,8 +331,10 @@ otel_end_script_and_exec() {
     local traceparent=$(otel_span_traceparent $span_id)
     otel_span_end $span_id
     otel_end_script
-    export OTEL_TRACEPARENT=$traceparent
     unset OTEL_SHELL_INJECTED
+    unset OTEL_SHELL_AUTO_INJECTED
+    shift
+    set -- \exec env OTEL_TRACEPARENT=$traceparent "$@"
   fi
   "$@"
 }
