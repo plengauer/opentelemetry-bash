@@ -98,7 +98,8 @@ otel_list_all_commands() {
 
 otel_auto_instrument() {
   local file_hint="$1"
-  local executables="$(otel_list_all_commands | \sort -u | otel_filter_instrumentations "$file_hint" | otel_line_join)"
+  local pre_instrumented_executables="$(\alias | \grep -vF 'otel_observe' | \sed 's/^alias //' | \cut -d= -f1 | otel_line_split)"
+  local executables="$(otel_list_all_commands | \grep -vF "$pre_instrumented_executables" | otel_filter_instrumentations "$file_hint" | \sort -u | otel_line_join)"
   if [ "$otel_shell" = "zsh" ]; then
     for cmd in ${(s/ /)executables}; do otel_instrument $cmd; done
   else
