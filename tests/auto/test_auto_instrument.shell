@@ -75,3 +75,18 @@ if [ "$SHELL" != "zsh" ]; then
   assert_ends_with "/echo" "$(\echo "$span" | jq -r '.attributes."subprocess.executable.path"')"
 fi
 assert_equals "0" $(\echo "$span" | jq -r '.attributes."subprocess.exit_code"')
+
+if [ ! -f 'FILE_THAT_DOES_NOT_EXIST' ]; then echo hello world in an if; fi
+
+span="$(resolve_span '.name == "echo hello world in an if"')"
+assert_equals "echo hello world in an if" "$(\echo "$span" | jq -r '.name')"
+assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
+assert_not_equals "null" $(\echo "$span" | jq -r '.parent_id')
+assert_equals "UNSET" $(\echo "$span" | jq -r '.status.status_code')
+assert_equals "echo hello world in an if" "$(\echo "$span" | jq -r '.attributes."subprocess.command"')"
+assert_equals "hello world in an if" "$(\echo "$span" | jq -r '.attributes."subprocess.command_args"')"
+assert_equals "echo" "$(\echo "$span" | jq -r '.attributes."subprocess.executable.name"')"
+if [ "$SHELL" != "zsh" ]; then
+  assert_ends_with "/echo" "$(\echo "$span" | jq -r '.attributes."subprocess.executable.path"')"
+fi
+assert_equals "0" $(\echo "$span" | jq -r '.attributes."subprocess.exit_code"')
