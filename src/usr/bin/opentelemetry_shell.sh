@@ -41,7 +41,7 @@ otel_alias_prepend() {
   local prepend_command=$2
   
   local previous_command="$(\alias $original_command 2> /dev/null | \cut -d= -f2- | otel_unquote)"
-  if [ -z "$previous_command" ]; then local previous_command="$original_command"; fi
+  if [ -z "$previous_command" ]; then local previous_command="\\$original_command"; fi
   if [ "${previous_command#OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE=}" != "$previous_command" ]; then local previous_command="$(\printf '%s' "$previous_command" | \cut -d" " -f2-)"; fi
   case "$previous_command" in
     *"$prepend_command"*) return 0 ;;
@@ -87,7 +87,7 @@ otel_list_alias_commands() {
   \alias | \sed 's/^alias //' | while read alias_entry; do
     local alias_key="$(\printf '%s' "$alias_entry" | \cut -d= -f1)"
     local alias_val="$(\printf '%s' "$alias_entry" | \cut -d= -f2- | otel_unquote)"
-    if [ "$(\printf '%s' "$alias_val" | otel_line_split | \grep -vP '\b(OTEL_|otel_)\w*\b' | otel_line_join)" != "$alias_key" ]; then \echo $alias_key; fi
+    if [ "$(\printf '%s' "$alias_val" | otel_line_split | \grep -vP '\b(OTEL_|otel_)\w*\b' | otel_line_join)" != "\\$alias_key" ]; then \echo $alias_key; fi
   done
 }
 
