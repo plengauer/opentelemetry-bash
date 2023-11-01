@@ -73,11 +73,7 @@ otel_filter_instrumentations() {
 }
 
 otel_list_path_executables() {
-  if [ "$otel_shell" = "zsh" ]; then
-    for dir in ${(s/:/)PATH}; do \find $dir -maxdepth 1 -type f,l -executable 2> /dev/null; done
-  else
-    IFS=': ' ; for dir in $PATH; do \find $dir -maxdepth 1 -type f,l -executable 2> /dev/null; done
-  fi
+  \echo "$PATH" | \tr ' ' '\n' | \tr ':' '\n' | while read dir; do \find $dir -maxdepth 1 -type f,l -executable 2> /dev/null; done
 }
 
 otel_list_path_commands() {
