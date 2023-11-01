@@ -62,10 +62,19 @@ otel_outstrument() {
   \unalias $1 1> /dev/null 2> /dev/null || true
 }
 
-otel_filter_instrumentations() {
+otel_filter_commands_by_file() {
   local file_hint="$1"
   if [ "$file_hint" != "" ] && [ -f "$file_hint" ] && [ "$(\readlink -f /proc/$$/exe)" != "$(\readlink -f $file_hint)" ] && [ "$file_hint" != "/usr/bin/opentelemetry_shell.sh" ]; then
     \grep -xF "$(\tr -s ' $=";(){}[]/\\!#~^'\' '\n' < "$file_hint" | \grep -E '^[a-zA-Z0-9 ._-]*$')"
+  else
+    \cat
+  fi
+}
+
+otel_filter_commands_by_instrumentation() {
+  local pre_instrumented_executables="$(\alias | \grep -F 'otel_observe' | \sed 's/^alias //' | \cut -d= -f1)"
+  if [ -n "$pre_instrumented_executables" ]; then
+    \grep -xFv "$pre_instrumented_executables" 
   else
     \cat
   fi
@@ -98,9 +107,8 @@ otel_list_all_commands() {
 
 otel_auto_instrument() {
   local file_hint="$1"
-  local pre_instrumented_executables="$(\alias | \grep -F 'otel_observe' | \sed 's/^alias //' | \cut -d= -f1 | otel_line_split)"
-  # both otel_filter_instrumentations and grepping by pre_instrumented_executables is functionally optional, but helps optimizing time because the following loop AND otel_instrument itself is expensive!
-  local executables="$(otel_list_all_commands | \grep -vF "$pre_instrumented_executables" | otel_filter_instrumentations "$file_hint" | \sort -u | otel_line_join)"
+  # both otel_filter_commands_by_file and otel_filter_commands_by_instrumentation are functionally optional, but helps optimizing time because the following loop AND otel_instrument itself is expensive!
+  local executables="$(otel_list_all_commands | otel_filter_commands_by_instrumentation | otel_filter_commands_by_file "$file_hint" | \sort -u | otel_line_join)"
   if [ "$otel_shell" = "zsh" ]; then
     for cmd in ${(s/ /)executables}; do otel_instrument $cmd; done
   else
