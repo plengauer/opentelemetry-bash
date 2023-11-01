@@ -113,7 +113,7 @@ otel_auto_instrument() {
 
 otel_alias_and_instrument() {
   local exit_code=0
-  "$@" || exit_code=$?
+  "$@" || local exit_code=$?
   shift
   local commands="$(\echo "$@" | otel_line_split | \grep -m1 '=' 2> /dev/null | \cut -d= -f1)"
   if [ "$otel_shell" = "zsh" ]; then
@@ -126,7 +126,7 @@ otel_alias_and_instrument() {
 
 otel_unalias_and_reinstrument() {
   local exit_code=0
-  "$@" || exit_code=$?
+  "$@" || local exit_code=$?
   shift
   local commands="$(otel_list_all_commands | \grep -Fx "$(\echo "$@" | otel_line_split 2> /dev/null)" 2> /dev/null)"
   if [ "$otel_shell" = "zsh" ]; then
@@ -223,7 +223,7 @@ otel_inject_shell_with_copy() {
   # run command
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-    OTEL_SHELL_AUTO_INJECTED=TRUE "$@" || exit_code=$?
+    OTEL_SHELL_AUTO_INJECTED=TRUE "$@" || local exit_code=$?
   \rm $temporary_script
   return $exit_code
 }
@@ -275,7 +275,7 @@ $arg"
   # run command
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-    OTEL_SHELL_AUTO_INJECTED=TRUE "$@" || exit_code=$?
+    OTEL_SHELL_AUTO_INJECTED=TRUE "$@" || local exit_code=$?
   return $exit_code
 }
 
