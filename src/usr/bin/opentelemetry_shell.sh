@@ -29,7 +29,7 @@ otel_unquote() {
 }
 
 otel_line_join() {
-  \sed '/^$/d' | \tr '\n' ' '
+  \sed '/^$/d' | \tr '\n' ' ' | sed 's/ $//'
   # \xargs
 }
 
