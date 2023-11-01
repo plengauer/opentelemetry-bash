@@ -334,7 +334,6 @@ otel_end_script_and_exec() {
     otel_end_script
     unset OTEL_SHELL_INJECTED
     unset OTEL_SHELL_AUTO_INJECTED
-    shift
     set -- env OTEL_TRACEPARENT=$traceparent "$@"
   fi
   \exec "$@"
