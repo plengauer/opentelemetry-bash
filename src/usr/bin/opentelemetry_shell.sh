@@ -285,6 +285,7 @@ otel_start_script() {
     unset OTEL_SHELL_AUTO_INJECTED
     otel_root_span_id=$(otel_span_start SERVER $(otel_command_self))
     if [ -n "$SSH_CLIENT"  ] && [ -n "$SSH_CONNECTION" ]; then
+      otel_span_attribute $otel_root_span_id endpoint.name=ssh
       otel_span_attribute $otel_root_span_id ssh.ip=$(\echo $SSH_CONNECTION | \cut -d' ' -f3)
       otel_span_attribute $otel_root_span_id ssh.port=$(\echo $SSH_CONNECTION | \cut -d' ' -f4)
       otel_span_attribute $otel_root_span_id net.peer.ip=$(\echo $SSH_CLIENT | \cut -d' ' -f1)
@@ -299,6 +300,10 @@ otel_start_script() {
       otel_span_attribute $otel_root_span_id http.target=$SCRIPT_NAME
       otel_span_attribute $otel_root_span_id http.url=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f1 | \tr '[:upper:]' '[:lower:]')://$SERVER_NAME:$SERVER_PORT$SCRIPT_NAME
       otel_span_attribute $otel_root_span_id net.peer.ip=$REMOTE_ADDR
+    elif [ "$(otel_command_self | \cut -d' ' -f2 | \rev | \cut -d/ -f2- | \rev)" = "/var/lib/dpkg/info" ]; then
+      otel_span_attribute $otel_root_span_id endpoint.name=$(otel_command_self | \cut -d' ' -f2 | \rev | \cut -d/ -f1 | \rev | \cut -d. -f2)
+      otel_span_attribute $otel_root_span_id debian.package.operation=$(otel_command_self | \cut -d' ' -f2 | \rev | \cut -d/ -f1 | \rev | \cut -d. -f2) $(otel_command_self | \cut -d' ' -f3)
+      otel_span_attribute $otel_root_span_id debian.package.name=$(otel_command_self | \cut -d' ' -f2 | \rev | \cut -d/ -f1 | \rev | \cut -d. -f1)
     fi
     otel_span_activate $otel_root_span_id
   fi
