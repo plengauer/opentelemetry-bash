@@ -29,8 +29,8 @@ otel_unquote() {
 }
 
 otel_line_join() {
-  # \sed '/^$/d' | \tr '\n' ' '
-  \xargs
+  \sed '/^$/d' | \tr '\n' ' '
+  # \xargs
 }
 
 otel_line_split() {
