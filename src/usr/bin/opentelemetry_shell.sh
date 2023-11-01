@@ -81,7 +81,7 @@ otel_list_path_commands() {
 }
 
 otel_list_alias_commands() {
-  \alias | \sed 's/^alias //' | \awk -F'=' '{ var=$1; sub($1 FS,""); } ! ($0 ~ "^'\''((OTEL_|otel_).* )*\\\\" var "'\''$") { print var }'
+  \alias | \sed 's/^alias //' | \awk -F'=' '{ var=$1; sub($1 FS,""); } ! ($0 ~ "^'\''((OTEL_|otel_).* )*" var "'\''$") { print var }'
 }
 
 otel_list_builtin_commands() {
