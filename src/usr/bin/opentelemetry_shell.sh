@@ -11,6 +11,10 @@ if [ "$OTEL_SHELL_INJECTED" = "TRUE" ]; then
 fi
 OTEL_SHELL_INJECTED=TRUE
 
+if [ "$otel_shell" = "bash" ] && [ -n "$BASHPID" ] && [ "$$" != "$BASHPID" ]; then
+  echo "WARNING The OpenTelemetry shell file for auto-instrumentation is sourced in a subshell, automatic instrumentation will only be active within that subshell!" >&2
+fi
+
 . /usr/bin/opentelemetry_shell_api.sh
 
 if [ "$otel_shell" = "bash" ]; then
