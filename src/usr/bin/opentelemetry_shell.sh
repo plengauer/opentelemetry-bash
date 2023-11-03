@@ -289,12 +289,17 @@ otel_record_exec() {
   local file="$1"
   local line="$2"
   if [ -n "$file" ] && [ -n "$line" ] && [ -f "$file" ]; then
-    local name="$(\cat "$file" | \head -n$line | \grep -F 'exec')"
+    local command="$(\cat "$file" | \sed -n "$line"p | \grep -F 'exec' | \sed 's/^.*exec /exec /')"
   else
-    local name="exec"
+    local command="exec"
   fi
-  local span_id=$(otel_span_start INTERNAL "$name")
-  otel_span_activate $span_id
+  local span_id=$(otel_span_start INTERNAL "$command")
+  otel_span_attribute $span_id code.filepath=$0
+  otel_span_attribute $span_id code.lineno=$LINENO
+  # is_last_command_redirect = [ -n "$(\printf '%s' "$command" | \rev | \cut -d' ' -f1 | \rev | \grep -F '>')" ]
+  if [ -f "$(\printf '%s' "$command" | \cut -d' ' -f2)" ]; then
+    otel_span_activate $span_id
+  fi
   otel_span_end $span_id
 }
 
@@ -361,9 +366,8 @@ if [ "$otel_shell" = "bash" ] || [ "$otel_shell" = "zsh" ]; then
 fi
 otel_auto_instrument "$0"
 
-# limitations of exec instrumentation: (1) file locations are missing, (2) proper span name, (3) leaking traceparent (if exec is used to just open a new fd, all subsequent spans will be children, not siblings)
-# \alias exec='exec_span_id=$(otel_span_start INTERNAL exec); otel_span_activate $exec_span_id; otel_span_end $exec_span_id; unset exec_span_id; \exec'
-\alias exec='otel_record_exec; \exec'
+# limitations of exec instrumentation: (1) leaking traceparent (if exec is used to just open a new fd, all subsequent spans will be children, not siblings)
+\alias exec='otel_record_exec "$0" "$LINENO"; \exec'
 trap otel_end_script EXIT
 
 otel_start_script
