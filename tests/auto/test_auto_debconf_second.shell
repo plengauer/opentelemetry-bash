@@ -1,5 +1,4 @@
 if [ "$SHELL" = "zsh" ]; then exit 0; fi
-set -x
 . /usr/bin/opentelemetry_shell.sh
 . /usr/share/debconf/confmodule
 echo hello world
