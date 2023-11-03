@@ -76,6 +76,7 @@ def main():
             sys.exit(0)
 
 def handle(scope, version, command, arguments):
+    global auto_end
     if command == 'RESOURCE_ATTRIBUTE':
         key = arguments.split('=', 1)[0]
         value = arguments.split('=', 1)[1]
@@ -103,7 +104,6 @@ def handle(scope, version, command, arguments):
             logger_provider.add_log_record_processor(BatchLogRecordProcessor(ConsoleLogExporter() if os.environ.get('OTEL_LOGS_CONSOLE_EXPORTER') == 'TRUE' else OTLPLogExporter()))
             opentelemetry._logs.set_logger_provider(logger_provider)
     elif command == 'SHUTDOWN':
-        global auto_end
         if auto_end:
             for span in spans.values():
                 span.end()
@@ -115,7 +115,6 @@ def handle(scope, version, command, arguments):
             opentelemetry._logs.get_logger_provider().shutdown()
         raise EOFError
     elif command == 'SPAN_START':
-        global auto_end
         global next_span_id
         tokens = arguments.split(' ', 3)
         response_path = tokens[0]
@@ -135,7 +134,6 @@ def handle(scope, version, command, arguments):
         span.end()
         del spans[span_id]
     elif command == 'SPAN_AUTO_END':
-        global auto_end
         auto_end = True
     elif command == 'SPAN_ERROR':
         span : Span = spans[arguments]
