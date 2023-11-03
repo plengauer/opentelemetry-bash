@@ -289,6 +289,20 @@ $arg"
   return $exit_code
 }
 
+otel_record_exec() {
+  local file="$1"
+  local line="$2"
+  if [ -n "$file" ] && [ -n "$line" ] && [ -f "$file" ]; then local command="$(\cat "$file" | \sed -n "$line"p | \grep -F 'exec' | \sed 's/^.*exec /exec /')"; fi
+  if [ -z "$command" ]; then local command="exec"; fi
+  local span_id=$(otel_span_start INTERNAL "$command")
+  otel_span_attribute $span_id code.filepath=$0
+  otel_span_attribute $span_id code.lineno=$LINENO
+  if [ "$(\printf '%s' "$command" | \sed 's/ [0-9]*>.*$//')" != "exec" ]; then
+    otel_span_activate $span_id
+  fi
+  otel_span_end $span_id
+}
+
 otel_start_script() {
   unset OTEL_SHELL_SPAN_NAME_OVERRIDE
   unset OTEL_SHELL_SPAN_KIND_OVERRIDE
@@ -334,21 +348,6 @@ otel_end_script() {
   otel_shutdown
 }
 
-otel_end_script_and_exec() {
-  if [ "$1" = "otel_observe" ]; then shift; fi
-  shift
-  if [ -n "$1" ]; then
-    local span_id=$(otel_span_start INTERNAL "exec $*")
-    local traceparent=$(otel_span_traceparent $span_id)
-    otel_span_end $span_id
-    otel_end_script
-    unset OTEL_SHELL_INJECTED
-    unset OTEL_SHELL_AUTO_INJECTED
-    set -- env OTEL_TRACEPARENT=$traceparent "$@"
-  fi
-  \exec "$@"
-}
-
 otel_alias_prepend wget otel_propagate_wget
 otel_alias_prepend curl otel_propagate_curl
 if [ "$otel_is_interactive" != "TRUE" ]; then # TODO do this always, not just when non-interactive. but then interactive injection must be handled properly!
@@ -367,7 +366,7 @@ if [ "$otel_shell" = "bash" ] || [ "$otel_shell" = "zsh" ]; then
 fi
 otel_auto_instrument "$0"
 
-otel_alias_prepend exec otel_end_script_and_exec
+\alias exec='otel_record_exec "$0" "$LINENO"; \exec'
 trap otel_end_script EXIT
 
 otel_start_script

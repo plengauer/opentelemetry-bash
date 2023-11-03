@@ -68,6 +68,7 @@ def main():
             except:
                 print('SDK Error: ' + line, file=sys.stderr)
                 traceback.print_exc()
+        handle(scope, version, 'SHUTDOWN', None)
 
 def handle(scope, version, command, arguments):
     if command == 'RESOURCE_ATTRIBUTE':
@@ -97,6 +98,10 @@ def handle(scope, version, command, arguments):
             logger_provider.add_log_record_processor(BatchLogRecordProcessor(ConsoleLogExporter() if os.environ.get('OTEL_LOGS_CONSOLE_EXPORTER') == 'TRUE' else OTLPLogExporter()))
             opentelemetry._logs.set_logger_provider(logger_provider)
     elif command == 'SHUTDOWN':
+        for span in spans.values():
+            # TODO better description of what is happening
+            span.set_status(StatusCode.ERROR)
+            span.end()
         if os.environ.get('OTEL_SHELL_TRACES_ENABLE') == 'TRUE':
             opentelemetry.trace.get_tracer_provider().shutdown()
         if os.environ.get('OTEL_SHELL_METRICS_ENABLE') == 'TRUE':
