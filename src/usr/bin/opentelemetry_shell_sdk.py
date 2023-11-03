@@ -68,7 +68,10 @@ def main():
             except:
                 print('SDK Error: ' + line, file=sys.stderr)
                 traceback.print_exc()
-        handle(scope, version, 'SHUTDOWN', None)
+        try:
+            handle(scope, version, 'SHUTDOWN', None)
+        except EOFError:
+            sys.exit(0)
 
 def handle(scope, version, command, arguments):
     if command == 'RESOURCE_ATTRIBUTE':
