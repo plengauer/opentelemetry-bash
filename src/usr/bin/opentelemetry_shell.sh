@@ -307,6 +307,7 @@ otel_record_exec() {
     otel_span_activate $span_id
   fi
   otel_span_end $span_id
+  otel_sdk_communicate 'SPAN_AUTO_END'
 }
 
 otel_start_script() {
