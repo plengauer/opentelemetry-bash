@@ -366,7 +366,6 @@ if [ "$otel_shell" = "bash" ] || [ "$otel_shell" = "zsh" ]; then
 fi
 otel_auto_instrument "$0"
 
-# limitations of exec instrumentation: (1) leaking traceparent (if exec is used to just open a new fd, all subsequent spans will be children, not siblings)
 \alias exec='otel_record_exec "$0" "$LINENO"; \exec'
 trap otel_end_script EXIT
 
