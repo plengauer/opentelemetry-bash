@@ -16,9 +16,9 @@ if [ "$otel_shell" = "bash" ] && [ -n "$BASHPID" ] && [ "$$" != "$BASHPID" ]; th
 fi
 
 if [ "$otel_shell" = "bash" ]; then
-  local otel_source_file_resolver='"$BASH_SOURCE"'
+  otel_source_file_resolver='"$BASH_SOURCE"'
 else
-  local otel_source_file_resolver='"$0"'
+  otel_source_file_resolver='"$0"'
 fi
 
 . /usr/bin/opentelemetry_shell_api.sh
