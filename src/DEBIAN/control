@@ -1,5 +1,5 @@
 Package: opentelemetry-shell
-Version: 2.6.1
+Version: 2.7.0
 Architecture: all
 Depends: awk, apt, procps, python3, python3-pip, python3-venv
 Priority: extra
