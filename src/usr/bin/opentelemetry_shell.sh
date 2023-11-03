@@ -89,7 +89,7 @@ otel_list_path_commands() {
 }
 
 otel_list_alias_commands() {
-  \alias | \sed 's/^alias //' | \awk -F'=' '{ var=$1; sub($1 FS,""); } ! ($0 ~ "^'\''((OTEL_|otel_).* )*" var "'\''$") { print var }' | \grep -vF 'exec'
+  \alias | \sed 's/^alias //' | \awk -F'=' '{ var=$1; sub($1 FS,""); } ! ($0 ~ "^'\''((OTEL_|otel_).* )*" var "'\''$") { print var }'
 }
 
 otel_list_builtin_commands() {
@@ -285,6 +285,12 @@ $arg"
   return $exit_code
 }
 
+otel_record_exec() {
+ local span_id=$(otel_span_start INTERNAL exec)
+ otel_span_activate $span_id
+ otel_span_end $span_id
+}
+
 otel_start_script() {
   unset OTEL_SHELL_SPAN_NAME_OVERRIDE
   unset OTEL_SHELL_SPAN_KIND_OVERRIDE
@@ -349,7 +355,8 @@ fi
 otel_auto_instrument "$0"
 
 # limitations of exec instrumentation: (1) file locations are missing, (2) proper span name, (3) leaking traceparent (if exec is used to just open a new fd, all subsequent spans will be children, not siblings)
-\alias exec='exec_span_id=$(otel_span_start INTERNAL exec); otel_span_activate $exec_span_id; otel_span_end $exec_span_id; unset exec_span_id; \exec'
+# \alias exec='exec_span_id=$(otel_span_start INTERNAL exec); otel_span_activate $exec_span_id; otel_span_end $exec_span_id; unset exec_span_id; \exec'
+\alias exec='otel_record_exec; \exec'
 trap otel_end_script EXIT
 
 otel_start_script
