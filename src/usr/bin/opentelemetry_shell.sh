@@ -348,7 +348,7 @@ if [ "$otel_shell" = "bash" ] || [ "$otel_shell" = "zsh" ]; then
 fi
 otel_auto_instrument "$0"
 
-\alias exec='exec_span_id=$(otel_span_start INTERNAL exec); traceparent=$(otel_span_traceparent $exec_span_id); otel_span_end $exec_span_id; \exec'
+\alias exec='exec_span_id=$(otel_span_start INTERNAL exec); traceparent=$(otel_span_traceparent $exec_span_id); otel_span_end $exec_span_id; unset exec_span_id; \exec'
 # env OTEL_TRACEPARENT=$traceparent'
 trap otel_end_script EXIT
 
