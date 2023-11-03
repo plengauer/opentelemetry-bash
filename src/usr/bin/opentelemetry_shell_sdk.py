@@ -50,6 +50,8 @@ next_span_id = 0
 metrics = {}
 next_metric_id = 0
 
+auto_end = False
+
 def main():
     fifo_path = sys.argv[1]
     scope = sys.argv[2]
@@ -68,9 +70,13 @@ def main():
             except:
                 print('SDK Error: ' + line, file=sys.stderr)
                 traceback.print_exc()
-        handle(scope, version, 'SHUTDOWN', None)
+        try:
+            handle(scope, version, 'SHUTDOWN', None)
+        except EOFError:
+            sys.exit(0)
 
 def handle(scope, version, command, arguments):
+    global auto_end
     if command == 'RESOURCE_ATTRIBUTE':
         key = arguments.split('=', 1)[0]
         value = arguments.split('=', 1)[1]
@@ -98,10 +104,9 @@ def handle(scope, version, command, arguments):
             logger_provider.add_log_record_processor(BatchLogRecordProcessor(ConsoleLogExporter() if os.environ.get('OTEL_LOGS_CONSOLE_EXPORTER') == 'TRUE' else OTLPLogExporter()))
             opentelemetry._logs.set_logger_provider(logger_provider)
     elif command == 'SHUTDOWN':
-        for span in spans.values():
-            # TODO better description of what is happening
-            span.set_status(StatusCode.ERROR)
-            span.end()
+        if auto_end:
+            for span in spans.values():
+                span.end()
         if os.environ.get('OTEL_SHELL_TRACES_ENABLE') == 'TRUE':
             opentelemetry.trace.get_tracer_provider().shutdown()
         if os.environ.get('OTEL_SHELL_METRICS_ENABLE') == 'TRUE':
@@ -122,11 +127,14 @@ def handle(scope, version, command, arguments):
         spans[str(span_id)] = span
         with open(response_path, 'w') as response:
             response.write(str(span_id))
+        auto_end = False
     elif command == 'SPAN_END':
         span_id = arguments
         span : Span = spans[span_id]
         span.end()
         del spans[span_id]
+    elif command == 'SPAN_AUTO_END':
+        auto_end = True
     elif command == 'SPAN_ERROR':
         span : Span = spans[arguments]
         span.set_status(StatusCode.ERROR)
