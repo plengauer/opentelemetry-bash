@@ -89,7 +89,7 @@ otel_list_path_commands() {
 }
 
 otel_list_alias_commands() {
-  \alias | \sed 's/^alias //' | \awk -F'=' '{ var=$1; sub($1 FS,""); } ! ($0 ~ "^'\''((OTEL_|otel_).* )*" var "'\''$") { print var }'
+  \alias | \sed 's/^alias //' | \awk -F'=' '{ var=$1; sub($1 FS,""); } ! ($0 ~ "^'\''((OTEL_|otel_).* )*" var "'\''$") { print var }' | \grep -vF 'exec'
 }
 
 otel_list_builtin_commands() {
@@ -330,21 +330,6 @@ otel_end_script() {
   otel_shutdown
 }
 
-otel_end_script_and_exec() {
-  if [ "$1" = "otel_observe" ]; then shift; fi
-  shift
-  if [ -n "$1" ]; then
-    local span_id=$(otel_span_start INTERNAL "exec $*")
-    local traceparent=$(otel_span_traceparent $span_id)
-    otel_span_end $span_id
-    otel_end_script
-    unset OTEL_SHELL_INJECTED
-    unset OTEL_SHELL_AUTO_INJECTED
-    set -- env OTEL_TRACEPARENT=$traceparent "$@"
-  fi
-  \exec "$@"
-}
-
 otel_alias_prepend wget otel_propagate_wget
 otel_alias_prepend curl otel_propagate_curl
 if [ "$otel_is_interactive" != "TRUE" ]; then # TODO do this always, not just when non-interactive. but then interactive injection must be handled properly!
@@ -363,7 +348,7 @@ if [ "$otel_shell" = "bash" ] || [ "$otel_shell" = "zsh" ]; then
 fi
 otel_auto_instrument "$0"
 
-otel_alias_prepend exec otel_end_script_and_exec
+\alias exec='exec_span_id=$(otel_span_start INTERNAL exec); traceparent=$(otel_span_traceparent $exec_span_id); otel_span_end $exec_span_id; \exec env OTEL_TRACEPARENT=$traceparent'
 trap otel_end_script EXIT
 
 otel_start_script
