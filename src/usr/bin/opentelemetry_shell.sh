@@ -294,7 +294,7 @@ otel_record_exec() {
   otel_span_attribute $span_id code.filepath=$0
   otel_span_attribute $span_id code.lineno=$LINENO
   # is_last_command_redirect = [ -n "$(\printf '%s' "$command" | \rev | \cut -d' ' -f1 | \rev | \grep -F '>')" ]
-  if [ -f "$(\printf '%s' "$command" | \cut -d' ' -f2)" ]; then
+  if [ "$(\printf '%s' "$command" | \sed 's/ [0-9]*>.*$//')" = "exec" ]; then
     otel_span_activate $span_id
   fi
   otel_span_end $span_id
