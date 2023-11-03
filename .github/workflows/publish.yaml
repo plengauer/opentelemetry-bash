@@ -117,6 +117,21 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:oldstable zsh"
 
+  test-debian-stable-oldest-ksh:
+    needs: test-smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: package.deb
+      - run: mv ./package.deb tests
+      - run: sudo apt-get update
+      - run: sudo apt-get remove -y containerd.io
+      - run: sudo apt-get install -y docker.io runc
+      - run: bash -c "cd tests && bash run_tests_containerized.sh debian:oldstable ksh"
+
   test-debian-stable-latest-sh:
     needs: test-smoke
     runs-on: ubuntu-latest
@@ -191,6 +206,21 @@ jobs:
       - run: sudo apt-get remove -y containerd.io
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:stable zsh"
+
+  test-debian-stable-latest-ksh:
+    needs: test-smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: package.deb
+      - run: mv ./package.deb tests
+      - run: sudo apt-get update
+      - run: sudo apt-get remove -y containerd.io
+      - run: sudo apt-get install -y docker.io runc
+      - run: bash -c "cd tests && bash run_tests_containerized.sh debian:stable ksh"
 
   test-debian-testing-sh:
     needs: test-smoke
@@ -267,6 +297,21 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:testing zsh"
 
+  test-debian-testing-ksh:
+    needs: test-smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: package.deb
+      - run: mv ./package.deb tests
+      - run: sudo apt-get update
+      - run: sudo apt-get remove -y containerd.io
+      - run: sudo apt-get install -y docker.io runc
+      - run: bash -c "cd tests && bash run_tests_containerized.sh debian:testing ksh"
+
   test-debian-unstable-sh:
     needs: test-smoke
     runs-on: ubuntu-latest
@@ -341,6 +386,21 @@ jobs:
       - run: sudo apt-get remove -y containerd.io
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:unstable zsh"
+
+  test-debian-unstable-ksh:
+    needs: test-smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: package.deb
+      - run: mv ./package.deb tests
+      - run: sudo apt-get update
+      - run: sudo apt-get remove -y containerd.io
+      - run: sudo apt-get install -y docker.io runc
+      - run: bash -c "cd tests && bash run_tests_containerized.sh debian:unstable ksh"
 
   test-ubuntu-stable-oldest-sh:
     needs: test-smoke
@@ -417,6 +477,21 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:focal zsh"
 
+  test-ubuntu-stable-oldest-ksh:
+    needs: test-smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: package.deb
+      - run: mv ./package.deb tests
+      - run: sudo apt-get update
+      - run: sudo apt-get remove -y containerd.io
+      - run: sudo apt-get install -y docker.io runc
+      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:focal ksh"
+
   test-ubuntu-stable-latest-sh:
     needs: test-smoke
     runs-on: ubuntu-latest
@@ -491,6 +566,21 @@ jobs:
       - run: sudo apt-get remove -y containerd.io
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:latest zsh"
+
+  test-ubuntu-stable-latest-ksh:
+    needs: test-smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: package.deb
+      - run: mv ./package.deb tests
+      - run: sudo apt-get update
+      - run: sudo apt-get remove -y containerd.io
+      - run: sudo apt-get install -y docker.io runc
+      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:latest ksh"
 
   test-ubuntu-testing-sh:
     needs: test-smoke
@@ -567,6 +657,21 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:rolling zsh"
 
+  test-ubuntu-testing-ksh:
+    needs: test-smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: package.deb
+      - run: mv ./package.deb tests
+      - run: sudo apt-get update
+      - run: sudo apt-get remove -y containerd.io
+      - run: sudo apt-get install -y docker.io runc
+      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:rolling ksh"
+
   test-ubuntu-unstable-sh:
     needs: test-smoke
     runs-on: ubuntu-latest
@@ -642,6 +747,21 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel zsh"
 
+  test-ubuntu-unstable-ksh:
+    needs: test-smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: package.deb
+      - run: mv ./package.deb tests
+      - run: sudo apt-get update
+      - run: sudo apt-get remove -y containerd.io
+      - run: sudo apt-get install -y docker.io runc
+      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel ksh"
+
   test-debian:
     needs: [test-debian-stable-oldest-sh, test-debian-stable-oldest-ash, test-debian-stable-oldest-dash, test-debian-stable-oldest-bash, test-debian-stable-oldest-zsh, test-debian-stable-latest-sh, test-debian-stable-latest-ash, test-debian-stable-latest-dash, test-debian-stable-latest-bash, test-debian-stable-latest-zsh, test-debian-testing-sh, test-debian-testing-ash, test-debian-testing-dash, test-debian-testing-bash, test-debian-testing-zsh]
     runs-on: ubuntu-latest
@@ -684,8 +804,14 @@ jobs:
     steps:
       - run: echo zsh
 
+  test-ksh:
+    needs: [test-debian-stable-oldest-ksh, test-debian-stable-latest-ksh, test-debian-testing-ksh, test-ubuntu-stable-oldest-ksh, test-ubuntu-stable-latest-ksh, test-ubuntu-testing-ksh]
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo ksh
+
   test-shell:
-    needs: [test-sh, test-ash, test-dash, test-bash, test-zsh]
+    needs: [test-sh, test-ash, test-dash, test-bash, test-zsh, test-ksh]
     runs-on: ubuntu-latest
     steps:
       - run: echo shell
