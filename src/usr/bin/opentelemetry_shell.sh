@@ -293,7 +293,6 @@ otel_record_exec() {
   local span_id=$(otel_span_start INTERNAL "$command")
   otel_span_attribute $span_id code.filepath=$0
   otel_span_attribute $span_id code.lineno=$LINENO
-  # is_last_command_redirect = [ -n "$(\printf '%s' "$command" | \rev | \cut -d' ' -f1 | \rev | \grep -F '>')" ]
   if [ "$(\printf '%s' "$command" | \sed 's/ [0-9]*>.*$//')" = "exec" ]; then
     otel_span_activate $span_id
   fi
