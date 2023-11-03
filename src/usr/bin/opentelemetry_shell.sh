@@ -288,11 +288,8 @@ $arg"
 otel_record_exec() {
   local file="$1"
   local line="$2"
-  if [ -n "$file" ] && [ -n "$line" ] && [ -f "$file" ]; then
-    local command="$(\cat "$file" | \sed -n "$line"p | \grep -F 'exec' | \sed 's/^.*exec /exec /')"
-  else
-    local command="exec"
-  fi
+  if [ -n "$file" ] && [ -n "$line" ] && [ -f "$file" ]; then local command="$(\cat "$file" | \sed -n "$line"p | \grep -F 'exec' | \sed 's/^.*exec /exec /')"; fi
+  if [ -z "$command" ]; then local command="exec"; fi
   local span_id=$(otel_span_start INTERNAL "$command")
   otel_span_attribute $span_id code.filepath=$0
   otel_span_attribute $span_id code.lineno=$LINENO
