@@ -348,8 +348,8 @@ if [ "$otel_shell" = "bash" ] || [ "$otel_shell" = "zsh" ]; then
 fi
 otel_auto_instrument "$0"
 
-#TODO limitations: (1) file locations are missing, (2) proper span name
-\alias exec='exec_span_id=$(otel_span_start INTERNAL exec); otel_span_activate $exec_span_id); otel_span_end $exec_span_id; unset exec_span_id; \exec'
+# limitations of exec instrumentation: (1) file locations are missing, (2) proper span name, (3) leaking traceparent (if exec is used to just open a new fd, all subsequent spans will be children, not siblings)
+\alias exec='exec_span_id=$(otel_span_start INTERNAL exec); otel_span_activate $exec_span_id; otel_span_end $exec_span_id; unset exec_span_id; \exec'
 trap otel_end_script EXIT
 
 otel_start_script
