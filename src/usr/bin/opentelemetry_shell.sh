@@ -286,9 +286,16 @@ $arg"
 }
 
 otel_record_exec() {
- local span_id=$(otel_span_start INTERNAL exec)
- otel_span_activate $span_id
- otel_span_end $span_id
+  local file="$1"
+  local line="$2"
+  if [ -n "$file" ] && [ -n "$line" ] && [ -f "$file" ]; then
+    local name="$(\cat "$file" | \head -n$line | \grep -F 'exec')"
+  else
+    local name="exec"
+  fi
+  local span_id=$(otel_span_start INTERNAL "$name")
+  otel_span_activate $span_id
+  otel_span_end $span_id
 }
 
 otel_start_script() {
