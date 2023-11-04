@@ -18,8 +18,8 @@ if [ "$otel_shell" = "bash" ] && [ -n "$BASHPID" ] && [ "$$" != "$BASHPID" ]; th
 fi
 
 if [ "$otel_shell" = "bash" ]; then
-  otel_source_file_resolver='"$BASH_SOURCE"'
-  otel_source_line_resolver='"$BASH_LINENO"'
+  otel_source_file_resolver='"${BASH_SOURCE[0]}"'
+  otel_source_line_resolver='"${BASH_LINENO[1]}"'
 else
   otel_source_file_resolver='"$0"'
   otel_source_line_resolver='"$LINENO"'
