@@ -155,7 +155,6 @@ otel_unalias_and_reinstrument() {
 
 otel_instrument_and_source() {
   local file="$2"
-  # sourcing /usr/share/debconf/confmodule will exec and restart the script 
   if [ -f "$file" ]; then
     otel_auto_instrument "$file"
   fi
@@ -302,8 +301,6 @@ otel_record_exec() {
   if [ -n "$file" ] && [ -n "$line" ] && [ -f "$file" ]; then local command="$(\cat "$file" | \sed -n "$line"p | \grep -F 'exec' | \sed 's/^.*exec /exec /')"; fi
   if [ -z "$command" ]; then local command="exec"; fi
   local span_id=$(otel_span_start INTERNAL "$command")
-  # otel_span_attribute $span_id code.filepath=$(eval $otel_source_file_resolver)
-  # otel_span_attribute $span_id code.lineno=$(eval $otel_source_line_resolver)
   if [ "$(\printf '%s' "$command" | \sed 's/ [0-9]*>.*$//')" != "exec" ]; then
     otel_span_activate $span_id
   fi
