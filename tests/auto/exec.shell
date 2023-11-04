@@ -1,2 +1,9 @@
+set -e
 . /usr/bin/opentelemetry_shell.sh
-exec echo hello world
+exec 3>&2
+if [  "$1" = "source" ]; then
+  echo 'exec echo hello world sourced' > source_exec.shell
+  . source_exec.shell
+else
+  exec echo hello world
+fi
