@@ -19,11 +19,11 @@ fi
 
 if [ "$otel_shell" = "bash" ]; then
   otel_source_file_resolver='"${BASH_SOURCE[0]}"'
-  otel_source_line_resolver='"${BASH_LINENO[1]}"'
+  # otel_source_line_resolver='"${BASH_LINENO[0]}"'
 else
   otel_source_file_resolver='"$0"'
-  otel_source_line_resolver='"$LINENO"'
 fi
+otel_source_line_resolver='"$LINENO"'
 
 if [ "$otel_shell" = "bash" ]; then
   shopt -s expand_aliases &> /dev/null
