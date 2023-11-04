@@ -7,6 +7,6 @@ assert_equals "SpanKind.SERVER" $(\echo "$span" | jq -r '.kind')
 span="$(resolve_span '.name == "exec 3>&2"')"
 span="$(resolve_span '.name == "exec echo hello world"')"
 
-bash auto/exec.shell source
+bash -x auto/exec.shell source
 assert_equals 0 $?
 span="$(resolve_span '.name == "exec echo hello world sourced"')"
