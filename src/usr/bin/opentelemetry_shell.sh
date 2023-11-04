@@ -23,7 +23,7 @@ else
   otel_source_file_resolver='"$0"'
 fi
 otel_source_line_resolver='"$LINENO"'
-otel_source_func_resolver='"${FUNCNAME[0]}"'
+otel_source_func_resolver='"$FUNCNAME"'
 
 if [ "$otel_shell" = "bash" ]; then
   shopt -s expand_aliases &> /dev/null
