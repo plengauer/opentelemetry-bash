@@ -11,22 +11,23 @@ if [ "$OTEL_SHELL_INJECTED" = "TRUE" ]; then
 fi
 OTEL_SHELL_INJECTED=TRUE
 
+. /usr/bin/opentelemetry_shell_api.sh
+
 if [ "$otel_shell" = "bash" ] && [ -n "$BASHPID" ] && [ "$$" != "$BASHPID" ]; then
   echo "WARNING The OpenTelemetry shell file for auto-instrumentation is sourced in a subshell, automatic instrumentation will only be active within that subshell!" >&2
 fi
 
 if [ "$otel_shell" = "bash" ]; then
-  otel_source_file_resolver='"$BASH_SOURCE"'
+  otel_source_file_resolver='"${BASH_SOURCE[0]}"'
 else
   otel_source_file_resolver='"$0"'
 fi
-
-. /usr/bin/opentelemetry_shell_api.sh
+otel_source_line_resolver='"$LINENO"'
+otel_source_func_resolver='"$FUNCNAME"'
 
 if [ "$otel_shell" = "bash" ]; then
   shopt -s expand_aliases &> /dev/null
-fi
-if [ "$otel_shell" = "zsh" ]; then
+elif [ "$otel_shell" = "zsh" ]; then
   setopt aliases &> /dev/null
 fi
 case "$-" in
@@ -61,7 +62,7 @@ otel_alias_prepend() {
   local previous_otel_command="$(\printf '%s' "$previous_command" | otel_line_split | \grep '^otel_' | otel_line_join)"
   local previous_alias_command="$(\printf '%s' "$previous_command" | otel_line_split | \grep -v '^otel_' | otel_line_join)"
   local new_command="$previous_otel_command $prepend_command $previous_alias_command"
-  \alias $original_command='OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="code.filepath='$otel_source_file_resolver',code.lineno=$LINENO" '"$new_command"
+  \alias $original_command='OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="code.filepath='$otel_source_file_resolver',code.lineno='$otel_source_line_resolver',code.function='$otel_source_func_resolver'" '"$new_command"
 }
 
 otel_instrument() {
@@ -154,7 +155,6 @@ otel_unalias_and_reinstrument() {
 
 otel_instrument_and_source() {
   local file="$2"
-  # sourcing /usr/share/debconf/confmodule will exec and restart the script 
   if [ -f "$file" ]; then
     otel_auto_instrument "$file"
   fi
@@ -299,10 +299,8 @@ otel_record_exec() {
   local file="$1"
   local line="$2"
   if [ -n "$file" ] && [ -n "$line" ] && [ -f "$file" ]; then local command="$(\cat "$file" | \sed -n "$line"p | \grep -F 'exec' | \sed 's/^.*exec /exec /')"; fi
-  if [ -z "$command" ]; then local command="exec ..."; fi
+  if [ -z "$command" ]; then local command="exec"; fi
   local span_id=$(otel_span_start INTERNAL "$command")
-  otel_span_attribute $span_id code.filepath=$0
-  otel_span_attribute $span_id code.lineno=$LINENO
   if [ "$(\printf '%s' "$command" | \sed 's/ [0-9]*>.*$//')" != "exec" ]; then
     otel_span_activate $span_id
   fi
@@ -376,7 +374,7 @@ if [ "$otel_shell" = "bash" ] || [ "$otel_shell" = "zsh" ]; then
 fi
 otel_auto_instrument "$0"
 
-\alias exec='otel_record_exec '$otel_source_file_resolver' "$LINENO"; exec'
+\alias exec='otel_record_exec '$otel_source_file_resolver' '$otel_source_line_resolver'; exec'
 trap otel_end_script EXIT
 
 otel_start_script
