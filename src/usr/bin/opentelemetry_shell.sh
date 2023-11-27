@@ -40,7 +40,7 @@ otel_unquote() {
 }
 
 otel_line_join() {
-  \sed '/^$/d' | \tr '\n' ' ' | sed 's/ $//'
+  \sed '/^$/d' | \tr '\n' ' ' | \sed 's/ $//'
 }
 
 otel_line_split() {
