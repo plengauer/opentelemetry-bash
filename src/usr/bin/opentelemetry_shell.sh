@@ -40,7 +40,7 @@ otel_unquote() {
 }
 
 otel_line_join() {
-  \sed '/^$/d' | \tr '\n' ' ' | sed 's/ $//'
+  \sed '/^$/d' | \tr '\n' ' ' | \sed 's/ $//'
 }
 
 otel_line_split() {
@@ -314,7 +314,6 @@ otel_start_script() {
   unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
   otel_init || return $?
   if [ "$OTEL_SHELL_AUTO_INJECTED" != "TRUE" ]; then
-    unset OTEL_SHELL_AUTO_INJECTED
     if [ -n "$SSH_CLIENT"  ] && [ -n "$SSH_CONNECTION" ]; then
       otel_root_span_id=$(otel_span_start SERVER ssh)
       otel_span_attribute $otel_root_span_id ssh.ip=$(\echo $SSH_CONNECTION | \cut -d' ' -f3)
@@ -333,8 +332,12 @@ otel_start_script() {
       otel_span_attribute $otel_root_span_id http.target=$SCRIPT_NAME
       otel_span_attribute $otel_root_span_id http.url=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f1 | \tr '[:upper:]' '[:lower:]')://$SERVER_NAME:$SERVER_PORT$SCRIPT_NAME
       otel_span_attribute $otel_root_span_id net.peer.ip=$REMOTE_ADDR
-    elif [ "$(otel_command_self | \cut -d' ' -f2 | \rev | \cut -d/ -f2- | \rev)" = "/var/lib/dpkg/info" ]; then
-      otel_root_span_id=$(otel_span_start SERVER $(otel_command_self | \cut -d' ' -f2 | \rev | \cut -d/ -f1 | \cut -d. -f1 | \rev))
+    elif [ "$(otel_command_self | \cut -d' ' -f2 | \rev | \cut -d/ -f2- | \rev)" = "/var/lib/dpkg/info" ] || [ "$(otel_command_self | \cut -d' ' -f2 | \rev | \cut -d/ -f2- | \rev)" = "/var/lib/dpkg/tmp.ci" ]; then
+      if [ -z "$OTEL_TRACEPARENT" ]; then
+        otel_root_span_id=$(otel_span_start SERVER $(otel_command_self | \cut -d' ' -f2 | \rev | \cut -d/ -f1 | \cut -d. -f1 | \rev))
+      else
+        otel_root_span_id=$(otel_span_start INTERNAL $(otel_command_self | \cut -d' ' -f2 | \rev | \cut -d/ -f1 | \cut -d. -f1 | \rev))
+      fi
       otel_span_attribute $otel_root_span_id debian.package.operation=$(otel_command_self | \cut -d' ' -f2 | \rev | \cut -d/ -f1 | \rev | \cut -d. -f2) $(otel_command_self | \cut -d' ' -f3)
       otel_span_attribute $otel_root_span_id debian.package.name=$(otel_command_self | \cut -d' ' -f2 | \rev | \cut -d/ -f1 | \rev | \cut -d. -f1)
     else
@@ -342,6 +345,7 @@ otel_start_script() {
     fi
     otel_span_activate $otel_root_span_id
   fi
+  unset OTEL_SHELL_AUTO_INJECTED
 }
 
 otel_end_script() {
