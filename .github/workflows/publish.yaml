@@ -13,7 +13,7 @@ jobs:
         working-directory: ./src
     steps:
       - uses: actions/checkout@v2
-      - run: sudo apt-get install devscripts debhelper
+      - run: sudo apt-get update && sudo apt-get install devscripts debhelper
       - run: dpkg-deb --root-owner-group -Zgzip --build . ../package.deb
       - uses: actions/upload-artifact@v2
         with:
