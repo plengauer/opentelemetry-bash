@@ -65,7 +65,8 @@ otel_alias_prepend() {
     local previous_alias_command="$(\printf '%s' "$previous_command" | otel_line_split | \grep -v '^otel_' | otel_line_join)"
     local new_command="$previous_otel_command $prepend_command $previous_alias_command"
   fi
-  \alias $original_command='OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="code.filepath='$otel_source_file_resolver',code.lineno='$otel_source_line_resolver',code.function='$otel_source_func_resolver'" '"$new_comm>
+  
+  \alias $original_command='OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="code.filepath='$otel_source_file_resolver',code.lineno='$otel_source_line_resolver',code.function='$otel_source_func_resolver'" '"$new_command"
 }
 
 otel_instrument() {
