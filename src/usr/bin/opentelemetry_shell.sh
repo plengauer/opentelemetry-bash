@@ -50,19 +50,22 @@ otel_line_split() {
 otel_alias_prepend() {
   local original_command=$1
   local prepend_command=$2
-  
-  local previous_command="$(\alias $original_command 2> /dev/null | \cut -d= -f2- | otel_unquote)"
-  if [ -z "$previous_command" ]; then local previous_command="$original_command"; fi
-  if [ "${previous_command#OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE=}" != "$previous_command" ]; then local previous_command="$(\printf '%s' "$previous_command" | \cut -d" " -f2-)"; fi
-  case "$previous_command" in
-    *"$prepend_command"*) return 0 ;;
-    *) ;;
-  esac
 
-  local previous_otel_command="$(\printf '%s' "$previous_command" | otel_line_split | \grep '^otel_' | otel_line_join)"
-  local previous_alias_command="$(\printf '%s' "$previous_command" | otel_line_split | \grep -v '^otel_' | otel_line_join)"
-  local new_command="$previous_otel_command $prepend_command $previous_alias_command"
-  \alias $original_command='OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="code.filepath='$otel_source_file_resolver',code.lineno='$otel_source_line_resolver',code.function='$otel_source_func_resolver'" '"$new_command"
+  if [ -z "$(\alias $original_command 2> /dev/null)" ]; then # fastpath
+    local new_command="$prepend_command $original_command"
+  else
+    local previous_command=''; local previous_command="$(\alias $original_command 2> /dev/null | \cut -d= -f2- | otel_unquote)"
+    if [ -z "$previous_command" ]; then local previous_command="$original_command"; fi
+    if [ "${previous_command#OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE=}" != "$previous_command" ]; then local previous_command="$(\printf '%s' "$previous_command" | \cut -d" " -f2-)"; fi
+    case "$previous_command" in
+      *"$prepend_command"*) return 0 ;;
+      *) ;;
+    esac
+    local previous_otel_command="$(\printf '%s' "$previous_command" | otel_line_split | \grep '^otel_' | otel_line_join)"
+    local previous_alias_command="$(\printf '%s' "$previous_command" | otel_line_split | \grep -v '^otel_' | otel_line_join)"
+    local new_command="$previous_otel_command $prepend_command $previous_alias_command"
+  fi
+  \alias $original_command='OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="code.filepath='$otel_source_file_resolver',code.lineno='$otel_source_line_resolver',code.function='$otel_source_func_resolver'" '"$new_comm>
 }
 
 otel_instrument() {
