@@ -54,7 +54,7 @@ otel_alias_prepend() {
   if [ -z "$(\alias $original_command 2> /dev/null)" ]; then # fastpath
     local new_command="$prepend_command $original_command"
   else
-    local previous_command=''; local previous_command="$(\alias $original_command 2> /dev/null | \cut -d= -f2- | otel_unquote)"
+    local previous_command="$(\alias $original_command 2> /dev/null | \cut -d= -f2- | otel_unquote)"
     if [ -z "$previous_command" ]; then local previous_command="$original_command"; fi
     if [ "${previous_command#OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE=}" != "$previous_command" ]; then local previous_command="$(\printf '%s' "$previous_command" | \cut -d" " -f2-)"; fi
     case "$previous_command" in
