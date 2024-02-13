@@ -367,7 +367,7 @@ otel_end_script() {
 otel_alias_prepend wget otel_propagate_wget
 otel_alias_prepend curl otel_propagate_curl
 if [ "$otel_is_interactive" != "TRUE" ]; then # TODO do this always, not just when non-interactive. but then interactive injection must be handled properly!
-  otel_alias_prepend sh otel_inject_shell_with_copy # cant realy relly what kind of shell it actually is, so lets play it safe
+  otel_alias_prepend sh otel_inject_shell_with_copy # cant really know what kind of shell it actually is, so lets play it safe
   otel_alias_prepend ash otel_inject_shell_with_copy # sourced files do not support arguments
   otel_alias_prepend dash otel_inject_shell_with_copy # sourced files do not support arguments
   otel_alias_prepend bash otel_inject_shell_with_c_flag
