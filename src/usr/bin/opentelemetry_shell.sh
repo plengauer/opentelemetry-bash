@@ -87,7 +87,6 @@ otel_deshebangify() {
   if [ -z "$aliased_shebang" ]; then return 3; fi
   # TODO we should replace the original shebang path in the alias
   \alias $1="$aliased_shebang $(\echo $shebang | \cut -s -d ' ' -f2-) $(\which $1)"  # e.g., upgrade => otel_inject_shell_with_source bash -x /usr/bin/upgrade
-  # TODO the observed commandline as span name will be wrong! this could be fixed by overriding the observed commandline ALWAYS when prepending with the alias'd command
 }
 
 otel_instrument() {
