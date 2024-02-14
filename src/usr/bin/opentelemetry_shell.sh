@@ -69,7 +69,29 @@ otel_alias_prepend() {
   \alias $original_command='OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="code.filepath='$otel_source_file_resolver',code.lineno='$otel_source_line_resolver',code.function='$otel_source_func_resolver'" '"$new_command"
 }
 
+otel_shebang() {
+  local path="$(\which $1)"
+  if [ -z "$path" ] || [ ! -f "$path" ]; then return 1; fi
+  read -r first_line < "$path"
+  if [ "$(\echo "$first_line" | \cut -c1-2)" != '#!' ]; then return 2; fi
+  \echo "$first_line" | \cut -c3- | \awk '{$1=$1};1'
+}
+
+otel_deshebangify() {
+  local cmd=$1 # e.g., "upgrade"
+  if [ -n "$(\alias $1 2> /dev/null)" ]; then return 1; fi
+  local shebang="$(otel_shebang $1)" # e.g., "/bin/bash -x"
+  if [ -z "$shebang" ]; then return 2; fi
+  local shebang_cmd="$(\echo "$shebang" | \cut -d' ' -f1 | \rev | \cut -d/ -f1 | \rev)" # e.g., "bash"
+  # TODO we have to check wether the de-pathified version would resolve with which to the same executable again
+  local aliased_shebang="$(\alias $shebang_cmd | cut -d' ' -f1)" # e.g., "otel_inject_shell_with_source bash"
+  if [ -z "$aliased_shebang" ]; then return 3; fi
+  \alias $1="$aliased_shebang $(\echo $shebang | cut -d ' ' -f2-) $(\which $1)"  # e.g., upgrade => otel_inject_shell_with_source bash -x /usr/bin/upgrade
+  # TODO the observed commandline as span name will be wrong! this could be fixed by overriding the observed commandline ALWAYS when prepending with the alias'd command
+}
+
 otel_instrument() {
+  otel_deshebangify $1 || true
   otel_alias_prepend $1 'otel_observe'
 }
 
@@ -380,6 +402,7 @@ otel_alias_prepend . otel_instrument_and_source
 if [ "$otel_shell" = "bash" ] || [ "$otel_shell" = "zsh" ]; then
   otel_alias_prepend source otel_instrument_and_source
 fi
+
 otel_auto_instrument "$0"
 
 \alias exec='otel_record_exec '$otel_source_file_resolver' '$otel_source_line_resolver'; exec'
