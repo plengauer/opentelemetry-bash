@@ -27,8 +27,6 @@ otel_source_func_resolver='"$FUNCNAME"'
 
 if [ "$otel_shell" = "bash" ]; then
   shopt -s expand_aliases &> /dev/null
-elif [ "$otel_shell" = "zsh" ]; then
-  setopt aliases &> /dev/null
 fi
 case "$-" in
   *i*) otel_is_interactive=TRUE;;
@@ -129,7 +127,7 @@ otel_list_alias_commands() {
 
 otel_list_builtin_commands() {
   \echo type
-  if [ "$otel_shell" = "bash" ] || [ "$otel_shell" = "zsh" ]; then
+  if [ "$otel_shell" = "bash" ]; then
     \echo history
   fi
 }
@@ -144,11 +142,7 @@ otel_auto_instrument() {
   local file_hint="$1"
   # both otel_filter_commands_by_file and otel_filter_commands_by_instrumentation are functionally optional, but helps optimizing time because the following loop AND otel_instrument itself is expensive!
   local executables="$(otel_list_all_commands | otel_filter_commands_by_instrumentation | otel_filter_commands_by_file "$file_hint" | \sort -u | otel_line_join)"
-  if [ "$otel_shell" = "zsh" ]; then
-    for cmd in ${(s/ /)executables}; do otel_instrument $cmd; done
-  else
-    for cmd in $executables; do otel_instrument $cmd; done
-  fi
+  for cmd in $executables; do otel_instrument $cmd; done
 }
 
 otel_alias_and_instrument() {
@@ -156,11 +150,7 @@ otel_alias_and_instrument() {
   "$@" || local exit_code=$?
   shift
   local commands="$(\echo "$@" | otel_line_split | \grep -m1 '=' 2> /dev/null | \cut -d= -f1)"
-  if [ "$otel_shell" = "zsh" ]; then
-    for cmd in ${(s/ /)commands}; do otel_instrument $cmd; done
-  else
-    for cmd in $commands; do otel_instrument $cmd; done
-  fi
+  for cmd in $commands; do otel_instrument $cmd; done
   return $exit_code
 }
 
@@ -169,11 +159,7 @@ otel_unalias_and_reinstrument() {
   "$@" || local exit_code=$?
   shift
   local commands="$(otel_list_all_commands | \grep -Fx "$(\echo "$@" | otel_line_split 2> /dev/null)" 2> /dev/null)"
-  if [ "$otel_shell" = "zsh" ]; then
-    for cmd in ${(s/ /)commands}; do otel_instrument $cmd; done
-  else
-    for cmd in $commands; do otel_instrument $cmd; done
-  fi
+  for cmd in $commands; do otel_instrument $cmd; done
   return $exit_code
 }
 
@@ -255,11 +241,7 @@ otel_inject_shell_with_copy() {
   fi
   \chmod +x $temporary_script
   # compile command
-  if [ "$otel_shell" = "zsh" ]; then
-    set -- ${(z)=executable} ${(z)=options} $temporary_script
-  else
-    set -- $executable $options $temporary_script
-  fi
+  set -- $executable $options $temporary_script
   # run command
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
@@ -307,11 +289,7 @@ $arg"
   if [ -f "$cmd" ]; then
     local cmd=". $cmd"
   fi
-  if [ "$otel_shell" = "zsh" ]; then
-    set -- ${(z)=executable} ${(z)=options} -c ". /usr/bin/opentelemetry_shell.sh; $cmd $args" "$dollar_zero"
-  else
-    set -- $executable $options -c ". /usr/bin/opentelemetry_shell.sh; $cmd $args" "$dollar_zero"
-  fi
+  set -- $executable $options -c ". /usr/bin/opentelemetry_shell.sh; $cmd $args" "$dollar_zero"
   # run command
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
@@ -391,13 +369,12 @@ if [ "$otel_is_interactive" != "TRUE" ]; then # TODO do this always, not just wh
   otel_alias_prepend ash otel_inject_shell_with_copy # sourced files do not support arguments
   otel_alias_prepend dash otel_inject_shell_with_copy # sourced files do not support arguments
   otel_alias_prepend bash otel_inject_shell_with_c_flag
-  otel_alias_prepend zsh otel_inject_shell_with_c_flag
 fi
 
 otel_alias_prepend alias otel_alias_and_instrument
 otel_alias_prepend unalias otel_unalias_and_reinstrument
 otel_alias_prepend . otel_instrument_and_source
-if [ "$otel_shell" = "bash" ] || [ "$otel_shell" = "zsh" ]; then
+if [ "$otel_shell" = "bash" ]; then
   otel_alias_prepend source otel_instrument_and_source
 fi
 
