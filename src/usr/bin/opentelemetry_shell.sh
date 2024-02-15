@@ -230,16 +230,18 @@ otel_inject_shell_with_copy() {
     fi
   done
   # prepare temporary script
-  local temporary_script=$(\mktemp -u)
-  \touch $temporary_script
-  \echo "set -- $args" >> $temporary_script
-  \echo ". /usr/bin/opentelemetry_shell.sh" >> $temporary_script
-  if [ -f "$cmd" ]; then
-    \cat $cmd >> $temporary_script
-  else
-    \echo "$cmd" >> $temporary_script
+  if [ -n "$cmd" ]; then
+    local temporary_script=$(\mktemp -u)
+    \touch $temporary_script
+    \echo "set -- $args" >> $temporary_script
+    \echo ". /usr/bin/opentelemetry_shell.sh" >> $temporary_script
+    if [ -f "$cmd" ]; then
+      \cat $cmd >> $temporary_script
+    else
+      \echo "$cmd" >> $temporary_script
+    fi
+    \chmod +x $temporary_script
   fi
-  \chmod +x $temporary_script
   # compile command
   set -- $executable $options $temporary_script
   # run command
@@ -286,10 +288,12 @@ $arg"
     fi
   done
   # compile command
-  if [ -f "$cmd" ]; then
-    local cmd=". $cmd"
+  if [ -n "$cmd" ]; then
+    if [ -f "$cmd" ]; then
+      local cmd=". $cmd"
+    fi
+    set -- $executable $options -c ". /usr/bin/opentelemetry_shell.sh; $cmd $args" "$dollar_zero"
   fi
-  set -- $executable $options -c ". /usr/bin/opentelemetry_shell.sh; $cmd $args" "$dollar_zero"
   # run command
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
@@ -364,12 +368,10 @@ otel_end_script() {
 
 otel_alias_prepend wget otel_propagate_wget
 otel_alias_prepend curl otel_propagate_curl
-if [ "$otel_is_interactive" != "TRUE" ]; then # TODO do this always, not just when non-interactive. but then interactive injection must be handled properly!
-  otel_alias_prepend sh otel_inject_shell_with_copy # cant really know what kind of shell it actually is, so lets play it safe
-  otel_alias_prepend ash otel_inject_shell_with_copy # sourced files do not support arguments
-  otel_alias_prepend dash otel_inject_shell_with_copy # sourced files do not support arguments
-  otel_alias_prepend bash otel_inject_shell_with_c_flag
-fi
+otel_alias_prepend sh otel_inject_shell_with_copy # cant really know what kind of shell it actually is, so lets play it safe
+otel_alias_prepend ash otel_inject_shell_with_copy # sourced files do not support arguments
+otel_alias_prepend dash otel_inject_shell_with_copy # sourced files do not support arguments
+otel_alias_prepend bash otel_inject_shell_with_c_flag
 
 otel_alias_prepend alias otel_alias_and_instrument
 otel_alias_prepend unalias otel_unalias_and_reinstrument
