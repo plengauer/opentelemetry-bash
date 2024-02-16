@@ -1,6 +1,7 @@
 . ./assert.sh
 sudo echo "#!/bin/$SHELL" > /usr/bin/fail_no_auto.shell
 sudo cat auto/fail_no_auto.shell >> /usr/bin/fail_no_auto.shell
+sudo chmod +x /usr/bin/fail_no_auto.shell
 . /usr/bin/opentelemetry_shell.sh
 set -x
 fail_no_auto.shell
