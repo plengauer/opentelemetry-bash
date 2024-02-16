@@ -158,7 +158,11 @@ otel_unalias_and_reinstrument() {
   local exit_code=0
   "$@" || local exit_code=$?
   shift
-  local commands="$(otel_list_all_commands | \grep -Fx "$(\echo "$@" | otel_line_split 2> /dev/null)" 2> /dev/null)"
+  if [ "-a" = "$*" ]; then
+    local commands="$(otel_list_all_commands)"
+  else
+    local commands="$(otel_list_all_commands | \grep -Fx "$(\echo "$@" | otel_line_split 2> /dev/null)" 2> /dev/null)"
+  fi
   for cmd in $commands; do otel_instrument $cmd; done
   return $exit_code
 }
