@@ -301,6 +301,19 @@ $arg"
   return $exit_code
 }
 
+otel_inject_inner_command() {
+  if [ "$1" = "otel_observe" ]; then
+    local executable="otel_observe $1"; shift
+  else
+    local executable=$1;
+  fi
+  shift
+  local exit_code=0
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
+    OTEL_SHELL_AUTO_INJECTED=TRUE $executable $(otel_command_self) -c ". /usr/bin/opentelemetry_shell.sh; $*" || local exit_code=$?
+  return $exit_code
+}
+
 otel_record_exec() {
   local file="$1"
   local line="$2"
@@ -372,6 +385,7 @@ otel_alias_prepend sh otel_inject_shell_with_copy # cant really know what kind o
 otel_alias_prepend ash otel_inject_shell_with_copy # sourced files do not support arguments
 otel_alias_prepend dash otel_inject_shell_with_copy # sourced files do not support arguments
 otel_alias_prepend bash otel_inject_shell_with_c_flag
+otel_alias_prepend sudo otel_inject_inner_command
 
 otel_alias_prepend alias otel_alias_and_instrument
 otel_alias_prepend unalias otel_unalias_and_reinstrument
