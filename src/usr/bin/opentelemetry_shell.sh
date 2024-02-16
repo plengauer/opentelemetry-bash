@@ -303,9 +303,9 @@ $arg"
 
 otel_inject_inner_command() {
   if [ "$1" = "otel_observe" ]; then
-    local executable="otel_observe $1"; shift
+    shift; local executable="otel_observe $1"
   else
-    local executable=$1;
+    local executable=$1
   fi
   shift
   local exit_code=0
