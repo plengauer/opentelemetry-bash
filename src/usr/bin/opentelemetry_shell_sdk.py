@@ -46,7 +46,11 @@ class AwsEC2ResourceDetector(ResourceDetector):
 
 resource = {}
 spans = {}
+next_span_id = 0
 metrics = {}
+next_metric_id = 0
+
+auto_end = False
 
 def main():
     fifo_path = sys.argv[1]
@@ -64,9 +68,15 @@ def main():
             except EOFError:
                 sys.exit(0)
             except:
+                print('SDK Error: ' + line, file=sys.stderr)
                 traceback.print_exc()
+        try:
+            handle(scope, version, 'SHUTDOWN', None)
+        except EOFError:
+            sys.exit(0)
 
 def handle(scope, version, command, arguments):
+    global auto_end
     if command == 'RESOURCE_ATTRIBUTE':
         key = arguments.split('=', 1)[0]
         value = arguments.split('=', 1)[1]
@@ -94,6 +104,9 @@ def handle(scope, version, command, arguments):
             logger_provider.add_log_record_processor(BatchLogRecordProcessor(ConsoleLogExporter() if os.environ.get('OTEL_LOGS_CONSOLE_EXPORTER') == 'TRUE' else OTLPLogExporter()))
             opentelemetry._logs.set_logger_provider(logger_provider)
     elif command == 'SHUTDOWN':
+        if auto_end:
+            for span in spans.values():
+                span.end()
         if os.environ.get('OTEL_SHELL_TRACES_ENABLE') == 'TRUE':
             opentelemetry.trace.get_tracer_provider().shutdown()
         if os.environ.get('OTEL_SHELL_METRICS_ENABLE') == 'TRUE':
@@ -102,20 +115,26 @@ def handle(scope, version, command, arguments):
             opentelemetry._logs.get_logger_provider().shutdown()
         raise EOFError
     elif command == 'SPAN_START':
+        global next_span_id
         tokens = arguments.split(' ', 3)
         response_path = tokens[0]
         trace_parent = tokens[1]
         kind = tokens[2]
         name = tokens[3]
+        span_id = next_span_id
+        next_span_id = next_span_id + 1
         span = opentelemetry.trace.get_tracer(scope, version).start_span(name, kind=SpanKind[kind.upper()], context=TraceContextTextMapPropagator().extract({'traceparent': trace_parent}))
-        spans[str(span.context.span_id)] = span
+        spans[str(span_id)] = span
         with open(response_path, 'w') as response:
-            response.write(str(span.context.span_id))
+            response.write(str(span_id))
+        auto_end = False
     elif command == 'SPAN_END':
         span_id = arguments
         span : Span = spans[span_id]
         span.end()
         del spans[span_id]
+    elif command == 'SPAN_AUTO_END':
+        auto_end = True
     elif command == 'SPAN_ERROR':
         span : Span = spans[arguments]
         span.set_status(StatusCode.ERROR)
@@ -138,10 +157,12 @@ def handle(scope, version, command, arguments):
         with open(response_path, 'w') as response:
             response.write(carrier.get('traceparent', ''))
     elif command == 'METRIC_CREATE':
+        global next_metric_id
         tokens = arguments.split(' ', 1)
         response_path = tokens[0]
         metric_name = tokens[1]
-        metric_id = "0"
+        metric_id = str(next_metric_id)
+        next_metric_id = next_metric_id + 1
         metrics[metric_id] = { 'name': metric_name, 'attributes': {} }
         with open(response_path, 'w') as response:
             response.write(metric_id)
@@ -162,17 +183,17 @@ def handle(scope, version, command, arguments):
         del metrics[metric_id]
     elif command == 'LOG_RECORD':
         tokens = arguments.split(' ', 1)
-        span_id = tokens[0]
+        traceparent = tokens[0]
         line = tokens[1] if len(tokens) > 1 else ""
         if len(line) == 0:
             return
-        span : Span = spans[span_id]
+        context = opentelemetry.trace.get_current_span(TraceContextTextMapPropagator().extract({'traceparent': traceparent})).get_span_context()
         logger = opentelemetry._logs.get_logger(scope, version)
         record = LogRecord(
             timestamp=int(time.time() * 1e9),
-            trace_id=span.get_span_context().trace_id,
-            span_id=span.get_span_context().span_id,
-            trace_flags=span.get_span_context().trace_flags,
+            trace_id=context.trace_id,
+            span_id=context.span_id,
+            trace_flags=context.trace_flags,
             severity_text='unspecified',
             severity_number=SeverityNumber.UNSPECIFIED,
             body=line,

@@ -1,0 +1,5 @@
+if [ "$SHELL" = "zsh" ]; then exit 0; fi
+. /usr/bin/opentelemetry_shell.sh
+. /usr/share/debconf/confmodule
+echo hello world
+db_get $(debconf-show $(debconf-show --listowners | head -n1) | sed 's/^\* //' | sed 's/  //' | cut -d: -f1 | head -n1)

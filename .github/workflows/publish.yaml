@@ -13,7 +13,7 @@ jobs:
         working-directory: ./src
     steps:
       - uses: actions/checkout@v2
-      - run: sudo apt-get install devscripts debhelper
+      - run: sudo apt-get update && sudo apt-get install devscripts debhelper
       - run: dpkg-deb --root-owner-group -Zgzip --build . ../package.deb
       - uses: actions/upload-artifact@v2
         with:
@@ -30,8 +30,20 @@ jobs:
       - run: sudo apt-get -y install ./package.deb
       - run: sudo apt-get -y remove opentelemetry-shell
 
-  test-debian-stable-oldest-sh:
+  test-smoke:
     needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: package.deb
+      - run: sudo apt-get -y install ./package.deb
+      - run: bash -c "cd tests && sudo bash run_tests.sh bash"
+
+  test-debian-stable-oldest-sh:
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -46,7 +58,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:oldstable sh"
 
   test-debian-stable-oldest-ash:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -61,7 +73,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:oldstable ash"
 
   test-debian-stable-oldest-dash:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -76,7 +88,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:oldstable dash"
 
   test-debian-stable-oldest-bash:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -90,23 +102,8 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:oldstable bash"
 
-  test-debian-stable-oldest-zsh:
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: package.deb
-      - run: mv ./package.deb tests
-      - run: sudo apt-get update
-      - run: sudo apt-get remove -y containerd.io
-      - run: sudo apt-get install -y docker.io runc
-      - run: bash -c "cd tests && bash run_tests_containerized.sh debian:oldstable zsh"
-
   test-debian-stable-latest-sh:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -121,7 +118,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:stable sh"
 
   test-debian-stable-latest-ash:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -136,7 +133,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:stable ash"
 
   test-debian-stable-latest-dash:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -151,7 +148,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:stable dash"
 
   test-debian-stable-latest-bash:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -165,23 +162,8 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:stable bash"
 
-  test-debian-stable-latest-zsh:
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: package.deb
-      - run: mv ./package.deb tests
-      - run: sudo apt-get update
-      - run: sudo apt-get remove -y containerd.io
-      - run: sudo apt-get install -y docker.io runc
-      - run: bash -c "cd tests && bash run_tests_containerized.sh debian:stable zsh"
-
   test-debian-testing-sh:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -196,7 +178,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:testing sh"
 
   test-debian-testing-ash:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -211,7 +193,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:testing ash"
 
   test-debian-testing-dash:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -226,7 +208,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:testing dash"
 
   test-debian-testing-bash:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -240,23 +222,8 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:testing bash"
 
-  test-debian-testing-zsh:
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: package.deb
-      - run: mv ./package.deb tests
-      - run: sudo apt-get update
-      - run: sudo apt-get remove -y containerd.io
-      - run: sudo apt-get install -y docker.io runc
-      - run: bash -c "cd tests && bash run_tests_containerized.sh debian:testing zsh"
-
   test-debian-unstable-sh:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -271,7 +238,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:unstable sh"
 
   test-debian-unstable-ash:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -286,7 +253,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:unstable ash"
 
   test-debian-unstable-dash:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -301,7 +268,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:unstable dash"
 
   test-debian-unstable-bash:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -315,23 +282,8 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh debian:unstable bash"
 
-  test-debian-unstable-zsh:
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: package.deb
-      - run: mv ./package.deb tests
-      - run: sudo apt-get update
-      - run: sudo apt-get remove -y containerd.io
-      - run: sudo apt-get install -y docker.io runc
-      - run: bash -c "cd tests && bash run_tests_containerized.sh debian:unstable zsh"
-
   test-ubuntu-stable-oldest-sh:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -346,7 +298,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:focal sh"
 
   test-ubuntu-stable-oldest-ash:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -361,7 +313,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:focal ash"
 
   test-ubuntu-stable-oldest-dash:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -376,7 +328,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:focal dash"
 
   test-ubuntu-stable-oldest-bash:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -390,23 +342,8 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:focal bash"
 
-  test-ubuntu-stable-oldest-zsh:
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: package.deb
-      - run: mv ./package.deb tests
-      - run: sudo apt-get update
-      - run: sudo apt-get remove -y containerd.io
-      - run: sudo apt-get install -y docker.io runc
-      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:focal zsh"
-
   test-ubuntu-stable-latest-sh:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -421,7 +358,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:latest sh"
 
   test-ubuntu-stable-latest-ash:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -436,7 +373,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:latest ash"
 
   test-ubuntu-stable-latest-dash:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -451,7 +388,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:latest dash"
 
   test-ubuntu-stable-latest-bash:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -465,23 +402,8 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:latest bash"
 
-  test-ubuntu-stable-latest-zsh:
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: package.deb
-      - run: mv ./package.deb tests
-      - run: sudo apt-get update
-      - run: sudo apt-get remove -y containerd.io
-      - run: sudo apt-get install -y docker.io runc
-      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:latest zsh"
-
   test-ubuntu-testing-sh:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -496,7 +418,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:rolling sh"
 
   test-ubuntu-testing-ash:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -511,7 +433,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:rolling ash"
 
   test-ubuntu-testing-dash:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -526,7 +448,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:rolling dash"
 
   test-ubuntu-testing-bash:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -540,23 +462,8 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:rolling bash"
 
-  test-ubuntu-testing-zsh:
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: package.deb
-      - run: mv ./package.deb tests
-      - run: sudo apt-get update
-      - run: sudo apt-get remove -y containerd.io
-      - run: sudo apt-get install -y docker.io runc
-      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:rolling zsh"
-
   test-ubuntu-unstable-sh:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -571,7 +478,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel sh"
 
   test-ubuntu-unstable-ash:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -586,7 +493,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel ash"
 
   test-ubuntu-unstable-dash:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -601,7 +508,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel dash"
 
   test-ubuntu-unstable-bash:
-    needs: build
+    needs: test-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -615,29 +522,14 @@ jobs:
       - run: sudo apt-get install -y docker.io runc
       - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel bash"
 
-  test-ubuntu-unstable-zsh:
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: package.deb
-      - run: mv ./package.deb tests
-      - run: sudo apt-get update
-      - run: sudo apt-get remove -y containerd.io
-      - run: sudo apt-get install -y docker.io runc
-      - run: bash -c "cd tests && bash run_tests_containerized.sh ubuntu:devel zsh"
-
   test-debian:
-    needs: [test-debian-stable-oldest-sh, test-debian-stable-oldest-ash, test-debian-stable-oldest-dash, test-debian-stable-oldest-bash, test-debian-stable-oldest-zsh, test-debian-stable-latest-sh, test-debian-stable-latest-ash, test-debian-stable-latest-dash, test-debian-stable-latest-bash, test-debian-stable-latest-zsh, test-debian-testing-sh, test-debian-testing-ash, test-debian-testing-dash, test-debian-testing-bash, test-debian-testing-zsh]
+    needs: [test-debian-stable-oldest-sh, test-debian-stable-oldest-ash, test-debian-stable-oldest-dash, test-debian-stable-oldest-bash, test-debian-stable-latest-sh, test-debian-stable-latest-ash, test-debian-stable-latest-dash, test-debian-stable-latest-bash, test-debian-testing-sh, test-debian-testing-ash, test-debian-testing-dash, test-debian-testing-bash]
     runs-on: ubuntu-latest
     steps:
       - run: echo debian
 
   test-ubuntu:
-    needs: [test-ubuntu-stable-oldest-sh, test-ubuntu-stable-oldest-ash, test-ubuntu-stable-oldest-dash, test-ubuntu-stable-oldest-bash, test-ubuntu-stable-oldest-zsh, test-ubuntu-stable-latest-sh, test-ubuntu-stable-latest-ash, test-ubuntu-stable-latest-dash, test-ubuntu-stable-latest-bash, test-ubuntu-stable-latest-zsh, test-ubuntu-testing-sh, test-ubuntu-testing-ash, test-ubuntu-testing-dash, test-ubuntu-testing-bash, test-ubuntu-testing-zsh]
+    needs: [test-ubuntu-stable-oldest-sh, test-ubuntu-stable-oldest-ash, test-ubuntu-stable-oldest-dash, test-ubuntu-stable-oldest-bash, test-ubuntu-stable-latest-sh, test-ubuntu-stable-latest-ash, test-ubuntu-stable-latest-dash, test-ubuntu-stable-latest-bash, test-ubuntu-testing-sh, test-ubuntu-testing-ash, test-ubuntu-testing-dash, test-ubuntu-testing-bash]
     runs-on: ubuntu-latest
     steps:
       - run: echo ubuntu
@@ -666,14 +558,8 @@ jobs:
     steps:
       - run: echo bash
 
-  test-zsh:
-    needs: [test-debian-stable-oldest-zsh, test-debian-stable-latest-zsh, test-debian-testing-zsh, test-ubuntu-stable-oldest-zsh, test-ubuntu-stable-latest-zsh, test-ubuntu-testing-zsh]
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo zsh
-
   test-shell:
-    needs: [test-sh, test-ash, test-dash, test-bash, test-zsh]
+    needs: [test-sh, test-ash, test-dash, test-bash]
     runs-on: ubuntu-latest
     steps:
       - run: echo shell
@@ -781,39 +667,5 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./package.deb
           asset_name: opentelemetry-bash_${{ steps.version.outputs.version }}.deb
-          asset_content_type: application/octet-stream
-        continue-on-error: true
-
-  build_and_publish_zsh:
-    needs: publish
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./src_zsh
-    steps:
-      - uses: actions/checkout@v2
-      - run: echo "::set-output name=version::$(cat ./DEBIAN/control | grep 'Version' | awk -F\  '{print $2}')"
-        id: version
-      - run: sudo apt-get install devscripts debhelper
-      - run: dpkg-deb --root-owner-group --build . ../package.deb
-      - uses: actions/create-release@v1
-        id: create_release
-        env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_RELEASE_TOKEN }}
-        with:
-          tag_name: v${{ steps.version.outputs.version }}-zsh
-          release_name: Release Zsh v${{ steps.version.outputs.version }}
-          draft: false
-          prerelease: false
-        continue-on-error: true
-      - uses: actions/upload-release-asset@v1
-        id: upload-release-asset
-        env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_RELEASE_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./package.deb
-          asset_name: opentelemetry-zsh_${{ steps.version.outputs.version }}.deb
           asset_content_type: application/octet-stream
         continue-on-error: true
