@@ -1,10 +1,10 @@
 . ./assert.sh
-sudo echo "#!/bin/$SHELL -x" > /usr/bin/fail_no_auto.shell
+sudo echo "#!/bin/sh -x" > /usr/bin/fail_no_auto.shell
 sudo cat auto/fail_no_auto.shell >> /usr/bin/fail_no_auto.shell
 sudo chmod +x /usr/bin/fail_no_auto.shell
 . /usr/bin/opentelemetry_shell.sh
 fail_no_auto.shell
 assert_equals 0 $?
-span="$(resolve_span '.resource.attributes."process.command" == "$SHELL auto/fail_no_auto.shell"')"
+span="$(resolve_span '.resource.attributes."process.command" == "sh auto/fail_no_auto.shell"')"
 assert_equals "myspan" "$(\echo "$span" | jq -r '.name')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
