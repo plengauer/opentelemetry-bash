@@ -18,4 +18,9 @@ unalias grep
 count_2=$(alias | wc -l)
 if [ "$count_0" -ne "$count_1" ] || [ "$count_1" -ne "$count_2" ]; then exit 1; fi
 
+count_0=$(alias | wc -l)
+unalias -a
+count_1=$(alias | wc -l)
+if [ "$count_0" -ne "$count_1" ]; then exit 1; fi
+
 exit 0
