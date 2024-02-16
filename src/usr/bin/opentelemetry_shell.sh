@@ -303,13 +303,13 @@ $arg"
 
 otel_inject_inner_command() {
   if [ "$1" = "otel_observe" ]; then
-    shift; local executable="otel_observe $1"
+    shift; local executable="otel_observe $1";
   else
     local executable=$1
   fi
   shift
   local exit_code=0
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="$executable $*" OTEL_SHELL_SPAN_NAME_OVERRIDE="$executable $*" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
+  OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
     OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE $executable $(otel_command_self | \cut -d' ' -f1) -c ". /usr/bin/opentelemetry_shell.sh; $*" || local exit_code=$?
   return $exit_code
 }
