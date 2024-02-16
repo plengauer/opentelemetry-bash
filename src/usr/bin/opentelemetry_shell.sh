@@ -229,8 +229,8 @@ otel_inject_shell_with_copy() {
       esac
     fi
   done
-  # prepare temporary script
   if [ -n "$cmd" ]; then
+    # prepare temporary script
     local temporary_script=$(\mktemp -u)
     \touch $temporary_script
     \echo "set -- $args" >> $temporary_script
@@ -241,14 +241,16 @@ otel_inject_shell_with_copy() {
       \echo "$cmd" >> $temporary_script
     fi
     \chmod +x $temporary_script
+    # compile command
+    set -- $executable $options $temporary_script
+  else
+    set -- $executable $options
   fi
-  # compile command
-  set -- $executable $options $temporary_script
   # run command
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
     OTEL_SHELL_AUTO_INJECTED=TRUE "$@" || local exit_code=$?
-  \rm $temporary_script
+  \rm $temporary_script || true
   return $exit_code
 }
 
@@ -293,6 +295,8 @@ $arg"
       local cmd=". $cmd"
     fi
     set -- $executable $options -c ". /usr/bin/opentelemetry_shell.sh; $cmd $args" "$dollar_zero"
+  else
+    set -- $executable $options
   fi
   # run command
   local exit_code=0
