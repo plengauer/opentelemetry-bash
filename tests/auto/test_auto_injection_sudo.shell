@@ -1,7 +1,7 @@
 . ./assert.sh
 . /usr/bin/opentelemetry_shell.sh
 
-sudo sh -x auto/fail_no_auto.shell
+sudo sh auto/fail_no_auto.shell
 assert_equals 0 $?
 span="$(resolve_span '.resource.attributes."process.command" == "sh auto/fail_no_auto.shell"')"
 assert_equals "myspan" "$(\echo "$span" | jq -r '.name')"
