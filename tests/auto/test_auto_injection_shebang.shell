@@ -1,5 +1,5 @@
 . ./assert.sh
-sudo cp auto/fail_no_auto_shell /usr/bin/
+sudo cp auto/fail_no_auto.shell /usr/bin/
 . /usr/bin/opentelemetry_shell.sh
 fail_no_auto.shell
 assert_equals 0 $?
