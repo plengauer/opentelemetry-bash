@@ -571,13 +571,13 @@ jobs:
       - run: echo os
 
   test:
-    needs: [test-shell, test-os]
+    needs: [test-package, test-shell, test-os]
     runs-on: ubuntu-latest
     steps:
       - run: echo all
 
   publish:
-    needs: [build, test-package, test]
+    needs: [build, test]
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
