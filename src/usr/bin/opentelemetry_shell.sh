@@ -350,9 +350,8 @@ otel_inject_sudo() {
   local exit_code=0
   export OTEL_SHELL_AUTO_INJECTED=TRUE
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-    OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE $executable -E sh -c ". /usr/bin/opentelemetry_shell.sh
+    OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE $executable $(\printenv | \grep '^OTEL_' | otel_line_join) sh -c ". /usr/bin/opentelemetry_shell.sh
 $(otel_escape_args "$@")" || local exit_code=$?
-  # $(\printenv | \grep '^OTEL_' | otel_line_join)
   unset OTEL_SHELL_AUTO_INJECTED
   return $exit_code
 }
