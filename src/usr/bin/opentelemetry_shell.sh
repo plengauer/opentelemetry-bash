@@ -10,6 +10,7 @@ if [ "$OTEL_SHELL_INJECTED" = "TRUE" ]; then
   return 0
 fi
 OTEL_SHELL_INJECTED=TRUE
+unset OTEL_SHELL_SUPPRESS_LOG_COLLECTION
 
 . /usr/bin/opentelemetry_shell_api.sh
 
@@ -81,9 +82,9 @@ otel_deshebangify() {
   local shebang="$(otel_shebang $1)" # e.g., "/bin/bash -x"
   if [ -z "$shebang" ]; then return 2; fi
   local shebang_cmd="$(\echo "$shebang" | \cut -d' ' -f1 | \rev | \cut -d/ -f1 | \rev)" # e.g., "bash"
-  local aliased_shebang="$(\alias $shebang_cmd 2> /dev/null | \cut -d' ' -f2- | \cut -d= -f2- | otel_unquote)" # e.g., "otel_inject_shell_with_source bash"
+  local aliased_shebang="$(\alias "$shebang_cmd" 2> /dev/null | \cut -d= -f2- | otel_unquote)" # e.g., "otel_inject_shell_with_source bash"
   if [ -z "$aliased_shebang" ]; then return 3; fi
-  \alias $1="$aliased_shebang $(\echo $shebang | \cut -s -d ' ' -f2-) $(\which $1)"  # e.g., upgrade => otel_inject_shell_with_source bash -x /usr/bin/upgrade
+  \alias $1="$aliased_shebang $(\echo "$shebang" | \cut -s -d ' ' -f2-) $(\which $1)"  # e.g., upgrade => otel_inject_shell_with_source bash -x /usr/bin/upgrade
 }
 
 otel_instrument() {
@@ -251,7 +252,7 @@ otel_inject_shell_with_copy() {
   # run command
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-    OTEL_SHELL_AUTO_INJECTED=TRUE "$@" || local exit_code=$?
+    OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE "$@" || local exit_code=$?
   \rm $temporary_script
   return $exit_code
 }
@@ -301,7 +302,7 @@ $arg"
   # run command
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-    OTEL_SHELL_AUTO_INJECTED=TRUE "$@" || local exit_code=$?
+    OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE "$@" || local exit_code=$?
   return $exit_code
 }
 
