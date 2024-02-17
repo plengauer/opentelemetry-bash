@@ -49,7 +49,10 @@ otel_escape_args() {
   local first=TRUE
   for arg in "$@"; do
     if [ "$first" = TRUE ]; then local first=FALSE; else \echo -n " "; fi
-    \echo -n "\"$arg\""
+    case "$arg" in  
+      *\ * ) echo -n "\"$arg\"" ;;
+      *) echo -n "$arg" ;;
+    esac
   done
 }
 
