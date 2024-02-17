@@ -227,15 +227,11 @@ otel_observe() {
   otel_span_activate $span_id
   local traceparent=$OTEL_TRACEPARENT
 
-  if [ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0" ]; then
-    set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0)"
-  fi
-  if [ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1" ]; then
-    set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1)"
-  fi
+  if [ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0)"; fi
+  if [ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1)"; fi
   local stderr_pipe=$(\mktemp -u).opentelemetry_shell_$$.pipe
   \mkfifo $stderr_pipe
-  ((while IFS= read -r line; do otel_log_record $traceparent "$line"; \echo -e "$line\r" >&2; done < $stderr_pipe) &)
+  ((while IFS= read -r line; do if [ "$OTEL_SHELL_SUPPRESS_LOG_COLLECTION" != TRUE ]; then otel_log_record $traceparent "$line"; fi; \echo "$line" >&2; done < $stderr_pipe) &)
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_AUTO_INJECTED=$OTEL_SHELL_AUTO_INJECTED "$@" 2> $stderr_pipe || local exit_code=$?
   \rm $stderr_pipe

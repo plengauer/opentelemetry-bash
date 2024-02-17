@@ -10,6 +10,7 @@ if [ "$OTEL_SHELL_INJECTED" = "TRUE" ]; then
   return 0
 fi
 OTEL_SHELL_INJECTED=TRUE
+unset OTEL_SHELL_SUPPRESS_LOG_COLLECTION
 
 . /usr/bin/opentelemetry_shell_api.sh
 
@@ -81,9 +82,9 @@ otel_deshebangify() {
   local shebang="$(otel_shebang $1)" # e.g., "/bin/bash -x"
   if [ -z "$shebang" ]; then return 2; fi
   local shebang_cmd="$(\echo "$shebang" | \cut -d' ' -f1 | \rev | \cut -d/ -f1 | \rev)" # e.g., "bash"
-  local aliased_shebang="$(\alias $shebang_cmd 2> /dev/null | \cut -d' ' -f2- | \cut -d= -f2- | otel_unquote)" # e.g., "otel_inject_shell_with_source bash"
+  local aliased_shebang="$(\alias "$shebang_cmd" 2> /dev/null | \cut -d= -f2- | otel_unquote)" # e.g., "otel_inject_shell_with_source bash"
   if [ -z "$aliased_shebang" ]; then return 3; fi
-  \alias $1="$aliased_shebang $(\echo $shebang | \cut -s -d ' ' -f2-) $(\which $1)"  # e.g., upgrade => otel_inject_shell_with_source bash -x /usr/bin/upgrade
+  \alias $1="$aliased_shebang $(\echo "$shebang" | \cut -s -d ' ' -f2-) $(\which $1)"  # e.g., upgrade => otel_inject_shell_with_source bash -x /usr/bin/upgrade
 }
 
 otel_instrument() {
@@ -158,7 +159,11 @@ otel_unalias_and_reinstrument() {
   local exit_code=0
   "$@" || local exit_code=$?
   shift
-  local commands="$(otel_list_all_commands | \grep -Fx "$(\echo "$@" | otel_line_split 2> /dev/null)" 2> /dev/null)"
+  if [ "-a" = "$*" ]; then
+    local commands="$(otel_list_all_commands)"
+  else
+    local commands="$(otel_list_all_commands | \grep -Fx "$(\echo "$@" | otel_line_split 2> /dev/null)" 2> /dev/null)"
+  fi
   for cmd in $commands; do otel_instrument $cmd; done
   return $exit_code
 }
@@ -229,8 +234,8 @@ otel_inject_shell_with_copy() {
       esac
     fi
   done
-  # prepare temporary script
   if [ -n "$cmd" ]; then
+    # prepare temporary script
     local temporary_script=$(\mktemp -u)
     \touch $temporary_script
     \echo "set -- $args" >> $temporary_script
@@ -241,14 +246,16 @@ otel_inject_shell_with_copy() {
       \echo "$cmd" >> $temporary_script
     fi
     \chmod +x $temporary_script
+    # compile command
+    set -- $executable $options $temporary_script
+  else
+    set -- $executable $options
   fi
-  # compile command
-  set -- $executable $options $temporary_script
   # run command
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-    OTEL_SHELL_AUTO_INJECTED=TRUE "$@" || local exit_code=$?
-  \rm $temporary_script
+    OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE "$@" || local exit_code=$?
+  \rm $temporary_script || true
   return $exit_code
 }
 
@@ -293,11 +300,13 @@ $arg"
       local cmd=". $cmd"
     fi
     set -- $executable $options -c ". /usr/bin/opentelemetry_shell.sh; $cmd $args" "$dollar_zero"
+  else
+    set -- $executable $options
   fi
   # run command
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-    OTEL_SHELL_AUTO_INJECTED=TRUE "$@" || local exit_code=$?
+    OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE "$@" || local exit_code=$?
   return $exit_code
 }
 
