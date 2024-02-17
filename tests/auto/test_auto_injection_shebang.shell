@@ -1,4 +1,3 @@
-set -x
 . ./assert.sh
 if [ "$(whoami)" = "root" ]; then
   echo "#!/bin/sh" > /usr/bin/fail_no_auto.shell
