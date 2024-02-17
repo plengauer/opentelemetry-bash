@@ -1,4 +1,4 @@
-if [ -z "$(which sudo)" ]; then return 0; fi
+if [ -z "$(which sudo)" ]; then exit 0; fi
 . ./assert.sh
 . /usr/bin/opentelemetry_shell.sh
 
