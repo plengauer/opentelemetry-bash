@@ -46,6 +46,17 @@ otel_line_split() {
   \tr ' ' '\n'
 }
 
+otel_escape_args() {
+  local first=TRUE
+  for arg in "$@"; do
+    if [ "$first" = TRUE ]; then local first=FALSE; else \echo -n " "; fi
+    case "$arg" in  
+      *\ * ) echo -n "\"$arg\"" ;;
+      *) echo -n "$arg" ;;
+    esac
+  done
+}
+
 otel_alias_prepend() {
   local original_command=$1
   local prepend_command=$2
@@ -127,6 +138,7 @@ otel_list_alias_commands() {
 }
 
 otel_list_builtin_commands() {
+  \echo printenv
   \echo type
   if [ "$otel_shell" = "bash" ]; then
     \echo history
@@ -310,6 +322,40 @@ $arg"
   return $exit_code
 }
 
+otel_inject_inner_command() {
+  if [ "$1" = "otel_observe" ]; then
+    shift; local executable="otel_observe $1"
+  else
+    local executable=$1
+  fi
+  local cmdline="$*"
+  shift
+  local exit_code=0
+  export OTEL_SHELL_AUTO_INJECTED=TRUE
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
+    OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE $executable sh -c ". /usr/bin/opentelemetry_shell.sh
+$(otel_escape_args "$@")" || local exit_code=$?
+  unset OTEL_SHELL_AUTO_INJECTED
+  return $exit_code
+}
+
+otel_inject_sudo() {
+  if [ "$1" = "otel_observe" ]; then
+    shift; local executable="otel_observe $1"
+  else
+    local executable=$1
+  fi
+  local cmdline="$*"
+  shift
+  local exit_code=0
+  export OTEL_SHELL_AUTO_INJECTED=TRUE
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
+    OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE $executable $(\printenv | \grep '^OTEL_' | otel_line_join) sh -c ". /usr/bin/opentelemetry_shell.sh
+$(otel_escape_args "$@")" || local exit_code=$?
+  unset OTEL_SHELL_AUTO_INJECTED
+  return $exit_code
+}
+
 otel_record_exec() {
   local file="$1"
   local line="$2"
@@ -381,6 +427,9 @@ otel_alias_prepend sh otel_inject_shell_with_copy # cant really know what kind o
 otel_alias_prepend ash otel_inject_shell_with_copy # sourced files do not support arguments
 otel_alias_prepend dash otel_inject_shell_with_copy # sourced files do not support arguments
 otel_alias_prepend bash otel_inject_shell_with_c_flag
+otel_alias_prepend sudo otel_inject_sudo
+otel_alias_prepend time otel_inject_inner_command
+otel_alias_prepend timeout otel_inject_inner_command
 
 otel_alias_prepend alias otel_alias_and_instrument
 otel_alias_prepend unalias otel_unalias_and_reinstrument
