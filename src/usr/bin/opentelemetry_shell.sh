@@ -45,6 +45,14 @@ otel_line_split() {
   \tr ' ' '\n'
 }
 
+otel_escape_args() {
+  local first=TRUE
+  for arg in "$@"; do
+    if [ "$first" = TRUE ]; then local first=FALSE; else \echo -n " "; fi
+    \echo -n "\"$arg\""
+  done
+}
+
 otel_alias_prepend() {
   local original_command=$1
   local prepend_command=$2
@@ -311,7 +319,7 @@ otel_inject_inner_command() {
   shift
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-    OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE $executable sh -c ". /usr/bin/opentelemetry_shell.sh; $*" || local exit_code=$?
+    OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE $executable sh -c ". /usr/bin/opentelemetry_shell.sh; $(otel_escape_args "$@")" || local exit_code=$?
   return $exit_code
 }
 
