@@ -4,9 +4,9 @@ if [ -z "$(which sudo)" ]; then exit 0; fi
 
 sudo echo hello world
 assert_equals 0 $?
-span="$(resolve_span '.resource.attributes.name == "sudo echo hello world"')"
+span="$(resolve_span '.name == "sudo echo hello world"')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
-span="$(resolve_span '.resource.attributes.name == "echo hello world"')"
+span="$(resolve_span '.name == "echo hello world"')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
 
 #sudo sh auto/fail_no_auto.shell
