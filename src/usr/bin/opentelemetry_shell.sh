@@ -10,6 +10,7 @@ if [ "$OTEL_SHELL_INJECTED" = "TRUE" ]; then
   return 0
 fi
 OTEL_SHELL_INJECTED=TRUE
+unset OTEL_SHELL_SUPPRESS_LOG_COLLECTION
 
 . /usr/bin/opentelemetry_shell_api.sh
 
@@ -247,7 +248,7 @@ otel_inject_shell_with_copy() {
   # run command
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-    OTEL_SHELL_AUTO_INJECTED=TRUE "$@" || local exit_code=$?
+    OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE "$@" || local exit_code=$?
   \rm $temporary_script
   return $exit_code
 }
@@ -297,7 +298,7 @@ $arg"
   # run command
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-    OTEL_SHELL_AUTO_INJECTED=TRUE "$@" || local exit_code=$?
+    OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE "$@" || local exit_code=$?
   return $exit_code
 }
 
