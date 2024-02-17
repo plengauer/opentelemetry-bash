@@ -95,7 +95,7 @@ otel_deshebangify() {
 }
 
 otel_instrument() {
-  otel_deshebangify $1 || true
+  # otel_deshebangify $1 || true
   otel_alias_prepend $1 'otel_observe'
 }
 
@@ -319,7 +319,7 @@ otel_inject_inner_command() {
   shift
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-    OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE $executable sh -c "set -x; . /usr/bin/opentelemetry_shell.sh; $(otel_escape_args "$@")" || local exit_code=$?
+    OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE $executable sh -c ". /usr/bin/opentelemetry_shell.sh; $(otel_escape_args "$@")" || local exit_code=$?
   return $exit_code
 }
 
