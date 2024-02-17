@@ -410,6 +410,8 @@ otel_alias_prepend ash otel_inject_shell_with_copy # sourced files do not suppor
 otel_alias_prepend dash otel_inject_shell_with_copy # sourced files do not support arguments
 otel_alias_prepend bash otel_inject_shell_with_c_flag
 otel_alias_prepend sudo otel_inject_inner_command
+otel_alias_prepend time otel_inject_inner_command
+otel_alias_prepend timeout otel_inject_inner_command
 
 otel_alias_prepend alias otel_alias_and_instrument
 otel_alias_prepend unalias otel_unalias_and_reinstrument
