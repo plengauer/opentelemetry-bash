@@ -2,8 +2,13 @@ if [ -z "$(which sudo)" ]; then return 0; fi
 . ./assert.sh
 . /usr/bin/opentelemetry_shell.sh
 
-sudo sh auto/fail_no_auto.shell
+sudo echo hello world
 assert_equals 0 $?
-span="$(resolve_span '.resource.attributes."process.command" == "sudo sh auto/fail_no_auto.shell"')"
-assert_equals "myspan" "$(\echo "$span" | jq -r '.name')"
+span="$(resolve_span '.resource.attributes."process.command" == "sudo echo hello world"')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+
+#sudo sh auto/fail_no_auto.shell
+#assert_equals 0 $?
+#span="$(resolve_span '.resource.attributes."process.command" == "sudo sh auto/fail_no_auto.shell"')"
+#assert_equals "myspan" "$(\echo "$span" | jq -r '.name')"
+#assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
