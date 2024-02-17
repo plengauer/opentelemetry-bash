@@ -12,3 +12,5 @@ sudo echo hello world
 #span="$(resolve_span '.resource.attributes."process.command" == "sudo sh auto/fail_no_auto.shell"')"
 #assert_equals "myspan" "$(\echo "$span" | jq -r '.name')"
 #assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+
+exit 1
