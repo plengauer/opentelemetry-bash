@@ -95,7 +95,7 @@ otel_deshebangify() {
 }
 
 otel_instrument() {
-  # otel_deshebangify $1 || true
+  otel_deshebangify $1 || true
   otel_alias_prepend $1 'otel_observe'
 }
 
