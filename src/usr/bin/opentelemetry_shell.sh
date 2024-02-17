@@ -345,6 +345,7 @@ otel_inject_sudo() {
   else
     local executable=$1
   fi
+  local cmdline="$*"
   shift
   local exit_code=0
   export OTEL_SHELL_AUTO_INJECTED=TRUE
