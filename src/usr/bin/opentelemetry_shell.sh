@@ -10,6 +10,7 @@ if [ "$OTEL_SHELL_INJECTED" = "TRUE" ]; then
   return 0
 fi
 OTEL_SHELL_INJECTED=TRUE
+unset OTEL_SHELL_SUPPRESS_LOG_COLLECTION
 
 . /usr/bin/opentelemetry_shell_api.sh
 
@@ -169,7 +170,11 @@ otel_unalias_and_reinstrument() {
   local exit_code=0
   "$@" || local exit_code=$?
   shift
-  local commands="$(otel_list_all_commands | \grep -Fx "$(\echo "$@" | otel_line_split 2> /dev/null)" 2> /dev/null)"
+  if [ "-a" = "$*" ]; then
+    local commands="$(otel_list_all_commands)"
+  else
+    local commands="$(otel_list_all_commands | \grep -Fx "$(\echo "$@" | otel_line_split 2> /dev/null)" 2> /dev/null)"
+  fi
   for cmd in $commands; do otel_instrument $cmd; done
   return $exit_code
 }
@@ -240,8 +245,8 @@ otel_inject_shell_with_copy() {
       esac
     fi
   done
-  # prepare temporary script
   if [ -n "$cmd" ]; then
+    # prepare temporary script
     local temporary_script=$(\mktemp -u)
     \touch $temporary_script
     \echo "set -- $args" >> $temporary_script
@@ -252,14 +257,16 @@ otel_inject_shell_with_copy() {
       \echo "$cmd" >> $temporary_script
     fi
     \chmod +x $temporary_script
+    # compile command
+    set -- $executable $options $temporary_script
+  else
+    set -- $executable $options
   fi
-  # compile command
-  set -- $executable $options $temporary_script
   # run command
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-    OTEL_SHELL_AUTO_INJECTED=TRUE "$@" || local exit_code=$?
-  \rm $temporary_script
+    OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE "$@" || local exit_code=$?
+  \rm $temporary_script || true
   return $exit_code
 }
 
@@ -304,11 +311,13 @@ $arg"
       local cmd=". $cmd"
     fi
     set -- $executable $options -c ". /usr/bin/opentelemetry_shell.sh; $cmd $args" "$dollar_zero"
+  else
+    set -- $executable $options
   fi
   # run command
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-    OTEL_SHELL_AUTO_INJECTED=TRUE "$@" || local exit_code=$?
+    OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE "$@" || local exit_code=$?
   return $exit_code
 }
 
