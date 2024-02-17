@@ -7,6 +7,6 @@ set -x
 fail_no_auto.shell
 assert_equals 0 $?
 set +x
-span="$(resolve_span '.resource.attributes."process.command" == "sh auto/fail_no_auto.shell"')"
+span="$(resolve_span '.resource.attributes."process.command" == "sh /usr/bin/fail_no_auto.shell"')"
 assert_equals "myspan" "$(\echo "$span" | jq -r '.name')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
