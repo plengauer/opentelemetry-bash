@@ -355,15 +355,16 @@ otel_inject_sudo() {
 }
 
 otel_inject_xargs() {
-  # ??? | xargs echo
-  # ??? | xargs -I '{}' echo '{}'
-  if [ "$3" = "-I" ]; then
-    # xargs -I echo {} => xargs -I {} sh -c '. /otel.sh; echo {}'
-    otel_inject_inner_command "$@"
+  if [ "$1" = "otel_observe" ]; then
+    shift; local executable="otel_observe $1"
   else
-    # xargs echo => xargs -I '{}' sh -c '. /otel.sh; echo {}'
-    # otel_inject_inner_command
-    otel_inject_xargs "$1" "$2" -I '{}' "${@:3}" '{}'
+    local executable=$1
+  fi
+  shift
+  if ["$(\expr "$*" : ".*-I.*")" -gt 0 ]; then
+    otel_inject_inner_command $executable "$@"
+  else
+    otel_inject_xargs $executable -I '{}' "$@" '{}'
   fi
 }
 
