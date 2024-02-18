@@ -1,9 +1,7 @@
 . ./assert.sh
 . /usr/bin/opentelemetry_shell.sh
 
-set -x
-printf '%s' hello world | xargs echo
-set +x
+printf '%s' 'hello world' | xargs echo
 span="$(resolve_span '.name == "xargs echo"')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
 span="$(resolve_span '.name == "echo hello world"')"
