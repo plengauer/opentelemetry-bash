@@ -1,0 +1,9 @@
+. ./assert.sh
+. /usr/bin/opentelemetry_shell.sh
+
+find . -exec echo {} ';'
+find . -exec echo {} +
+find . -execdir echo {} ';'
+find . -execdir echo {} +
+
+exit 1
