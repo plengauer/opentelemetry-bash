@@ -354,6 +354,18 @@ otel_inject_sudo() {
   MORE_ARGS="$(\printenv | \grep '^OTEL_' | otel_line_join)" otel_inject_inner_command "$@"
 }
 
+otel_inject_xargs() {
+  # ??? | xargs echo
+  # ??? | xargs -I '{}' echo '{}'
+  if [ "$3" = "-I" ]; then
+    # xargs -I echo {} => xargs -I {} sh -c '. /otel.sh; echo {}'
+    otel_inject_inner_command "$@"
+  else
+    # xargs echo => xargs -I '{}' sh -c '. /otel.sh; echo {}'
+    otel_inject_inner_command "$1" "$2" -I '{}' "${@:3}"
+  fi
+}
+
 otel_record_exec() {
   local file="$1"
   local line="$2"
@@ -428,7 +440,7 @@ otel_alias_prepend bash otel_inject_shell_with_c_flag
 otel_alias_prepend sudo otel_inject_sudo
 otel_alias_prepend time otel_inject_inner_command
 otel_alias_prepend timeout otel_inject_inner_command
-otel_alias_prepend xargs otel_inject_inner_command
+otel_alias_prepend xargs otel_inject_xargs
 
 otel_alias_prepend alias otel_alias_and_instrument
 otel_alias_prepend unalias otel_unalias_and_reinstrument
