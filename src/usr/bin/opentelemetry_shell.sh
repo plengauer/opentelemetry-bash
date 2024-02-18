@@ -355,16 +355,49 @@ otel_inject_sudo() {
 }
 
 otel_inject_xargs() {
-  if [ "$1" = "otel_observe" ]; then
-    shift; local executable="otel_observe $1"
+  if [ "$(\expr "$*" : ".* -I .*")" -gt 0 ]; then
+    otel_inject_inner_command "$@"
   else
-    local executable=$1
+    if [ "$1" = "otel_observe" ]; then
+      shift; local executable="otel_observe $1"
+    else
+      local executable=$1
+    fi
+    shift
+    otel_inject_xargs $executable -I '{}' "$@" '{}' # TODO we should fake the commandline and span name and also adjust the test!
   fi
-  shift
-  if [ "$(\expr "$*" : ".*-I.*")" -gt 0 ]; then
-    otel_inject_inner_command $executable "$@"
+}
+
+otel_inject_find_arguments() {
+  local in_exec=0
+  local first=1
+  for arg in "$@"; do
+    if [ "$first" = 1 ]; then local first=0; else \echo -n ' '; fi
+    if [ "$in_exec" -eq 0 ] && ([ "$arg" = "-exec" ] || [ "$arg" = "-execdir" ]); then
+      local in_exec=1
+      echo -n "$arg"
+      echo -n ' sh -c ". /usr/bin/opentelemetry_shell.sh; '
+    elif [ "$in_exec" -eq 1 ] && ([ "$arg" = ";" ] || [ "$arg" = "+" ]); then
+      local in_exec=0
+      echo -n '" ;'
+    else
+      echo -n '"'$arg'"'
+    fi
+    echo -n ' ';
+  done
+}
+
+otel_inject_find() {
+  if [ "$(\expr "$*" : ".* -exec .*")" -gt 0 ]; then
+    if [ "$1" = "otel_observe" ]; then
+      shift; local executable="otel_observe $1"
+    else
+      local executable=$1
+    fi
+    shift
+    $executable $(otel_inject_find_arguments "$@") 
   else
-    otel_inject_xargs $executable -I '{}' "$@" '{}'
+    otel_inject_inner_command "$@"
   fi
 }
 
@@ -443,6 +476,7 @@ otel_alias_prepend sudo otel_inject_sudo
 otel_alias_prepend time otel_inject_inner_command
 otel_alias_prepend timeout otel_inject_inner_command
 otel_alias_prepend xargs otel_inject_xargs
+otel_alias_prepend xargs otel_inject_find
 
 otel_alias_prepend alias otel_alias_and_instrument
 otel_alias_prepend unalias otel_unalias_and_reinstrument
