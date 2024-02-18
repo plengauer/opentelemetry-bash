@@ -7,8 +7,8 @@ expected="$(echo hello world 2>&1)"
 actual="$(otel_observe echo hello world 2>&1)"
 assert_equals "$expected" "$actual"
 
-expected="$(echo -e 'hello\rworld' 2>&1)"
-actual="$(otel_observe echo -e 'hello\rworld' 2>&1)"
+expected="$(echo -e 'hello\\rworld' 2>&1)"
+actual="$(otel_observe echo -e 'hello\\rworld' 2>&1)"
 assert_equals "$expected" "$actual"
 
 expected="$((time echo hello world) 2>&1)"
