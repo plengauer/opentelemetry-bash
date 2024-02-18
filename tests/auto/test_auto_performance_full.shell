@@ -1,0 +1,3 @@
+set -e
+
+timeout 1s $SHELL -c 'exit 0'
