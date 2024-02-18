@@ -1,9 +1,16 @@
 . ./assert.sh
 . /usr/bin/opentelemetry_shell.sh
 
-find . -exec echo {} ';'
-find . -exec echo {} +
-find . -execdir echo {} ';'
-find . -execdir echo {} +
+n=1000
 
-exit 1
+directory="$(mktemp -d)"
+for i in $(seq 1 $n); do touch $directory/$i; done
+find $directory -exec echo {} ';'
+for i in $(seq 1 $n); do
+  span="$(resolve_span ".name == echo $directory/$i")"
+  assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+done
+
+# find . -exec echo {} +
+# find . -execdir echo {} ';'
+# find . -execdir echo {} +
