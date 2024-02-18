@@ -361,7 +361,7 @@ otel_inject_xargs() {
     local executable=$1
   fi
   shift
-  if ["$(\expr "$*" : ".*-I.*")" -gt 0 ]; then
+  if [ "$(\expr "$*" : ".*-I.*")" -gt 0 ]; then
     otel_inject_inner_command $executable "$@"
   else
     otel_inject_xargs $executable -I '{}' "$@" '{}'
