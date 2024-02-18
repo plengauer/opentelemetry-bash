@@ -2,5 +2,13 @@
 . /usr/bin/opentelemetry_shell.sh
 
 echo hello world | xargs echo
+span="$(resolve_span '.name == "xargs echo"')"
+assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+span="$(resolve_span '.name == "echo hello world"')"
+assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+
 echo hello world | xargs -I '{}' echo '{}'
-exit 1
+span="$(resolve_span '.name == "xargs  -I '{}' echo '{}'"')"
+assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+span="$(resolve_span '.name == "echo hello world"')"
+assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
