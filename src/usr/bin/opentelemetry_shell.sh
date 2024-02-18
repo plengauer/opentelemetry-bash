@@ -362,7 +362,8 @@ otel_inject_xargs() {
     otel_inject_inner_command "$@"
   else
     # xargs echo => xargs -I '{}' sh -c '. /otel.sh; echo {}'
-    otel_inject_inner_command "$1" "$2" -I '{}' "${@:3}" '{}'
+    # otel_inject_inner_command
+    otel_inject_xargs "$1" "$2" -I '{}' "${@:3}" '{}'
   fi
 }
 
