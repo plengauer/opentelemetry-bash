@@ -330,12 +330,21 @@ otel_inject_inner_command() {
   fi
   local cmdline="$*"
   shift
+  for arg in "$@"; do
+    if ! [ "${arg%"${arg#?}"}" = "-" ] && ([ -n "$(which $arg)" ] || [ -x "$arg" ]); then break; fi
+    local executable="$executable $1"
+    shift
+  done
   local exit_code=0
-  export OTEL_SHELL_AUTO_INJECTED=TRUE
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-    OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE $executable sh -c ". /usr/bin/opentelemetry_shell.sh
+  if [ -n "$*" ]; then
+    $executable || local exit_code=$?
+  else
+    export OTEL_SHELL_AUTO_INJECTED=TRUE
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
+      OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE $executable sh -c ". /usr/bin/opentelemetry_shell.sh
 $(otel_escape_args "$@")" || local exit_code=$?
-  unset OTEL_SHELL_AUTO_INJECTED
+    unset OTEL_SHELL_AUTO_INJECTED
+  fi
   return $exit_code
 }
 
