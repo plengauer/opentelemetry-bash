@@ -1,0 +1,6 @@
+. ./assert.sh
+. /usr/bin/opentelemetry_shell.sh
+
+echo hello world | xargs echo
+echo hello world | xargs -I '{}' echo '{}'
+exit 1
