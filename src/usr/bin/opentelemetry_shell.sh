@@ -376,14 +376,22 @@ otel_inject_find_arguments() {
     if [ "$in_exec" -eq 0 ] && ([ "$arg" = "-exec" ] || [ "$arg" = "-execdir" ]); then
       local in_exec=1
       echo -n "$arg"
-      echo -n ' sh -c ". /usr/bin/opentelemetry_shell.sh; '
+      echo -n -e ' sh -c ". /usr/bin/opentelemetry_shell.sh
+'
     elif [ "$in_exec" -eq 1 ] && ([ "$arg" = ";" ] || [ "$arg" = "+" ]); then
       local in_exec=0
-      echo -n '" ;'
+      echo -n '" ";"'
     else
-      echo -n '"'$arg'"'
+      if [ "$(\expr "$arg" : ".* .*")" -gt 0 ] || [ "$(\expr "$arg" : ".*\*.*")" -gt 0 ]; then
+        if [ "$in_exec" -eq 1 ]; then
+          echo -n '\"'$arg'\"'
+        else
+          echo -n '"'$arg'"'
+        fi
+      else
+        echo -n "$arg"
+      fi
     fi
-    echo -n ' ';
   done
 }
 
@@ -395,9 +403,9 @@ otel_inject_find() {
       local executable=$1
     fi
     shift
-    $executable $(otel_inject_find_arguments "$@") 
+    eval $executable "$(otel_inject_find_arguments "$@")"
   else
-    otel_inject_inner_command "$@"
+    $executable "$@"
   fi
 }
 
