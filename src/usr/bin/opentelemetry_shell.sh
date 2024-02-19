@@ -11,18 +11,25 @@ if [ "$OTEL_SHELL_INJECTED" = "TRUE" ]; then
 fi
 OTEL_SHELL_INJECTED=TRUE
 
-if [ -n "$OTEL_SHELL_AUTO_INSTRUMENTATION_HINT" ]; then
-  otel_shell_auto_instrumentation_hint="$OTEL_SHELL_AUTO_INSTRUMENTATION_HINT"
-  unset OTEL_SHELL_AUTO_INSTRUMENTATION_HINT
-else
-  otel_shell_auto_instrumentation_hint="$0"
-fi
-
 . /usr/bin/opentelemetry_shell_api.sh
 
 if [ "$otel_shell" = "bash" ] && [ -n "$BASHPID" ] && [ "$$" != "$BASHPID" ]; then
   echo "WARNING The OpenTelemetry shell file for auto-instrumentation is sourced in a subshell, automatic instrumentation will only be active within that subshell!" >&2
 fi
+
+case "$-" in
+  *i*) otel_is_interactive=TRUE;;
+  *)   otel_is_interactive=FALSE;;
+esac
+
+if [ "$otel_is_interactive" = "TRUE" ]; then
+  otel_shell_auto_instrumentation_hint=""
+elif [ -n "$OTEL_SHELL_AUTO_INSTRUMENTATION_HINT" ]; then
+  otel_shell_auto_instrumentation_hint="$OTEL_SHELL_AUTO_INSTRUMENTATION_HINT"
+else
+  otel_shell_auto_instrumentation_hint="$0"
+fi
+unset OTEL_SHELL_AUTO_INSTRUMENTATION_HINT
 
 if [ "$otel_shell" = "bash" ]; then
   otel_source_file_resolver='"${BASH_SOURCE[0]}"'
@@ -35,10 +42,6 @@ otel_source_func_resolver='"$FUNCNAME"'
 if [ "$otel_shell" = "bash" ]; then
   shopt -s expand_aliases &> /dev/null
 fi
-case "$-" in
-  *i*) otel_is_interactive=TRUE;;
-  *)   otel_is_interactive=FALSE;;
-esac
 
 otel_unquote() {
   \sed "s/^'\(.*\)'$/\1/"
@@ -412,8 +415,10 @@ otel_inject_find() {
     else
       local executable=$1
     fi
+    local cmdline="$*"
     shift
-    OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$*" eval $executable "$(otel_inject_find_arguments "$@")"
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
+      OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$*" eval $executable "$(otel_inject_find_arguments "$@")"
   else
     $executable "$@"
   fi
