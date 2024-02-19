@@ -9,6 +9,7 @@ otel_remote_sdk_pipe=$(\mktemp -u)_opentelemetry_shell_$$.pipe
 otel_shell=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
 otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE
+unset OTEL_SHELL_SUPPRESS_LOG_COLLECTION
 
 otel_command_self() {
   if [ -n "$otel_commandline_override" ]; then
