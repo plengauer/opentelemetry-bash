@@ -388,7 +388,7 @@ otel_inject_find_arguments() {
 }
 
 otel_inject_find() {
-  if [ "$(\expr "$*" : ".* -exec .*")" -gt 0 ]; then
+  if [ "$(\expr "$*" : ".* -exec .*")" -gt 0 ] ||  [ "$(\expr "$*" : ".* -execdir .*")" -gt 0 ]; then
     if [ "$1" = "otel_observe" ]; then
       shift; local executable="otel_observe $1"
     else
