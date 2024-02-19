@@ -438,9 +438,6 @@ otel_record_exec() {
 }
 
 otel_start_script() {
-  unset OTEL_SHELL_SPAN_NAME_OVERRIDE
-  unset OTEL_SHELL_SPAN_KIND_OVERRIDE
-  unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
   otel_init || return $?
   if [ "$OTEL_SHELL_AUTO_INJECTED" != "TRUE" ]; then
     if [ -n "$SSH_CLIENT"  ] && [ -n "$SSH_CONNECTION" ]; then
