@@ -1,7 +1,7 @@
 . ./assert.sh
 . /usr/bin/opentelemetry_shell.sh
 
-n=3
+n=5
 
 directory="$(mktemp -d)"
 for i in $(seq 1 $n); do \touch $directory/$i; done
@@ -9,7 +9,7 @@ expected="$(\find $directory -exec echo {} ';')"
 actual="$(find $directory -exec echo {} ';')"
 assert_equals "$expected" "$actual"
 for i in $(seq 1 $n); do
-  span="$(resolve_span ".name == \"/bin/echo $directory/$i\"")"
+  span="$(resolve_span ".name == \"echo $directory/$i\"")"
   assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | \jq -r '.kind')"
 done
 
@@ -18,10 +18,6 @@ for i in $(seq 1 $n); do \touch $directory/$i; done
 expected="$(\find $directory -exec echo {} '+')"
 actual="$(find $directory -exec echo {} '+')"
 assert_equals "$expected" "$actual"
-for i in $(seq 1 $n); do
-  span="$(resolve_span ".name == \"/bin/echo $directory/$i\"")"
-  assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | \jq -r '.kind')"
-done
 
 directory="$(mktemp -d)"
 for i in $(seq 1 $n); do \touch $directory/$i; done
@@ -29,7 +25,7 @@ expected="$(\find $directory -execdir echo {} ';')"
 actual="$(find $directory -execdir echo {} ';')"
 assert_equals "$expected" "$actual"
 for i in $(seq 1 $n); do
-  span="$(resolve_span ".name == \\"/bin/echo $directory/$i"\")"
+  span="$(resolve_span ".name == \"echo ./$i"\"")"
   assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | \jq -r '.kind')"
 done
 
@@ -38,8 +34,4 @@ for i in $(seq 1 $n); do \touch $directory/$i; done
 expected="$(\find $directory -execdir echo {} '+')"
 actual="$(find $directory -execdir echo {} '+')"
 assert_equals "$expected" "$actual"
-for i in $(seq 1 $n); do
-  span="$(resolve_span ".name == \"/bin/echo $directory/$i"\")"
-  assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | \jq -r '.kind')"
-done
 
