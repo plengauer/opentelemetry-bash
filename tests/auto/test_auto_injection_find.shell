@@ -25,7 +25,7 @@ expected="$(\find $directory -execdir echo {} ';')"
 actual="$(find $directory -execdir echo {} ';')"
 assert_equals "$expected" "$actual"
 for i in $(seq 1 $n); do
-  span="$(resolve_span ".name == \"echo ./$i"\"")"
+  span="$(resolve_span ".name == \"echo ./$i\"")"
   assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | \jq -r '.kind')"
 done
 

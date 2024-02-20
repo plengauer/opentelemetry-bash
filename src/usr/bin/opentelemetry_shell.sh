@@ -60,8 +60,8 @@ otel_escape_args() {
   for arg in "$@"; do
     if [ "$first" = TRUE ]; then local first=FALSE; else \echo -n " "; fi
     case "$arg" in  
-      *\ * ) echo -n "\"$arg\"" ;;
-      *) echo -n "$arg" ;;
+      *\ * ) \echo -n "\"$arg\"" ;;
+      *) \echo -n "$arg" ;;
     esac
   done
 }
@@ -355,7 +355,7 @@ otel_inject_inner_command() {
     OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" $executable || local exit_code=$?
   else
     export OTEL_SHELL_AUTO_INJECTED=TRUE
-    export OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$*" 
+    export OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$*"
     OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
       OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE $executable $more_args sh -c ". /usr/bin/opentelemetry_shell.sh
 $(otel_escape_args "$@")" || local exit_code=$?
@@ -366,7 +366,7 @@ $(otel_escape_args "$@")" || local exit_code=$?
 }
 
 otel_inject_sudo() {
-  MORE_ARGS="$(\printenv | \grep '^OTEL_' | otel_line_join)" otel_inject_inner_command "$@"
+  MORE_ARGS="--preserve-env=$(\printenv | \grep '^OTEL_' | \cut -d= -f1 | \tr '\n' ','),OTEL_SHELL_AUTO_INJECTED,OTEL_SHELL_AUTO_INSTRUMENTATION_HINT" otel_inject_inner_command "$@"
 }
 
 otel_inject_xargs() {
@@ -390,19 +390,19 @@ otel_inject_find_arguments() {
     if [ "$first" = 1 ]; then local first=0; else \echo -n ' '; fi
     if [ "$in_exec" -eq 0 ] && ([ "$arg" = "-exec" ] || [ "$arg" = "-execdir" ]); then
       local in_exec=1
-      echo -n "$arg"
-      echo -n -e " \\sh -c '. /usr/bin/opentelemetry_shell.sh
+      \echo -n "$arg"
+      \echo -n -e " \\sh -c '. /usr/bin/opentelemetry_shell.sh
 "
     elif [ "$in_exec" -eq 1 ] && ([ "$arg" = ";" ] || [ "$arg" = "+" ]); then
       local in_exec=0
-      echo -n "' '' {} '$arg'"
+      \echo -n "' '' {} '$arg'"
     elif [ "$in_exec" -eq 1 ] && [ "$arg" = "{}" ]; then
-      echo -n '"$@"'
+      \echo -n '"$@"'
     else
       if [ "$(\expr "$arg" : ".* .*")" -gt 0 ] || [ "$(\expr "$arg" : ".*\*.*")" -gt 0 ]; then
-        echo -n '"'$arg'"'
+        \echo -n '"'$arg'"'
       else
-        echo -n "$arg"
+        \echo -n "$arg"
       fi
     fi
   done
