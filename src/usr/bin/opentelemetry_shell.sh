@@ -435,14 +435,28 @@ otel_end_script() {
 
 otel_alias_prepend wget otel_propagate_wget
 otel_alias_prepend curl otel_propagate_curl
+
 otel_alias_prepend sh otel_inject_shell_with_copy # cant really know what kind of shell it actually is, so lets play it safe
 otel_alias_prepend ash otel_inject_shell_with_copy # sourced files do not support arguments
 otel_alias_prepend dash otel_inject_shell_with_copy # sourced files do not support arguments
 otel_alias_prepend bash otel_inject_shell_with_c_flag
+otel_alias_prepend env otel_inject_inner_command
+otel_alias_prepend chroot otel_inject_inner_command
 otel_alias_prepend sudo otel_inject_sudo
+otel_alias_prepend taskset otel_inject_inner_command
+otel_alias_prepend nice otel_inject_inner_command
+otel_alias_prepend ionice otel_inject_inner_command
+otel_alias_prepend renice otel_inject_inner_command
+otel_alias_prepend stdbuf otel_inject_inner_command
+# otel_alias_prepend nohup otel_inject_inner_command # injecting via changing the command defeats the purpose of nohub
+# otel_alias_prepend strace otel_inject_inner_command # injecting via changing the command defeats the purpose of strace
 otel_alias_prepend time otel_inject_inner_command
 otel_alias_prepend timeout otel_inject_inner_command
 otel_alias_prepend xargs otel_inject_xargs
+otel_alias_prepend parallel otel_inject_inner_command
+otel_alias_prepend watch otel_inject_inner_command
+otel_alias_prepend at otel_inject_inner_command
+otel_alias_prepend flock otel_inject_inner_command
 
 otel_alias_prepend alias otel_alias_and_instrument
 otel_alias_prepend unalias otel_unalias_and_reinstrument
