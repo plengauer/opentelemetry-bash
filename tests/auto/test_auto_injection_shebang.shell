@@ -4,8 +4,8 @@ if [ "$(whoami)" = "root" ]; then
   cat auto/fail_no_auto.shell >> /usr/bin/fail_no_auto.shell
   chmod +x /usr/bin/fail_no_auto.shell
 else
-  sudo echo "#!/bin/sh" > /usr/bin/fail_no_auto.shell
-  sudo cat auto/fail_no_auto.shell >> /usr/bin/fail_no_auto.shell
+  echo "#!/bin/sh" | sudo tee /usr/bin/fail_no_auto.shell
+  cat auto/fail_no_auto.shell | sudo tee -a /usr/bin/fail_no_auto.shell
   sudo chmod +x /usr/bin/fail_no_auto.shell
 fi
 . /usr/bin/opentelemetry_shell.sh

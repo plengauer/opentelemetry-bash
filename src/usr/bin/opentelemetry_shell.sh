@@ -10,13 +10,26 @@ if [ "$OTEL_SHELL_INJECTED" = "TRUE" ]; then
   return 0
 fi
 OTEL_SHELL_INJECTED=TRUE
-unset OTEL_SHELL_SUPPRESS_LOG_COLLECTION
 
 . /usr/bin/opentelemetry_shell_api.sh
 
 if [ "$otel_shell" = "bash" ] && [ -n "$BASHPID" ] && [ "$$" != "$BASHPID" ]; then
   echo "WARNING The OpenTelemetry shell file for auto-instrumentation is sourced in a subshell, automatic instrumentation will only be active within that subshell!" >&2
 fi
+
+case "$-" in
+  *i*) otel_is_interactive=TRUE;;
+  *)   otel_is_interactive=FALSE;;
+esac
+
+if [ "$otel_is_interactive" = "TRUE" ]; then
+  otel_shell_auto_instrumentation_hint=""
+elif [ -n "$OTEL_SHELL_AUTO_INSTRUMENTATION_HINT" ]; then
+  otel_shell_auto_instrumentation_hint="$OTEL_SHELL_AUTO_INSTRUMENTATION_HINT"
+else
+  otel_shell_auto_instrumentation_hint="$0"
+fi
+unset OTEL_SHELL_AUTO_INSTRUMENTATION_HINT
 
 if [ "$otel_shell" = "bash" ]; then
   otel_source_file_resolver='"${BASH_SOURCE[0]}"'
@@ -29,10 +42,6 @@ otel_source_func_resolver='"$FUNCNAME"'
 if [ "$otel_shell" = "bash" ]; then
   shopt -s expand_aliases &> /dev/null
 fi
-case "$-" in
-  *i*) otel_is_interactive=TRUE;;
-  *)   otel_is_interactive=FALSE;;
-esac
 
 otel_unquote() {
   \sed "s/^'\(.*\)'$/\1/"
@@ -51,8 +60,8 @@ otel_escape_args() {
   for arg in "$@"; do
     if [ "$first" = TRUE ]; then local first=FALSE; else \echo -n " "; fi
     case "$arg" in  
-      *\ * ) echo -n "\"$arg\"" ;;
-      *) echo -n "$arg" ;;
+      *\ * ) \echo -n "\"$arg\"" ;;
+      *) \echo -n "$arg" ;;
     esac
   done
 }
@@ -107,10 +116,11 @@ otel_outstrument() {
   \unalias $1 1> /dev/null 2> /dev/null || true
 }
 
-otel_filter_commands_by_file() {
-  local file_hint="$1"
-  if [ "$file_hint" != "" ] && [ -f "$file_hint" ] && [ "$(\readlink -f /proc/$$/exe)" != "$(\readlink -f $file_hint)" ] && [ "$file_hint" != "/usr/bin/opentelemetry_shell.sh" ]; then
-    \grep -xF "$(\tr -s ' $=";(){}[]/\\!#~^'\' '\n' < "$file_hint" | \grep -E '^[a-zA-Z0-9 ._-]*$')"
+otel_filter_commands_by_hint() {
+  local hint="$1"
+  if [ -n "$hint" ]; then
+    if [ -f "$hint" ] && [ "$(\readlink -f /proc/$$/exe)" != "$(\readlink -f $hint)" ] && [ "$hint" != "/usr/bin/opentelemetry_shell.sh" ]; then local hint="$(\cat "$hint")"; fi
+    \grep -xF "$(\echo "$hint" | \tr -s ' $=";(){}[]/\\!#~^'\' '\n' | \grep -E '^[a-zA-Z0-9 ._-]*$')"
   else
     \cat
   fi
@@ -152,9 +162,9 @@ otel_list_all_commands() {
 }
 
 otel_auto_instrument() {
-  local file_hint="$1"
+  local hint="$1"
   # both otel_filter_commands_by_file and otel_filter_commands_by_instrumentation are functionally optional, but helps optimizing time because the following loop AND otel_instrument itself is expensive!
-  local executables="$(otel_list_all_commands | otel_filter_commands_by_instrumentation | otel_filter_commands_by_file "$file_hint" | \sort -u | otel_line_join)"
+  local executables="$(otel_list_all_commands | otel_filter_commands_by_instrumentation | otel_filter_commands_by_hint "$hint" | \sort -u | otel_line_join)"
   for cmd in $executables; do otel_instrument $cmd; done
 }
 
@@ -233,6 +243,7 @@ otel_inject_shell_with_copy() {
     elif [ "$is_next_command_string" = "TRUE" ]; then
       local cmd="$arg"
       local is_next_command_string="FALSE"
+      local is_parsing_command="TRUE"
     elif [ "$is_parsing_command" = "TRUE" ]; then
       local args="$args \"$arg\""
     elif [ "$is_next_option" = "TRUE" ]; then
@@ -251,6 +262,7 @@ otel_inject_shell_with_copy() {
     local temporary_script=$(\mktemp -u)
     \touch $temporary_script
     \echo "set -- $args" >> $temporary_script
+    \echo "OTEL_SHELL_AUTO_INSTRUMENTATION_HINT=\"$temporary_script\"" >> $temporary_script
     \echo ". /usr/bin/opentelemetry_shell.sh" >> $temporary_script
     if [ -f "$cmd" ]; then
       \cat $cmd >> $temporary_script
@@ -266,7 +278,7 @@ otel_inject_shell_with_copy() {
   # run command
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-    OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE "$@" || local exit_code=$?
+    OTEL_SHELL_AUTO_INJECTED=TRUE "$@" || local exit_code=$?
   \rm $temporary_script || true
   return $exit_code
 }
@@ -293,6 +305,7 @@ $arg"
       # aliases need at least a linefeed or a source to become active in a -c command. Dunno why, but its like that
       # also, we cant just introduce ALWAYS a linefeed, because then argument ordering is confused for sourced scripts
       local is_next_command_string="FALSE"
+      local is_parsing_command="TRUE"
     elif [ "$is_parsing_command" = "TRUE" ]; then
       local args="$args \"$arg\""
     elif [ "$is_next_option" = "TRUE" ]; then
@@ -318,11 +331,13 @@ $arg"
   # run command
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-    OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE "$@" || local exit_code=$?
+    OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$cmd $args" "$@" || local exit_code=$?
   return $exit_code
 }
 
 otel_inject_inner_command() {
+  local more_args="$MORE_ARGS"
+  unset MORE_ARGS
   if [ "$1" = "otel_observe" ]; then
     shift; local executable="otel_observe $1"
   else
@@ -330,30 +345,82 @@ otel_inject_inner_command() {
   fi
   local cmdline="$*"
   shift
+  for arg in "$@"; do
+    if ! [ "${arg%"${arg#?}"}" = "-" ] && ([ -n "$(\which $arg)" ] || [ -x "$arg" ]); then break; fi
+    local executable="$executable $1"
+    shift
+  done
   local exit_code=0
-  export OTEL_SHELL_AUTO_INJECTED=TRUE
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-    OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE $executable sh -c ". /usr/bin/opentelemetry_shell.sh
+  if [ -z "$*" ]; then
+    OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" $executable || local exit_code=$?
+  else
+    export OTEL_SHELL_AUTO_INJECTED=TRUE
+    export OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$*"
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
+      $executable $more_args sh -c ". /usr/bin/opentelemetry_shell.sh
 $(otel_escape_args "$@")" || local exit_code=$?
-  unset OTEL_SHELL_AUTO_INJECTED
+    unset OTEL_SHELL_AUTO_INSTRUMENTATION_HINT
+    unset OTEL_SHELL_AUTO_INJECTED
+  fi
   return $exit_code
 }
 
 otel_inject_sudo() {
-  if [ "$1" = "otel_observe" ]; then
-    shift; local executable="otel_observe $1"
+  MORE_ARGS="--preserve-env=$(\printenv | \grep '^OTEL_' | \cut -d= -f1 | \tr '\n' ','),OTEL_SHELL_AUTO_INJECTED,OTEL_SHELL_AUTO_INSTRUMENTATION_HINT" otel_inject_inner_command "$@"
+}
+
+otel_inject_xargs() {
+  if [ "$(\expr "$*" : ".* -I .*")" -gt 0 ]; then
+    otel_inject_inner_command "$@"
   else
-    local executable=$1
+    if [ "$1" = "otel_observe" ]; then
+      shift; local executable="otel_observe $1"
+    else
+      local executable=$1
+    fi
+    shift
+    otel_inject_xargs $executable -I '{}' "$@" '{}' # TODO we should fake the commandline and span name and also adjust the test!
   fi
-  local cmdline="$*"
-  shift
-  local exit_code=0
-  export OTEL_SHELL_AUTO_INJECTED=TRUE
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-    OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE $executable $(\printenv | \grep '^OTEL_' | otel_line_join) sh -c ". /usr/bin/opentelemetry_shell.sh
-$(otel_escape_args "$@")" || local exit_code=$?
-  unset OTEL_SHELL_AUTO_INJECTED
-  return $exit_code
+}
+
+otel_inject_find_arguments() {
+  local in_exec=0
+  local first=1
+  for arg in "$@"; do
+    if [ "$first" = 1 ]; then local first=0; else \echo -n ' '; fi
+    if [ "$in_exec" -eq 0 ] && ([ "$arg" = "-exec" ] || [ "$arg" = "-execdir" ]); then
+      local in_exec=1
+      \echo -n "$arg sh -c '. /usr/bin/opentelemetry_shell.sh
+"
+    elif [ "$in_exec" -eq 1 ] && ([ "$arg" = ";" ] || [ "$arg" = "+" ]); then
+      local in_exec=0
+      \echo -n "' '' {} '$arg'"
+    elif [ "$in_exec" -eq 1 ] && [ "$arg" = "{}" ]; then
+      \echo -n '"$@"'
+    else
+      if [ "$(\expr "$arg" : ".* .*")" -gt 0 ] || [ "$(\expr "$arg" : ".*\*.*")" -gt 0 ]; then
+        \echo -n '"'$arg'"'
+      else
+        \echo -n "$arg"
+      fi
+    fi
+  done
+}
+
+otel_inject_find() {
+  if [ "$(\expr "$*" : ".* -exec .*")" -gt 0 ] || [ "$(\expr "$*" : ".* -execdir .*")" -gt 0 ]; then
+    if [ "$1" = "otel_observe" ]; then
+      shift; local executable="otel_observe $1"
+    else
+      local executable=$1
+    fi
+    local cmdline="$*"
+    shift
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
+      OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$*" eval $executable "$(otel_inject_find_arguments "$@")"
+  else
+    $executable "$@"
+  fi
 }
 
 otel_record_exec() {
@@ -370,9 +437,6 @@ otel_record_exec() {
 }
 
 otel_start_script() {
-  unset OTEL_SHELL_SPAN_NAME_OVERRIDE
-  unset OTEL_SHELL_SPAN_KIND_OVERRIDE
-  unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
   otel_init || return $?
   if [ "$OTEL_SHELL_AUTO_INJECTED" != "TRUE" ]; then
     if [ -n "$SSH_CLIENT"  ] && [ -n "$SSH_CONNECTION" ]; then
@@ -430,6 +494,8 @@ otel_alias_prepend bash otel_inject_shell_with_c_flag
 otel_alias_prepend sudo otel_inject_sudo
 otel_alias_prepend time otel_inject_inner_command
 otel_alias_prepend timeout otel_inject_inner_command
+otel_alias_prepend xargs otel_inject_xargs
+otel_alias_prepend find otel_inject_find
 
 otel_alias_prepend alias otel_alias_and_instrument
 otel_alias_prepend unalias otel_unalias_and_reinstrument
@@ -438,7 +504,7 @@ if [ "$otel_shell" = "bash" ]; then
   otel_alias_prepend source otel_instrument_and_source
 fi
 
-otel_auto_instrument "$0"
+otel_auto_instrument "$otel_shell_auto_instrumentation_hint"
 
 \alias exec='otel_record_exec '$otel_source_file_resolver' '$otel_source_line_resolver'; exec'
 trap otel_end_script EXIT

@@ -2,8 +2,8 @@
 . /usr/bin/opentelemetry_shell_api.sh
 
 otel_init
-otel_observe wget http://www.google.at
+otel_observe $SHELL sdk/log.sh
 otel_shutdown
 
-log="$(resolve_log '.body == "HTTP request sent, awaiting response... 200 OK"')"
-assert_equals "HTTP request sent, awaiting response... 200 OK" "$(echo "$log" | jq -r '.body')"
+log="$(resolve_log '.body == "my log"')"
+assert_equals "my log" "$(echo "$log" | jq -r '.body')"
