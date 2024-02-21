@@ -26,6 +26,8 @@ if [ "$otel_is_interactive" = "TRUE" ]; then
   otel_shell_auto_instrumentation_hint=""
 elif [ -n "$OTEL_SHELL_AUTO_INSTRUMENTATION_HINT" ]; then
   otel_shell_auto_instrumentation_hint="$OTEL_SHELL_AUTO_INSTRUMENTATION_HINT"
+elif [ "$(\readlink -f "$(\which "$0")" | \rev | \cut -d/ -f1 | \rev)" = "$(\readlink -f /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)" ]; then
+  otel_shell_auto_instrumentation_hint=""
 else
   otel_shell_auto_instrumentation_hint="$0"
 fi
