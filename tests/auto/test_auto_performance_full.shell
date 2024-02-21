@@ -1,0 +1,4 @@
+set -e
+
+timeout 60s sh -c '. /usr/bin/opentelemetry_shell.sh
+exit 0'
