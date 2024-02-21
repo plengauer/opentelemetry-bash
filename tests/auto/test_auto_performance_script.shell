@@ -3,6 +3,7 @@ set -e
 script="$(mktemp).$SHELL"
 echo "#!/bin/$SHELL" >> $script
 echo ". /usr/bin/opentelemetry_shell.sh" >> $script
+# echo "\alias" >> $script
 echo "exit 0" >> $script
 echo "curl http://www.google.at" >> $script
 echo "sudo apt-get -< dist-upgrade" >> $script
@@ -12,3 +13,4 @@ echo "echo 'hello world'" >> $script
 echo "printf '%s %s' \"hello world\"" >> $script
 
 timeout 0.05s $SHELL $script
+
