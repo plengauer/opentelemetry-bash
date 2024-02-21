@@ -110,7 +110,6 @@ otel_deshebangify() {
 }
 
 otel_instrument() {
-  otel_deshebangify $1 || true
   otel_alias_prepend $1 'otel_observe'
 }
 
@@ -167,6 +166,7 @@ otel_auto_instrument() {
   local hint="$1"
   # both otel_filter_commands_by_file and otel_filter_commands_by_instrumentation are functionally optional, but helps optimizing time because the following loop AND otel_instrument itself is expensive!
   local executables="$(otel_list_all_commands | otel_filter_commands_by_instrumentation | otel_filter_commands_by_hint "$hint" | \sort -u | otel_line_join)"
+  for cmd in $executables; do otel_deshebangify $cmd || true; done
   for cmd in $executables; do otel_instrument $cmd; done
 }
 
