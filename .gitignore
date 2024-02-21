@@ -1,1 +1,3 @@
 *.deb
+wget-log*
+tests/source_exec.shell
