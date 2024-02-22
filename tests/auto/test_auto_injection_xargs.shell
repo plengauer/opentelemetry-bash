@@ -1,6 +1,10 @@
 . ./assert.sh
 . /usr/bin/opentelemetry_shell.sh
 
+actual="$(printf '%s
+%s' 'hello world 0' 'hello world 0' | xargs)"
+assert_equals 'hello world 0 hello world 0' "$actual"
+
 printf '%s' 'hello world 1' | xargs echo
 ## span="$(resolve_span '.name == "xargs echo"')"
 # span="$(resolve_span '.name == "xargs -I '{}' echo '{}'"')"
