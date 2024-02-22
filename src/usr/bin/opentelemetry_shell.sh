@@ -360,12 +360,12 @@ $(otel_escape_args "$@")"
 }
 
 otel_inject_sudo() {
-  MORE_ARGS="--preserve-env=$(\printenv | \grep '^OTEL_' | \cut -d= -f1 | \tr '\n' ','),OTEL_SHELL_AUTO_INJECTED,OTEL_SHELL_AUTO_INSTRUMENTATION_HINT" otel_inject_inner_command "$@"
+   OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" MORE_ARGS="--preserve-env=$(\printenv | \grep '^OTEL_' | \cut -d= -f1 | \tr '\n' ','),OTEL_SHELL_AUTO_INJECTED,OTEL_SHELL_AUTO_INSTRUMENTATION_HINT" otel_inject_inner_command "$@"
 }
 
 otel_inject_xargs() {
   if [ "$(\expr "$*" : ".* -I .*")" -gt 0 ]; then
-    otel_inject_inner_command "$@"
+     OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" otel_inject_inner_command "$@"
   else
     if [ "$1" = "otel_observe" ]; then
       shift; local executable="otel_observe $1"
@@ -373,7 +373,11 @@ otel_inject_xargs() {
       local executable=$1
     fi
     shift
-    otel_inject_xargs $executable -I '{}' "$@" '{}' # TODO we should fake the commandline and span name and also adjust the test!
+    if [ -z "$*" ]; then
+      OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" $executable
+    else
+      OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" otel_inject_xargs $executable -I '{}' "$@" '{}' # TODO we should fake the commandline and span name and also adjust the test!
+    fi
   fi
 }
 
@@ -413,7 +417,7 @@ otel_inject_find() {
     OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$*" \
       eval $executable "$(otel_inject_find_arguments "$@")"
   else
-    $executable "$@"
+    OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" $executable "$@"
   fi
 }
 
