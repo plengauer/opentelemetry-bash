@@ -494,14 +494,14 @@ otel_alias_prepend sh otel_inject_shell_with_copy # cant really know what kind o
 otel_alias_prepend ash otel_inject_shell_with_copy # sourced files do not support arguments
 otel_alias_prepend dash otel_inject_shell_with_copy # sourced files do not support arguments
 otel_alias_prepend bash otel_inject_shell_with_c_flag
-otel_alias_prepend env otel_inject_inner_command # this may affect signals and cannot be reqritten inthat case
+otel_alias_prepend env otel_inject_inner_command # TODO this has options affecting signal handling and cannot be rewritten in that case
 otel_alias_prepend chroot otel_inject_inner_command # TODO this has a file as argument before the command, if its executable it may be mistaken for the start of the command
 otel_alias_prepend sudo otel_inject_sudo
 otel_alias_prepend taskset otel_inject_inner_command
 otel_alias_prepend nice otel_inject_inner_command
 otel_alias_prepend ionice otel_inject_inner_command
 # otel_alias_prepend stdbuf otel_inject_inner_command # injecting via changing the command defeats the purpose of stdbuf
-# otel_alias_prepend nohup otel_inject_inner_command # injecting via changing the command defeats the purpose of nohub
+# otel_alias_prepend nohup otel_inject_inner_command # injecting via changing the command defeats the purpose of nohup
 # otel_alias_prepend strace otel_inject_inner_command # injecting via changing the command defeats the purpose of strace
 otel_alias_prepend time otel_inject_inner_command
 otel_alias_prepend timeout otel_inject_inner_command
