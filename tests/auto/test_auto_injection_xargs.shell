@@ -1,8 +1,7 @@
 . ./assert.sh
 . /usr/bin/opentelemetry_shell.sh
 
-actual="$(printf '%s
-%s' 'hello world 0' 'hello world 0' | xargs)"
+actual="$((echo hello world  0; echo hello world 0) | xargs)"
 assert_equals 'hello world 0 hello world 0' "$actual"
 
 printf '%s' 'hello world 1' | xargs echo
