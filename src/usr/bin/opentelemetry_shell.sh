@@ -279,8 +279,8 @@ otel_inject_shell_with_copy() {
   fi
   # run command
   local exit_code=0
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-    OTEL_SHELL_AUTO_INJECTED=TRUE "$@" || local exit_code=$?
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE \
+    "$@" || local exit_code=$?
   \rm $temporary_script || true
   return $exit_code
 }
@@ -331,10 +331,8 @@ $arg"
     set -- $executable $options
   fi
   # run command
-  local exit_code=0
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-    OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$cmd $args" "$@" || local exit_code=$?
-  return $exit_code
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$cmd $args" \
+    "$@"
 }
 
 otel_inject_inner_command() {
@@ -352,19 +350,13 @@ otel_inject_inner_command() {
     local executable="$executable $1"
     shift
   done
-  local exit_code=0
   if [ -z "$*" ]; then
-    OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" $executable || local exit_code=$?
+    $executable
   else
-    export OTEL_SHELL_AUTO_INJECTED=TRUE
-    export OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$*"
-    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$*" \
       $executable $more_args sh -c ". /usr/bin/opentelemetry_shell.sh
-$(otel_escape_args "$@")" || local exit_code=$?
-    unset OTEL_SHELL_AUTO_INSTRUMENTATION_HINT
-    unset OTEL_SHELL_AUTO_INJECTED
+$(otel_escape_args "$@")"
   fi
-  return $exit_code
 }
 
 otel_inject_sudo() {
@@ -418,8 +410,8 @@ otel_inject_find() {
     fi
     local cmdline="$*"
     shift
-    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
-      OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$*" eval $executable "$(otel_inject_find_arguments "$@")"
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$*" \
+      eval $executable "$(otel_inject_find_arguments "$@")"
   else
     $executable "$@"
   fi
