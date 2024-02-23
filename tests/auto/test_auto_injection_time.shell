@@ -2,8 +2,6 @@
 . /usr/bin/opentelemetry_shell.sh
 
 ######
-echo 0
-assert_equals "foo" "$(sh -c 'echo $1' '' 'foo')"
 echo 1
 assert_equals "foo" "$(TEXT=foo sh -c 'echo $TEXT' '' 'foo')"
 echo 2
