@@ -317,7 +317,7 @@ $arg"
       case "$arg" in
         -*file) local options="$options $arg"; local is_next_option="TRUE" ;;
         -*) local options="$options $arg" ;;
-        *) local is_parsing_command="TRUE"; local cmd="$arg"; local dollar_zero="$arg" ;;
+        *) local is_parsing_command="TRUE"; local cmd="$arg "'$@'; local dollar_zero="$arg" ;;
       esac
     fi
   done
@@ -326,7 +326,7 @@ $arg"
     if [ -f "$cmd" ]; then
       local cmd=". $cmd"
     fi
-    set -- $executable $options -c ". /usr/bin/opentelemetry_shell.sh; $cmd $args" "$dollar_zero"
+    set -- $executable $options -c ". /usr/bin/opentelemetry_shell.sh; $cmd" "$dollar_zero" $args
   else
     set -- $executable $options
   fi
