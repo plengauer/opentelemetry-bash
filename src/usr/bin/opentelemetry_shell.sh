@@ -336,7 +336,7 @@ $arg"
 }
 
 otel_inject_inner_command() {
-  local more_args="$MORE_ARGS"
+  local more_args="$OTEL_SHELL_INJECT_INNER_COMMAND_MORE_ARGS"
   unset MORE_ARGS
   if [ "$1" = "otel_observe" ]; then
     shift; local executable="otel_observe $1"
@@ -353,30 +353,31 @@ otel_inject_inner_command() {
   if [ -z "$*" ]; then
     $executable
   else
-    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$*" \
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="${OTEL_SHELL_COMMANDLINE_OVERRIDE:-$cmdline}:" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$*" \
       $executable $more_args sh -c ". /usr/bin/opentelemetry_shell.sh
 $(otel_escape_args "$@")"
   fi
 }
 
 otel_inject_sudo() {
-   OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" MORE_ARGS="--preserve-env=$(\printenv | \grep '^OTEL_' | \cut -d= -f1 | \tr '\n' ','),OTEL_SHELL_AUTO_INJECTED,OTEL_SHELL_AUTO_INSTRUMENTATION_HINT" otel_inject_inner_command "$@"
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$*" OTEL_SHELL_INJECT_INNER_COMMAND_MORE_ARGS="--preserve-env=$(\printenv | \grep '^OTEL_' | \cut -d= -f1 | \tr '\n' ','),OTEL_SHELL_COMMANDLINE_OVERRIDE,OTEL_SHELL_AUTO_INJECTED,OTEL_SHELL_AUTO_INSTRUMENTATION_HINT" otel_inject_inner_command "$@"
 }
 
 otel_inject_xargs() {
   if [ "$(\expr "$*" : ".* -I .*")" -gt 0 ]; then
-     OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" otel_inject_inner_command "$@"
+     otel_inject_inner_command "$@"
   else
     if [ "$1" = "otel_observe" ]; then
       shift; local executable="otel_observe $1"
     else
       local executable=$1
     fi
+    local cmdline="$*"
     shift
     if [ -z "$*" ]; then
-      OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" $executable
+      $executable
     else
-      OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" otel_inject_xargs $executable -I '{}' "$@" '{}' # TODO we should fake the commandline and span name and also adjust the test!
+      OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" otel_inject_xargs $executable -I '{}' "$@" '{}' # TODO we should fake the commandline and span name and also adjust the test!
     fi
   fi
 }
