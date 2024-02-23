@@ -9,5 +9,9 @@ assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
 span="$(resolve_span '.name == "echo hello world"')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
 
-sudo sh auto/fail_no_auto.shell
+sudo -D / echo hello world 1
+assert_equals 0 $?
+
+mkdir 'dir with blanks'
+sudo -D 'dir with blanks' echo hello world 2
 assert_equals 0 $?
