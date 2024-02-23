@@ -8,14 +8,15 @@ actual="$(cat $file | xargs)"
 assert_equals 'hello world 0 hello world 0' "$actual"
 
 printf '%s' 'hello world 1' | xargs echo
-## span="$(resolve_span '.name == "xargs echo"')"
-# span="$(resolve_span '.name == "xargs -I '{}' echo '{}'"')"
-# assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+span="$(resolve_span '.name == "xargs echo"')"
+assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
 span="$(resolve_span '.name == "echo hello world 1"')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+assert_equals "xargs echo" "$(\echo "$span" | jq -r '.attributes."subprocess.command"')"
 
 printf '%s' 'hello world 2' | xargs -I '{}' echo '{}'
-# span="$(resolve_span '.name == "xargs -I '{}' echo '{}'"')"
-# assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+span="$(resolve_span '.name == "xargs -I '{}' echo '{}'"')"
+assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
 span="$(resolve_span '.name == "echo hello world 2"')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+assert_equals "xargs -I '{}' echo '{}'" "$(\echo "$span" | jq -r '.attributes."subprocess.command"')"
