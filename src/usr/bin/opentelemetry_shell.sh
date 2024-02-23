@@ -425,6 +425,41 @@ otel_inject_find() {
   fi
 }
 
+otel_inject_parallel_arguments() {
+  local in_exec=0
+  local first=1
+  for arg in "$@"; do
+    if [ "$first" = 1 ]; then local first=0; else \echo -n ' '; fi
+    if [ "$in_exec" -eq 0 ] && ! [ "${arg%"${arg#?}"}" = "-" ] && [ -x "$(\which "$arg")" ]; then
+      local in_exec=1
+      \echo -n "sh -c '. /usr/bin/opentelemetry_shell.sh
+$arg"
+    elif [ "$in_exec" -eq 1 ] && ! [ "$arg" = "--" ]; then
+      \echo -n "'$arg'"
+    elif [ "$in_exec" -eq 1 ] && [ "$arg" = "--" ]; then
+      local in_exec=0
+      \echo -n "' $arg"
+    else
+      if [ "$(\expr "$arg" : ".* .*")" -gt 0 ] || [ "$(\expr "$arg" : ".*\*.*")" -gt 0 ]; then
+        \echo -n '"'$arg'"'
+      else
+        \echo -n "$arg"
+      fi
+    fi
+  done
+}
+
+otel_inject_parallel() {
+   if [ "$1" = "otel_observe" ]; then
+      shift; local executable="otel_observe $1"
+    else
+      local executable=$1
+    fi
+    local cmdline="$*"
+    shift
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" eval $executable "$(otel_inject_parallel_arguments "$@")"
+}
+
 otel_record_exec() {
   local file="$1"
   local line="$2"
@@ -494,8 +529,7 @@ otel_alias_prepend sh otel_inject_shell_with_copy # cant really know what kind o
 otel_alias_prepend ash otel_inject_shell_with_copy # sourced files do not support arguments
 otel_alias_prepend dash otel_inject_shell_with_copy # sourced files do not support arguments
 otel_alias_prepend bash otel_inject_shell_with_c_flag
-otel_alias_prepend env otel_inject_inner_command # TODO this has options affecting signal handling and cannot be rewritten in that case
-otel_alias_prepend chroot otel_inject_inner_command # TODO this has a file as argument before the command, if its executable it may be mistaken for the start of the command
+# otel_alias_prepend env otel_inject_inner_command # injecting via changing the command is dangerous because there are some options affecting signal handling
 otel_alias_prepend sudo otel_inject_sudo
 otel_alias_prepend taskset otel_inject_inner_command
 otel_alias_prepend nice otel_inject_inner_command
@@ -506,10 +540,10 @@ otel_alias_prepend ionice otel_inject_inner_command
 otel_alias_prepend time otel_inject_inner_command
 otel_alias_prepend timeout otel_inject_inner_command
 otel_alias_prepend xargs otel_inject_xargs
-otel_alias_prepend parallel otel_inject_inner_command # this is some weird way of arranging arguments and needs more careful parsing, similar to find
+otel_alias_prepend parallel otel_inject_parallel
 otel_alias_prepend watch otel_inject_inner_command
 otel_alias_prepend at otel_inject_inner_command
-otel_alias_prepend flock otel_inject_inner_command # TODO this has a file or directory as argument before the command, if its executable it may be mistaken for the start of the command
+otel_alias_prepend flock otel_inject_inner_command
 otel_alias_prepend find otel_inject_find
 
 otel_alias_prepend alias otel_alias_and_instrument
