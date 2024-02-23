@@ -1,6 +1,16 @@
 . ./assert.sh
 . /usr/bin/opentelemetry_shell.sh
 
+######
+echo 0
+assert_equals "foo" "$(sh -c 'echo $1' '' 'foo')"
+echo 1
+assert_equals "foo" "$(TEXT=foo sh -c 'echo $TEXT' '' 'foo')"
+echo 2
+my_print() { sh -c 'echo $TEXT'; }
+assert_equals "foo" "$(TEXT=foo my_print)"
+######
+
 time echo hello world
 assert_equals 0 $?
 span="$(resolve_span '.name == "time echo hello world"')"
