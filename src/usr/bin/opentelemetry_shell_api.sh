@@ -200,10 +200,10 @@ otel_log_record() {
 otel_observe() {
   # validate and clean arguments
   local name="${OTEL_SHELL_SPAN_NAME_OVERRIDE:-$*}"
-  local name="${name#otel_observe}"
+  local name="${name#otel_observe }"
   local kind="${OTEL_SHELL_SPAN_KIND_OVERRIDE:-INTERNAL}"
   local command="${OTEL_SHELL_COMMANDLINE_OVERRIDE:-$*}"
-  local command="${command#otel_observe}"
+  local command="${command#otel_observe }"
   local attributes="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE"
   if [ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0)"; fi
   if [ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1)"; fi
