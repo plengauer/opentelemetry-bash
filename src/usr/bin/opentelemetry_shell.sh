@@ -293,7 +293,7 @@ otel_inject_shell_with_c_flag() {
   if [ "$1" = "otel_observe" ]; then
     shift; local cmdline="$*"; local executable="otel_observe $1"; local dollar_zero="$1"; shift
   else
-    local cmdline="$*"; local executable=$1; local dollar_zero="$1"; shift
+    local cmdline="$*"; local executable="$1"; local dollar_zero="$1"; shift
   fi
   # decompile command
   local options=""; local cmd=""; local args="";
@@ -331,8 +331,7 @@ $arg"
     set -- $executable $options
   fi
   # run command
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$cmd $args" \
-    "$@"
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$cmd $args" "$@"
 }
 
 otel_inject_inner_command() {
