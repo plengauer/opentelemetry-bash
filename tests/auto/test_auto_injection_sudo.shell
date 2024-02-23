@@ -8,6 +8,7 @@ span="$(resolve_span '.name == "sudo echo hello world"')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
 span="$(resolve_span '.name == "echo hello world"')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+assert_equals "sudo echo hello world" "$(\echo "$span" | jq -r '.attributes."subprocess.command"')"
 
 sudo sh auto/fail_no_auto.shell
 assert_equals 0 $?
