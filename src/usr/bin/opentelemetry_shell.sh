@@ -348,7 +348,7 @@ otel_inject_inner_command() {
   local cmdline="$*"
   shift
   for arg in "$@"; do
-    if ! [ "${arg%"${arg#?}"}" = "-" ] && ([ -n "$(\which $arg)" ] || [ -x "$arg" ]); then break; fi
+    if ! [ "${arg%"${arg#?}"}" = "-" ] && ([ -x "$arg" ] || [ -x "$(\which "$arg")" ]); then break; fi
     local executable="$executable $1"
     shift
   done
