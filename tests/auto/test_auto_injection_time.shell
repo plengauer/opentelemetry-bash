@@ -9,6 +9,9 @@ assert_equals "foo" "$(TEXT=foo sh -c 'echo $TEXT' '' 'foo')"
 echo 2
 my_print() { sh -c 'echo $TEXT'; }
 assert_equals "foo" "$(TEXT=foo my_print)"
+echo 3
+my_print_2() { my_print; }
+assert_equals "foo" "$(TEXT=foo my_print_2)"
 ######
 
 time echo hello world
