@@ -281,7 +281,7 @@ _otel_inject_shell_with_c_flag() {
   if [ "$1" = "_otel_observe" ]; then
     shift; local cmdline="$*"; local executable="_otel_observe $1"; local dollar_zero="$1"; shift
   else
-    local cmdline="$*"; local executable=$1; local dollar_zero="$1"; shift
+    local cmdline="$*"; local executable="$1"; local dollar_zero="$1"; shift
   fi
   # decompile command
   local options=""; local cmd=""; local args="";
