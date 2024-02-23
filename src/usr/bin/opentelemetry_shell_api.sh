@@ -198,49 +198,37 @@ otel_log_record() {
 }
 
 otel_observe() {
-  if [ -z "$OTEL_SHELL_SPAN_NAME_OVERRIDE" ]; then
-    local name="$*"
-  else
-    local name="$OTEL_SHELL_SPAN_NAME_OVERRIDE"
-    unset OTEL_SHELL_SPAN_NAME_OVERRIDE
-  fi
-  if [ -z "$OTEL_SHELL_SPAN_KIND_OVERRIDE" ]; then
-    local kind=INTERNAL
-  else
-    local kind="$OTEL_SHELL_SPAN_KIND_OVERRIDE"
-    unset OTEL_SHELL_SPAN_KIND_OVERRIDE
-  fi
-  if [ -z "$OTEL_SHELL_COMMANDLINE_OVERRIDE" ]; then
-    local command="$*"
-  else
-    local command="$OTEL_SHELL_COMMANDLINE_OVERRIDE"
-    unset OTEL_SHELL_COMMANDLINE_OVERRIDE
-  fi
-  if [ -z "$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" ]; then
-    local attributes=""
-  else
-    local attributes="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE"
-    unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
-  fi
-
+  # validate and clean arguments
+  local name="${OTEL_SHELL_SPAN_NAME_OVERRIDE:-$*}"
+  local kind="${OTEL_SHELL_SPAN_KIND_OVERRIDE:-INTERNAL}"
+  local command="${OTEL_SHELL_COMMANDLINE_OVERRIDE:-$*}"
+  local command="${command#otel_observe}"
+  local attributes="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE"
+  if [ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0)"; fi
+  if [ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1)"; fi
+  unset OTEL_SHELL_SPAN_NAME_OVERRIDE
+  unset OTEL_SHELL_SPAN_KIND_OVERRIDE
+  unset OTEL_SHELL_COMMANDLINE_OVERRIDE
+  unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
+  unset OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0
+  unset OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1
+  # create span, set initial attributes
   local span_id=$(otel_span_start $kind "$name")
   otel_span_attribute $span_id subprocess.executable.name=$(\echo "$command" | \cut -d' ' -f1 | \rev | \cut -d'/' -f1 | \rev)
   otel_span_attribute $span_id subprocess.executable.path="$(\which $(\echo "$command" | \cut -d' ' -f1))"
   otel_span_attribute $span_id subprocess.command="$command"
   otel_span_attribute $span_id subprocess.command_args="$(\echo "$command" | \cut -sd' ' -f2-)"
+  # run command
   otel_span_activate $span_id
   local traceparent=$OTEL_TRACEPARENT
-
-  if [ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0)"; fi
-  if [ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1)"; fi
   local stderr_pipe=$(\mktemp -u).opentelemetry_shell_$$.pipe
   \mkfifo $stderr_pipe
   ((while IFS= read -r line; do if [ "$OTEL_SHELL_SUPPRESS_LOG_COLLECTION" != TRUE ]; then otel_log_record $traceparent "$line"; fi; \echo "$line" >&2; done < $stderr_pipe) &)
   local exit_code=0
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_AUTO_INJECTED=$OTEL_SHELL_AUTO_INJECTED "$@" 2> $stderr_pipe || local exit_code=$?
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" "$@" 2> $stderr_pipe || local exit_code=$?
   \rm $stderr_pipe
-
   otel_span_deactivate $span_id
+  # set custom attributes, set final attributes, finish span
   otel_span_attribute $span_id subprocess.exit_code=$exit_code
   if [ "$exit_code" -ne "0" ]; then
     otel_span_error $span_id
