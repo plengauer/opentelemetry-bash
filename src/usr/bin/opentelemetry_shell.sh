@@ -433,7 +433,7 @@ otel_inject_parallel_arguments() {
     if [ "$in_exec" -eq 0 ] && ! [ "${arg%"${arg#?}"}" = "-" ] && [ -x "$(\which "$arg")" ]; then
       local in_exec=1
       \echo -n "sh -c '. /usr/bin/opentelemetry_shell.sh
-$arg"
+$arg "'$1'
     elif [ "$in_exec" -eq 1 ] && ! [ "$arg" = "--" ]; then
       \echo -n "'$arg'"
     elif [ "$in_exec" -eq 1 ] && [ "$arg" = "--" ]; then
