@@ -11,7 +11,7 @@ assert_equals "$expected" "$actual"
 for i in $(seq 1 $n); do
   span="$(resolve_span ".name == \"echo $directory/$i\"")"
   assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | \jq -r '.kind')"
-  assert_equals "find $directory -exec echo {} ;" "$(\echo "$span" | jq -r '.resource.attributes."subprocess.command"')"
+  assert_equals "find $directory -exec echo {} ;" "$(\echo "$span" | jq -r '.resource.attributes."process.command"')"
 done
 
 directory="$(mktemp -d)"
@@ -28,7 +28,7 @@ assert_equals "$expected" "$actual"
 for i in $(seq 1 $n); do
   span="$(resolve_span ".name == \"echo ./$i\"")"
   assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | \jq -r '.kind')"
-  assert_equals "find $directory -execdir echo {} ;" "$(\echo "$span" | jq -r '.resource.attributes."subprocess.command"')"
+  assert_equals "find $directory -execdir echo {} ;" "$(\echo "$span" | jq -r '.resource.attributes."process.command"')"
 done
 
 directory="$(mktemp -d)"
