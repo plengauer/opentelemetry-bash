@@ -200,6 +200,7 @@ otel_log_record() {
 otel_observe() {
   # validate and clean arguments
   local name="${OTEL_SHELL_SPAN_NAME_OVERRIDE:-$*}"
+  local name="${name#otel_observe}"
   local kind="${OTEL_SHELL_SPAN_KIND_OVERRIDE:-INTERNAL}"
   local command="${OTEL_SHELL_COMMANDLINE_OVERRIDE:-$*}"
   local command="${command#otel_observe}"
