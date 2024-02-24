@@ -1,9 +1,7 @@
 . ./assert.sh
 . /usr/bin/opentelemetry_shell.sh
 
-set -x
 time echo hello world
-set +x
 assert_equals 0 $?
 span="$(resolve_span '.name == "time echo hello world"')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
