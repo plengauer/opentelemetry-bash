@@ -4,10 +4,10 @@
 ######
 echo 0
 export TEXT=foo
-assert_equals "foo" "$(\sh -c 'echo $TEXT')"
+assert_equals "foo" "$(sh -c 'echo $TEXT')"
 unset TEXT
 echo 1
-assert_equals "foo" "$(TEXT=foo \sh -c 'echo $TEXT')"
+assert_equals "foo" "$(TEXT=foo sh -c 'echo $TEXT')"
 echo 2
 my_print() { sh -c 'echo $TEXT'; }
 assert_equals "foo" "$(TEXT=foo my_print)"
