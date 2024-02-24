@@ -198,8 +198,9 @@ otel_log_record() {
 }
 
 _otel_escape() {
-  case "$*" in # TODO handle ' and maybe also handle backslashes?
-    *\ * ) \echo -n "'$*'" ;;
+  case "$*" in
+    *[[:space:]\&\<\>\|\'\"\(\)\`!\$\;]*) \echo -n "'$(\printf '%s' "$*" | \sed "s/'/'\\\\''/g")'" ;;
+    "") \echo -n "''" ;;
     *) \echo -n "$*" ;;
   esac
 }
