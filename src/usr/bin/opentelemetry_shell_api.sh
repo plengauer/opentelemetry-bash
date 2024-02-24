@@ -197,6 +197,31 @@ otel_log_record() {
   otel_sdk_communicate "LOG_RECORD" "$traceparent" "$line"
 }
 
+_otel_escape() {
+  case "$*" in # TODO handle ' and maybe also handle backslashes?
+    *\ * ) \echo -n "'$*'" ;;
+    *) \echo -n "$*" ;;
+  esac
+}
+
+_otel_escape_in() {
+  local first=1
+  while read line; do
+    if [ "$first" = 1 ]; then local first=0; else \echo -n " "; fi
+    _otel_escape "$line"
+  done
+}
+
+_otel_escape_args() {
+  for arg in "$@"; do \echo "$arg"; done | _otel_escape_in
+}
+
+_otel_call() {
+  # old versions of dash dont set env vars properly
+  # more specifically they do not make variables that are set in front of commands part of the child process env vars but only of the local execution environment
+  eval \env "$(\printenv | \grep '^OTEL_' | \tr '\n' ' ' | _otel_escape_in)" "$(_otel_escape_args "$@")"
+}
+
 otel_observe() {
   # validate and clean arguments
   local name="${OTEL_SHELL_SPAN_NAME_OVERRIDE:-$*}"
@@ -226,7 +251,7 @@ otel_observe() {
   \mkfifo $stderr_pipe
   ((while IFS= read -r line; do if [ "$OTEL_SHELL_SUPPRESS_LOG_COLLECTION" != TRUE ]; then otel_log_record $traceparent "$line"; fi; \echo "$line" >&2; done < $stderr_pipe) &)
   local exit_code=0
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" "$@" 2> $stderr_pipe || local exit_code=$?
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" _otel_call "$@" 2> $stderr_pipe || local exit_code=$?
   \rm $stderr_pipe
   otel_span_deactivate $span_id
   # set custom attributes, set final attributes, finish span
