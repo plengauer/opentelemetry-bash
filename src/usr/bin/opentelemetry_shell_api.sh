@@ -201,7 +201,7 @@ _otel_escape() {
   case "$1" in
     *[[:space:]\&\<\>\|\'\"\(\)\`!\$\;]*) \printf '%s' "'$(\printf '%s' "$1" | \sed "s/'/'\\\\''/g")'" ;;
     "") \echo -n "''" ;;
-    *) \echo -n "$*" ;;
+    *) \echo -n "$1" ;;
   esac
 }
 
