@@ -201,6 +201,8 @@ _otel_escape() {
   local do_escape=0
   if [ -z "$1" ]; then
     local do_escape=1
+  elif [ "$1X" != "$(\printf '%s' "$1")"X ]; then
+    local do_escape=1
   else
     case "$1" in
       *"
@@ -211,8 +213,7 @@ _otel_escape() {
   fi
   if [ "$do_escape" = 1 ]; then
     local escaped="$(\printf '%sX' "$1" | \sed "s/'/'\\\\''/g")"
-    local escaped="${escaped%X}" # https://stackoverflow.com/questions/16991270/newlines-at-the-end-get-removed-in-shell-scripts-why
-    \printf "'%s'" "$escaped"
+    \printf "'%s'" "${escaped%X}" # https://stackoverflow.com/questions/16991270/newlines-at-the-end-get-removed-in-shell-scripts-why
   else
     \printf '%s' "$1"
   fi
