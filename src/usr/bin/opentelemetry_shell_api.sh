@@ -213,7 +213,7 @@ _otel_escape() {
     esac
   fi
   if [ "$do_escape" = 1 ]; then
-    local escaped="$(\printf '%sX' "$1" | \sed "s/'/'\\\\''/g")"
+    local escaped="$(\printf '%s' "$1X" | \sed "s/'/'\\\\''/g")"
     \printf "'%s'" "${escaped%X}" # https://stackoverflow.com/questions/16991270/newlines-at-the-end-get-removed-in-shell-scripts-why
   else
     \printf '%s' "$1"
