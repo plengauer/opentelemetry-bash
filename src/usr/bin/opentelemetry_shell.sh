@@ -149,7 +149,6 @@ otel_list_alias_commands() {
 }
 
 otel_list_builtin_commands() {
-  \echo printenv
   \echo type
   if [ "$otel_shell" = "bash" ]; then
     \echo history
@@ -360,10 +359,7 @@ $(otel_escape_args "$@")"
 }
 
 otel_inject_sudo() {
-  local env_keys="$({ \printenv; \set; } | \grep '^OTEL_' | \cut -d= -f1 | \sort -u | \tr '\n' ','),OTEL_SHELL_COMMANDLINE_OVERRIDE,OTEL_SHELL_AUTO_INJECTED,OTEL_SHELL_AUTO_INSTRUMENTATION_HINT"
-  local exit_code=0
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="$*" OTEL_SHELL_INJECT_INNER_COMMAND_MORE_ARGS="--preserve-env=$env_keys" otel_inject_inner_command "$@" || local exit_code=$?
-  return $exit_code
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$*" OTEL_SHELL_INJECT_INNER_COMMAND_MORE_ARGS="--preserve-env=$(\printenv | \grep '^OTEL_' | \cut -d= -f1 | \sort -u | \tr '\n' ','),OTEL_SHELL_COMMANDLINE_OVERRIDE,OTEL_SHELL_AUTO_INJECTED,OTEL_SHELL_AUTO_INSTRUMENTATION_HINT" otel_inject_inner_command "$@"
 }
 
 otel_inject_xargs() {
