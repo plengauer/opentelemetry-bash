@@ -197,36 +197,40 @@ otel_log_record() {
   otel_sdk_communicate "LOG_RECORD" "$traceparent" "$line"
 }
 
-#_otel_escape() {
-#  case "$1" in
-#    *[[:space:]\&\<\>\|\'\"\(\)\`!\$\;]*) \printf '%s' "'$(\printf '%s' "$1" | \sed -n "s/'/'\\\\''/g")'" ;;
-#    "") \echo -n "''" ;;
-#    *) \echo -n "$1" ;;
-#  esac
+_otel_escape() {
+  case "$1" in
+    "
+") \printf '%s' "'$1'" ;;
+    *[[:space:]\&\<\>\|\'\"\(\)\`!\$\;]*) \printf '%s' "'$(\printf '%s' "$1" | \sed -n "s/'/'\\\\''/g")'" ;;
+    "") \echo -n "''" ;;
+    *) \echo -n "$1" ;;
+  esac
 #}
 
-_otel_escape() {
-  local nl="$(printf '\nx')"
-  local nl="${nl%x}"
-  for arg in "$@"; do
-    if [ -z "$arg" ]; then
-      \printf "''"
-    else
-      if \printf '%s' "$arg" | \grep -q "$nl"; then
-        local needs_escape=1
-      elif \printf '%s' "$arg" | \grep -Eq "[[:space:]&<>|'\"()!$;]"; then
-        local needs_escape=1
-      else
-        local needs_escape=0
-      fi
-      if [ "$needs_escape" -eq 1 ]; then
-        # local escaped_arg="$(\printf '%s' "$arg" | \sed "s/'/'\\\\''/g")"
-        \printf "'%s'" "$arg"
-      else
-        \printf '%s' "$arg"
-      fi
-    fi
-  done
+#_otel_escape() {
+#  local nl="$(\printf '\nx')"
+#  local nl="${nl%x}"
+#  for arg in "$@"; do
+#    if [ -z "$arg" ]; then
+#      \printf "''"
+#    else
+#      if \printf '%s' "$arg" | \grep -q "$nl"; then
+#        echo DEBUG FOUND LINEFEED >&2
+#        local needs_escape=1
+#      elif \printf '%s' "$arg" | \grep -Eq "[[:space:]&<>|'\"()!$;]"; then
+#        echo DEBUG SPECIAL CHARACTER >&2
+#        local needs_escape=1
+#      else
+#        local needs_escape=0
+#      fi
+#      if [ "$needs_escape" -eq 1 ]; then
+#        # local escaped_arg="$(\printf '%s' "$arg" | \sed "s/'/'\\\\''/g")"
+#        \printf "'%s'" "$arg"
+#      else
+#        \printf '%s' "$arg"
+#      fi
+#    fi
+#  done
 }
 
 _otel_escape_in() {
@@ -253,8 +257,8 @@ _otel_call() {
 #  for arg in "$@"; do
     
 #  done
-  \echo DEBUG "$*" '=>' "$({ \printenv; \set; } | \grep '^OTEL_' | \sort -u | \tr '\n' ' ' | _otel_escape_in)" "\\\\$(_otel_escape_args "$@")" >&2
-  \eval "$({ \printenv; \set; } | \grep '^OTEL_' | \sort -u | \tr '\n' ' ' | _otel_escape_in)" "\\\\$(_otel_escape_args "$@")"
+  \echo DEBUG "$*" '=>' "$({ \printenv; \set; } | \grep '^OTEL_' | \sort -u | \tr '\n' ' ' | _otel_escape_in)" "\\$(_otel_escape_args "$@")" >&2
+  \eval "$({ \printenv; \set; } | \grep '^OTEL_' | \sort -u | \tr '\n' ' ' | _otel_escape_in)" "\\$(_otel_escape_args "$@")"
 }
 
 otel_observe() {
