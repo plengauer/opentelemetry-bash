@@ -206,9 +206,8 @@ otel_log_record() {
 #}
 
 _otel_escape() {
-  local nl=$(printf '\nx')
-  local nl=${nl%x}
-
+  local nl="$(printf '\nx')"
+  local nl="${nl%x}"
   for arg in "$@"; do
     if [ -z "$arg" ]; then
       \printf "''"
@@ -221,7 +220,7 @@ _otel_escape() {
         local needs_escape=0
       fi
       if [ "$needs_escape" -eq 1 ]; then
-        escaped_arg=$(\printf '%s' "$arg" | \sed "s/'/'\\\\''/g")
+        local escaped_arg="$(\printf '%s' "$arg" | \sed "s/'/'\\\\''/g")"
         \printf "'%s'" "$escaped_arg"
       else
         \printf '%s' "$arg"
@@ -251,9 +250,9 @@ _otel_call() {
   # old versions of dash dont set env vars properly
   # more specifically they do not make variables that are set in front of commands part of the child process env vars but only of the local execution environment
   for arg in "$@"; do \echo DEBUG ARG "$arg" >&2; done
-  for arg in "$@"; do
+#  for arg in "$@"; do
     
-  done
+#  done
   \echo DEBUG "$*" '=>' "$({ \printenv; \set; } | \grep '^OTEL_' | \sort -u | \tr '\n' ' ' | _otel_escape_in)" "\\$(_otel_escape_args "$@")" >&2
   \eval "$({ \printenv; \set; } | \grep '^OTEL_' | \sort -u | \tr '\n' ' ' | _otel_escape_in)" "\\$(_otel_escape_args "$@")"
 }
