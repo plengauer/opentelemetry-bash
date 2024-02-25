@@ -220,8 +220,8 @@ _otel_escape() {
         local needs_escape=0
       fi
       if [ "$needs_escape" -eq 1 ]; then
-        local escaped_arg="$(\printf '%s' "$arg" | \sed "s/'/'\\\\''/g")"
-        \printf "'%s'" "$escaped_arg"
+        # local escaped_arg="$(\printf '%s' "$arg" | \sed "s/'/'\\\\''/g")"
+        \printf "'%s'" "$arg"
       else
         \printf '%s' "$arg"
       fi
