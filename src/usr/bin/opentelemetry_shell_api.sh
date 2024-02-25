@@ -239,7 +239,7 @@ _otel_escape_args() {
 _otel_call() {
   # old versions of dash dont set env vars properly
   # more specifically they do not make variables that are set in front of commands part of the child process env vars but only of the local execution environment
-  \printf '%s' "$*" >&2
+  \printf 'DEBUG CMD %s\n' "$*" >&2
   for arg in "$@"; do \printf 'DEBUG ARG %s\n' "$arg" >&2; done
   for arg in "$@"; do \printf 'DEBUG ARG %s\n' "$(\echo -n "$arg")" >&2; done
   \echo DEBUG "$*" '=>' "$({ \printenv; \set; } | \grep '^OTEL_' | \sort -u | \tr '\n' ' ' | _otel_escape_in)" "\\$(_otel_escape_args "$@")" >&2
