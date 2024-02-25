@@ -198,7 +198,7 @@ otel_log_record() {
 }
 
 _otel_escape() {
-  \printf 'DEBUG ARG ESCAPE >>>%s<<<' "$1" >&2
+  \printf 'DEBUG ARG ESCAPE >>>%s<<<\n' "$1" >&2
   local do_escape=0
   if [ -z "$1" ]; then
     local do_escape=1
