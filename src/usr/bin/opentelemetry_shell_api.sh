@@ -198,14 +198,14 @@ otel_log_record() {
 }
 
 _otel_escape() {
-  \printf 'DEBUG ARG ESCAPE >>>%s<<<\n' "$1" >&2
+  \printf 'DEBUG ARG ESCAPE? >>>%s<<<\n' "$1" >&2
   local do_escape=0
   if [ -z "$1" ]; then
     local do_escape=1
 #  elif [ "$1X" != "$(\printf '%s' "$1")"X ]; then
 #    local do_escape=1
   else
-    case "$1" in
+    case "$1X" in
 #      *"
 #"*) local do_escape=1 ;;
       *[[:space:]\&\<\>\|\'\"\(\)\`!\$\;]*) local do_escape=1 ;;
