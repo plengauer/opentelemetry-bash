@@ -203,7 +203,7 @@ _otel_escape() {
   local do_escape=0
   if [ -z "$1" ]; then
     local do_escape=1
-  elif [ "$1X" != "$(\printf '%s' "$1")"X ]; then
+  elif [ "$1X" != "$(\echo "$1")"X ]; then
     local do_escape=1
   else
     case "$1X" in
