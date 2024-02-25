@@ -209,7 +209,13 @@ _otel_escape() {
       *) local do_escape=0 ;;
     esac
   fi
-  if [ "$do_escape" = 1 ]; then \printf '%s' "'$(\printf '%s' "$1" | \sed "s/'/'\\\\''/g")'"; else \printf '%s' "$1"; fi
+  if [ "$do_escape" = 1 ]; then
+    local escaped="$(\printf '%sX' "$1" | \sed "s/'/'\\\\''/g")"
+    local escaped="${escaped%X}" # https://stackoverflow.com/questions/16991270/newlines-at-the-end-get-removed-in-shell-scripts-why
+    \printf "'%s'" "$escaped"
+  else
+    \printf '%s' "$1"
+  fi
 }
 
 _otel_escape_in() {
@@ -232,7 +238,7 @@ _otel_escape_args() {
 _otel_call() {
   # old versions of dash dont set env vars properly
   # more specifically they do not make variables that are set in front of commands part of the child process env vars but only of the local execution environment
-  for arg in "$@"; do \printf 'DEBUG ARG %s' "$arg" >&2; done
+  for arg in "$@"; do \printf 'DEBUG ARG %s\n' "$arg" >&2; done
 #  for arg in "$@"; do
     
 #  done
