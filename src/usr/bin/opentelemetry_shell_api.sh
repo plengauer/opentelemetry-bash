@@ -199,7 +199,8 @@ otel_log_record() {
 
 _otel_escape() {
   case "$1" in
-    *[[:space:]\&\<\>\|\'\"\(\)\`!\$\;]*) \printf '%s' "'$(\printf '%s' "$1" | \sed -n "s/'/'\\\\''/g")'" ;;
+    *[[:space:]\&\<\>\|\'\"\(\)\`!\$\;]*) \echo -n "'$1'" ;; # TODO remove this in favor of the next case
+    # *[[:space:]\&\<\>\|\'\"\(\)\`!\$\;]*) \printf '%s' "'$(\printf '%s' "$1" | \sed -n "s/'/'\\\\''/g")'" ;;
     "") \echo -n "''" ;;
     *) \echo -n "$1" ;;
   esac
