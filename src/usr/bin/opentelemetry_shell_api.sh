@@ -198,14 +198,17 @@ otel_log_record() {
 }
 
 _otel_escape() {
-  case "$1" in
-    "
+  if [ -z "$1" ]; then
+    \echo -n "''";
+  else
+    case "$1" in
+      "
 ") \printf '%s' "'$1'" ;;
-    *[[:space:]\&\<\>\|\'\"\(\)\`!\$\;]*) \printf '%s' "'$(\printf '%s' "$1" | \sed -n "s/'/'\\\\''/g")'" ;;
-    "") \echo -n "''" ;;
-    *) \echo -n "$1" ;;
-  esac
-#}
+      *[[:space:]\&\<\>\|\'\"\(\)\`!\$\;]*) \printf '%s' "'$(\printf '%s' "$1" | \sed -n "s/'/'\\\\''/g")'" ;;
+      *) \echo -n "$1" ;;
+    esac
+  fi
+}
 
 #_otel_escape() {
 #  local nl="$(\printf '\nx')"
@@ -231,7 +234,7 @@ _otel_escape() {
 #      fi
 #    fi
 #  done
-}
+#}
 
 _otel_escape_in() {
   local first=1
