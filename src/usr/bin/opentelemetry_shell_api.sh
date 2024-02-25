@@ -209,7 +209,7 @@ _otel_escape() {
       *) local do_escape=0 ;;
     esac
   fi
-  if [ "$do_escape" = 1 ]; then \printf '%s' "'$(\printf '%s' "$1" | \sed "s/'/'\\\\''/g")'"; else \printf '%s' "$1" fi
+  if [ "$do_escape" = 1 ]; then \printf '%s' "'$(\printf '%s' "$1" | \sed "s/'/'\\\\''/g")'"; else \printf '%s' "$1"; fi
 }
 
 #_otel_escape() {
