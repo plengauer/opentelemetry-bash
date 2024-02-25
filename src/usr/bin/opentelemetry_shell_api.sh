@@ -198,7 +198,7 @@ otel_log_record() {
 }
 
 _otel_escape() {
-  case "$*" in
+  case "$1" in
     *[[:space:]\&\<\>\|\'\"\(\)\`!\$\;]*) \printf '%s' "'$(\printf '%s' "$*" | \sed "s/'/'\\\\''/g")'" ;;
     "") \echo -n "''" ;;
     *) \echo -n "$*" ;;
