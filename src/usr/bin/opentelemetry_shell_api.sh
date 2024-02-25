@@ -253,8 +253,8 @@ _otel_call() {
 #  for arg in "$@"; do
     
 #  done
-  \echo DEBUG "$*" '=>' "$({ \printenv; \set; } | \grep '^OTEL_' | \sort -u | \tr '\n' ' ' | _otel_escape_in)" "\\$(_otel_escape_args "$@")" >&2
-  \eval "$({ \printenv; \set; } | \grep '^OTEL_' | \sort -u | \tr '\n' ' ' | _otel_escape_in)" "\\$(_otel_escape_args "$@")"
+  \echo DEBUG "$*" '=>' "$({ \printenv; \set; } | \grep '^OTEL_' | \sort -u | \tr '\n' ' ' | _otel_escape_in)" "\\\\$(_otel_escape_args "$@")" >&2
+  \eval "$({ \printenv; \set; } | \grep '^OTEL_' | \sort -u | \tr '\n' ' ' | _otel_escape_in)" "\\\\$(_otel_escape_args "$@")"
 }
 
 otel_observe() {
