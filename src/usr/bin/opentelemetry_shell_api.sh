@@ -212,32 +212,6 @@ _otel_escape() {
   if [ "$do_escape" = 1 ]; then \printf '%s' "'$(\printf '%s' "$1" | \sed "s/'/'\\\\''/g")'"; else \printf '%s' "$1"; fi
 }
 
-#_otel_escape() {
-#  local nl="$(\printf '\nx')"
-#  local nl="${nl%x}"
-#  for arg in "$@"; do
-#    if [ -z "$arg" ]; then
-#      \printf "''"
-#    else
-#      if \printf '%s' "$arg" | \grep -q "$nl"; then
-#        echo DEBUG FOUND LINEFEED >&2
-#        local needs_escape=1
-#      elif \printf '%s' "$arg" | \grep -Eq "[[:space:]&<>|'\"()!$;]"; then
-#        echo DEBUG SPECIAL CHARACTER >&2
-#        local needs_escape=1
-#      else
-#        local needs_escape=0
-#      fi
-#      if [ "$needs_escape" -eq 1 ]; then
-#        # local escaped_arg="$(\printf '%s' "$arg" | \sed "s/'/'\\\\''/g")"
-#        \printf "'%s'" "$arg"
-#      else
-#        \printf '%s' "$arg"
-#      fi
-#    fi
-#  done
-#}
-
 _otel_escape_in() {
   local first=1
   while read line; do
@@ -258,7 +232,7 @@ _otel_escape_args() {
 _otel_call() {
   # old versions of dash dont set env vars properly
   # more specifically they do not make variables that are set in front of commands part of the child process env vars but only of the local execution environment
-  for arg in "$@"; do \echo DEBUG ARG "$arg" >&2; done
+  for arg in "$@"; do \printf 'DEBUG ARG %s' "$arg" >&2; done
 #  for arg in "$@"; do
     
 #  done
