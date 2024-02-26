@@ -16,7 +16,7 @@ unset OTEL_SHELL_SUPPRESS_LOG_COLLECTION
 
 otel_command_self() {
   if [ -n "$otel_commandline_override" ]; then
-    \echo "$otel_commandline_override"
+    \echo $otel_commandline_override
   else
     \cat /proc/$$/cmdline || \ps -p $$ -o args | \grep -v COMMAND
   fi
