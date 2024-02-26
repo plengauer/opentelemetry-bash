@@ -246,11 +246,11 @@ _otel_call() {
   local nl="$(\printf '%s' "\n\b")"
   local my_env="$(\printenv | \grep '^OTEL_' | \sed "s/\'//g")"
   local my_set="$(\printenv | \grep '^OTEL_' | \sed "s/\'//g")"
-  IFS="$nl" for kvp in $my_set; do \eval export "'$kvp'"; done
+  for kvp in IFS="$nl" $my_set; do \eval export "'$kvp'"; done
   local exit_code=0
   \eval "$({ \echo "$my_env"; \echo "$my_set"; } | \sort -u | _otel_escape_in)" "\\$(_otel_escape_args "$@")" || local exit_code=$?
-  IFS="$nl" for kvp in $my_set; do \eval unset "$(\echo "$kvp" | \cut -d= -f1)"; done
-  IFS="$nl" for kvp in $my_env; do \eval export "'$kvp'"; done
+  for kvp in IFS="$nl" $my_set; do \eval unset "$(\echo "$kvp" | \cut -d= -f1)"; done
+  for kvp in IFS="$nl" $my_env; do \eval export "'$kvp'"; done
   ##########
   set +x
   if [ "$1" = 'sudo' ]; then set +x; fi
