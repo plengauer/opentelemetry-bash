@@ -238,27 +238,26 @@ _otel_escape_args() {
 _otel_call() {
   # old versions of dash dont set env vars properly
   # more specifically they do not make variables that are set in front of commands part of the child process env vars but only of the local execution environment
-  ##########
-  if [ "$1" = 'sudo' ]; then \echo "$*" >&2; \echo printenv >&2; \printenv >&2; \echo set >&2; set >&2; set -x; fi
-  # problem here is some of the vars are only set locally, not via exported, so the child process has no chance of taking it over
-  set -x 
-  ##########
-  local nl="$(\printf '%s' "\n\b")" # TODO
-  local my_env="$(\printenv | \grep '^OTEL_' | \sed "s/\'//g")"
-  local my_set="$(\printenv | \grep '^OTEL_' | \sed "s/\'//g")"
-  for IFS="
-" kvp in $my_set; do \eval export "'$kvp'"; done
-  local exit_code=0
-  \eval "$({ \echo "$my_env"; \echo "$my_set"; } | \sort -u | _otel_escape_in)" "\\$(_otel_escape_args "$@")" || local exit_code=$?
-  for IFS="
-" kvp in $my_set; do \eval unset "$(\echo "$kvp" | \cut -d= -f1)"; done
-  for IFS="
-" kvp in" $my_env; do \eval export "'$kvp'"; done
-  ##########
-  set +x
-  if [ "$1" = 'sudo' ]; then set +x; fi
-  ##########
-  return $exit_code
+  local fast_path=1
+  if [ "$fast_path" = 1 ]; then
+    \eval "\\$(_otel_escape_args "$@")"
+  else
+    ###
+    if [ "$1" = 'sudo' ]; then \echo "$*" >&2; \echo printenv >&2; \printenv >&2; \echo set >&2; set >&2; set -x; fi
+    set -x
+    ###
+    local my_env="$(\printenv | \grep '^OTEL_' | \sed "s/\'//g")"
+    local my_set="$(\printenv | \grep '^OTEL_' | \sed "s/\'//g")"
+    for kvp in $my_set; do \eval export "'$kvp'"; done
+    local exit_code=0
+    \eval "$({ \echo "$my_env"; \echo "$my_set"; } | \sort -u | _otel_escape_in)" "\\$(_otel_escape_args "$@")" || local exit_code=$?
+    for kvp in $my_set; do \eval unset "$(\echo "$kvp" | \cut -d= -f1)"; done
+    for kvp in $my_env; do \eval export "'$kvp'"; done
+    ###
+    set +x
+    ###
+    return $exit_code
+  fi
 }
 
 otel_observe() {
@@ -288,7 +287,7 @@ otel_observe() {
   local traceparent=$OTEL_TRACEPARENT
   local stderr_pipe=$(\mktemp -u).opentelemetry_shell_$$.pipe
   \mkfifo $stderr_pipe
-  ((while IFS= read -r line; do if [ "$OTEL_SHELL_SUPPRESS_LOG_COLLECTION" != TRUE ]; then otel_log_record $traceparent "$line"; fi; \echo "$line" >&2; done < $stderr_pipe) &)
+  (while IFS= read -r line; do if [ "$OTEL_SHELL_SUPPRESS_LOG_COLLECTION" != TRUE ]; then otel_log_record $traceparent "$line"; fi; \echo "$line" >&2; done < $stderr_pipe) &
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" _otel_call "$@" 2> $stderr_pipe || local exit_code=$?
   \rm $stderr_pipe
