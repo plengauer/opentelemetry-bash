@@ -212,6 +212,7 @@ _otel_call() {
     unset OTEL_SHELL_CALL_FORCE_FASTPATH
     \eval "\\$(_otel_escape_args "$@")"
   else
+    set -x
     local my_env="$(\printenv | \grep '^OTEL_' | \sed "s/\'//g")"
     local my_set="$(\printenv | \grep '^OTEL_' | \sed "s/\'//g")"
     \eval $(\echo "$my_set" | \awk '{print "export \"" $0 "\""}')
@@ -220,6 +221,7 @@ _otel_call() {
     \eval $(\echo "$my_set" | \cut -d= -f1 | \awk '{print "unset " $0}')
     \eval $(\echo "$my_env" | \awk '{print "export \"" $0 "\""}')
     return $exit_code
+    set +x
   fi
 }
 
