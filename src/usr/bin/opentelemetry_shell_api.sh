@@ -41,52 +41,26 @@ otel_resource_attributes() {
   \echo process.runtime.version=$(otel_package_version $(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev))
   \echo process.runtime.options=$-
   case $otel_shell in
-    sh)
-      \echo process.runtime.description="Bourne Shell"
-      ;;
-    dash)
-      \echo process.runtime.description="Debian Almquist Shell"
-      ;;
-    bash)
-      \echo process.runtime.description="Bourne Again Shell"
-      ;;
-    zsh)
-      \echo process.runtime.description="Z Shell"
-      ;;
-    ksh)
-      \echo process.runtime.description="Korn Shell"
-      ;;
-    pdksh)
-      \echo process.runtime.description="Public Domain Korn Shell"
-      ;;
-    posh)
-      \echo process.runtime.description="Policy-compliant Ordinary Shell"
-      ;;
-    yash)
-      \echo process.runtime.description="Yet Another Shell"
-      ;;
-    bosh)
-      \echo process.runtime.description="Bourne Shell"
-      ;;
-    fish)
-      \echo process.runtime.description="Friendly Interactive Shell"
-      ;;
-    *)
-      \echo process.runtime.description=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
-      ;;
+       sh) \echo process.runtime.description="Bourne Shell" ;;
+     dash) \echo process.runtime.description="Debian Almquist Shell" ;;
+     bash) \echo process.runtime.description="Bourne Again Shell" ;;
+      zsh) \echo process.runtime.description="Z Shell" ;;
+      ksh) \echo process.runtime.description="Korn Shell" ;;
+    pdksh) \echo process.runtime.description="Public Domain Korn Shell" ;;
+     posh) \echo process.runtime.description="Policy-compliant Ordinary Shell" ;;
+     yash) \echo process.runtime.description="Yet Another Shell" ;;
+     bosh) \echo process.runtime.description="Bourne Shell" ;;
+     fish) \echo process.runtime.description="Friendly Interactive Shell" ;;
+        *) \echo process.runtime.description=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev) ;;
   esac
 
-  if [ -z "$OTEL_SERVICE_NAME" ]; then
-    \echo service.name="unknown_service"
-  else
-    \echo service.name=$OTEL_SERVICE_NAME
-  fi
+  \echo service.name="${OTEL_SERVICE_NAME:-unknown_service}"
   \echo service.version=$OTEL_SERVICE_VERSION
   \echo service.namespace=$OTEL_SERVICE_NAMESPACE
   \echo service.instance.id=$OTEL_SERVICE_INSTANCE_ID
 }
 
-otel_sdk_communicate() {
+_otel_sdk_communicate() {
   \echo "$*" >&7
 }
 
@@ -105,14 +79,12 @@ otel_init() {
   (\python3 /usr/bin/opentelemetry_shell_sdk.py $otel_remote_sdk_pipe "shell" $(otel_package_version opentelemetry-shell) > "$sdk_output" 2> "$sdk_output" &)
   deactivate
   \exec 7> $otel_remote_sdk_pipe
-  otel_resource_attributes | while IFS= read -r kvp; do
-    otel_sdk_communicate "RESOURCE_ATTRIBUTE" "$kvp"
-  done
-  otel_sdk_communicate "INIT"
+  otel_resource_attributes | while IFS= read -r kvp; do _otel_sdk_communicate "RESOURCE_ATTRIBUTE" "$kvp"; done
+  _otel_sdk_communicate "INIT"
 }
 
 otel_shutdown() {
-  otel_sdk_communicate "SHUTDOWN"
+  _otel_sdk_communicate "SHUTDOWN"
   \exec 7>&-
   \rm $otel_remote_sdk_pipe
 }
@@ -121,38 +93,35 @@ otel_span_start() {
   local kind=$1
   shift
   local name="$*"
-  if [ -z "$traceparent" ]; then
-    local traceparent=$OTEL_TRACEPARENT
-  fi
   local response_pipe=$(\mktemp -u)_opentelemetry_shell_$$.pipe
   \mkfifo $response_pipe
-  otel_sdk_communicate "SPAN_START $response_pipe $traceparent $kind $name"
+  _otel_sdk_communicate "SPAN_START $response_pipe $OTEL_TRACEPARENT $kind $name"
   \cat $response_pipe
   \rm $response_pipe &> /dev/null
 }
 
 otel_span_end() {
   local span_id=$1
-  otel_sdk_communicate "SPAN_END $span_id"
+  _otel_sdk_communicate "SPAN_END $span_id"
 }
 
 otel_span_error() {
   local span_id=$1
-  otel_sdk_communicate "SPAN_ERROR $span_id"
+  _otel_sdk_communicate "SPAN_ERROR $span_id"
 }
 
 otel_span_attribute() {
   local span_id=$1
   shift
   local kvp="$@"
-  otel_sdk_communicate "SPAN_ATTRIBUTE $span_id $kvp"
+  _otel_sdk_communicate "SPAN_ATTRIBUTE $span_id $kvp"
 }
 
 otel_span_traceparent() {
   local span_id=$1
   local response_pipe=$(\mktemp -u)_opentelemetry_shell_$$.pipe
   \mkfifo $response_pipe
-  otel_sdk_communicate "SPAN_TRACEPARENT $response_pipe $span_id"
+  _otel_sdk_communicate "SPAN_TRACEPARENT $response_pipe $span_id"
   \cat $response_pipe
   \rm $response_pipe &> /dev/null
 }
@@ -172,7 +141,7 @@ otel_metric_create() {
   local metric_name=$1
   local response_pipe=$(\mktemp -u)_opentelemetry_shell_$$.pipe
   \mkfifo $response_pipe
-  otel_sdk_communicate "METRIC_CREATE" "$response_pipe" "$metric_name"
+  _otel_sdk_communicate "METRIC_CREATE" "$response_pipe" "$metric_name"
   \cat $response_pipe
   \rm $response_pipe &> /dev/null
 }
@@ -181,20 +150,20 @@ otel_metric_attribute() {
   local metric_id=$1
   shift
   local kvp="$*"
-  otel_sdk_communicate "METRIC_ATTRIBUTE" "$metric_id" "$kvp"
+  _otel_sdk_communicate "METRIC_ATTRIBUTE" "$metric_id" "$kvp"
 }
 
 otel_metric_add() {
   local metric_id=$1
   local value=$2
-  otel_sdk_communicate "METRIC_ADD" "$metric_id" "$value"
+  _otel_sdk_communicate "METRIC_ADD" "$metric_id" "$value"
 }
 
 otel_log_record() {
   local traceparent=$1
   shift
   local line="$*"
-  otel_sdk_communicate "LOG_RECORD" "$traceparent" "$line"
+  _otel_sdk_communicate "LOG_RECORD" "$traceparent" "$line"
 }
 
 _otel_escape() {
