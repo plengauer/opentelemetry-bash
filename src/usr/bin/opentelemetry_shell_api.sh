@@ -239,7 +239,7 @@ _otel_call() {
   # old versions of dash dont set env vars properly
   # more specifically they do not make variables that are set in front of commands part of the child process env vars but only of the local execution environment
   ##########
-  if [ "$1" = 'sudo' ]; then \echo "$*" >&2; \echo printenv; \printenv >&2; \echo set; set >&2; fi
+  if [ "$1" = 'sudo' ]; then \echo "$*" >&2; \echo printenv >&2; \printenv >&2; \echo set >&2; set >&2; fi
   # problem here is some of the vars are only set locally, not via exported, so the child process has no chance of taking it over
   ##########
   \eval "$({ \printenv; \set; } | \grep '^OTEL_' | \sort -u | \tr '\n' ' ' | _otel_escape_in)" "\\$(_otel_escape_args "$@")"
