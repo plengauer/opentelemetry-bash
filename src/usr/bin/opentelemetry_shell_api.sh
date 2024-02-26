@@ -239,10 +239,20 @@ _otel_call() {
   # old versions of dash dont set env vars properly
   # more specifically they do not make variables that are set in front of commands part of the child process env vars but only of the local execution environment
   ##########
-  if [ "$1" = 'sudo' ]; then \echo "$*" >&2; \echo printenv >&2; \printenv >&2; \echo set >&2; set >&2; fi
+  if [ "$1" = 'sudo' ]; then \echo "$*" >&2; \echo printenv >&2; \printenv >&2; \echo set >&2; set >&2; set -x; fi
   # problem here is some of the vars are only set locally, not via exported, so the child process has no chance of taking it over
   ##########
-  \eval "$({ \printenv; \set; } | \grep '^OTEL_' | \sort -u | \tr '\n' ' ' | _otel_escape_in)" "\\$(_otel_escape_args "$@")"
+  local my_env="$(\printenv | \grep '^OTEL_')"
+  local my_set="$(\printenv | \grep '^OTEL_')"
+  for kvp in "$my_set"; do \eval export "$kvp"; done
+  local exit_code="$?"
+  \eval "$({ \echo "$my_env"; \echo "$my_set"; } | \sort -u | _otel_escape_in)" "\\$(_otel_escape_args "$@")" || local exit_code="$?"
+  for kvp in "$my_set"; do \eval unset "$(\echo "$kvp" | \cut -d= -f1)"; done
+  for kvp in "$my_env"; do \eval export "$kvp" done
+  ##########
+  if [ "$1" = 'sudo' ]; then set +x; fi
+  ##########
+  return $exit_code
 }
 
 otel_observe() {
