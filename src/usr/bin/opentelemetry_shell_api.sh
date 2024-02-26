@@ -251,7 +251,7 @@ otel_observe() {
   otel_span_activate $span_id
   local traceparent=$OTEL_TRACEPARENT
   local exit_code=0
-  if [ 0 = 1 ]; then
+  if [ -n "" ]; then
     local stderr_pipe=$(\mktemp -u).opentelemetry_shell_$$.pipe
     \mkfifo $stderr_pipe
     (while IFS= read -r line; do if [ "$OTEL_SHELL_SUPPRESS_LOG_COLLECTION" != TRUE ]; then otel_log_record $traceparent "$line"; fi; \echo "$line" >&2; done < $stderr_pipe) &
