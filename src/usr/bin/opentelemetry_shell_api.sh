@@ -211,10 +211,6 @@ _otel_call() {
   if [ "$OTEL_SHELL_CALL_FORCE_FASTPATH" = TRUE ] || [ "$fast_path" = 1 ]; then
     \eval "\\$(_otel_escape_args "$@")"
   else
-    ###
-    if [ "$1" = 'sudo' ]; then \echo "$*" >&2; \echo printenv >&2; \printenv >&2; \echo set >&2; set >&2; set -x; fi
-    set -x
-    ###
     local my_env="$(\printenv | \grep '^OTEL_' | \sed "s/\'//g")"
     local my_set="$(\printenv | \grep '^OTEL_' | \sed "s/\'//g")"
     \eval $(\echo "$my_set" | \awk '{print "export \"" $0 "\""}')
@@ -222,9 +218,6 @@ _otel_call() {
     OTEL_SHELL_CALL_FORCE_FASTPATH=TRUE _otel_call "$@" || local exit_code=$?
     \eval $(\echo "$my_set" | \cut -d= -f1 | \awk '{print "unset " $0}')
     \eval $(\echo "$my_env" | \awk '{print "export \"" $0 "\""}')
-    ###
-    set +x
-    ###
     return $exit_code
   fi
 }
