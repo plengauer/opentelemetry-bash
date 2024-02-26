@@ -241,7 +241,7 @@ _otel_call() {
   ##########
   if [ "$1" = 'sudo' ]; then \echo "$*" >&2; \echo printenv >&2; \printenv >&2; \echo set >&2; set >&2; set -x; fi
   # problem here is some of the vars are only set locally, not via exported, so the child process has no chance of taking it over
-  set -x
+  set -x 
   ##########
   local my_env="$(\printenv | \grep '^OTEL_' | \sed "s/\'//g")"
   local my_set="$(\printenv | \grep '^OTEL_' | \sed "s/\'//g")"
