@@ -215,11 +215,11 @@ _otel_call() {
     # set -x
     local my_env="$(\printenv | \grep '^OTEL_' | \sed "s/'//g")"
     local my_set="$(     \set | \grep '^OTEL_' | \sed "s/'//g")"
-    \eval $(\echo "$my_set" | \awk '{print "export " $0}')
+    \eval $(\echo "$my_set" | \awk '{print "export \"" $0 "\""}')
     local exit_code=0
     OTEL_SHELL_CALL_FORCE_FASTPATH=TRUE _otel_call "$@" || local exit_code=$?
     \eval $(\echo "$my_set" | \cut -d= -f1 | \awk '{print "unset " $0}')
-    \eval $(\echo "$my_env" | \awk '{print "export " $0}')
+    \eval $(\echo "$my_env" | \awk '{print "export \"" $0 "\""}')
     return $exit_code
     # set +x
   fi
