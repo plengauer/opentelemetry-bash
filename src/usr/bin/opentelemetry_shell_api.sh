@@ -207,8 +207,8 @@ _otel_escape_args() {
 _otel_call() {
   # old versions of dash dont set env vars properly
   # more specifically they do not make variables that are set in front of commands part of the child process env vars but only of the local execution environment
-  local fast_path=1
-  if [ "$fast_path" = 1 ]; then
+  local fast_path=0
+  if [ "$OTEL_SHELL_CALL_FORCE_FASTPATH" = TRUE ] || [ "$fast_path" = 1 ]; then
     \eval "\\$(_otel_escape_args "$@")"
   else
     ###
@@ -217,11 +217,11 @@ _otel_call() {
     ###
     local my_env="$(\printenv | \grep '^OTEL_' | \sed "s/\'//g")"
     local my_set="$(\printenv | \grep '^OTEL_' | \sed "s/\'//g")"
-    for kvp in $my_set; do \eval export "'$kvp'"; done
+    \eval $(\echo "$my_set" | \awk '{print "export \"" $0 "\""}')
     local exit_code=0
-    \eval "$({ \echo "$my_env"; \echo "$my_set"; } | \sort -u | _otel_escape_in)" "\\$(_otel_escape_args "$@")" || local exit_code=$?
-    for kvp in $my_set; do \eval unset "$(\echo "$kvp" | \cut -d= -f1)"; done
-    for kvp in $my_env; do \eval export "'$kvp'"; done
+    OTEL_SHELL_CALL_FORCE_FASTPATH=TRUE _otel_call "$@" || local exit_code=$?
+    \eval $(\echo "$my_set" | \cut -d= -f1 | \awk '{print "unset " $0}')
+    \eval $(\echo "$my_env" | \awk '{print "export \"" $0 "\""}')
     ###
     set +x
     ###
