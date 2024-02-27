@@ -6,10 +6,10 @@
 # All other functions and variables are for internal use only and therefore subject to change without notice!  #
 ################################################################################################################
 
-if [ "$OTEL_SHELL_INJECTED" = "TRUE" ]; then
+if [ "$otel_shell_injected" = "TRUE" ]; then
   return 0
 fi
-OTEL_SHELL_INJECTED=TRUE
+otel_shell_injected=TRUE
 
 . /usr/bin/opentelemetry_shell_api.sh
 
