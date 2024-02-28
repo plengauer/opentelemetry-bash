@@ -212,7 +212,7 @@ _otel_call() {
     unset OTEL_SHELL_CALL_FORCE_FASTPATH
     \eval "\\$(_otel_escape_args "$@")"
   else
-    if [ -z "" ]; do
+    if [ -z "" ]; then
       \eval \env "$({\printenv; \set} | \grep '^OTEL_' | \sed "s/'//g" | \sort -u | otel_escape_in)" "\\$(otel_escape_args "$@")" 
     else
       ##########
