@@ -262,9 +262,9 @@ otel_observe() {
   otel_span_attribute $span_id subprocess.command_args="$(\echo "$command" | \cut -sd' ' -f2-)"
   # run command
   otel_span_activate $span_id
-  local traceparent=$OTEL_TRACEPARENT
   local exit_code=0
   if [ "$OTEL_SHELL_SUPPRESS_LOG_COLLECTION" != TRUE ]; then
+    local traceparent=$OTEL_TRACEPARENT
     local stderr_pipe=$(\mktemp -u).opentelemetry_shell_$$.pipe
     \mkfifo $stderr_pipe
     (while IFS= read -r line; do otel_log_record $traceparent "$line"; \echo "$line" >&2; done < $stderr_pipe) &
