@@ -207,7 +207,7 @@ _otel_escape_args() {
 _otel_call() {
   # old versions of dash dont set env vars properly
   # more specifically they do not make variables that are set in front of commands part of the child process env vars but only of the local execution environment
-  if [ "$OTEL_SHELL_CALL_FORCE_FASTPATH" = TRUE ] || [ "$(\ŧype "$1" | \head -n1)" = "$1 is a function" ]; then
+  if [ "$OTEL_SHELL_CALL_FORCE_FASTPATH" = TRUE ] || [ "$(\type "$1" | \head -n1)" = "$1 is a function" ]; then
     unset OTEL_SHELL_CALL_FORCE_FASTPATH
     \eval "\\$(_otel_escape_args "$@")"
   else
