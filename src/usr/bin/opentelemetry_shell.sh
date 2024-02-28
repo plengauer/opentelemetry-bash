@@ -183,7 +183,7 @@ otel_unalias_and_reinstrument() {
   "$@" || local exit_code=$?
   shift
   if [ "-a" = "$*" ]; then
-    local commands="$(otel_list_all_commands)"
+    local commands="$(otel_list_all_commands | otel_filter_commands_by_hint "$otel_shell_auto_instrumentation_hint")"
   else
     local commands="$(otel_list_all_commands | \grep -Fx "$(\echo "$@" | otel_line_split 2> /dev/null)" 2> /dev/null)"
   fi
