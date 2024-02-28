@@ -213,7 +213,7 @@ _otel_call() {
     \eval "\\$(_otel_escape_args "$@")"
   else
     if [ -z "" ]; then
-      \eval \env "$( { \printenv; \set; } | \grep '^OTEL_' | \sed "s/'//g" | \sort -u | otel_escape_in)" "\\$(otel_escape_args "$@")" 
+      \eval \env "$( { \printenv; \set; } | \grep '^OTEL_' | \sed "s/'//g" | \sort -u | _otel_escape_in)" "\\$(otel_escape_args "$@")" 
     else
       ##########
       local my_env_before="$(\printenv | \grep '^OTEL_' | \sed "s/'//g" | \sort)"
