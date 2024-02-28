@@ -212,26 +212,30 @@ _otel_call() {
     unset OTEL_SHELL_CALL_FORCE_FASTPATH
     \eval "\\$(_otel_escape_args "$@")"
   else
-    ##########
-    local my_env_before="$(\printenv | \grep '^OTEL_' | \sed "s/'//g" | \sort)"
-    ##########
-    local my_env="$(\printenv | \grep '^OTEL_' | \sed "s/'//g")"
-    local my_set="$(     \set | \grep '^OTEL_' | \sed "s/'//g")"
-    \eval $(\echo "$my_set" | \awk '{print "export \"" $0 "\""}')
-    local exit_code=0
-    OTEL_SHELL_CALL_FORCE_FASTPATH=TRUE _otel_call "$@" || local exit_code=$?
-    \eval $(\echo "$my_set" | \cut -d= -f1 | \awk '{print "unset " $0}')
-    \eval $(\echo "$my_env" | \awk '{print "export \"" $0 "\""}')
-    ##########
-    local my_env_after="$(\printenv | \grep '^OTEL_' | \sed "s/'//g" | \sort)"
-    if [ "$my_env_before" != "$my_env_after" ]; then \echo "FAILED ENV COMPARE
+    if true; do
+      \eval \env "$({\printenv; \set} | \grep '^OTEL_' | \sed "s/'//g" | \sort -u | otel_escape_in)" "\\$(otel_escape_args "$@")" 
+    else
+      ##########
+      local my_env_before="$(\printenv | \grep '^OTEL_' | \sed "s/'//g" | \sort)"
+      ##########
+      local my_env="$(\printenv | \grep '^OTEL_' | \sed "s/'//g")"
+      local my_set="$(     \set | \grep '^OTEL_' | \sed "s/'//g")"
+      \eval $(\echo "$my_set" | \awk '{print "export \"" $0 "\""}')
+      local exit_code=0
+      OTEL_SHELL_CALL_FORCE_FASTPATH=TRUE _otel_call "$@" || local exit_code=$?
+      \eval $(\echo "$my_set" | \cut -d= -f1 | \awk '{print "unset " $0}')
+      \eval $(\echo "$my_env" | \awk '{print "export \"" $0 "\""}')
+      ##########
+      local my_env_after="$(\printenv | \grep '^OTEL_' | \sed "s/'//g" | \sort)"
+      if [ "$my_env_before" != "$my_env_after" ]; then \echo "FAILED ENV COMPARE
 <<<
 $my_env_before
 ===
 $my_env_after
 >>>" >&2; exit 1; fi
-    ##########
-    return $exit_code
+      ##########
+      return $exit_code
+    fi
   fi
 }
 
