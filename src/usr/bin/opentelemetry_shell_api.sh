@@ -207,11 +207,14 @@ _otel_escape_args() {
 _otel_call() {
   # old versions of dash dont set env vars properly
   # more specifically they do not make variables that are set in front of commands part of the child process env vars but only of the local execution environment
-  local fast_path=1
+  local fast_path=0
   if [ "$OTEL_SHELL_CALL_FORCE_FASTPATH" = TRUE ] || [ "$fast_path" = 1 ]; then
     unset OTEL_SHELL_CALL_FORCE_FASTPATH
     \eval "\\$(_otel_escape_args "$@")"
   else
+    ##########
+    local my_env_before="$(\printenv | \grep '^OTEL_' | \sed "s/'//g" | \sort)"
+    ##########
     local my_env="$(\printenv | \grep '^OTEL_' | \sed "s/'//g")"
     local my_set="$(     \set | \grep '^OTEL_' | \sed "s/'//g")"
     \eval $(\echo "$my_set" | \awk '{print "export \"" $0 "\""}')
@@ -219,6 +222,15 @@ _otel_call() {
     OTEL_SHELL_CALL_FORCE_FASTPATH=TRUE _otel_call "$@" || local exit_code=$?
     \eval $(\echo "$my_set" | \cut -d= -f1 | \awk '{print "unset " $0}')
     \eval $(\echo "$my_env" | \awk '{print "export \"" $0 "\""}')
+    ##########
+    local my_env_after="$(\printenv | \grep '^OTEL_' | \sed "s/'//g" | \sort)"
+    if [ "$my_env_before" != "$my_env_after" ]; then \echo "FAILED ENV COMPARE
+<<<
+$my_env_before
+===
+$my_env_after
+>>>" >&2; exit 1; fi
+    ##########
     return $exit_code
   fi
 }
