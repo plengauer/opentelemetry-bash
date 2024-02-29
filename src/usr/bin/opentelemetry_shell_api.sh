@@ -207,7 +207,8 @@ _otel_escape_args() {
 _otel_call() {
   # old versions of dash dont set env vars properly
   # more specifically they do not make variables that are set in front of commands part of the child process env vars but only of the local execution environment
-  if [ "$(\type "$1")" = "$1 is $(\which "$1")" ] || [ "$(\type "$1")" = "$(\which "$1")" ]; then
+  # if [ "$(\type "$1")" = "$1 is $(\which "$1")" ] || [ "$(\type "$1")" = "$(\which "$1")" ]; then
+  if [ "$(\command -v -- "$1")" = "$(\which "$1")" ]; then
     \eval \env "$( { \printenv; \set; } | \grep '^OTEL_' | \sed "s/'//g" | \sort -u | _otel_escape_in)" "\\$(_otel_escape_args "$@")" 
   else
     \eval "\\$(_otel_escape_args "$@")"
