@@ -281,7 +281,7 @@ _otel_inject_shell_with_c_flag() {
   if [ "$1" = "_otel_observe" ]; then
     shift; local cmdline="$*"; local executable="_otel_observe $1"; local dollar_zero="$1"; shift
   else
-    local cmdline="$*"; local executable=$1; local dollar_zero="$1"; shift
+    local cmdline="$*"; local executable="$1"; local dollar_zero="$1"; shift
   fi
   # decompile command
   local options=""; local cmd=""; local args="";
@@ -305,7 +305,7 @@ $arg"
       case "$arg" in
         -*file) local options="$options $arg"; local is_next_option="TRUE" ;;
         -*) local options="$options $arg" ;;
-        *) local is_parsing_command="TRUE"; local cmd="$arg"; local dollar_zero="$arg" ;;
+        *) local is_parsing_command="TRUE"; local cmd="$arg "'$@'; local dollar_zero="$arg" ;;
       esac
     fi
   done
@@ -314,7 +314,7 @@ $arg"
     if [ -f "$cmd" ]; then
       local cmd=". $cmd"
     fi
-    set -- $executable $options -c ". /usr/bin/opentelemetry_shell.sh; $cmd $args" "$dollar_zero"
+    set -- $executable $options -c ". /usr/bin/opentelemetry_shell.sh; $cmd" "$dollar_zero" $args
   else
     set -- $executable $options
   fi
