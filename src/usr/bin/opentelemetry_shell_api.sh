@@ -166,7 +166,7 @@ otel_log_record() {
   _otel_sdk_communicate "LOG_RECORD" "$traceparent" "$line"
 }
 
-_otel_escape() {
+_otel_escape_arg() {
    # that SO article shows why this is extra fun! https://stackoverflow.com/questions/16991270/newlines-at-the-end-get-removed-in-shell-scripts-why
   local do_escape=0
   if [ -z "$1" ]; then
@@ -187,36 +187,18 @@ _otel_escape() {
   fi
 }
 
-_otel_escape_in() {
-  local first=1
-  while read line; do
-    if [ "$first" = 1 ]; then local first=0; else \echo -n " "; fi
-    _otel_escape "$line"
-  done
-}
-
 _otel_escape_args() {
   # for arg in "$@"; do \echo "$arg"; done | _otel_escape_in # this may seem correct, but it doesnt handle linefeeds in arguments correctly
   local first=1
   for arg in "$@"; do
     if [ "$first" = 1 ]; then local first=0; else \echo -n " "; fi
-    _otel_escape "$arg"
+    _otel_escape_arg "$arg"
   done
 }
 
 _otel_call() {
   # old versions of dash dont set env vars properly
   # more specifically they do not make variables that are set in front of commands part of the child process env vars but only of the local execution environment
-  
-  ## if [ "$(\type "$1")" = "$1 is $(\which "$1")" ] || [ "$(\type "$1")" = "$(\which "$1")" ]; then
-  # if [ "$(\command -v -- "$1")" = "$(\which "$1")" ]; then
-  #  \eval \env "$( { \printenv; \set; } | \grep '^OTEL_' | \sed "s/'//g" | \sort -u | _otel_escape_in)" "\\$(_otel_escape_args "$@")" 
-  #else
-  #  \eval "\\$(_otel_escape_args "$@")"
-  #fi
-  
-  #\eval "$( { \printenv; \set; } | \grep '^OTEL_' | \sed "s/'//g" | \sort -u | _otel_escape_in)" "\\$(_otel_escape_args "$@")" 
-
   \eval "$( { \printenv; \set; } | \grep '^OTEL_' | \cut -d= -f1 | \sort -u | \awk '{ print $1 "=\"$" $1 "\"" }')" "\\$(_otel_escape_args "$@")"
 }
 
