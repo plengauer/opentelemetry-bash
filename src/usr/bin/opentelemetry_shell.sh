@@ -260,7 +260,7 @@ _otel_inject_shell_with_copy() {
   local temporary_script="$(\mktemp -u)"
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$(\echo "$cmdline" | _otel_line_join)" \
-    \eval "$(_otel_inject_shell_args_with_copy "$temporary_script" "$@")" # should we do \eval _otel_call "$(.....)" here? is it safer concerning transport of the OTEL control variables?
+    \eval "$(_otel_inject_shell_args_with_copy "$temporary_script" "$@")" || local exit_code=$? # should we do \eval _otel_call "$(.....)" here? is it safer concerning transport of the OTEL control variables?
   \rm "$temporary_script" || true
   return $exit_code
 }
@@ -284,7 +284,7 @@ $1"; \echo -n " "; local found_inner=1; break
         -*file) _otel_escape_arg "$1"; \echo -n " "; shift; _otel_escape_arg "$1" ;;
             -*) _otel_escape_arg "$1"; \echo -n " " ;;
              # we cant have a linebreak here to not garble the argument positions
-             *) \echo -n "-c "; _otel_escape_arg ". /usr/bin/opentelemetry_shell.sh; . $1 "'"$@"'; \echo -n " "; local dollar_zero="$1"; local found_inner=1; break ;;
+             *) \echo -n "-c "; _otel_escape_arg ". /usr/bin/opentelemetry_shell.sh; . $1 "'"$@"'; \echo -n " "; local dollar_zero="$1"; local found_inner=1; break ;; # TODO lets use eval before $1 in case there is something fishy?
       esac
     fi
     shift
