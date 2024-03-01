@@ -285,7 +285,7 @@ _otel_inject_shell_args_with_c_flag() {
   local found_inner=0
   while [ "$#" -gt 0 ]; do
     if [ "$1" = "-c" ]; then
-      shift; _otel_escape_arg "$injection $1"; \echo -n " "; local found_inner=1; break
+      shift; \echo -n "-c "; _otel_escape_arg "$injection $1"; \echo -n " "; local found_inner=1; break
     else
       case "$1" in
         -*file) _otel_escape_arg "$1"; \echo -n " "; shift; _otel_escape_arg "$1" ;;
