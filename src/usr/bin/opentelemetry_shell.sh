@@ -230,7 +230,7 @@ _otel_inject_shell_args_with_copy() {
   local found_inner=0
   while [ "$#" -gt 0 ]; do
     if [ "$1" = "-c" ]; then
-      local is_script=0; local found_inner=1; break
+      shift; local is_script=0; local found_inner=1; break
     else
       case "$1" in
         -*file) _otel_escape_arg "$1"; \echo -n " "; shift; _otel_escape_arg "$1" ;;
