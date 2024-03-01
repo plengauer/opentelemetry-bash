@@ -219,6 +219,7 @@ _otel_propagate_curl() {
 
 _otel_inject_shell_args_with_copy() {
   local temporary_script="$1"
+  shift
   local is_script=0
   # command
   if [ "$1" = "_otel_observe" ]; then _otel_escape_arg "$1"; \echo -n " "; shift; fi
@@ -257,7 +258,7 @@ _otel_inject_shell_with_copy() {
   local temporary_script="$(\mktemp -u)"
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$(\echo "$cmdline" | _otel_line_join)" \
-    \eval "$(_otel_inject_shell_args_with_copy "$@")" # should we do \eval _otel_call "$(.....)" here? is it safer concerning transport of the OTEL control variables?
+    \eval "$(_otel_inject_shell_args_with_copy "$temporary_script" "$@")" # should we do \eval _otel_call "$(.....)" here? is it safer concerning transport of the OTEL control variables?
   \rm "$temporary_script" || true
   return $exit_code
 }
