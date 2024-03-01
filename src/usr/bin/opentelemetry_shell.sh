@@ -277,20 +277,20 @@ _otel_inject_shell_args_with_c_flag() {
   local injection=". /usr/bin/opentelemetry_shell.sh
 "
   # command
-  if [ "$1" = "_otel_observe" ]; then _otel_escape_arg "$1"; shift; fi
+  if [ "$1" = "_otel_observe" ]; then _otel_escape_arg "$1"; \echo -n " "; shift; fi
   local dollar_zero="$1" # in case its not a script, $0 becomes the executable
-  _otel_escape_arg "$1"
+  _otel_escape_arg "$1"; \echo -n " "
   shift
   # options and script or command string
   local found_inner=0
   while [ "$#" -gt 0 ]; do
     if [ "$1" = "-c" ]; then
-      shift; _otel_escape_arg "$injection $1"; local found_inner=1; break
+      shift; _otel_escape_arg "$injection $1"; \echo -n " "; local found_inner=1; break
     else
       case "$1" in
-        -*file) _otel_escape_arg "$1"; shift; _otel_escape_arg "$1" ;;
-            -*) _otel_escape_arg "$1" ;;
-             *) _otel_escape_arg "$injection . $1 "'"$@"'; local dollar_zero="$1"; local found_inner=1; break ;;
+        -*file) _otel_escape_arg "$1"; \echo -n " "; shift; _otel_escape_arg "$1" ;;
+            -*) _otel_escape_arg "$1"; \echo -n " " ;;
+             *) _otel_escape_arg "$injection . $1 "'"$@"'; \echo -n " "; local dollar_zero="$1"; local found_inner=1; break ;;
       esac
     fi
     shift
@@ -298,8 +298,8 @@ _otel_inject_shell_args_with_c_flag() {
   # abort in case its interactive or invalid aguments
   if [ "$found_inner" -eq 0 ]; then return 0; fi 
   # arguments
-  _otel_escape_arg "$dollar_zero"
-  for dollar_n in "$@"; do _otel_escape_arg "$dollar_n"; done
+  _otel_escape_arg "$dollar_zero"; \echo -n " "
+  for dollar_n in "$@"; do _otel_escape_arg "$dollar_n"; \echo -n " "; done
 }
 
 _otel_inject_shell_with_c_flag() {
