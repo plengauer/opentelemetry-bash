@@ -290,10 +290,7 @@ _otel_inject_shell_with_c_flag() {
     if [ "$arg" = "-c" ]; then
       local is_next_command_string="TRUE"
     elif [ "$is_next_command_string" = "TRUE" ]; then
-      local cmd="
-$arg"
-      # aliases need at least a linefeed or a source to become active in a -c command. Dunno why, but its like that
-      # also, we cant just introduce ALWAYS a linefeed, because then argument ordering is confused for sourced scripts
+      local cmd="$arg"
       local is_next_command_string="FALSE"
       local is_parsing_command="TRUE"
     elif [ "$is_parsing_command" = "TRUE" ]; then
@@ -305,16 +302,16 @@ $arg"
       case "$arg" in
         -*file) local options="$options $arg"; local is_next_option="TRUE" ;;
         -*) local options="$options $arg" ;;
-        *) local is_parsing_command="TRUE"; local cmd="$arg "'"$@"'; local dollar_zero="$arg" ;;
+        *) local is_parsing_command="TRUE"; local cmd=". $arg "'"$@"'; local dollar_zero="$arg" ;;
       esac
     fi
   done
   # compile command
   if [ -n "$cmd" ]; then
-    if [ -f "$cmd" ]; then
-      local cmd=". $cmd"
-    fi
-    set -- $executable $options -c ". /usr/bin/opentelemetry_shell.sh; $cmd" "$dollar_zero" $args
+    # aliases need at least a linefeed or a source to become active in a -c command. Dunno why, but its like that
+    # also, we cant just introduce ALWAYS a linefeed, because then argument ordering is confused for sourced scripts
+    set -- $executable $options -c ". /usr/bin/opentelemetry_shell.sh
+$cmd" "$dollar_zero" $args
   else
     set -- $executable $options
   fi
