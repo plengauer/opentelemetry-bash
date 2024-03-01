@@ -1,8 +1,8 @@
 . ./assert.sh
 . /usr/bin/opentelemetry_shell.sh
 
-export OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE
-dash -x auto/fail_no_auto.shell
+# export OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE
+dash auto/fail_no_auto.shell
 assert_equals 0 $?
 span="$(resolve_span '.resource.attributes."process.command" == "dash auto/fail_no_auto.shell"')"
 assert_equals "myspan" "$(\echo "$span" | jq -r '.name')"
