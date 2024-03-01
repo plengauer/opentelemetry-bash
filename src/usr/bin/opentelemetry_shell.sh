@@ -305,7 +305,7 @@ $arg"
       case "$arg" in
         -*file) local options="$options $arg"; local is_next_option="TRUE" ;;
         -*) local options="$options $arg" ;;
-        *) local is_parsing_command="TRUE"; local cmd="$arg "'$@'; local dollar_zero="$arg" ;;
+        *) local is_parsing_command="TRUE"; local cmd="$arg "'"$@"'; local dollar_zero="$arg" ;;
       esac
     fi
   done
