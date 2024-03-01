@@ -199,8 +199,8 @@ _otel_escape_args() {
 _otel_call() {
   # old versions of dash dont set env vars properly
   # more specifically they do not make variables that are set in front of commands part of the child process env vars but only of the local execution environment
-  \eval "$( { \printenv; \set; } | \grep '^OTEL_' | \cut -d= -f1 | \sort -u | \awk '{ print $1 "=\"$" $1 "\"" }')" "\\$(_otel_escape_args "$@")"
-  if [ "$?" -ne 0 ]; then \echo "$( { \printenv; \set; } | \grep '^OTEL_' | \cut -d= -f1 | \sort -u | \awk '{ print $1 "=\"$" $1 "\"" }')"; fi
+  \eval "$( { \printenv; \set; } | \grep '^OTEL_' | \cut -d= -f1 | \sort -u | \awk '{ print $1 "=\"$" $1 "\"" }' | otel_line_join)" "\\$(_otel_escape_args "$@")"
+  # if [ "$?" -ne 0 ]; then \echo "$( { \printenv; \set; } | \grep '^OTEL_' | \cut -d= -f1 | \sort -u | \awk '{ print $1 "=\"$" $1 "\"" }')"; fi
 }
 
 otel_observe() {
