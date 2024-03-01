@@ -273,51 +273,39 @@ _otel_inject_shell_with_copy() {
   return $exit_code
 }
 
-_otel_inject_shell_with_c_flag() {
-  # type 0 - interactive or from stdin: bash, bash -x
-  # type 1 - script: bash +x script.sh foo bar baz
-  # type 2 - "-c": bash +x -c "echo $0" foo
-  # resolve executable
-  if [ "$1" = "_otel_observe" ]; then
-    shift; local cmdline="$*"; local executable="_otel_observe $1"; local dollar_zero="$1"; shift
-  else
-    local cmdline="$*"; local executable="$1"; local dollar_zero="$1"; shift
-  fi
-  # decompile command
-  local options=""; local cmd=""; local args="";
-  local is_next_command_string="FALSE"; local is_parsing_arguments="FALSE"; local is_next_option="FALSE";
-  for arg in "$@"; do
-    if [ "$arg" = "-c" ]; then
-      local is_next_command_string="TRUE"
-    elif [ "$is_next_command_string" = "TRUE" ]; then
-      local cmd="$arg"
-      local is_next_command_string="FALSE"
-      local is_parsing_command="TRUE"
-    elif [ "$is_parsing_command" = "TRUE" ]; then
-      local args="$args \"$arg\""
-    elif [ "$is_next_option" = "TRUE" ]; then
-      local options="$options $arg"
-      local is_next_option="FALSE"
+_otel_inject_shell_args_with_c_flag() {
+  local injection=". /usr/bin/opentelemetry_shell.sh
+"
+  # command
+  if [ "$1" = "_otel_observe" ]; then _otel_escape_arg "$1"; shift; fi
+  local dollar_zero="$1" # in case its not a script, $0 becomes the executable
+  _otel_escape_arg "$1"
+  shift
+  # options and script or command string
+  local found_inner=0
+  while [ "$#" -gt 0 ]; do
+    if [ "$1" = "-c" ]; then
+      shift; _otel_escape_arg "$injection $1"; local found_inner=1; break
     else
-      case "$arg" in
-        -*file) local options="$options $arg"; local is_next_option="TRUE" ;;
-        -*) local options="$options $arg" ;;
-        *) local is_parsing_command="TRUE"; local cmd=". $arg "'"$@"'; local dollar_zero="$arg" ;;
+      case "$1" in
+        -*file) _otel_escape_arg "$1"; shift; _otel_escape_arg "$1" ;;
+            -*) _otel_escape_arg "$1" ;;
+             *) _otel_escape_arg "$injection . $1 "'"$@"'; local dollar_zero="$1"; local found_inner=1; break ;;
       esac
     fi
+    shift
   done
-  # compile command
-  if [ -n "$cmd" ]; then
-    # aliases need at least a linefeed or a source to become active in a -c command. Dunno why, but its like that
-    # also, we cant just introduce ALWAYS a linefeed, because then argument ordering is confused for sourced scripts
-    set -- $executable $options -c ". /usr/bin/opentelemetry_shell.sh
-$cmd" "$dollar_zero" $args
-  else
-    set -- $executable $options
-  fi
-  # run command
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$(\echo "$cmd" | _otel_line_join)" \
-    "$@"
+  # abort in case its interactive or invalid aguments
+  if [ "$found_inner" -eq 0 ]; then return 0; fi 
+  # arguments
+  _otel_escape_arg "$dollar_zero"
+  for dollar_n in "$@"; do _otel_escape_arg "$dollar_n"; done
+}
+
+_otel_inject_shell_with_c_flag() {
+  if [ "$1" = "_otel_observe" ]; then local cmdline="${@:1}"; else local cmdline="$*"; fi
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$(\echo "$cmdline" | _otel_line_join)" \
+    \eval "$(_otel_inject_shell_args_with_c_flag "$@")" # should we do \eval _otel_call "$(.....)" here? is it safer concerning transport of the OTEL control variables?
 }
 
 _otel_inject_inner_command() {
