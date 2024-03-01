@@ -67,8 +67,8 @@ _otel_alias_prepend() {
       *"$prepend_command"*) return 0 ;;
       *) ;;
     esac
-    local previous_otel_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep '^otel_' | _otel_line_join)"
-    local previous_alias_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep -v '^otel_' | _otel_line_join)"
+    local previous_otel_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep '^_otel_' | _otel_line_join)"
+    local previous_alias_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep -v '^_otel_' | _otel_line_join)"
     local new_command="$previous_otel_command $prepend_command $previous_alias_command"
   fi
   
@@ -94,8 +94,12 @@ _otel_deshebangify() {
   \alias $1="$aliased_shebang $(\echo "$shebang" | \cut -s -d ' ' -f2-) $(\which $1)"  # e.g., upgrade => otel_inject_shell_with_source bash -x /usr/bin/upgrade
 }
 
+_otel_observe() {
+  otel_observe "$@"
+}
+
 otel_instrument() {
-  _otel_alias_prepend $1 'otel_observe'
+  _otel_alias_prepend $1 '_otel_observe'
 }
 
 otel_outstrument() {
