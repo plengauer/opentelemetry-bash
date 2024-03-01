@@ -249,12 +249,12 @@ _otel_inject_shell_args_with_copy() {
   \chmod +x $temporary_script
   \echo "OTEL_SHELL_AUTO_INSTRUMENTATION_HINT=\"$temporary_script\"" >> "$temporary_script"
   \echo ". /usr/bin/opentelemetry_shell.sh" >> "$temporary_script"
-  \echo "\set -- $(_otel_escape_args "${@:1}")" >> "$temporary_script"
+  \echo "\set -- $(_otel_escape_args "${@:2}")" >> "$temporary_script"
   (if [ "$is_script" -eq 1 ]; then \cat $1; else \echo "$1"; fi) >> "$temporary_script"
 }
 
 _otel_inject_shell_with_copy() {
-  if [ "$1" = "_otel_observe" ]; then local cmdline="${@:1}"; else local cmdline="$*"; fi
+  if [ "$1" = "_otel_observe" ]; then local cmdline="${@:2}"; else local cmdline="$*"; fi
   local temporary_script="$(\mktemp -u)"
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$(\echo "$cmdline" | _otel_line_join)" \
@@ -296,7 +296,7 @@ $1"; \echo -n " "; local found_inner=1; break
 }
 
 _otel_inject_shell_with_c_flag() {
-  if [ "$1" = "_otel_observe" ]; then local cmdline="${@:1}"; else local cmdline="$*"; fi
+  if [ "$1" = "_otel_observe" ]; then local cmdline="${@:2}"; else local cmdline="$*"; fi
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$(\echo "$cmdline" | _otel_line_join)" \
     \eval "$(_otel_inject_shell_args_with_c_flag "$@")" # should we do \eval _otel_call "$(.....)" here? is it safer concerning transport of the OTEL control variables?
 }
