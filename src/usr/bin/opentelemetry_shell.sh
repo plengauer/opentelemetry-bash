@@ -254,7 +254,7 @@ _otel_inject_shell_args_with_copy() {
 }
 
 _otel_inject_shell_with_copy() {
-  if [ "$1" = "_otel_observe" ]; then local cmdline="${@:2}"; else local cmdline="$*"; fi
+  local cmdline="$({ set -- "$@"; if [ "$1" = "_otel_observe" ]; then shift; fi; \cat "$*" })" 
   local temporary_script="$(\mktemp -u)"
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$(\echo "$cmdline" | _otel_line_join)" \
