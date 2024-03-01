@@ -244,6 +244,7 @@ _otel_inject_shell_args_with_copy() {
   if [ "$found_inner" -eq 0 ]; then return 0; fi 
   # finish command
   _otel_escape_arg "$temporary_script"
+  if [ "$is_script" -eq 1 ]; then \echo -n " ";  fi
   # setup temporary script
   local command="$1"
   shift
@@ -278,7 +279,7 @@ _otel_inject_shell_args_with_c_flag() {
     if [ "$1" = "-c" ]; then
       # we need a linebreak here for the aliases to work.
       shift; \echo -n "-c "; _otel_escape_arg ". /usr/bin/opentelemetry_shell.sh
-$1"; \echo -n " "; local found_inner=1; break
+$1"; \echo -n " "; local found_inner=1; local dollar_zero=""; break
     else
       case "$1" in
         -*file) _otel_escape_arg "$1"; \echo -n " "; shift; _otel_escape_arg "$1" ;;
@@ -293,7 +294,7 @@ $1"; \echo -n " "; local found_inner=1; break
   # abort in case its interactive or invalid aguments
   if [ "$found_inner" -eq 0 ]; then return 0; fi 
   # arguments
-  _otel_escape_arg "$dollar_zero"; \echo -n " "
+  if [ -n "$dollar_zero" ]; then _otel_escape_arg "$dollar_zero"; \echo -n " "; fi
   for dollar_n in "$@"; do _otel_escape_arg "$dollar_n"; \echo -n " "; done
 }
 
