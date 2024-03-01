@@ -5,42 +5,42 @@
 # All variables are for internal use only and therefore subject to change without notice!        #
 ##################################################################################################
 
-otel_remote_sdk_pipe=$(\mktemp -u)_opentelemetry_shell_$$.pipe
-otel_shell=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
-otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"
+_otel_remote_sdk_pipe=$(\mktemp -u)_opentelemetry_shell_$$.pipe
+_otel_shell=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
+_otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE
 unset OTEL_SHELL_SPAN_NAME_OVERRIDE
 unset OTEL_SHELL_SPAN_KIND_OVERRIDE
 unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
 unset OTEL_SHELL_SUPPRESS_LOG_COLLECTION
 
-otel_command_self() {
-  if [ -n "$otel_commandline_override" ]; then
-    \echo $otel_commandline_override
+_otel_command_self() {
+  if [ -n "$_otel_commandline_override" ]; then
+    \echo $_otel_commandline_override
   else
     \ps -p $$ -o args | \grep -v COMMAND || \cat /proc/$$/cmdline
   fi
 }
 
-otel_package_version() {
+_otel_package_version() {
   \dpkg -s "$1" 2> /dev/null | \grep Version | \awk '{ print $2 }' || \apt-cache policy "$1" 2> /dev/null | \grep Installed | \awk '{ print $2 }' || \apt show "$1" 2> /dev/null | \grep Version | \awk '{ print $2 }'
 }
 
-otel_resource_attributes() {
+_otel_resource_attributes() {
   \echo telemetry.sdk.name=opentelemetry
   \echo telemetry.sdk.language=shell
-  \echo telemetry.sdk.version=$(otel_package_version opentelemetry-shell)
+  \echo telemetry.sdk.version=$(_otel_package_version opentelemetry-shell)
 
   \echo process.pid=$$
   \echo process.executable.name=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
   \echo process.executable.path=$(\readlink /proc/$$/exe)
-  \echo process.command=$(otel_command_self)
-  \echo process.command_args=$(otel_command_self | \cut -d' ' -f2-)
+  \echo process.command=$(_otel_command_self)
+  \echo process.command_args=$(_otel_command_self | \cut -d' ' -f2-)
   \echo process.owner=$(\whoami)
   \echo process.runtime.name=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
-  \echo process.runtime.version=$(otel_package_version $(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev))
+  \echo process.runtime.version=$(_otel_package_version $(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev))
   \echo process.runtime.options=$-
-  case $otel_shell in
+  case $_otel_shell in
        sh) \echo process.runtime.description="Bourne Shell" ;;
      dash) \echo process.runtime.description="Debian Almquist Shell" ;;
      bash) \echo process.runtime.description="Bourne Again Shell" ;;
@@ -74,19 +74,19 @@ otel_init() {
       local sdk_output=/dev/null
     fi
   fi
-  \mkfifo $otel_remote_sdk_pipe
+  \mkfifo $_otel_remote_sdk_pipe
   \. /opt/opentelemetry_shell/venv/bin/activate
-  (\python3 /usr/bin/opentelemetry_shell_sdk.py $otel_remote_sdk_pipe "shell" $(otel_package_version opentelemetry-shell) > "$sdk_output" 2> "$sdk_output" &)
+  (\python3 /usr/bin/opentelemetry_shell_sdk.py $_otel_remote_sdk_pipe "shell" $(_otel_package_version opentelemetry-shell) > "$sdk_output" 2> "$sdk_output" &)
   deactivate
-  \exec 7> $otel_remote_sdk_pipe
-  otel_resource_attributes | while IFS= read -r kvp; do _otel_sdk_communicate "RESOURCE_ATTRIBUTE" "$kvp"; done
+  \exec 7> $_otel_remote_sdk_pipe
+  _otel_resource_attributes | while IFS= read -r kvp; do _otel_sdk_communicate "RESOURCE_ATTRIBUTE" "$kvp"; done
   _otel_sdk_communicate "INIT"
 }
 
 otel_shutdown() {
   _otel_sdk_communicate "SHUTDOWN"
   \exec 7>&-
-  \rm $otel_remote_sdk_pipe
+  \rm $_otel_remote_sdk_pipe
 }
 
 otel_span_start() {
