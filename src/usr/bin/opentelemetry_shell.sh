@@ -295,6 +295,7 @@ _otel_inject_shell_args_with_c_flag() {
     fi
     shift
   done
+  shift
   # abort in case its interactive or invalid aguments
   if [ "$found_inner" -eq 0 ]; then return 0; fi 
   # arguments
