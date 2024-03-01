@@ -245,12 +245,15 @@ _otel_inject_shell_args_with_copy() {
   # finish command
   _otel_escape_arg "$temporary_script"
   # setup temporary script
+  local command="$1"
+  shift
   \touch "$temporary_script"
   \chmod +x $temporary_script
   \echo "OTEL_SHELL_AUTO_INSTRUMENTATION_HINT=\"$temporary_script\"" >> "$temporary_script"
   \echo ". /usr/bin/opentelemetry_shell.sh" >> "$temporary_script"
-  \echo "\set -- $(_otel_escape_args "${@:2}")" >> "$temporary_script"
-  (if [ "$is_script" -eq 1 ]; then \cat "$1"; else \echo "$1"; fi) >> "$temporary_script"
+  \echo "\set -- "
+  \echo "\set -- $(_otel_escape_args "$@")" >> "$temporary_script"
+  (if [ "$is_script" -eq 1 ]; then \cat "$command"; else \echo "$command"; fi) >> "$temporary_script"
 }
 
 _otel_inject_shell_with_copy() {
