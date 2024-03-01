@@ -117,7 +117,7 @@ _otel_filter_commands_by_hint() {
 }
 
 _otel_filter_commands_by_instrumentation() {
-  local pre_instrumented_executables="$(\alias | \grep -F 'otel_observe' | \sed 's/^alias //' | \cut -d= -f1)"
+  local pre_instrumented_executables="$(\alias | \grep -F '_otel_observe' | \sed 's/^alias //' | \cut -d= -f1)"
   if [ -n "$pre_instrumented_executables" ]; then
     \grep -xFv "$pre_instrumented_executables" 
   else
@@ -189,7 +189,7 @@ _otel_instrument_and_source() {
 }
 
 _otel_propagate_wget() {
-  local command="$(\echo "$*" | \sed 's/^otel_observe //')"
+  local command="$(\echo "$*" | \sed 's/^_otel_observe //')"
   local url=$(\echo "$@" | \awk '{for(i=1;i<=NF;i++) if ($i ~ /^http/) print $i}')
   local scheme=http # TODO
   local target=$(\echo /${url#*//*/})
@@ -202,7 +202,7 @@ _otel_propagate_wget() {
 }
 
 _otel_propagate_curl() {
-  local command="$(\echo "$*" | \sed 's/^otel_observe //')"
+  local command="$(\echo "$*" | \sed 's/^_otel_observe //')"
   local url=$(\echo "$@" | \awk '{for(i=1;i<=NF;i++) if ($i ~ /^http/) print $i}')
   local scheme=http # TODO
   local target=$(\echo /${url#*//*/})
@@ -219,8 +219,8 @@ _otel_propagate_curl() {
 
 _otel_inject_shell_with_copy() {
   # resolve executable
-  if [ "$1" = "otel_observe" ]; then
-    shift; local cmdline="$*"; local executable="otel_observe $1"; local dollar_zero="$1"; shift
+  if [ "$1" = "_otel_observe" ]; then
+    shift; local cmdline="$*"; local executable="_otel_observe $1"; local dollar_zero="$1"; shift
   else
     local cmdline="$*"; local executable=$1; local dollar_zero="$1"; shift
   fi
@@ -278,8 +278,8 @@ _otel_inject_shell_with_c_flag() {
   # type 1 - script: bash +x script.sh foo bar baz
   # type 2 - "-c": bash +x -c "echo $0" foo
   # resolve executable
-  if [ "$1" = "otel_observe" ]; then
-    shift; local cmdline="$*"; local executable="otel_observe $1"; local dollar_zero="$1"; shift
+  if [ "$1" = "_otel_observe" ]; then
+    shift; local cmdline="$*"; local executable="_otel_observe $1"; local dollar_zero="$1"; shift
   else
     local cmdline="$*"; local executable=$1; local dollar_zero="$1"; shift
   fi
@@ -326,8 +326,8 @@ $arg"
 _otel_inject_inner_command() {
   local more_args="$OTEL_SHELL_INJECT_INNER_COMMAND_MORE_ARGS"
   unset MORE_ARGS
-  if [ "$1" = "otel_observe" ]; then
-    shift; local executable="otel_observe $1"
+  if [ "$1" = "_otel_observe" ]; then
+    shift; local executable="_otel_observe $1"
   else
     local executable=$1
   fi
@@ -355,8 +355,8 @@ _otel_inject_xargs() {
   if [ "$(\expr "$*" : ".* -I .*")" -gt 0 ]; then
      _otel_inject_inner_command "$@"
   else
-    if [ "$1" = "otel_observe" ]; then
-      shift; local executable="otel_observe $1"
+    if [ "$1" = "_otel_observe" ]; then
+      shift; local executable="_otel_observe $1"
     else
       local executable=$1
     fi
@@ -396,8 +396,8 @@ _otel_inject_find_arguments() {
 
 _otel_inject_find() {
   if [ "$(\expr "$*" : ".* -exec .*")" -gt 0 ] || [ "$(\expr "$*" : ".* -execdir .*")" -gt 0 ]; then
-    if [ "$1" = "otel_observe" ]; then
-      shift; local executable="otel_observe $1"
+    if [ "$1" = "_otel_observe" ]; then
+      shift; local executable="_otel_observe $1"
     else
       local executable=$1
     fi
