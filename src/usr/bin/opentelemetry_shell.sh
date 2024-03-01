@@ -274,8 +274,7 @@ _otel_inject_shell_with_copy() {
 }
 
 _otel_inject_shell_args_with_c_flag() {
-  local injection=". /usr/bin/opentelemetry_shell.sh
-"
+  local injection=". /usr/bin/opentelemetry_shell.sh"
   # command
   if [ "$1" = "_otel_observe" ]; then _otel_escape_arg "$1"; \echo -n " "; shift; fi
   local dollar_zero="$1" # in case its not a script, $0 becomes the executable
@@ -285,12 +284,15 @@ _otel_inject_shell_args_with_c_flag() {
   local found_inner=0
   while [ "$#" -gt 0 ]; do
     if [ "$1" = "-c" ]; then
-      shift; \echo -n "-c "; _otel_escape_arg "$injection $1"; \echo -n " "; local found_inner=1; break
+      # we need a linebreak here for the aliases to work.
+      shift; \echo -n "-c "; _otel_escape_arg ". /usr/bin/opentelemetry_shell.sh
+$1"; \echo -n " "; local found_inner=1; break
     else
       case "$1" in
         -*file) _otel_escape_arg "$1"; \echo -n " "; shift; _otel_escape_arg "$1" ;;
             -*) _otel_escape_arg "$1"; \echo -n " " ;;
-             *) \echo -n "-c "; _otel_escape_arg "$injection . $1 "'"$@"'; \echo -n " "; local dollar_zero="$1"; local found_inner=1; break ;;
+             # we cant have a linebreak here to not garble the argument positions
+             *) \echo -n "-c "; _otel_escape_arg ". /usr/bin/opentelemetry_shell.sh; . $1 "'"$@"'; \echo -n " "; local dollar_zero="$1"; local found_inner=1; break ;;
       esac
     fi
     shift
