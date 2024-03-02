@@ -3,7 +3,8 @@
 
 n=5
 
-directory="$(mktemp -d). .dir"
+directory="$(mktemp -d)"
+mv "$directory" "$directory"". .dir"
 chmod +x "$directory"
 for i in $(seq 1 $n); do \touch "$directory/$i"; done
 expected="$(\find "$directory" -exec echo {} ';')"
@@ -15,14 +16,16 @@ for i in $(seq 1 $n); do
   assert_equals "find $directory -exec echo {} ;" "$(\echo "$span" | jq -r '.resource.attributes."process.command"')"
 done
 
-directory="$(mktemp -d). .dir"
+directory="$(mktemp -d)"
+mv "$directory" "$directory"". .dir"
 chmod +x "$directory"
 for i in $(seq 1 $n); do \touch "$directory/$i"; done
 expected="$(\find "$directory" -exec echo {} '+')"
 actual="$(find "$directory" -exec echo {} '+')"
 assert_equals "$expected" "$actual"
 
-directory="$(mktemp -d). .dir"
+directory="$(mktemp -d)"
+mv "$directory" "$directory"". .dir"
 chmod +x "$directory"
 for i in $(seq 1 $n); do \touch "$directory/$i"; done
 expected="$(\find "$directory" -execdir echo {} ';')"
@@ -34,7 +37,8 @@ for i in $(seq 1 $n); do
   assert_equals "find $directory -execdir echo {} ;" "$(\echo "$span" | jq -r '.resource.attributes."process.command"')"
 done
 
-directory="$(mktemp -d). .dir"
+directory="$(mktemp -d)"
+mv "$directory" "$directory"". .dir"
 chmod +x "$directory"
 for i in $(seq 1 $n); do \touch "$directory/$i"; done
 expected="$(\find "$directory" -execdir echo {} '+')"
