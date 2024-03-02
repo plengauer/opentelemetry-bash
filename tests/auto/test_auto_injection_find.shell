@@ -3,10 +3,11 @@
 
 n=5
 
-directory="$(mktemp -d)"
-for i in $(seq 1 $n); do \touch $directory/$i; done
-expected="$(\find $directory -exec echo {} ';')"
-actual="$(find $directory -exec echo {} ';')"
+directory="$(mktemp -d). .dir"
+chmod +x "$directory"
+for i in $(seq 1 $n); do \touch "$directory/$i"; done
+expected="$(\find "$directory" -exec echo {} ';')"
+actual="$(find "$directory" -exec echo {} ';')"
 assert_equals "$expected" "$actual"
 for i in $(seq 1 $n); do
   span="$(resolve_span ".name == \"echo $directory/$i\"")"
@@ -14,16 +15,18 @@ for i in $(seq 1 $n); do
   assert_equals "find $directory -exec echo {} ;" "$(\echo "$span" | jq -r '.resource.attributes."process.command"')"
 done
 
-directory="$(mktemp -d)"
-for i in $(seq 1 $n); do \touch $directory/$i; done
-expected="$(\find $directory -exec echo {} '+')"
-actual="$(find $directory -exec echo {} '+')"
+directory="$(mktemp -d). .dir"
+chmod +x "$directory"
+for i in $(seq 1 $n); do \touch "$directory/$i"; done
+expected="$(\find "$directory" -exec echo {} '+')"
+actual="$(find "$directory" -exec echo {} '+')"
 assert_equals "$expected" "$actual"
 
-directory="$(mktemp -d)"
-for i in $(seq 1 $n); do \touch $directory/$i; done
-expected="$(\find $directory -execdir echo {} ';')"
-actual="$(find $directory -execdir echo {} ';')"
+directory="$(mktemp -d). .dir"
+chmod +x "$directory"
+for i in $(seq 1 $n); do \touch "$directory/$i"; done
+expected="$(\find "$directory" -execdir echo {} ';')"
+actual="$(find "$directory" -execdir echo {} ';')"
 assert_equals "$expected" "$actual"
 for i in $(seq 1 $n); do
   span="$(resolve_span ".name == \"echo ./$i\"")"
@@ -31,9 +34,10 @@ for i in $(seq 1 $n); do
   assert_equals "find $directory -execdir echo {} ;" "$(\echo "$span" | jq -r '.resource.attributes."process.command"')"
 done
 
-directory="$(mktemp -d)"
-for i in $(seq 1 $n); do \touch $directory/$i; done
-expected="$(\find $directory -execdir echo {} '+')"
-actual="$(find $directory -execdir echo {} '+')"
+directory="$(mktemp -d). .dir"
+chmod +x "$directory"
+for i in $(seq 1 $n); do \touch "$directory/$i"; done
+expected="$(\find "$directory" -execdir echo {} '+')"
+actual="$(find "$directory" -execdir echo {} '+')"
 assert_equals "$expected" "$actual"
 
