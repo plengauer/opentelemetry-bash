@@ -232,7 +232,7 @@ _otel_inject_shell_args_with_copy() {
       shift; local is_script=0; local found_inner=1; break
     else
       case "$1" in
-        -*file) _otel_escape_arg "$1"; \echo -n " "; shift; _otel_escape_arg "$1";; \echo -n " " ;;
+        -*file) _otel_escape_arg "$1"; \echo -n " "; shift; _otel_escape_arg "$1"; \echo -n " " ;;
             -*) _otel_escape_arg "$1"; \echo -n " " ;;
              *) local is_script=1; local found_inner=1; break ;;
       esac
@@ -280,7 +280,7 @@ _otel_inject_shell_args_with_c_flag() {
 $1"; \echo -n " "; local found_inner=1; local dollar_zero=""; break
     else
       case "$1" in
-        -*file) _otel_escape_arg "$1"; \echo -n " "; shift; _otel_escape_arg "$1" ;;
+        -*file) _otel_escape_arg "$1"; \echo -n " "; shift; _otel_escape_arg "$1"; \echo -n " " ;;
             -*) _otel_escape_arg "$1"; \echo -n " " ;;
              # we cant have a linebreak here to not garble the argument positions
              *) \echo -n "-c "; _otel_escape_arg ". /usr/bin/opentelemetry_shell.sh; . $1 "'"$@"'; \echo -n " "; local dollar_zero="$1"; local found_inner=1; break ;; # TODO lets use eval before $1 in case there is something fishy?
