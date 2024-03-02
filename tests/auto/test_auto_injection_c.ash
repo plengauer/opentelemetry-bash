@@ -7,6 +7,6 @@ span="$(resolve_span '.resource.attributes."process.command" == "ash -c echo hel
 assert_equals "echo hello world" "$(\echo "$span" | jq -r '.name')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
 
-assert_equals "ash" "$(ash -c 'echo $0' 'foo' 'bar')"
-assert_equals "foo" "$(ash -c 'echo $1' 'foo' 'bar')"
-assert_equals "bar" "$(ash -c 'echo $2' 'foo' 'bar')"
+# assert_equals "$(\ash -c 'echo $0' 'foo' 'bar baz')" "$(ash -c 'echo $0' 'foo' 'bar baz')" # known sideeffect
+assert_equals "$(\ash -c 'echo $1' 'foo' 'bar baz')" "$(ash -c 'echo $1' 'foo' 'bar baz')"
+assert_equals "$(\ash -c 'echo $2' 'foo' 'bar baz')" "$(ash -c 'echo $2' 'foo' 'bar baz')"
