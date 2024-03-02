@@ -246,7 +246,7 @@ _otel_inject_shell_args_with_copy() {
   # setup temporary script
   local command="$1"
   shift
-  if [ "$is_script" = 0 ]; then shift; fi
+  if [ "$is_script" = 0 ] && [ "$#" -gt 0 ]; then shift; fi
   \touch "$temporary_script"
   \chmod +x "$temporary_script"
   \echo "OTEL_SHELL_AUTO_INSTRUMENTATION_HINT=\"$temporary_script\"" >> "$temporary_script"
