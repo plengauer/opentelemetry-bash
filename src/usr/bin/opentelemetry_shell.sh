@@ -232,7 +232,7 @@ _otel_inject_shell_args_with_copy() {
       shift; local is_script=0; local found_inner=1; break
     else
       case "$1" in
-        -*file) _otel_escape_arg "$1"; \echo -n " "; shift; _otel_escape_arg "$1" ;;
+        -*file) _otel_escape_arg "$1"; \echo -n " "; shift; _otel_escape_arg "$1";; \echo -n " " ;;
             -*) _otel_escape_arg "$1"; \echo -n " " ;;
              *) local is_script=1; local found_inner=1; break ;;
       esac
@@ -243,7 +243,6 @@ _otel_inject_shell_args_with_copy() {
   if [ "$found_inner" -eq 0 ]; then return 0; fi 
   # finish command
   _otel_escape_arg "$temporary_script"
-  if [ "$is_script" -eq 1 ]; then \echo -n " ";  fi
   # setup temporary script
   local command="$1"
   shift
