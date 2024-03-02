@@ -1,4 +1,4 @@
-# . ./assert.sh
+. ./assert.sh
 . /usr/bin/opentelemetry_shell.sh
 
 ash -c 'echo hello world'
