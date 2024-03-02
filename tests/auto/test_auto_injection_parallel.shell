@@ -1,0 +1,22 @@
+. ./assert.sh
+. /usr/bin/opentelemetry_shell.sh
+
+parallel echo -- a1 a2 a3
+span="$(resolve_span '.name == "parallel echo -- a1 a2 a3"')"
+assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+span="$(resolve_span '.name == "echo a1"')"
+assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+span="$(resolve_span '.name == "echo a2"')"
+assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+span="$(resolve_span '.name == "echo a3"')"
+assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+
+parallel -- 'echo b1' 'echo b2' 'echo b3'
+span="$(resolve_span '.name == "parallel -- "echo b1 echo b2 echo b3"')"
+assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+span="$(resolve_span '.name == "echo b1"')"
+assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+span="$(resolve_span '.name == "echo b2"')"
+assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+span="$(resolve_span '.name == "echo b3"')"
+assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"

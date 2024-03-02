@@ -390,6 +390,41 @@ _otel_inject_find() {
   fi
 }
 
+_otel_inject_parallel_arguments() {
+  local in_exec=0
+  local first=1
+  for arg in "$@"; do
+    if [ "$first" = 1 ]; then local first=0; else \echo -n ' '; fi
+    if [ "$in_exec" -eq 0 ] && ! [ "${arg%"${arg#?}"}" = "-" ] && [ -x "$(\which "$arg")" ]; then
+      local in_exec=1
+      \echo -n "sh -c '. /usr/bin/opentelemetry_shell.sh
+$arg "'$1'
+    elif [ "$in_exec" -eq 1 ] && ! [ "$arg" = "--" ]; then
+      \echo -n "'$arg'"
+    elif [ "$in_exec" -eq 1 ] && [ "$arg" = "--" ]; then
+      local in_exec=0
+      \echo -n "' $arg"
+    else
+      if [ "$(\expr "$arg" : ".* .*")" -gt 0 ] || [ "$(\expr "$arg" : ".*\*.*")" -gt 0 ]; then
+        \echo -n '"'$arg'"'
+      else
+        \echo -n "$arg"
+      fi
+    fi
+  done
+}
+
+_otel_inject_parallel() {
+   if [ "$1" = "otel_observe" ]; then
+      shift; local executable="otel_observe $1"
+    else
+      local executable=$1
+    fi
+    local cmdline="$*"
+    shift
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" eval $executable "$(_otel_inject_parallel_arguments "$@")"
+}
+
 _otel_record_exec() {
   local file="$1"
   local line="$2"
@@ -454,14 +489,26 @@ _otel_end_script() {
 
 _otel_alias_prepend wget _otel_propagate_wget
 _otel_alias_prepend curl _otel_propagate_curl
+
 _otel_alias_prepend sh _otel_inject_shell_with_copy # cant really know what kind of shell it actually is, so lets play it safe
 _otel_alias_prepend ash _otel_inject_shell_with_copy # sourced files do not support arguments
 _otel_alias_prepend dash _otel_inject_shell_with_copy # sourced files do not support arguments
 _otel_alias_prepend bash _otel_inject_shell_with_c_flag
+# _otel_alias_prepend env _otel_inject_inner_command # injecting via changing the command is dangerous because there are some options affecting signal handling
 _otel_alias_prepend sudo _otel_inject_sudo
+_otel_alias_prepend taskset _otel_inject_inner_command
+_otel_alias_prepend nice _otel_inject_inner_command
+_otel_alias_prepend ionice _otel_inject_inner_command
+# _otel_alias_prepend stdbuf _otel_inject_inner_command # injecting via changing the command defeats the purpose of stdbuf
+# _otel_alias_prepend nohup _otel_inject_inner_command # injecting via changing the command defeats the purpose of nohup
+# _otel_alias_prepend strace _otel_inject_inner_command # injecting via changing the command defeats the purpose of strace
 _otel_alias_prepend time _otel_inject_inner_command
 _otel_alias_prepend timeout _otel_inject_inner_command
 _otel_alias_prepend xargs _otel_inject_xargs
+_otel_alias_prepend parallel otel_inject_parallel
+_otel_alias_prepend watch _otel_inject_inner_command
+_otel_alias_prepend at _otel_inject_inner_command
+_otel_alias_prepend flock _otel_inject_inner_command
 _otel_alias_prepend find _otel_inject_find
 
 _otel_alias_prepend alias _otel_alias_and_instrument
