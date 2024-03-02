@@ -5,6 +5,7 @@ n=5
 
 directory="$(mktemp -d)"
 mv "$directory" "$directory"". .dir"
+directory="$directory"". .dir"
 chmod +x "$directory"
 for i in $(seq 1 $n); do \touch "$directory/$i"; done
 expected="$(\find "$directory" -exec echo {} ';')"
@@ -18,6 +19,7 @@ done
 
 directory="$(mktemp -d)"
 mv "$directory" "$directory"". .dir"
+directory="$directory"". .dir"
 chmod +x "$directory"
 for i in $(seq 1 $n); do \touch "$directory/$i"; done
 expected="$(\find "$directory" -exec echo {} '+')"
@@ -26,6 +28,7 @@ assert_equals "$expected" "$actual"
 
 directory="$(mktemp -d)"
 mv "$directory" "$directory"". .dir"
+directory="$directory"". .dir"
 chmod +x "$directory"
 for i in $(seq 1 $n); do \touch "$directory/$i"; done
 expected="$(\find "$directory" -execdir echo {} ';')"
@@ -38,6 +41,7 @@ for i in $(seq 1 $n); do
 done
 
 directory="$(mktemp -d)"
+directory="$directory"". .dir"
 mv "$directory" "$directory"". .dir"
 chmod +x "$directory"
 for i in $(seq 1 $n); do \touch "$directory/$i"; done
