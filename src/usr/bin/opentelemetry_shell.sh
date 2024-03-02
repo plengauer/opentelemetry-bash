@@ -217,110 +217,90 @@ _otel_propagate_curl() {
     "$@"
 }
 
-_otel_inject_shell_with_copy() {
-  # resolve executable
-  if [ "$1" = "_otel_observe" ]; then
-    shift; local cmdline="$*"; local executable="_otel_observe $1"; local dollar_zero="$1"; shift
-  else
-    local cmdline="$*"; local executable=$1; local dollar_zero="$1"; shift
-  fi
-  # decompile command
-  local options=""; local cmd=""; local args="";
-  local is_next_command_string="FALSE"; local is_parsing_arguments="FALSE"; local is_next_option="FALSE";
-  for arg in "$@"; do
-    if [ "$arg" = "-c" ]; then
-      local is_next_command_string="TRUE"
-    elif [ "$is_next_command_string" = "TRUE" ]; then
-      local cmd="$arg"
-      local is_next_command_string="FALSE"
-      local is_parsing_command="TRUE"
-    elif [ "$is_parsing_command" = "TRUE" ]; then
-      local args="$args \"$arg\""
-    elif [ "$is_next_option" = "TRUE" ]; then
-      local options="$options $arg"
-      local is_next_option="FALSE"
+_otel_inject_shell_args_with_copy() {
+  local temporary_script="$1"
+  shift
+  local is_script=0
+  # command
+  if [ "$1" = "_otel_observe" ]; then _otel_escape_arg "$1"; \echo -n " "; shift; fi
+  _otel_escape_arg "$1"; \echo -n " "
+  shift
+  # options and script or command string
+  local found_inner=0
+  while [ "$#" -gt 0 ]; do
+    if [ "$1" = "-c" ]; then
+      shift; local is_script=0; local found_inner=1; break
     else
-      case "$arg" in
-        -*file) local options="$options $arg"; local is_next_option="TRUE" ;;
-        -*) local options="$options $arg" ;;
-        *) local is_parsing_command="TRUE"; local cmd="$arg"; local dollar_zero="$arg" ;;
+      case "$1" in
+        -*file) _otel_escape_arg "$1"; \echo -n " "; shift; _otel_escape_arg "$1"; \echo -n " " ;;
+            -*) _otel_escape_arg "$1"; \echo -n " " ;;
+             *) local is_script=1; local found_inner=1; break ;;
       esac
     fi
+    shift
   done
-  if [ -n "$cmd" ]; then
-    # prepare temporary script
-    local temporary_script=$(\mktemp -u)
-    \touch $temporary_script
-    \echo "set -- $args" >> $temporary_script
-    \echo "OTEL_SHELL_AUTO_INSTRUMENTATION_HINT=\"$temporary_script\"" >> $temporary_script
-    \echo ". /usr/bin/opentelemetry_shell.sh" >> $temporary_script
-    if [ -f "$cmd" ]; then
-      \cat $cmd >> $temporary_script
-    else
-      \echo "$cmd" >> $temporary_script
-    fi
-    \chmod +x $temporary_script
-    # compile command
-    set -- $executable $options $temporary_script
-  else
-    set -- $executable $options
-  fi
-  # run command
+  # abort in case its interactive or invalid aguments
+  if [ "$found_inner" -eq 0 ]; then return 0; fi 
+  # finish command
+  _otel_escape_arg "$temporary_script"
+  # setup temporary script
+  local command="$1"
+  shift
+  if [ "$is_script" = 0 ] && [ "$#" -gt 0 ]; then shift; fi
+  \touch "$temporary_script"
+  \chmod +x "$temporary_script"
+  \echo "OTEL_SHELL_AUTO_INSTRUMENTATION_HINT=\"$temporary_script\"" >> "$temporary_script"
+  \echo ". /usr/bin/opentelemetry_shell.sh" >> "$temporary_script"
+  \echo "\set -- $(_otel_escape_args "$@")" >> "$temporary_script"
+  (if [ "$is_script" -eq 1 ]; then \cat "$command"; else \echo "$command"; fi) >> "$temporary_script"
+}
+
+_otel_inject_shell_with_copy() {
+  local cmdline="$({ set -- "$@"; if [ "$1" = "_otel_observe" ]; then shift; fi; \echo -n "$*"; })" 
+  local temporary_script="$(\mktemp -u)"
   local exit_code=0
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE \
-    "$@" || local exit_code=$?
-  \rm $temporary_script || true
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$(\echo "$cmdline" | _otel_line_join)" \
+    \eval "$(_otel_inject_shell_args_with_copy "$temporary_script" "$@")" || local exit_code=$? # should we do \eval _otel_call "$(.....)" here? is it safer concerning transport of the OTEL control variables?
+  \rm "$temporary_script" || true
   return $exit_code
 }
 
-_otel_inject_shell_with_c_flag() {
-  # type 0 - interactive or from stdin: bash, bash -x
-  # type 1 - script: bash +x script.sh foo bar baz
-  # type 2 - "-c": bash +x -c "echo $0" foo
-  # resolve executable
-  if [ "$1" = "_otel_observe" ]; then
-    shift; local cmdline="$*"; local executable="_otel_observe $1"; local dollar_zero="$1"; shift
-  else
-    local cmdline="$*"; local executable="$1"; local dollar_zero="$1"; shift
-  fi
-  # decompile command
-  local options=""; local cmd=""; local args="";
-  local is_next_command_string="FALSE"; local is_parsing_arguments="FALSE"; local is_next_option="FALSE";
-  for arg in "$@"; do
-    if [ "$arg" = "-c" ]; then
-      local is_next_command_string="TRUE"
-    elif [ "$is_next_command_string" = "TRUE" ]; then
-      local cmd="
-$arg"
-      # aliases need at least a linefeed or a source to become active in a -c command. Dunno why, but its like that
-      # also, we cant just introduce ALWAYS a linefeed, because then argument ordering is confused for sourced scripts
-      local is_next_command_string="FALSE"
-      local is_parsing_command="TRUE"
-    elif [ "$is_parsing_command" = "TRUE" ]; then
-      local args="$args \"$arg\""
-    elif [ "$is_next_option" = "TRUE" ]; then
-      local options="$options $arg"
-      local is_next_option="FALSE"
+_otel_inject_shell_args_with_c_flag() {
+  local injection=". /usr/bin/opentelemetry_shell.sh"
+  # command
+  if [ "$1" = "_otel_observe" ]; then _otel_escape_arg "$1"; \echo -n " "; shift; fi
+  local dollar_zero="$1" # in case its not a script, $0 becomes the executable
+  _otel_escape_arg "$1"; \echo -n " "
+  shift
+  # options and script or command string
+  local found_inner=0
+  while [ "$#" -gt 0 ]; do
+    if [ "$1" = "-c" ]; then
+      # we need a linebreak here for the aliases to work.
+      shift; \echo -n "-c "; _otel_escape_arg ". /usr/bin/opentelemetry_shell.sh
+$1"; \echo -n " "; local found_inner=1; local dollar_zero=""; break
     else
-      case "$arg" in
-        -*file) local options="$options $arg"; local is_next_option="TRUE" ;;
-        -*) local options="$options $arg" ;;
-        *) local is_parsing_command="TRUE"; local cmd="$arg "'$@'; local dollar_zero="$arg" ;;
+      case "$1" in
+        -*file) _otel_escape_arg "$1"; \echo -n " "; shift; _otel_escape_arg "$1"; \echo -n " " ;;
+            -*) _otel_escape_arg "$1"; \echo -n " " ;;
+             # we cant have a linebreak here to not garble the argument positions
+             *) \echo -n "-c "; _otel_escape_arg ". /usr/bin/opentelemetry_shell.sh; . $1 "'"$@"'; \echo -n " "; local dollar_zero="$1"; local found_inner=1; break ;; # TODO lets use eval before $1 in case there is something fishy?
       esac
     fi
+    shift
   done
-  # compile command
-  if [ -n "$cmd" ]; then
-    if [ -f "$cmd" ]; then
-      local cmd=". $cmd"
-    fi
-    set -- $executable $options -c ". /usr/bin/opentelemetry_shell.sh; $cmd" "$dollar_zero" $args
-  else
-    set -- $executable $options
-  fi
-  # run command
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$(\echo "$cmd" | _otel_line_join)" \
-    "$@"
+  shift
+  # abort in case its interactive or invalid aguments
+  if [ "$found_inner" -eq 0 ]; then return 0; fi 
+  # arguments
+  if [ -n "$dollar_zero" ]; then _otel_escape_arg "$dollar_zero"; \echo -n " "; fi
+  for dollar_n in "$@"; do _otel_escape_arg "$dollar_n"; \echo -n " "; done
+}
+
+_otel_inject_shell_with_c_flag() {
+  if [ "$1" = "_otel_observe" ]; then local cmdline="${@:2}"; else local cmdline="$*"; fi
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$(\echo "$cmdline" | _otel_line_join)" \
+    \eval "$(_otel_inject_shell_args_with_c_flag "$@")" # should we do \eval _otel_call "$(.....)" here? is it safer concerning transport of the OTEL control variables?
 }
 
 _otel_inject_inner_command() {
