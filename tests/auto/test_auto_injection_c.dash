@@ -8,8 +8,5 @@ assert_equals "echo hello world" "$(\echo "$span" | jq -r '.name')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
 
 # assert_equals "$(\dash -c 'echo $0' 'foo' 'bar baz')" "$(dash -c 'echo $0' 'foo' 'bar baz')" # known sideffect
-export OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE
-set -x
 assert_equals "$(\dash -c 'echo $1' 'foo' 'bar baz')" "$(dash -c 'echo $1' 'foo' 'bar baz')"
-set +x
 assert_equals "$(\dash -c 'echo $2' 'foo' 'bar baz')" "$(dash -c 'echo $2' 'foo' 'bar baz')"
