@@ -9,14 +9,14 @@
 _otel_inject_shell_args_with_c_flag() {
   local injection=". /usr/bin/opentelemetry_shell.sh"
   # command
-  if [ "$1" = "_otel_observe" ]; then _otel_escape_arg "$1"; \echo -n " "; shift; fi
+  if \[ "$1" = "_otel_observe" ]; then _otel_escape_arg "$1"; \echo -n " "; shift; fi
   local dollar_zero="$1" # in case its not a script, $0 becomes the executable
   _otel_escape_arg "$1"; \echo -n " "
   shift
   # options and script or command string
   local found_inner=0
-  while [ "$#" -gt 0 ]; do
-    if [ "$1" = "-c" ]; then
+  while \[ "$#" -gt 0 ]; do
+    if \[ "$1" = "-c" ]; then
       # we need a linebreak here for the aliases to work.
       shift; \echo -n "-c "; _otel_escape_arg ". /usr/bin/opentelemetry_shell.sh
 $1"; \echo -n " "; local found_inner=1; local dollar_zero=""; break
@@ -32,14 +32,14 @@ $1"; \echo -n " "; local found_inner=1; local dollar_zero=""; break
   done
   shift
   # abort in case its interactive or invalid arguments
-  if [ "$found_inner" -eq 0 ]; then return 0; fi 
+  if \[ "$found_inner" -eq 0 ]; then return 0; fi
   # arguments
-  if [ -n "$dollar_zero" ]; then _otel_escape_arg "$dollar_zero"; \echo -n " "; fi
+  if \[ -n "$dollar_zero" ]; then _otel_escape_arg "$dollar_zero"; \echo -n " "; fi
   for dollar_n in "$@"; do _otel_escape_arg "$dollar_n"; \echo -n " "; done
 }
 
 _otel_inject_shell_with_c_flag() {
-  local cmdline="$({ set -- "$@"; if [ "$1" = "_otel_observe" ]; then shift; fi; \echo -n "$*"; })"
+  local cmdline="$({ set -- "$@"; if \[ "$1" = "_otel_observe" ]; then shift; fi; \echo -n "$*"; })"
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$(\echo "$cmdline" | _otel_line_join)" \
     \eval "$(_otel_inject_shell_args_with_c_flag "$@")" # should we do \eval _otel_call "$(.....)" here? is it safer concerning transport of the OTEL control variables?
 }
