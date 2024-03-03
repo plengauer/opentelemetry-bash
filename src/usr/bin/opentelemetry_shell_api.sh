@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/false
 ##################################################################################################
 # This file is providing an API for creating and managing open telemetry spans.                  #
 # It should be sourced at the very top of any shell script where the functions are to be used.   #
@@ -180,8 +180,11 @@ _otel_escape_arg() {
     esac
   fi
   if [ "$do_escape" = 1 ]; then
+    # need the extra X to preservice trailing linefeeds (yay)
+    # local escaped="$(\printf '%s' "$1X" | \sed "s/'/'\\\\''/g")"
     local escaped="$(\printf '%s' "$1X" | \sed "s/'/'\\\\''/g")"
-    \printf "'%s'" "${escaped%X}"
+    if [ "$no_quote" = 1 ]; then local format_string='%s'; else local format_string="'%s'"; fi
+    \printf "$format_string" "${escaped%X}"
   else
     \printf '%s' "$1"
   fi

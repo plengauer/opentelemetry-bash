@@ -12,7 +12,7 @@ span="$(resolve_span '.name == "echo a3"')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
 
 parallel -- 'echo b1' 'echo b2' 'echo b3'
-span="$(resolve_span '.name == "parallel -- "echo b1 echo b2 echo b3"')"
+span="$(resolve_span '.name == "parallel -- echo b1 echo b2 echo b3"')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
 span="$(resolve_span '.name == "echo b1"')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"

@@ -41,8 +41,8 @@ for i in $(seq 1 $n); do
 done
 
 directory="$(mktemp -d)"
-directory="$directory"". .dir"
 mv "$directory" "$directory"". .dir"
+directory="$directory"". .dir"
 chmod +x "$directory"
 for i in $(seq 1 $n); do \touch "$directory/$i"; done
 expected="$(\find "$directory" -execdir echo {} '+')"
