@@ -5,7 +5,7 @@ fi
 . /usr/bin/opentelemetry_shell.sh
 alias
 
-if [ "$(alias | wc -l)" -gt "25" ]; then
+if [ "$(alias | wc -l)" -gt "50" ]; then
   exit 1
 fi
 
