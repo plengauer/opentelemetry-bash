@@ -88,10 +88,20 @@ _otel_deshebangify() {
   if [ -n "$(\alias $1 2> /dev/null)" ]; then return 1; fi
   local shebang="$(_otel_shebang $1)" # e.g., "/bin/bash -x"
   if [ -z "$shebang" ]; then return 2; fi
-  local shebang_cmd="$(\echo "$shebang" | \cut -d' ' -f1 | \rev | \cut -d/ -f1 | \rev)" # e.g., "bash"
-  local aliased_shebang="$(\alias "$shebang_cmd" 2> /dev/null | \cut -d= -f2- | _otel_unquote)" # e.g., "otel_inject_shell_with_source bash"
-  if [ -z "$aliased_shebang" ]; then return 3; fi
-  \alias $1="$aliased_shebang $(\echo "$shebang" | \cut -s -d ' ' -f2-) $(\which $1)"  # e.g., upgrade => otel_inject_shell_with_source bash -x /usr/bin/upgrade
+  \alias $1="$shebang $(\which $1)" # e.g., alias upgrade='/bin/bash -x /usr/bin/upgrade'
+}
+
+_otel_dealiasify() {
+  # e.g., alias upgrade='/bin/bash -x /usr/bin/upgrade'
+  # e.g., alias bash='_otel_inject_shell _otel_observe bash'
+  local cmd=$1 # e.g., "upgrade"
+  local cmd_alias="$(\alias $1 2> /dev/null | \cut -d= -f2- | _otel_unquote | \cut -d' ' -f1 | \rev | \cut -d/ -f1 | \rev)" # e.g., bash
+  if [ -z "$cmd_alias" ]; then return 1; fi
+  local cmd_aliased="$(\alias $cmd_alias 2> /dev/null | \cut -d= -f2- | _otel_unquote)" # e.g., _otel_inject_shell bash
+  if [ -z "$cmd_aliased" ]; then return 2; fi
+  local otel_cmds="$(\echo "$cmd_aliased" | _otel_line_split | \grep '^_otel_' | \grep -v '^_otel_observe' | _otel_line_join)" # e.g., _otel_inject_shell
+  if [ -z "$otel_cmds" ]; then return 3; fi
+  _otel_alias_prepend $cmd "$otel_cmds" # e.g., alias upgrade='_otel_inject_shell /bin/bash -x /usr/bin/upgrade'
 }
 
 _otel_observe() {
@@ -106,11 +116,15 @@ otel_outstrument() {
   \unalias $1 1> /dev/null 2> /dev/null || true
 }
 
+_otel_grep_valid_command() {
+  \grep -E '^[a-zA-Z0-9._][a-zA-Z0-9 ._-]*$'
+}
+
 _otel_filter_commands_by_hint() {
   local hint="$1"
   if [ -n "$hint" ]; then
     if [ -f "$hint" ] && [ "$(\readlink -f /proc/$$/exe)" != "$(\readlink -f $hint)" ] && [ "$hint" != "/usr/bin/opentelemetry_shell.sh" ]; then local hint="$(\cat "$hint")"; fi
-    \grep -xF "$(\echo "$hint" | \tr -s ' $=";(){}[]/\\!#~^'\' '\n' | \grep -E '^[a-zA-Z0-9 ._-]*$')"
+    \grep -xF "$(\echo "$hint" | \tr -s ' $=";(){}[]/\\!#~^'\' '\n' | _otel_grep_valid_command)"
   else
     \cat
   fi
@@ -125,6 +139,10 @@ _otel_filter_commands_by_instrumentation() {
   fi
 }
 
+_otel_filter_commands_by_special() {
+  \grep -v '^(alias|unalias|\.|source|exec)$'
+}
+
 _otel_list_path_executables() {
   \echo "$PATH" | \tr ' ' '\n' | \tr ':' '\n' | while read dir; do \find $dir -maxdepth 1 -type f,l -executable 2> /dev/null; done
 }
@@ -137,6 +155,10 @@ _otel_list_alias_commands() {
   \alias | \sed 's/^alias //' | \awk -F'=' '{ var=$1; sub($1 FS,""); } ! ($0 ~ "^'\''((OTEL_|_otel_).* )*" var "'\''$") { print var }'
 }
 
+_otel_list_aliased_commands() {
+  \alias | \cut -d= -f2- | _otel_line_split | \grep -v '^(OTEL_|_otel_)' | _otel_grep_valid_command
+}
+
 _otel_list_builtin_commands() {
   \echo type
   if [ "$_otel_shell" = "bash" ]; then
@@ -147,23 +169,25 @@ _otel_list_builtin_commands() {
 _otel_list_all_commands() {
   _otel_list_path_commands
   _otel_list_alias_commands
+  _otel_list_aliased_commands
   _otel_list_builtin_commands
 }
 
 _otel_auto_instrument() {
   local hint="$1"
   # both otel_filter_commands_by_file and _otel_filter_commands_by_instrumentation are functionally optional, but helps optimizing time because the following loop AND otel_instrument itself is expensive!
-  local executables="$(_otel_list_all_commands | _otel_filter_commands_by_instrumentation | _otel_filter_commands_by_hint "$hint" | \sort -u | _otel_line_join)"
-  for cmd in $executables; do _otel_deshebangify $cmd || true; done
-  for cmd in $executables; do otel_instrument $cmd; done
+  for cmd in $(_otel_list_path_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_hint "$hint" | \sort -u | _otel_line_join); do _otel_deshebangify $cmd || true; done
+  for cmd in $(_otel_list_alias_commands | _otel_filter_commands_by_special | _otel_line_join); do _otel_dealiasify $cmd || true; done
+  for cmd in $(_otel_list_all_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_instrumentation | _otel_filter_commands_by_hint "$hint" | \sort -u | _otel_line_join); do otel_instrument $cmd; done
 }
 
 _otel_alias_and_instrument() {
   local exit_code=0
   "$@" || local exit_code=$?
   shift
-  local commands="$(\echo "$@" | _otel_line_split | \grep -m1 '=' 2> /dev/null | \cut -d= -f1)"
-  for cmd in $commands; do otel_instrument $cmd; done
+  if [ -n "$*" ]; then
+    _otel_auto_instrument "$(\echo "$@" | _otel_line_split | \grep -m1 '=' 2> /dev/null | \tr '=' ' ')"
+  fi
   return $exit_code
 }
 
@@ -172,11 +196,10 @@ _otel_unalias_and_reinstrument() {
   "$@" || local exit_code=$?
   shift
   if [ "-a" = "$*" ]; then
-    local commands="$(_otel_list_all_commands | _otel_filter_commands_by_hint "$_otel_shell_auto_instrumentation_hint")"
+    _otel_auto_instrument "$_otel_shell_auto_instrumentation_hint"
   else
-    local commands="$(_otel_list_all_commands | \grep -Fx "$(\echo "$@" | _otel_line_split 2> /dev/null)" 2> /dev/null)"
+    _otel_auto_instrument "$*"
   fi
-  for cmd in $commands; do otel_instrument $cmd; done
   return $exit_code
 }
 
