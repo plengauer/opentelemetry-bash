@@ -1,3 +1,4 @@
+if ! dpkg -s moreutils; then exit 0; fi
 . ./assert.sh
 
 # from a real world example
