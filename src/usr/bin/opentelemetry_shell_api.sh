@@ -15,7 +15,7 @@ unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
 unset OTEL_SHELL_SUPPRESS_LOG_COLLECTION
 
 _otel_command_self() {
-  if [ -n "$_otel_commandline_override" ]; then
+  if \[ -n "$_otel_commandline_override" ]; then
     \echo $_otel_commandline_override
   else
     \ps -p $$ -o args | \grep -v COMMAND || \cat /proc/$$/cmdline
@@ -65,17 +65,17 @@ _otel_sdk_communicate() {
 }
 
 otel_init() {
-  if [ -n "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" ]; then
+  if \[ -n "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" ]; then
     local sdk_output=$OTEL_SHELL_SDK_OUTPUT_REDIRECT
   else
-    if [ -e "/dev/stderr" ] && [ -e "$(\readlink -f /dev/stderr)" ]; then
+    if \[ -e "/dev/stderr" ] && \[ -e "$(\readlink -f /dev/stderr)" ]; then
       local sdk_output=/dev/stderr
     else
       local sdk_output=/dev/null
     fi
   fi
   \mkfifo $_otel_remote_sdk_pipe
-  \. /opt/opentelemetry_shell/venv/bin/activate
+  eval "$(\cat /opt/opentelemetry_shell/venv/bin/activate | \sed 's/\[/\\\[/g')"
   (\python3 /usr/bin/opentelemetry_shell_sdk.py $_otel_remote_sdk_pipe "shell" $(_otel_package_version opentelemetry-shell) > "$sdk_output" 2> "$sdk_output" &)
   deactivate
   \exec 7> $_otel_remote_sdk_pipe
@@ -169,9 +169,9 @@ otel_log_record() {
 _otel_escape_arg() {
    # that SO article shows why this is extra fun! https://stackoverflow.com/questions/16991270/newlines-at-the-end-get-removed-in-shell-scripts-why
   local do_escape=0
-  if [ -z "$1" ]; then
+  if \[ -z "$1" ]; then
     local do_escape=1
-  elif [ "$1X" != "$(\echo "$1")"X ]; then # fancy check for "contains linefeed"
+  elif \[ "$1X" != "$(\echo "$1")"X ]; then # fancy check for "contains linefeed"
     local do_escape=1
   else
     case "$1X" in
@@ -179,11 +179,11 @@ _otel_escape_arg() {
       *) local do_escape=0 ;;
     esac
   fi
-  if [ "$do_escape" = 1 ]; then
+  if \[ "$do_escape" = 1 ]; then
     # need the extra X to preservice trailing linefeeds (yay)
     # local escaped="$(\printf '%s' "$1X" | \sed "s/'/'\\\\''/g")"
     local escaped="$(\printf '%s' "$1X" | \sed "s/'/'\\\\''/g")"
-    if [ "$no_quote" = 1 ]; then local format_string='%s'; else local format_string="'%s'"; fi
+    if \[ "$no_quote" = 1 ]; then local format_string='%s'; else local format_string="'%s'"; fi
     \printf "$format_string" "${escaped%X}"
   else
     \printf '%s' "$1"
@@ -194,7 +194,7 @@ _otel_escape_args() {
   # for arg in "$@"; do \echo "$arg"; done | _otel_escape_in # this may seem correct, but it doesnt handle linefeeds in arguments correctly
   local first=1
   for arg in "$@"; do
-    if [ "$first" = 1 ]; then local first=0; else \echo -n " "; fi
+    if \[ "$first" = 1 ]; then local first=0; else \echo -n " "; fi
     _otel_escape_arg "$arg"
   done
 }
@@ -207,7 +207,7 @@ _otel_call() {
   # old versions of dash dont set env vars properly
   # more specifically they do not make variables that are set in front of commands part of the child process env vars but only of the local execution environment
   \eval "$( { \printenv; \set; } | \grep '^OTEL_' | \cut -d= -f1 | \sort -u | \awk '{ print $1 "=\"$" $1 "\"" }' | _otel_line_join)" "\\$(_otel_escape_args "$@")"
-  # if [ "$?" -ne 0 ]; then \echo "$( { \printenv; \set; } | \grep '^OTEL_' | \cut -d= -f1 | \sort -u | \awk '{ print $1 "=\"$" $1 "\"" }')"; fi
+  # if \[ "$?" -ne 0 ]; then \echo "$( { \printenv; \set; } | \grep '^OTEL_' | \cut -d= -f1 | \sort -u | \awk '{ print $1 "=\"$" $1 "\"" }')"; fi
 }
 
 otel_observe() {
@@ -220,8 +220,8 @@ otel_observe() {
   local command="${command#otel_observe }"
   local command="${command#_otel_observe }"
   local attributes="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE"
-  if [ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0)"; fi
-  if [ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1)"; fi
+  if \[ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0)"; fi
+  if \[ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1)"; fi
   unset OTEL_SHELL_SPAN_NAME_OVERRIDE
   unset OTEL_SHELL_SPAN_KIND_OVERRIDE
   unset OTEL_SHELL_COMMANDLINE_OVERRIDE
@@ -237,7 +237,7 @@ otel_observe() {
   # run command
   otel_span_activate $span_id
   local exit_code=0
-  if [ "$OTEL_SHELL_SUPPRESS_LOG_COLLECTION" != TRUE ]; then
+  if \[ "$OTEL_SHELL_SUPPRESS_LOG_COLLECTION" != TRUE ]; then
     local traceparent=$OTEL_TRACEPARENT
     local stderr_pipe=$(\mktemp -u).opentelemetry_shell_$$.pipe
     \mkfifo $stderr_pipe
@@ -250,14 +250,14 @@ otel_observe() {
   otel_span_deactivate $span_id
   # set custom attributes, set final attributes, finish span
   otel_span_attribute $span_id subprocess.exit_code=$exit_code
-  if [ "$exit_code" -ne "0" ]; then
+  if \[ "$exit_code" -ne "0" ]; then
     otel_span_error $span_id
   fi
-  if [ -n "$attributes" ]; then
+  if \[ -n "$attributes" ]; then
     local IFS=','
     set -- $attributes
     for attribute in "$@"; do
-      if [ -n "$attribute" ]; then
+      if \[ -n "$attribute" ]; then
         otel_span_attribute $span_id "$attribute"
       fi
     done

@@ -9,7 +9,7 @@ _otel_propagate_curl() {
   local target=$(\echo /${url#*//*/})
   local host=$(\echo ${url} | \awk -F/ '{print $3}')
   local method=$(\echo "$@" | \awk '{for(i=1;i<=NF;i++) if ($i == "-X") print $(i+1)}')
-  if [ -z "$method" ]; then
+  if \[ -z "$method" ]; then
     local method=GET
   fi
   OTEL_SHELL_SPAN_NAME_OVERRIDE="$command" OTEL_SHELL_SPAN_KIND_OVERRIDE=CLIENT OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" \

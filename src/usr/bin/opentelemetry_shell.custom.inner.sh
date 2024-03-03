@@ -8,26 +8,26 @@ _otel_inject_inner_command_args() {
   local more_args="$OTEL_SHELL_INJECT_INNER_COMMAND_MORE_ARGS"
   unset OTEL_SHELL_INJECT_INNER_COMMAND_MORE_ARGS
   # command
-  if [ "$1" = "_otel_observe" ]; then \echo -n "$1 "; shift; fi
+  if \[ "$1" = "_otel_observe" ]; then \echo -n "$1 "; shift; fi
   local command="$1"
   _otel_escape_arg "$1"
   shift
   # options
   # -option or not executable file 
-  while [ "$#" -gt 0 ] && ( [ "${1%"${1#?}"}" = "-" ] || ! ( [ -x "$1" ] || [ -x "$(\which "$1")" ] ) ); do \echo -n " "; _otel_escape_arg "$1"; shift; done
+  while \[ "$#" -gt 0 ] && ( \[ "${1%"${1#?}"}" = "-" ] || ! ( \[ -x "$1" ] || \[ -x "$(\which "$1")" ] ) ); do \echo -n " "; _otel_escape_arg "$1"; shift; done
   # opt out if there is no command
-  if [ -z "$*" ]; then return 0; fi
+  if \[ -z "$*" ]; then return 0; fi
   # more options
   for arg in $more_args; do \echo -n " ";  _otel_escape_arg "$arg"; done
   # wrap command
   \echo -n " sh -c '. /usr/bin/opentelemetry_shell.sh
 "
-  while [ "$#" -gt 0 ]; do \echo -n " "; no_quote=1 _otel_escape_arg "$(_otel_escape_arg "$1")"; shift; done
+  while \[ "$#" -gt 0 ]; do \echo -n " "; no_quote=1 _otel_escape_arg "$(_otel_escape_arg "$1")"; shift; done
   \echo -n "' $(_otel_escape_arg "$command")"
 }
 
 _otel_inject_inner_command() {
-  local cmdline="$({ set -- "$@"; if [ "$1" = "_otel_observe" ]; then shift; fi; \echo -n "$*"; })"
+  local cmdline="$({ set -- "$@"; if \[ "$1" = "_otel_observe" ]; then shift; fi; \echo -n "$*"; })"
   OTEL_SHELL_COMMANDLINE_OVERRIDE="${OTEL_SHELL_COMMANDLINE_OVERRIDE:-$cmdline}" OTEL_SHELL_SPAN_NAME_OVERRIDE="${OTEL_SHELL_SPAN_NAME_OVERRIDE:-$cmdline}" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$*" \
     eval "$(_otel_inject_inner_command_args "$@")"
 }
@@ -57,17 +57,17 @@ _otel_alias_prepend sudo _otel_inject_sudo
 # xargs rm -rf => xargs -I {} rm -rf {} => xargs -I {} sh -c '. /otel.sh; rm -rf {}'
 
 _otel_inject_xargs() {
-  if [ "$(\expr "$*" : ".* -I .*")" -gt 0 ]; then
+  if \[ "$(\expr "$*" : ".* -I .*")" -gt 0 ]; then
      _otel_inject_inner_command "$@"
   else
-    if [ "$1" = "_otel_observe" ]; then
+    if \[ "$1" = "_otel_observe" ]; then
       shift; local executable="_otel_observe $1"
     else
       local executable="$1"
     fi
     local cmdline="$*"
     shift
-    if [ -z "$*" ]; then
+    if \[ -z "$*" ]; then
       $executable
     else
       OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" _otel_inject_xargs $executable -I '{}' "$@" '{}'

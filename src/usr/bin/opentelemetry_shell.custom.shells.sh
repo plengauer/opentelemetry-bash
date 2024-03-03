@@ -11,13 +11,13 @@ _otel_inject_shell_args_with_copy() {
   shift
   local is_script=0
   # command
-  if [ "$1" = "_otel_observe" ]; then _otel_escape_arg "$1"; \echo -n " "; shift; fi
+  if \[ "$1" = "_otel_observe" ]; then _otel_escape_arg "$1"; \echo -n " "; shift; fi
   _otel_escape_arg "$1"; \echo -n " "
   shift
   # options and script or command string
   local found_inner=0
-  while [ "$#" -gt 0 ]; do
-    if [ "$1" = "-c" ]; then
+  while \[ "$#" -gt 0 ]; do
+    if \[ "$1" = "-c" ]; then
       shift; local is_script=0; local found_inner=1; break
     else
       case "$1" in
@@ -29,23 +29,23 @@ _otel_inject_shell_args_with_copy() {
     shift
   done
   # abort in case its interactive or invalid aguments
-  if [ "$found_inner" -eq 0 ]; then return 0; fi 
+  if \[ "$found_inner" -eq 0 ]; then return 0; fi 
   # finish command
   _otel_escape_arg "$temporary_script"
   # setup temporary script
   local command="$1"
   shift
-  if [ "$is_script" = 0 ] && [ "$#" -gt 0 ]; then shift; fi
+  if \[ "$is_script" = 0 ] && \[ "$#" -gt 0 ]; then shift; fi
   \touch "$temporary_script"
   \chmod +x "$temporary_script"
   \echo "OTEL_SHELL_AUTO_INSTRUMENTATION_HINT=\"$temporary_script\"" >> "$temporary_script"
   \echo ". /usr/bin/opentelemetry_shell.sh" >> "$temporary_script"
   \echo "\set -- $(_otel_escape_args "$@")" >> "$temporary_script"
-  (if [ "$is_script" -eq 1 ]; then \cat "$command"; else \echo "$command"; fi) >> "$temporary_script"
+  (if \[ "$is_script" -eq 1 ]; then \cat "$command"; else \echo "$command"; fi) >> "$temporary_script"
 }
 
 _otel_inject_shell_with_copy() {
-  local cmdline="$({ set -- "$@"; if [ "$1" = "_otel_observe" ]; then shift; fi; \echo -n "$*"; })"
+  local cmdline="$({ set -- "$@"; if \[ "$1" = "_otel_observe" ]; then shift; fi; \echo -n "$*"; })"
   local temporary_script="$(\mktemp -u)"
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$(\echo "$cmdline" | _otel_line_join)" \
