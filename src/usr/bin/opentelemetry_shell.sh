@@ -140,7 +140,7 @@ _otel_filter_commands_by_instrumentation() {
 }
 
 _otel_filter_commands_by_special() {
-  \grep -v '^(alias|unalias|\.|source|exec)$'
+  \grep -v '^alias$' | \grep -v '^unalias$' | \grep -v '^\.$' | \grep -v '^source$' | \grep -v '^exec$' | \grep -v '^OTEL_' | \grep -v '^_otel_' | \grep -v '^otel_'
 }
 
 _otel_list_path_executables() {
@@ -156,7 +156,7 @@ _otel_list_alias_commands() {
 }
 
 _otel_list_aliased_commands() {
-  \alias | \cut -d= -f2- | _otel_line_split | \grep -v '^(OTEL_|_otel_)' | _otel_grep_valid_command
+  \alias | \cut -d= -f2- | _otel_line_split | _otel_grep_valid_command
 }
 
 _otel_list_builtin_commands() {
