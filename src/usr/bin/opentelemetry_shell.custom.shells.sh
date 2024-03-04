@@ -36,9 +36,9 @@ _otel_inject_shell_args_with_copy() {
   # finish command
   _otel_escape_arg "-c"
   \echo -n " "
-  _otel_escape_arg "'. $temporary_script'"
+  _otel_escape_arg "'. \"$temporary_script\"'"
   \echo -n " "
-  if \[ "$is_script" -eq 1 ]; then _otel_escape_arg "$1"; else _otel_escape_arg "$shell"; fi)
+  if \[ "$is_script" -eq 1 ]; then _otel_escape_arg "$1"; else _otel_escape_arg "$shell"; fi
   # setup temporary script
   if \[ "$is_script" = 0 ] && \[ "$#" -gt 0 ]; then shift; fi
   \touch "$temporary_script"
