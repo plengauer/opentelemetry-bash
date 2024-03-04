@@ -185,7 +185,7 @@ _otel_alias_and_instrument() {
   local exit_code=0
   "$@" || local exit_code=$?
   shift
-  if \[ -n "$*" ] && [ "${*#*=*}" = "$*" ]; then
+  if \[ -n "$*" ] && [ "${*#*=*}" != "$*" ]; then
     _otel_auto_instrument "$(\echo "$@" | _otel_line_split | \grep -m1 '=' 2> /dev/null | \tr '=' ' ')"
   fi
   return $exit_code
