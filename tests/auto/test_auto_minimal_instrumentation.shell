@@ -16,6 +16,7 @@ if [ -n "$(alias alias | grep otel_observe)" ] || [ -n "$(alias unalias | grep o
   exit 1
 fi
 
+set -x
 full_instrumentation="$($SHELL -c '. /usr/bin/opentelemetry_shell.sh
 alias')"
 assert_equals "" "$(printf '%s' "$full_instrumentation" | sed 's/^alias //g' | cut -d= -f1 | grep '^OTEL_')"
