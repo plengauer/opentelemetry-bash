@@ -1,6 +1,8 @@
 . /usr/bin/opentelemetry_shell.sh
 alias
 
+printf '%s' '0\n'
+
 if [ -n "$(alias | grep ech | grep cho)" ]; then printf '%s' "e-cho has been instrumented"; exit 1; fi
 . auto/count_fail_no_auto.shell
 alias
@@ -16,10 +18,12 @@ if [ -n "$(alias alias | grep otel_observe)" ] || [ -n "$(alias unalias | grep o
   exit 1
 fi
 
-full_instrumentation="$($SHELL -c '. /usr/bin/opentelemetry_shell.sh
-alias')"
-assert_equals "" "$(printf '%s' "$full_instrumentation" | sed 's/^alias //g' | cut -d= -f1 | grep '^OTEL_')"
-assert_equals "" "$(printf '%s' "$full_instrumentation" | sed 's/^alias //g' | cut -d= -f1 | grep '^_otel_')"
-assert_equals "" "$(printf '%s' "$full_instrumentation" | sed 's/^alias //g' | cut -d= -f1 | grep '^otel_')"
+
+file=$(mktemp)
+$SHELL -c '. /usr/bin/opentelemetry_shell.sh
+alias' | sed 's/^alias //g' | cut -d= -f1 > $file
+assert_equals "" "$(cat $file | grep '^OTEL_')"
+assert_equals "" "$(cat $file | grep '^_otel_')"
+assert_equals "" "$(cat $file | grep '^otel_')"
 
 exit 0
