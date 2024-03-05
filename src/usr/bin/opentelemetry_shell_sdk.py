@@ -44,6 +44,30 @@ class AwsEC2ResourceDetector(ResourceDetector):
         except:
             return Resource.create({})
 
+class OracleResourceDetector(ResourceDetector):
+    def detect(self) -> Resource:
+        try:
+            metadata = self.fetch_metadata()
+            resource = Resource.create({
+                "cloud.provider": "oracle",
+                "cloud.region": metadata['region'],
+                "cloud.availability_zone": metadata['availabilityDomain'],
+                "cloud.account_id": metadata['tenantId'],
+                "host.type": metadata['shape'],
+                "host.name": metadata['hostname'],
+                "host.id": metadata['id'],
+                "host.image_id": metadata['image']
+            })
+            return resource
+        except Exception as e:
+            print("Error fetching metadata:", e)
+            return Resource({})
+
+    def fetch_metadata(self):
+        response = requests.get('http://169.254.169.254/opc/v1/instance/', headers={'Authorization': 'Bearer Oracle'})
+        response.raise_for_status()  # Raise an exception for 4xx or 5xx status codes
+        return response.json()
+
 resource = {}
 spans = {}
 next_span_id = 0
@@ -87,6 +111,7 @@ def handle(scope, version, command, arguments):
                 KubernetesResourceDetector(),
                 DockerResourceDetector(),
                 OTELResourceDetector(),
+                OracleResourceDetector(),
             ]).merge(Resource.create(resource))
 
         if os.environ.get('OTEL_SHELL_TRACES_ENABLE') == 'TRUE':
