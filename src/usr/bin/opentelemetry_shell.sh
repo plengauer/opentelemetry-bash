@@ -152,7 +152,7 @@ _otel_list_path_commands() {
 }
 
 _otel_list_alias_commands() {
-  \alias | \sed 's/^alias //' | \grep -vF '[=' | | \awk -F'=' '{ var=$1; sub($1 FS,""); } ! ($0 ~ "^'\''((OTEL_|_otel_).* )*" var "'\''$") { print var }'
+  \alias | \sed 's/^alias //' | \grep -vF '[=' | \awk -F'=' '{ var=$1; sub($1 FS,""); } ! ($0 ~ "^'\''((OTEL_|_otel_).* )*" var "'\''$") { print var }'
 }
 
 _otel_list_aliased_commands() {
