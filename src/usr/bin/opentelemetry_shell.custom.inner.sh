@@ -58,7 +58,7 @@ _otel_alias_prepend sudo _otel_inject_sudo
 
 _otel_inject_xargs() {
   case "$*" in
-    * -I *) _otel_inject_inner_command "$@" ;;
+    *' -I '*) _otel_inject_inner_command "$@" ;;
     *)
       if \[ "$1" = "_otel_observe" ]; then
         shift; local executable="_otel_observe $1"
