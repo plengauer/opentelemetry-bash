@@ -113,7 +113,7 @@ otel_span_error() {
 otel_span_attribute() {
   local span_id=$1
   shift
-  local kvp="$@"
+  local kvp="$*"
   _otel_sdk_communicate "SPAN_ATTRIBUTE $span_id $kvp"
 }
 
@@ -175,7 +175,7 @@ _otel_escape_arg() {
     local do_escape=1
   else
     case "$1X" in
-      *[[:space:]\&\<\>\|\'\"\(\)\`!\$\;]*) local do_escape=1 ;;
+      *[[:space:]\&\<\>\|\'\"\(\)\`!\$\;\\]*) local do_escape=1 ;;
       *) local do_escape=0 ;;
     esac
   fi
