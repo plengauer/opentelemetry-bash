@@ -140,7 +140,7 @@ _otel_filter_commands_by_instrumentation() {
 }
 
 _otel_filter_commands_by_special() {
-  \grep -v '^(alias|unalias|\.|source|exec)$'
+  \grep -v '^alias$' | \grep -v '^unalias$' | \grep -v '^\.$' | \grep -v '^source$' | \grep -v '^exec$' | \grep -v '^OTEL_' | \grep -v '^_otel_' | \grep -v '^otel_'
 }
 
 _otel_list_path_executables() {
@@ -152,11 +152,11 @@ _otel_list_path_commands() {
 }
 
 _otel_list_alias_commands() {
-  \alias | \sed 's/^alias //' | \awk -F'=' '{ var=$1; sub($1 FS,""); } ! ($0 ~ "^'\''((OTEL_|_otel_).* )*" var "'\''$") { print var }'
+  \alias | \sed 's/^alias //' | \grep -vF '[=' | \awk -F'=' '{ var=$1; sub($1 FS,""); } ! ($0 ~ "^'\''((OTEL_|_otel_).* )*" var "'\''$") { print var }'
 }
 
 _otel_list_aliased_commands() {
-  \alias | \cut -d= -f2- | _otel_line_split | \grep -v '^(OTEL_|_otel_)' | _otel_grep_valid_command
+  \alias | \cut -d= -f2- | _otel_line_split | _otel_grep_valid_command
 }
 
 _otel_list_builtin_commands() {
@@ -185,7 +185,7 @@ _otel_alias_and_instrument() {
   local exit_code=0
   "$@" || local exit_code=$?
   shift
-  if \[ -n "$*" ]; then
+  if \[ -n "$*" ] && [ "${*#*=*}" != "$*" ]; then
     _otel_auto_instrument "$(\echo "$@" | _otel_line_split | \grep -m1 '=' 2> /dev/null | \tr '=' ' ')"
   fi
   return $exit_code
