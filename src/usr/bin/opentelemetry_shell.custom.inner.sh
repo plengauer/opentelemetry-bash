@@ -57,22 +57,23 @@ _otel_alias_prepend sudo _otel_inject_sudo
 # xargs rm -rf => xargs -I {} rm -rf {} => xargs -I {} sh -c '. /otel.sh; rm -rf {}'
 
 _otel_inject_xargs() {
-  if \[ "$(\expr "$*" : ".* -I .*")" -gt 0 ]; then
-     _otel_inject_inner_command "$@"
-  else
-    if \[ "$1" = "_otel_observe" ]; then
-      shift; local executable="_otel_observe $1"
-    else
-      local executable="$1"
-    fi
-    local cmdline="$*"
-    shift
-    if \[ -z "$*" ]; then
-      $executable
-    else
-      OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" _otel_inject_xargs $executable -I '{}' "$@" '{}'
-    fi
-  fi
+  case "$*" in
+    * -I *) _otel_inject_inner_command "$@" ;;
+    *)
+      if \[ "$1" = "_otel_observe" ]; then
+        shift; local executable="_otel_observe $1"
+      else
+        local executable="$1"
+      fi
+      local cmdline="$*"
+      shift
+      if \[ -z "$*" ]; then
+        $executable
+      else
+        OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" _otel_inject_xargs $executable -I '{}' "$@" '{}'
+      fi
+      ;;
+  esac
 }
 
 _otel_alias_prepend xargs _otel_inject_xargs
