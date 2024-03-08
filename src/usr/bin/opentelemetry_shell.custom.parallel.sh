@@ -71,7 +71,7 @@ $arg"
 
 _otel_inject_parallel_arguments() {
   local cmd="$({ set -- "$@"; if \[ "$1" = "_otel_observe" ]; then shift; fi; \echo -n "$1"; })"
-  if \[ -n "$("$cmd" --help | \grep ':::')" ]; then
+  if \[ -n "$("$cmd" -help | \grep ':::')" ]; then
     _otel_inject_parallel_gnu_arguments "$@"
   else
     _otel_inject_parallel_moreutils_arguments "$@"
