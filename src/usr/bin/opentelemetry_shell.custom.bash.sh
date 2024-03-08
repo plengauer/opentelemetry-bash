@@ -45,7 +45,7 @@ _otel_inject_shell_with_c_flag() {
   # we use an ugly hack here to optimize for single most common case
   if \[ "$1" = "_otel_observe" ] && \[ "$3" = "-c" ]; then export OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$(\echo "$cmdline" | _otel_line_join)"; fi
   local exit_code=0
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$(\echo "$cmdline" | _otel_line_join)" \
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE \
     \eval "$(_otel_inject_shell_args_with_c_flag "$@")" || local exit_code=$? # should we do \eval _otel_call "$(.....)" here? is it safer concerning transport of the OTEL control variables?
   unset OTEL_SHELL_AUTO_INSTRUMENTATION_HINT
   return $exit_code
