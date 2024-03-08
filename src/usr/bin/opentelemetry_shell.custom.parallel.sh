@@ -4,7 +4,7 @@
 # parallel -j 10 rm -i -f {} -- ./file1.txt ./file2.txt ./file3.txt => parallel -i -j 10 sh -c ' . /otel.sh; rm -f {}' parallel -- ./file1.txt ./file2.txt ./file3.txt
 # parallel -j 10 -- 'rm ./file1.txt' 'rm ./file2.txt' 'rm ./file3.txt' =>
 
-_otel_inject_parallel_arguments() {
+_otel_inject_parallel_moreutils_arguments() {
   if \[ "$1" = "_otel_observe" ]; then \echo -n "$1 "; shift; fi
   \echo -n "$1" ; shift
   local in_exec=0
@@ -39,6 +39,19 @@ $arg'\'' parallel'"
   done
 }
 
+_otel_inject_parallel_gnu_arguments() {
+  exit 1 # TODO
+}
+
+_otel_inject_parallel_arguments() {
+  local cmd="$({ set -- "$@"; if \[ "$1" = "_otel_observe" ]; then shift; fi; \echo -n "$1"; })"
+  if \[ -n "("$cmd --help" | \grep ':::')" ]; then
+    _otel_inject_parallel_gnu_arguments "$@"
+  else
+    _otel_inject_parallel_moreutils_arguments "$@"
+  fi
+}
+
 _otel_inject_parallel() {
     local cmdline="$({ set -- "$@"; if \[ "$1" = "_otel_observe" ]; then shift; fi; \echo -n "$*"; })"
     OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$*" \
@@ -46,3 +59,4 @@ _otel_inject_parallel() {
 }
 
 _otel_alias_prepend parallel _otel_inject_parallel
+_otel_alias_prepend parallel.moreutils _otel_inject_parallel
