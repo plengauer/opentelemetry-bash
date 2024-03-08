@@ -17,6 +17,6 @@ if [ "$count_0" -ne "$count_1" ] || [ "$count_1" -ne "$count_2" ]; then echo "$c
 count_0=$(alias | wc -l)
 unalias -a
 count_1=$(alias | wc -l)
-if [ "$count_0" -gt "$count_1" ]; then exit 1; fi # TODO
+if [ "$count_0" -ne "$count_1" ]; then then echo "$count_0 $count_1"; exit 1; fi
 
 exit 0
