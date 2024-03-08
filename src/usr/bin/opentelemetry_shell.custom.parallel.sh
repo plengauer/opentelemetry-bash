@@ -53,7 +53,7 @@ _otel_inject_parallel_gnu_arguments() {
       local in_exec=1
       \echo -n "sh -c '. /usr/bin/opentelemetry_shell.sh
 $arg"
-    elif \[ "$in_exec" -eq 1 ] && \[ "${arg%"${arg#?}"}" = ":::" ]; then
+    elif \[ "$in_exec" -eq 1 ] && \[ "$arg" = ":::${arg#":::"}" ]; then
       local in_exec=0
       \echo -n '"$@"'"' parallel '$arg'"
     else
@@ -65,7 +65,7 @@ $arg"
     fi
   done
   if \[ "$in_exec" -eq 1 ]; then
-    \echo -n '"$@"'"' parallel"
+    \echo -n ' "$@"'"' parallel"
   fi
 }
 
