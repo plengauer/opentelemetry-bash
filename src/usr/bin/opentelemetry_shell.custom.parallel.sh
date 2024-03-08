@@ -1,8 +1,8 @@
 #!/bin/false
 
-# parallel -j 10 rm -f -- ./file1.txt ./file2.txt ./file3.txt => parallel -j 10 sh -c ' . /otel.sh; rm -f "$1"' parallel -- ./file1.txt ./file2.txt ./file3.txt
-# parallel -i -j 10 rm -f {} -- ./file1.txt ./file2.txt ./file3.txt => parallel -i -j 10 sh -c ' . /otel.sh; rm -f {}' parallel -- ./file1.txt ./file2.txt ./file3.txt
-# parallel -j 10 -- 'rm ./file1.txt' 'rm ./file2.txt' 'rm ./file3.txt' =>
+# parallel -j 10 rm -f -- ./file1.txt ./file2.txt ./file3.txt => parallel -j 10 sh -c '. /otel.sh; rm -f "$1"' parallel -- ./file1.txt ./file2.txt ./file3.txt
+# parallel -i -j 10 rm -f {} -- ./file1.txt ./file2.txt ./file3.txt => parallel -i -j 10 sh -c '. /otel.sh; rm -f {}' parallel -- ./file1.txt ./file2.txt ./file3.txt
+# parallel -j 10 -- 'rm ./file1.txt' 'rm ./file2.txt' 'rm ./file3.txt' => parallel -j 10 -- 'sh -c \'. /otel.sh; rm -f ./file1.txt\' parallel' 'sh -c \'. /otel.sh; rm -f ./file2.txt\' parallel' 'sh -c \'. /otel.sh; rm -f ./file3.txt\' parallel'
 
 _otel_inject_parallel_moreutils_arguments() {
   if \[ "$1" = "_otel_observe" ]; then \echo -n "$1 "; shift; fi
@@ -39,11 +39,14 @@ $arg'\'' parallel'"
   done
 }
 
+# parallel rm -f ::: ./file1.txt ./file2.txt ./file3.txt => parallel sh -c '. ./otel.sh; rm -f "$@"' parallel ::: ./file1.txt ./file2.txt ./file3.txt
+# parallel rm -f {} ::: ./file1.txt ./file2.txt ./file3.txt => parallel sh -c '. ./otel.sh; rm -f {} "$@" parallel ::: ./file1.txt ./file2.txt ./file3.txt
+# parallel rm -f => parallel sh -c '. ./otel.sh; rm -f "$@"' parallel
+
 _otel_inject_parallel_gnu_arguments() {
   if \[ "$1" = "_otel_observe" ]; then \echo -n "$1 "; shift; fi
   \echo -n "$1" ; shift
   local in_exec=0
-  local explicit_pos=0
   for arg in "$@"; do
     \echo -n ' '
     if \[ "$in_exec" -eq 0 ] && ! \[ "${arg%"${arg#?}"}" = "-" ] && \[ -x "$(\which "$arg")" ]; then
@@ -52,20 +55,17 @@ _otel_inject_parallel_gnu_arguments() {
 $arg"
     elif \[ "$in_exec" -eq 1 ] && \[ "${arg%"${arg#?}"}" = ":::" ]; then
       local in_exec=0
-      if \[ "$explicit_pos" = 0 ]; then \echo -n '"$@"'; fi
-      \echo -n "' parallel '$arg'"
+      \echo -n '"$@"'"' parallel '$arg'"
     else
       if \[ "$in_exec" = 1 ]; then
         no_quote=1 _otel_escape_arg "$(_otel_escape_arg "$arg")"
       else
-        if \[ "$arg" = "-I" ]; then local explicit_pos=1; fi
         _otel_escape_arg "$arg"
       fi
     fi
   done
   if \[ "$in_exec" -eq 1 ]; then
-    if \[ "$explicit_pos" = 0 ]; then \echo -n '"$@"'; fi
-    \echo -n "' parallel"
+    \echo -n '"$@"'"' parallel"
   fi
 }
 
