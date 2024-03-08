@@ -63,6 +63,10 @@ $arg"
       fi
     fi
   done
+  if \[ "$in_exec" -eq 1 ]; do
+    if \[ "$explicit_pos" = 0 ]; then \echo -n '"$@"'; fi
+    \echo -n "' parallel"
+  done
 }
 
 _otel_inject_parallel_arguments() {
