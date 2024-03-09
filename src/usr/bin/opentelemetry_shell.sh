@@ -175,10 +175,20 @@ _otel_list_all_commands() {
 
 _otel_auto_instrument() {
   local hint="$1"
-  # both otel_filter_commands_by_file and _otel_filter_commands_by_instrumentation are functionally optional, but helps optimizing time because the following loop AND otel_instrument itself is expensive!
+  # special instrumentations
+  _otel_alias_prepend alias _otel_alias_and_instrument
+  _otel_alias_prepend unalias _otel_unalias_and_reinstrument
+  _otel_alias_prepend . _otel_instrument_and_source
+  if \[ "$_otel_shell" = "bash" ]; then _otel_alias_prepend source _otel_instrument_and_source; fi
+  # custom instrumentations (injections and propagations)
+  for file in $(\ls /usr/bin | \grep '^opentelemetry_shell.custom.' | \grep '.sh$'); do \. "$file"; done
+  # deshebangify commands, propagate special instrumentations into aliases, instrument all commands
+  # (both otel_filter_commands_by_file and _otel_filter_commands_by_instrumentation are functionally optional, but helps optimizing time because the following loop AND otel_instrument itself is expensive!)
   for cmd in $(_otel_list_path_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_hint "$hint" | \sort -u | _otel_line_join); do _otel_deshebangify $cmd || true; done
   for cmd in $(_otel_list_alias_commands | _otel_filter_commands_by_special | _otel_line_join); do _otel_dealiasify $cmd || true; done
   for cmd in $(_otel_list_all_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_instrumentation | _otel_filter_commands_by_hint "$hint" | \sort -u | _otel_line_join); do otel_instrument $cmd; done
+  # super special instrumentations
+  \alias exec='_otel_record_exec '$_otel_source_file_resolver' '$_otel_source_line_resolver'; exec'
 }
 
 _otel_alias_and_instrument() {
@@ -275,13 +285,7 @@ _otel_end_script() {
   otel_shutdown
 }
 
-_otel_alias_prepend alias _otel_alias_and_instrument
-_otel_alias_prepend unalias _otel_unalias_and_reinstrument
-_otel_alias_prepend . _otel_instrument_and_source
-if \[ "$_otel_shell" = "bash" ]; then _otel_alias_prepend source _otel_instrument_and_source; fi
-for file in $(\ls /usr/bin | \grep '^opentelemetry_shell.custom.' | \grep '.sh$'); do \. "$file"; done
 _otel_auto_instrument "$_otel_shell_auto_instrumentation_hint"
-\alias exec='_otel_record_exec "'$_otel_source_file_resolver'" "'$_otel_source_line_resolver'"; exec'
 trap _otel_end_script EXIT
 
 _otel_start_script
