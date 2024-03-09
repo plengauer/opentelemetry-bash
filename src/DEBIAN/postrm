@@ -1,7 +1,10 @@
-#!/bin/bash
-set -e
-rm -rf /opt/opentelemetry_bash &> /dev/null || true # clean the old install directory
-if [ "$1" = "remove" ] || [ "$1" = "purge" ]; then
+#!/bin/bash -e
+if [ "$1" = 'remove' ] || [ "$1" = 'purge' ] || [ "$1" = 'disappear' ]; then
   rm -rf /opt/opentelemetry_shell
+elif [ "$1" = 'upgrade' ]; then
+  # nothing to do
+elif [ "$1" = 'failed-upgrade' ] || [ "$1" = 'abort-install' ] || [ "$1" = 'abort-upgrade' ]; then
+  # nothing to do
+else
+  exit 1
 fi
-exit 0
