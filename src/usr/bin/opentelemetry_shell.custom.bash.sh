@@ -41,10 +41,14 @@ $1"; \echo -n " "; local found_inner=1; local dollar_zero=""; break
 _otel_inject_shell_with_c_flag() {
   local cmdline="$({ set -- "$@"; if \[ "$1" = "_otel_observe" ]; then shift; fi; \echo -n "$*"; })"
   # be careful about setting the instrumentation hint, setting it is only possible if its a -c invocation, not a script invocation
-  # for now, be safe and not set it. better have slow performance on -c injection that no spans at all from a script injection
-  # OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$(\echo "$cmdline" | _otel_line_join)"
+  # we could be safe and not set it. better have slow performance on -c injection that no spans at all from a script injection
+  # we use an ugly hack here to optimize for single most common case
+  if \[ "$1" = "_otel_observe" ] && \[ "$3" = "-c" ]; then export OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$(\echo "$cmdline" | _otel_line_join)"; fi
+  local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE \
-    \eval "$(_otel_inject_shell_args_with_c_flag "$@")" # should we do \eval _otel_call "$(.....)" here? is it safer concerning transport of the OTEL control variables?
+    \eval "$(_otel_inject_shell_args_with_c_flag "$@")" || local exit_code=$? # should we do \eval _otel_call "$(.....)" here? is it safer concerning transport of the OTEL control variables?
+  unset OTEL_SHELL_AUTO_INSTRUMENTATION_HINT
+  return $exit_code
 }
 
 _otel_alias_prepend bash _otel_inject_shell_with_c_flag
