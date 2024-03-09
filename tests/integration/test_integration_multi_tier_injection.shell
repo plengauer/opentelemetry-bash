@@ -5,7 +5,7 @@ if ! dpkg -s moreutils; then exit 0; fi
 
 # lets simulate the caller
 . /usr/bin/opentelemetry_shell.sh
-seq -s " philbot-discordgateway2http_" 0 3 | xargs -I '{}' echo philbot-discordgateway2http_'{}' | xargs parallel -j 3 sh -c 'echo $1' echo --
+seq -s " philbot-discordgateway2http_" 0 3 | xargs -I '{}' echo philbot-discordgateway2http_'{}' | xargs parallel.moreutils -j 3 sh -c 'echo $1' echo --
 # in reality the parallel command stops a docker container, but echo should be enough for this
 
 # lets assert
@@ -18,16 +18,16 @@ span="$(resolve_span '.name == "echo philbot-discordgateway2http_0 philbot-disco
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
 assert_equals "xargs -I {} echo philbot-discordgateway2http_{}" "$(\echo "$span" | jq -r '.resource.attributes."process.command"')"
 
-span="$(resolve_span '.name == "xargs parallel -j 3 sh -c echo $1 echo --"')"
+span="$(resolve_span '.name == "xargs parallel.moreutils -j 3 sh -c echo $1 echo --"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
 
-span="$(resolve_span '.name == "parallel -j 3 sh -c echo $1 echo -- philbot-discordgateway2http_0 philbot-discordgateway2http_1 philbot-discordgateway2http_2 philbot-discordgateway2http_3"')"
+span="$(resolve_span '.name == "parallel.moreutils -j 3 sh -c echo $1 echo -- philbot-discordgateway2http_0 philbot-discordgateway2http_1 philbot-discordgateway2http_2 philbot-discordgateway2http_3"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
-assert_equals 'xargs parallel -j 3 sh -c echo $1 echo --' "$(\echo "$span" | jq -r '.resource.attributes."process.command"')"
+assert_equals 'xargs parallel.moreutils -j 3 sh -c echo $1 echo --' "$(\echo "$span" | jq -r '.resource.attributes."process.command"')"
 
 span="$(resolve_span '.name == "sh -c echo $1 echo philbot-discordgateway2http_0"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
-assert_equals 'parallel -j 3 sh -c echo $1 echo -- philbot-discordgateway2http_0 philbot-discordgateway2http_1 philbot-discordgateway2http_2 philbot-discordgateway2http_3' "$(\echo "$span" | jq -r '.resource.attributes."process.command"')"
+assert_equals 'parallel.moreutils -j 3 sh -c echo $1 echo -- philbot-discordgateway2http_0 philbot-discordgateway2http_1 philbot-discordgateway2http_2 philbot-discordgateway2http_3' "$(\echo "$span" | jq -r '.resource.attributes."process.command"')"
 
 span="$(resolve_span '.name == "echo philbot-discordgateway2http_0"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
@@ -35,7 +35,7 @@ assert_equals 'sh -c echo $1 echo philbot-discordgateway2http_0' "$(\echo "$span
 
 span="$(resolve_span '.name == "sh -c echo $1 echo philbot-discordgateway2http_1"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
-assert_equals 'parallel -j 3 sh -c echo $1 echo -- philbot-discordgateway2http_0 philbot-discordgateway2http_1 philbot-discordgateway2http_2 philbot-discordgateway2http_3' "$(\echo "$span" | jq -r '.resource.attributes."process.command"')"
+assert_equals 'parallel.moreutils -j 3 sh -c echo $1 echo -- philbot-discordgateway2http_0 philbot-discordgateway2http_1 philbot-discordgateway2http_2 philbot-discordgateway2http_3' "$(\echo "$span" | jq -r '.resource.attributes."process.command"')"
 
 span="$(resolve_span '.name == "echo philbot-discordgateway2http_1"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
@@ -43,7 +43,7 @@ assert_equals 'sh -c echo $1 echo philbot-discordgateway2http_1' "$(\echo "$span
 
 span="$(resolve_span '.name == "sh -c echo $1 echo philbot-discordgateway2http_2"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
-assert_equals 'parallel -j 3 sh -c echo $1 echo -- philbot-discordgateway2http_0 philbot-discordgateway2http_1 philbot-discordgateway2http_2 philbot-discordgateway2http_3' "$(\echo "$span" | jq -r '.resource.attributes."process.command"')"
+assert_equals 'parallel.moreutils -j 3 sh -c echo $1 echo -- philbot-discordgateway2http_0 philbot-discordgateway2http_1 philbot-discordgateway2http_2 philbot-discordgateway2http_3' "$(\echo "$span" | jq -r '.resource.attributes."process.command"')"
 
 span="$(resolve_span '.name == "echo philbot-discordgateway2http_2"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
@@ -51,7 +51,7 @@ assert_equals 'sh -c echo $1 echo philbot-discordgateway2http_2' "$(\echo "$span
 
 span="$(resolve_span '.name == "sh -c echo $1 echo philbot-discordgateway2http_3"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
-assert_equals 'parallel -j 3 sh -c echo $1 echo -- philbot-discordgateway2http_0 philbot-discordgateway2http_1 philbot-discordgateway2http_2 philbot-discordgateway2http_3' "$(\echo "$span" | jq -r '.resource.attributes."process.command"')"
+assert_equals 'parallel.moreutils -j 3 sh -c echo $1 echo -- philbot-discordgateway2http_0 philbot-discordgateway2http_1 philbot-discordgateway2http_2 philbot-discordgateway2http_3' "$(\echo "$span" | jq -r '.resource.attributes."process.command"')"
 
 span="$(resolve_span '.name == "echo philbot-discordgateway2http_3"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
