@@ -237,7 +237,7 @@ otel_observe() {
   # run command
   otel_span_activate $span_id
   local exit_code=0
-  if \[ "$OTEL_SHELL_SUPPRESS_LOG_COLLECTION" != TRUE ]; then
+  if ! \[ -t 2 ] && \[ "$OTEL_SHELL_SUPPRESS_LOG_COLLECTION" != TRUE ]; then
     local traceparent=$OTEL_TRACEPARENT
     local stderr_pipe=$(\mktemp -u).opentelemetry_shell_$$.pipe
     \mkfifo $stderr_pipe
