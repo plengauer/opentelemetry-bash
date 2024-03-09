@@ -34,12 +34,12 @@ fi
 unset OTEL_SHELL_AUTO_INSTRUMENTATION_HINT
 
 if \[ "$_otel_shell" = "bash" ]; then
-  _otel_source_file_resolver='"${BASH_SOURCE[0]}"'
+  _otel_source_file_resolver='${BASH_SOURCE[0]}'
 else
-  _otel_source_file_resolver='"$0"'
+  _otel_source_file_resolver='$0'
 fi
-_otel_source_line_resolver='"$LINENO"'
-_otel_source_func_resolver='"$FUNCNAME"'
+_otel_source_line_resolver='$LINENO'
+_otel_source_func_resolver='$FUNCNAME'
 
 if \[ "$_otel_shell" = "bash" ]; then
   shopt -s expand_aliases &> /dev/null
@@ -281,7 +281,7 @@ _otel_alias_prepend . _otel_instrument_and_source
 if \[ "$_otel_shell" = "bash" ]; then _otel_alias_prepend source _otel_instrument_and_source; fi
 for file in $(\ls /usr/bin | \grep '^opentelemetry_shell.custom.' | \grep '.sh$'); do \. "$file"; done
 _otel_auto_instrument "$_otel_shell_auto_instrumentation_hint"
-\alias exec='_otel_record_exec '$_otel_source_file_resolver' '$_otel_source_line_resolver'; exec'
+\alias exec='_otel_record_exec "'$_otel_source_file_resolver'" "'$_otel_source_line_resolver'"; exec'
 trap _otel_end_script EXIT
 
 _otel_start_script
