@@ -113,7 +113,7 @@ otel_span_error() {
 otel_span_attribute() {
   local span_id=$1
   shift
-  local kvp="$@"
+  local kvp="$*"
   _otel_sdk_communicate "SPAN_ATTRIBUTE $span_id $kvp"
 }
 
@@ -175,7 +175,7 @@ _otel_escape_arg() {
     local do_escape=1
   else
     case "$1X" in
-      *[[:space:]\&\<\>\|\'\"\(\)\`!\$\;]*) local do_escape=1 ;;
+      *[[:space:]\&\<\>\|\'\"\(\)\`!\$\;\\]*) local do_escape=1 ;;
       *) local do_escape=0 ;;
     esac
   fi
@@ -206,8 +206,11 @@ _otel_line_join() {
 _otel_call() {
   # old versions of dash dont set env vars properly
   # more specifically they do not make variables that are set in front of commands part of the child process env vars but only of the local execution environment
-  \eval "$( { \printenv; \set; } | \grep '^OTEL_' | \cut -d= -f1 | \sort -u | \awk '{ print $1 "=\"$" $1 "\"" }' | _otel_line_join)" "\\$(_otel_escape_args "$@")"
-  # if \[ "$?" -ne 0 ]; then \echo "$( { \printenv; \set; } | \grep '^OTEL_' | \cut -d= -f1 | \sort -u | \awk '{ print $1 "=\"$" $1 "\"" }')"; fi
+  if \[ "$_otel_shell" = "dash" ]; then
+    \eval "$( { \printenv; \set; } | \grep '^OTEL_' | \cut -d= -f1 | \sort -u | \awk '{ print $1 "=\"$" $1 "\"" }' | _otel_line_join)" "\\$(_otel_escape_args "$@")"
+  else
+    "$@"
+  fi
 }
 
 otel_observe() {
@@ -237,7 +240,7 @@ otel_observe() {
   # run command
   otel_span_activate $span_id
   local exit_code=0
-  if \[ "$OTEL_SHELL_SUPPRESS_LOG_COLLECTION" != TRUE ]; then
+  if ! \[ -t 2 ] && \[ "$OTEL_SHELL_SUPPRESS_LOG_COLLECTION" != TRUE ]; then
     local traceparent=$OTEL_TRACEPARENT
     local stderr_pipe=$(\mktemp -u).opentelemetry_shell_$$.pipe
     \mkfifo $stderr_pipe
