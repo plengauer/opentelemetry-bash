@@ -189,8 +189,8 @@ _otel_auto_instrument() {
   for cmd in $(_otel_list_alias_commands | _otel_filter_commands_by_special | _otel_line_join); do _otel_dealiasify $cmd || true; done
   for cmd in $(_otel_list_all_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_instrumentation | _otel_filter_commands_by_hint "$hint" | \sort -u | _otel_line_join); do otel_instrument $cmd; done
   # super special instrumentations
-  \alias .='_otel_auto_instrument_source . '$_otel_source_file_resolver' '$_otel_source_line_resolver'; .'
-  if \[ "$_otel_shell" = "bash" ]; then \alias source='_otel_auto_instrument_source source '$_otel_source_file_resolver' '$_otel_source_line_resolver'; source'; fi
+  \alias .='_otel_auto_instrument_source "$#" "$@" .'
+  if \[ "$_otel_shell" = "bash" ]; then \alias source='_otel_auto_instrument_source "$#" "$@" source'; fi
   \alias exec='_otel_record_exec '$_otel_source_file_resolver' '$_otel_source_line_resolver'; exec'
 }
 
@@ -216,14 +216,13 @@ _otel_unalias_and_reinstrument() {
   return $exit_code
 }
 
-_otel_auto_instrument_source() {
-  local source_command="$1"
-  local script_file="$2"
-  local script_line="$3"
-  if \[ -z "$script_file" ] || \[ -z "$script_line" ] || ! \[ -f "$script_file" ]; then return 0; fi
-  local sourced_files="$(\cat "$script_file" | \sed -n "$script_line"p | \grep -F "$source_command" | \tr ';' '\n' | if \[ "$source_command" = '.' ]; then \sed "s/.*\. //"; else \sed "s/.*$source_command //"; fi | \cut -d' ' -f1 | \tr '\n' ' ')"
-  # avoid piping directly into the loop, otherwise, it will be a subshell and aliases won't take an affect here
-  for sourced_file in $sourced_files; do _otel_auto_instrument "$sourced_file"; done
+_otel_instrument_and_source() {
+  local n="$1"
+  shift
+  local command="$(eval '\echo $'"$(($n+1))")"
+  local file="$(eval '\echo $'"$(($n+2))")"
+  if \[ -f "$file" ]; then _otel_auto_instrument "$file"; fi
+  eval "'$command' '$file' $(if \[ $# -gt $(($n + 2)) ]; then \seq $(($n + 2 + 1)) $#; else \seq $1 $n; fi | while read i; do \echo '"$'"$i"'"'; done | _otel_line_join)"
 }
 
 _otel_record_exec() {
