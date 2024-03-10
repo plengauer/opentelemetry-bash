@@ -286,7 +286,7 @@ _otel_alias_prepend unalias _otel_unalias_and_reinstrument
 for file in $(\ls /usr/bin | \grep '^opentelemetry_shell.custom.' | \grep '.sh$'); do \. "$file"; done
 _otel_auto_instrument "$_otel_shell_auto_instrumentation_hint"
 \alias .='_otel_auto_instrument_source . '$_otel_source_file_resolver' '$_otel_source_line_resolver'; .'
-if \[ "$_otel_shell" = "bash" ]; then _\alias source='_otel_auto_instrument_source source '$_otel_source_file_resolver' '$_otel_source_line_resolver'; source'; fi
+if \[ "$_otel_shell" = "bash" ]; then \alias source='_otel_auto_instrument_source source '$_otel_source_file_resolver' '$_otel_source_line_resolver'; source'; fi
 \alias exec='_otel_record_exec '$_otel_source_file_resolver' '$_otel_source_line_resolver'; exec'
 trap _otel_end_script EXIT
 
