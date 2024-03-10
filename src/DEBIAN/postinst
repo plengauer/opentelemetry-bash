@@ -2,7 +2,7 @@
 rm -rf /opt/opentelemetry_bash &> /dev/null || true # clean the old install directory
 if [ "$1" = 'abort-configure' ] || [ "$1" = 'abort-upgrade' ] || [ "$1" = 'abort-remove' ] || [ "$1" = 'abort-deconfigure' ]; then
   # nothing we can do
-elif [ "$1" = 'triggered' ]; then
+elif [ "$1" = 'triggered' ] || [ "$1" = 'reconfigure' ]; then
   # nothing to do
 elif [ "$1" = 'configure' ]; then
   python3 -m venv /opt/opentelemetry_shell/venv
