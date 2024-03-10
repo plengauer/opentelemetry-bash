@@ -261,7 +261,7 @@ _otel_start_script() {
     otel_span_attribute $otel_root_span_id debian.package.operation="$(\echo "$cmdline" | \cut -d'.' -f2-)"
   elif ! \[ "$OTEL_SHELL_AUTO_INJECTED" = TRUE ] && \[ -z "$OTEL_TRACEPARENT" ]; then
     otel_root_span_id="$(otel_span_start SERVER "$(_otel_command_self)")"
-  elif ! \[ "$OTEL_SHELL_AUTO_INJECTED" = TRUE ] && \[ -n "$OTEL_TRACEPARENT" ]
+  elif ! \[ "$OTEL_SHELL_AUTO_INJECTED" = TRUE ] && \[ -n "$OTEL_TRACEPARENT" ]; then
     otel_root_span_id="$(otel_span_start INTERNAL "$(_otel_command_self)")"
   fi
   if [ -n "$otel_root_span_id" ]; then otel_span_activate $otel_root_span_id; fi
