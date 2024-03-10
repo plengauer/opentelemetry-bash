@@ -203,12 +203,20 @@ _otel_unalias_and_reinstrument() {
   return $exit_code
 }
 
-_otel_instrument_and_source() {
-  local file="$2"
-  if \[ -f "$file" ]; then
-    _otel_auto_instrument "$file"
-  fi
-  "$@"
+_otel_auto_instrument_source() {
+  local source_command="$1"
+  local script_file="$2"
+  local script_line="$3"
+  if \[ -z "$script_file" ] || \[ -z "$script_line" ] || ! \[ -f "$script_file" ]; then return 0; fi
+  \cat "$script_file" \
+    | \sed -n "$script_line"p \
+    | \grep -F "$source_command" \
+    | \tr ';' '\n' \
+    | if \[ "$source_command" = '.' ]; then \sed "s/.*\. //"; else \sed "s/.*$source_command //"; fi \
+    | \cut -d' ' -f1 \
+    | while read sourced_file; do
+      _otel_auto_instrument "$sourced_file"
+    done
 }
 
 _otel_record_exec() {
@@ -275,10 +283,10 @@ _otel_end_script() {
 
 _otel_alias_prepend alias _otel_alias_and_instrument
 _otel_alias_prepend unalias _otel_unalias_and_reinstrument
-_otel_alias_prepend . _otel_instrument_and_source
-if \[ "$_otel_shell" = "bash" ]; then _otel_alias_prepend source _otel_instrument_and_source; fi
 for file in $(\ls /usr/bin | \grep '^opentelemetry_shell.custom.' | \grep '.sh$'); do \. "$file"; done
 _otel_auto_instrument "$_otel_shell_auto_instrumentation_hint"
+\alias .='_otel_auto_instrument_source . '$_otel_source_file_resolver' '$_otel_source_line_resolver'; .'
+if \[ "$_otel_shell" = "bash" ]; then _\alias source='_otel_auto_instrument_source source '$_otel_source_file_resolver' '$_otel_source_line_resolver'; source'; fi
 \alias exec='_otel_record_exec '$_otel_source_file_resolver' '$_otel_source_line_resolver'; exec'
 trap _otel_end_script EXIT
 
