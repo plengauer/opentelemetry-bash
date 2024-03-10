@@ -14,11 +14,15 @@ unset OTEL_SHELL_SPAN_KIND_OVERRIDE
 unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
 unset OTEL_SHELL_SUPPRESS_LOG_COLLECTION
 
+_otel_command_real_self() {
+  \ps -p $$ -o args | \grep -v COMMAND || \cat /proc/$$/cmdline
+}
+
 _otel_command_self() {
   if \[ -n "$_otel_commandline_override" ]; then
-    \echo $_otel_commandline_override
+    \echo "$_otel_commandline_override"
   else
-    \ps -p $$ -o args | \grep -v COMMAND || \cat /proc/$$/cmdline
+    _otel_command_real_self
   fi
 }
 
