@@ -7,7 +7,7 @@
 
 _otel_remote_sdk_pipe=$(\mktemp -u)_opentelemetry_shell_$$.pipe
 _otel_shell=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
-_otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"
+if \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "$PPID" ]; then _otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"; fi
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE
 unset OTEL_SHELL_SPAN_NAME_OVERRIDE
 unset OTEL_SHELL_SPAN_KIND_OVERRIDE
