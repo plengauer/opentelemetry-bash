@@ -189,8 +189,8 @@ _otel_auto_instrument() {
   for cmd in $(_otel_list_alias_commands | _otel_filter_commands_by_special | _otel_line_join); do _otel_dealiasify $cmd || true; done
   for cmd in $(_otel_list_all_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_instrumentation | _otel_filter_commands_by_hint "$hint" | \sort -u | _otel_line_join); do otel_instrument $cmd; done
   # super special instrumentations
-  \alias .='_otel_auto_instrument_source "$#" "$@" .'
-  if \[ "$_otel_shell" = "bash" ]; then \alias source='_otel_auto_instrument_source "$#" "$@" source'; fi
+  \alias .='_otel_instrument_and_source "$#" "$@" .'
+  if \[ "$_otel_shell" = "bash" ]; then \alias source='_otel_instrument_and_source "$#" "$@" source'; fi
   \alias exec='_otel_record_exec '$_otel_source_file_resolver' '$_otel_source_line_resolver'; exec'
 }
 
