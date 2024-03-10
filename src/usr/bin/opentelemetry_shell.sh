@@ -176,6 +176,7 @@ _otel_list_all_commands() {
 _otel_auto_instrument() {
   local hint="$1"
   # both otel_filter_commands_by_file and _otel_filter_commands_by_instrumentation are functionally optional, but helps optimizing time because the following loop AND otel_instrument itself is expensive!
+  # avoid piping directly into the loops, then it will be considered a subshell and aliases won't take effect here
   for cmd in $(_otel_list_path_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_hint "$hint" | \sort -u | _otel_line_join); do _otel_deshebangify $cmd || true; done
   for cmd in $(_otel_list_alias_commands | _otel_filter_commands_by_special | _otel_line_join); do _otel_dealiasify $cmd || true; done
   for cmd in $(_otel_list_all_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_instrumentation | _otel_filter_commands_by_hint "$hint" | \sort -u | _otel_line_join); do otel_instrument $cmd; done
@@ -208,15 +209,9 @@ _otel_auto_instrument_source() {
   local script_file="$2"
   local script_line="$3"
   if \[ -z "$script_file" ] || \[ -z "$script_line" ] || ! \[ -f "$script_file" ]; then return 0; fi
-  \cat "$script_file" \
-    | \sed -n "$script_line"p \
-    | \grep -F "$source_command" \
-    | \tr ';' '\n' \
-    | if \[ "$source_command" = '.' ]; then \sed "s/.*\. //"; else \sed "s/.*$source_command //"; fi \
-    | \cut -d' ' -f1 \
-    | while read sourced_file; do
-      _otel_auto_instrument "$sourced_file"
-    done
+  local sourced_files="$(\cat "$script_file" | \sed -n "$script_line"p | \grep -F "$source_command" | \tr ';' '\n' | if \[ "$source_command" = '.' ]; then \sed "s/.*\. //"; else \sed "s/.*$source_command //"; fi | \cut -d' ' -f1 | \tr '\n' ' ')"
+  # avoid piping directly into the loop, otherwise, it will be a subshell and aliases won't take an affect here
+  for sourced_file in $sourced_files; do _otel_auto_instrument "$sourced_file"; done
 }
 
 _otel_record_exec() {
