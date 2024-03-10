@@ -16,7 +16,7 @@ unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
 unset OTEL_SHELL_SUPPRESS_LOG_COLLECTION
 
 _otel_command_real_self() {
-  \ps -p $$ -o args | \grep -v COMMAND || \cat /proc/$$/cmdline
+  \ps -p $$ -o args | \grep -v COMMAND || \cat /proc/$$/cmdline | \tr -d '\000'
 }
 
 _otel_command_self() {
