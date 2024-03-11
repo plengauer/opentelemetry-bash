@@ -217,12 +217,13 @@ _otel_unalias_and_reinstrument() {
 }
 
 _otel_instrument_and_source() {
+  \echo "DEBUG INSTRUMENT_AND_SOURCE call $*" >&2
   local n="$1"
   shift
   local command="$(eval '\echo $'"$(($n+1))")"
   local file="$(eval '\echo $'"$(($n+2))")"
   if \[ -f "$file" ]; then _otel_auto_instrument "$file"; fi
-  \echo "DEBUG INSTRUMENT_AND_SOURCE '$command' '$file' $(if \[ $# -gt $(($n + 2)) ]; then \seq $(($n + 2 + 1)) $#; else \seq 1 $n; fi | while read i; do \echo '"$'"$i"'"'; done | _otel_line_join)" >&2
+  \echo "DEBUG INSTRUMENT_AND_SOURCE eval '$command' '$file' $(if \[ $# -gt $(($n + 2)) ]; then \seq $(($n + 2 + 1)) $#; else \seq 1 $n; fi | while read i; do \echo '"$'"$i"'"'; done | _otel_line_join)" >&2
   eval "'$command' '$file' $(if \[ $# -gt $(($n + 2)) ]; then \seq $(($n + 2 + 1)) $#; else \seq 1 $n; fi | while read i; do \echo '"$'"$i"'"'; done | _otel_line_join)"
 }
 
