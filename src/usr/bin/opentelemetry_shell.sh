@@ -11,7 +11,7 @@ if \[ "$_otel_shell_injected" = "TRUE" ]; then
 fi
 _otel_shell_injected=TRUE
 
-. /usr/bin/opentelemetry_shell_api.sh
+\. /usr/bin/opentelemetry_shell_api.sh
 
 if \[ "$_otel_shell" = "bash" ] && \[ -n "$BASHPID" ] && \[ "$$" != "$BASHPID" ]; then
   echo "WARNING The OpenTelemetry shell file for auto-instrumentation is sourced in a subshell, automatic instrumentation will only be active within that subshell!" >&2
@@ -181,13 +181,16 @@ _otel_auto_instrument() {
   _otel_alias_prepend . _otel_instrument_and_source
   if \[ "$_otel_shell" = "bash" ]; then _otel_alias_prepend source _otel_instrument_and_source; fi
   # custom instrumentations (injections and propagations)
-  for file in $(\ls /usr/bin | \grep '^opentelemetry_shell.custom.' | \grep '.sh$'); do \. "$file"; done
+  for otel_custom_file in $(\ls /usr/bin | \grep '^opentelemetry_shell.custom.' | \grep '.sh$'); do \. "$otel_custom_file"; done
   # deshebangify commands, propagate special instrumentations into aliases, instrument all commands
-  # (both otel_filter_commands_by_file and _otel_filter_commands_by_instrumentation are functionally optional, but helps optimizing time because the following loop AND otel_instrument itself is expensive!)
+  ## (both otel_filter_commands_by_file and _otel_filter_commands_by_instrumentation are functionally optional, but helps optimizing time because the following loop AND otel_instrument itself is expensive!)
+  ## avoid piping directly into the loops, then it will be considered a subshell and aliases won't take effect here
   for cmd in $(_otel_list_path_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_hint "$hint" | \sort -u | _otel_line_join); do _otel_deshebangify $cmd || true; done
   for cmd in $(_otel_list_alias_commands | _otel_filter_commands_by_special | _otel_line_join); do _otel_dealiasify $cmd || true; done
   for cmd in $(_otel_list_all_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_instrumentation | _otel_filter_commands_by_hint "$hint" | \sort -u | _otel_line_join); do otel_instrument $cmd; done
   # super special instrumentations
+  \alias .='_otel_instrument_and_source "$#" "$@" .'
+  if \[ "$_otel_shell" = "bash" ]; then \alias source='_otel_instrument_and_source "$#" "$@" source'; fi
   \alias exec='_otel_record_exec '$_otel_source_file_resolver' '$_otel_source_line_resolver'; exec'
 }
 
@@ -214,11 +217,12 @@ _otel_unalias_and_reinstrument() {
 }
 
 _otel_instrument_and_source() {
-  local file="$2"
-  if \[ -f "$file" ]; then
-    _otel_auto_instrument "$file"
-  fi
-  "$@"
+  local n="$1"
+  shift
+  local command="$(eval '\echo $'"$(($n+1))")"
+  local file="$(eval '\echo $'"$(($n+2))")"
+  if \[ -f "$file" ]; then _otel_auto_instrument "$file"; fi
+  eval "'$command' '$file' $(if \[ $# -gt $(($n + 2)) ]; then \seq $(($n + 2 + 1)) $#; else \seq 1 $n; fi | while read i; do \echo '"$'"$i"'"'; done | _otel_line_join)"
 }
 
 _otel_record_exec() {
