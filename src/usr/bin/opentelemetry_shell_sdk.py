@@ -59,11 +59,12 @@ class OracleResourceDetector(ResourceDetector):
                 "host.image_id": metadata['image']
             })
             return resource
-        except Exception as e:
+        except Exception:
             return Resource({})
 
     def fetch_metadata(self):
         response = requests.get('http://169.254.169.254/opc/v1/instance/', headers={'Authorization': 'Bearer Oracle'})
+        response.raise_for_status()  # Raise an exception for 4xx or 5xx status codes
         return response.json()
 
 resource = {}
