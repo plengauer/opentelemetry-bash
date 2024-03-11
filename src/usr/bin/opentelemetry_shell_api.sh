@@ -7,7 +7,7 @@
 
 _otel_remote_sdk_pipe=$(\mktemp -u)_opentelemetry_shell_$$.pipe
 _otel_shell=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
-if \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "$PPID" ]; then _otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"; fi
+if \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "$PPID" ] || \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "0" ]; then _otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"; fi
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE
 unset OTEL_SHELL_SPAN_NAME_OVERRIDE
@@ -250,7 +250,7 @@ otel_observe() {
     local stderr_pipe=$(\mktemp -u).opentelemetry_shell_$$.pipe
     \mkfifo $stderr_pipe
     ( (while IFS= read -r line; do otel_log_record $traceparent "$line"; \echo "$line" >&2; done < $stderr_pipe) & )
-    OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$$" _otel_call "$@" 2> $stderr_pipe || local exit_code=$?
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="${OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE:-$$}" _otel_call "$@" 2> $stderr_pipe || local exit_code=$?
     \rm $stderr_pipe
   else
     OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" _otel_call "$@" || local exit_code=$?
