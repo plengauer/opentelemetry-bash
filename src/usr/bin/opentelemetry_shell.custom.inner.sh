@@ -70,7 +70,7 @@ _otel_inject_xargs() {
       if \[ -z "$*" ]; then
         $executable
       else
-        OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" _otel_inject_xargs $executable -I '{}' "$@" '{}'
+        OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$$" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" _otel_inject_xargs $executable -I '{}' "$@" '{}'
       fi
       ;;
   esac
