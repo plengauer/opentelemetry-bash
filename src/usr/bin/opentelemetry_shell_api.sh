@@ -7,18 +7,23 @@
 
 _otel_remote_sdk_pipe=$(\mktemp -u)_opentelemetry_shell_$$.pipe
 _otel_shell=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
-_otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"
+if \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "$PPID" ] || \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "0" ]; then _otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"; fi
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE
+unset OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE
 unset OTEL_SHELL_SPAN_NAME_OVERRIDE
 unset OTEL_SHELL_SPAN_KIND_OVERRIDE
 unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
 unset OTEL_SHELL_SUPPRESS_LOG_COLLECTION
 
+_otel_command_real_self() {
+  \ps -p $$ -o args | \grep -v COMMAND || \cat /proc/$$/cmdline | \tr -d '\000'
+}
+
 _otel_command_self() {
   if \[ -n "$_otel_commandline_override" ]; then
-    \echo $_otel_commandline_override
+    \echo "$_otel_commandline_override"
   else
-    \ps -p $$ -o args | \grep -v COMMAND || \cat /proc/$$/cmdline
+    _otel_command_real_self
   fi
 }
 
@@ -222,6 +227,7 @@ otel_observe() {
   local command="${OTEL_SHELL_COMMANDLINE_OVERRIDE:-$*}"
   local command="${command#otel_observe }"
   local command="${command#_otel_observe }"
+  local command_signature="${OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE:-$$}"
   local attributes="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE"
   if \[ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0)"; fi
   if \[ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1)"; fi
@@ -245,7 +251,7 @@ otel_observe() {
     local stderr_pipe=$(\mktemp -u).opentelemetry_shell_$$.pipe
     \mkfifo $stderr_pipe
     ( (while IFS= read -r line; do otel_log_record $traceparent "$line"; \echo "$line" >&2; done < $stderr_pipe) & )
-    OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" _otel_call "$@" 2> $stderr_pipe || local exit_code=$?
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$command_signature" _otel_call "$@" 2> $stderr_pipe || local exit_code=$?
     \rm $stderr_pipe
   else
     OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" _otel_call "$@" || local exit_code=$?

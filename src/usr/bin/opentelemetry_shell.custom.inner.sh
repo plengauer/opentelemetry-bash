@@ -28,7 +28,7 @@ _otel_inject_inner_command_args() {
 
 _otel_inject_inner_command() {
   local cmdline="$({ set -- "$@"; if \[ "$1" = "_otel_observe" ]; then shift; fi; \echo -n "$*"; })"
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="${OTEL_SHELL_COMMANDLINE_OVERRIDE:-$cmdline}" OTEL_SHELL_SPAN_NAME_OVERRIDE="${OTEL_SHELL_SPAN_NAME_OVERRIDE:-$cmdline}" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$*" \
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="${OTEL_SHELL_COMMANDLINE_OVERRIDE:-$cmdline}" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_SPAN_NAME_OVERRIDE="${OTEL_SHELL_SPAN_NAME_OVERRIDE:-$cmdline}" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$*" \
     eval "$(_otel_inject_inner_command_args "$@")"
 }
 
@@ -48,7 +48,7 @@ _otel_alias_prepend flock _otel_inject_inner_command
 # sudo apt-get update => sudo sh -c '. /otel.sh; apt-get update' 'sudo'
 
 _otel_inject_sudo() {
-  OTEL_SHELL_INJECT_INNER_COMMAND_MORE_ARGS="--preserve-env=$(\printenv | \grep '^OTEL_' | \cut -d= -f1 | \sort -u | \tr '\n' ','),OTEL_SHELL_COMMANDLINE_OVERRIDE,OTEL_SHELL_AUTO_INJECTED,OTEL_SHELL_AUTO_INSTRUMENTATION_HINT" _otel_inject_inner_command "$@"
+  OTEL_SHELL_INJECT_INNER_COMMAND_MORE_ARGS="--preserve-env=$(\printenv | \grep '^OTEL_' | \cut -d= -f1 | \sort -u | \tr '\n' ','),OTEL_SHELL_COMMANDLINE_OVERRIDE,OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE,OTEL_SHELL_AUTO_INJECTED,OTEL_SHELL_AUTO_INSTRUMENTATION_HINT" _otel_inject_inner_command "$@"
 }
 
 _otel_alias_prepend sudo _otel_inject_sudo
@@ -70,7 +70,7 @@ _otel_inject_xargs() {
       if \[ -z "$*" ]; then
         $executable
       else
-        OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" _otel_inject_xargs $executable -I '{}' "$@" '{}'
+        OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" _otel_inject_xargs $executable -I '{}' "$@" '{}'
       fi
       ;;
   esac

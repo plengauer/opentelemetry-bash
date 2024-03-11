@@ -240,40 +240,35 @@ _otel_record_exec() {
 
 _otel_start_script() {
   otel_init || return $?
-  if \[ "$OTEL_SHELL_AUTO_INJECTED" != "TRUE" ]; then
-    if \[ -n "$SSH_CLIENT"  ] && \[ -n "$SSH_CONNECTION" ]; then
-      otel_root_span_id=$(otel_span_start SERVER ssh)
-      otel_span_attribute $otel_root_span_id ssh.ip=$(\echo $SSH_CONNECTION | \cut -d' ' -f3)
-      otel_span_attribute $otel_root_span_id ssh.port=$(\echo $SSH_CONNECTION | \cut -d' ' -f4)
-      otel_span_attribute $otel_root_span_id net.peer.ip=$(\echo $SSH_CLIENT | \cut -d' ' -f1)
-      otel_span_attribute $otel_root_span_id net.peer.port=$(\echo $SSH_CLIENT | \cut -d' ' -f2)
-    elif \[ -n "$SERVER_SOFTWARE"  ] && \[ -n "$SCRIPT_NAME" ] && \[ -n "$SERVER_NAME" ] && \[ -n "$SERVER_PROTOCOL" ]; then
-      otel_root_span_id=$(otel_span_start SERVER GET)
-      otel_span_attribute $otel_root_span_id http.flavor=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f2)
-      otel_span_attribute $otel_root_span_id http.host=$SERVER_NAME:$SERVER_PORT
-      otel_span_attribute $otel_root_span_id http.route=$SCRIPT_NAME
-      otel_span_attribute $otel_root_span_id http.scheme=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f1 | \tr '[:upper:]' '[:lower:]')
-      otel_span_attribute $otel_root_span_id http.method=GET
-      otel_span_attribute $otel_root_span_id http.status_code=200
-      otel_span_attribute $otel_root_span_id http.status_text=OK
-      otel_span_attribute $otel_root_span_id http.target=$SCRIPT_NAME
-      otel_span_attribute $otel_root_span_id http.url=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f1 | \tr '[:upper:]' '[:lower:]')://$SERVER_NAME:$SERVER_PORT$SCRIPT_NAME
-      otel_span_attribute $otel_root_span_id net.peer.ip=$REMOTE_ADDR
-    elif \[ "$(_otel_command_self | \cut -d' ' -f2 | \rev | \cut -d/ -f2- | \rev)" = "/var/lib/dpkg/info" ] || \[ "$(_otel_command_self | \cut -d' ' -f2 | \rev | \cut -d/ -f2- | \rev)" = "/var/lib/dpkg/tmp.ci" ]; then
-      if \[ -z "$OTEL_TRACEPARENT" ]; then local span_kind=SERVER; else local span_kind=INTERNAL; fi
-      otel_root_span_id=$(otel_span_start $span_kind $(_otel_command_self | \cut -d' ' -f2 | \rev | \cut -d/ -f1 | \cut -d. -f1 | \rev))
-      otel_span_attribute $otel_root_span_id debian.package.operation=$(_otel_command_self | \cut -d' ' -f2 | \rev | \cut -d/ -f1 | \rev | \cut -d. -f2) $(_otel_command_self | \cut -d' ' -f3)
-      otel_span_attribute $otel_root_span_id debian.package.name=$(_otel_command_self | \cut -d' ' -f2 | \rev | \cut -d/ -f1 | \rev | \cut -d. -f1)
-    elif \[ "$(_otel_command_self | \cut -d' ' -f3 | \rev | \cut -d/ -f2- | \rev)" = "/var/lib/dpkg/info" ] || \[ "$(_otel_command_self | \cut -d' ' -f3 | \rev | \cut -d/ -f2- | \rev)" = "/var/lib/dpkg/tmp.ci" ]; then
-      if \[ -z "$OTEL_TRACEPARENT" ]; then local span_kind=SERVER; else local span_kind=INTERNAL; fi
-      otel_root_span_id=$(otel_span_start $span_kind $(_otel_command_self | \cut -d' ' -f3 | \rev | \cut -d/ -f1 | \cut -d. -f1 | \rev))
-      otel_span_attribute $otel_root_span_id debian.package.operation=$(_otel_command_self | \cut -d' ' -f3 | \rev | \cut -d/ -f1 | \rev | \cut -d. -f2) $(_otel_command_self | \cut -d' ' -f4)
-      otel_span_attribute $otel_root_span_id debian.package.name=$(_otel_command_self | \cut -d' ' -f3 | \rev | \cut -d/ -f1 | \rev | \cut -d. -f1)
-    else
-      otel_root_span_id=$(otel_span_start SERVER $(_otel_command_self))
-    fi
-    otel_span_activate $otel_root_span_id
+  if \[ -n "$SSH_CLIENT"  ] && \[ -n "$SSH_CONNECTION" ] && \[ "$(\cat /proc/$PPID/cmdline | \tr -d '\000' | \cut -d' ' -f1)" = "sshd:" ]; then
+    otel_root_span_id="$(otel_span_start SERVER ssh)"
+    otel_span_attribute $otel_root_span_id ssh.ip=$(\echo $SSH_CONNECTION | \cut -d' ' -f3)
+    otel_span_attribute $otel_root_span_id ssh.port=$(\echo $SSH_CONNECTION | \cut -d' ' -f4)
+    otel_span_attribute $otel_root_span_id net.peer.ip=$(\echo $SSH_CLIENT | \cut -d' ' -f1)
+    otel_span_attribute $otel_root_span_id net.peer.port=$(\echo $SSH_CLIENT | \cut -d' ' -f2)
+  elif \[ -n "$SERVER_SOFTWARE"  ] && \[ -n "$SCRIPT_NAME" ] && \[ -n "$SERVER_NAME" ] && \[ -n "$SERVER_PROTOCOL" ] && ! \[ "$OTEL_SHELL_AUTO_INJECTED" = "TRUE" ] && \[ "$(\cat /proc/$PPID/cmdline | \tr -d '\000' | \cut -d' ' -f1 | \rev | \cut -d'/' -f1 | \rev)" = "python3" ]; then
+    otel_root_span_id="$(otel_span_start SERVER GET)"
+    otel_span_attribute $otel_root_span_id http.flavor=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f2)
+    otel_span_attribute $otel_root_span_id http.host=$SERVER_NAME:$SERVER_PORT
+    otel_span_attribute $otel_root_span_id http.route=$SCRIPT_NAME
+    otel_span_attribute $otel_root_span_id http.scheme=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f1 | \tr '[:upper:]' '[:lower:]')
+    otel_span_attribute $otel_root_span_id http.method=GET
+    otel_span_attribute $otel_root_span_id http.status_code=200
+    otel_span_attribute $otel_root_span_id http.status_text=OK
+    otel_span_attribute $otel_root_span_id http.target=$SCRIPT_NAME
+    otel_span_attribute $otel_root_span_id http.url=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f1 | \tr '[:upper:]' '[:lower:]')://$SERVER_NAME:$SERVER_PORT$SCRIPT_NAME
+    otel_span_attribute $otel_root_span_id net.peer.ip=$REMOTE_ADDR
+  elif _otel_command_self | grep -q '/var/lib/dpkg/info' > /dev/null; then
+    local cmdline="$(_otel_command_self | \sed 's/^.* \(\/var\/lib\/dpkg\/info\/.*\)$/\1/')"
+    otel_root_span_id="$(otel_span_start SERVER "$(\echo "$cmdline" | \rev | \cut -d'.' -f1 | \rev)")"
+    otel_span_attribute $otel_root_span_id debian.package.name="$(\echo "$cmdline" | \rev | \cut -d'/' -f1 | \cut -d'.' -f2- | \rev)"
+    otel_span_attribute $otel_root_span_id debian.package.operation="$(\echo "$cmdline" | \cut -d'.' -f2-)"
+  elif ! \[ "$OTEL_SHELL_AUTO_INJECTED" = TRUE ] && \[ -z "$OTEL_TRACEPARENT" ]; then
+    otel_root_span_id="$(otel_span_start SERVER "$(_otel_command_self)")"
+  elif ! \[ "$OTEL_SHELL_AUTO_INJECTED" = TRUE ] && \[ -n "$OTEL_TRACEPARENT" ]; then
+    otel_root_span_id="$(otel_span_start INTERNAL "$(_otel_command_self)")"
   fi
+  if [ -n "$otel_root_span_id" ]; then otel_span_activate $otel_root_span_id; fi
   unset OTEL_SHELL_AUTO_INJECTED
 }
 
