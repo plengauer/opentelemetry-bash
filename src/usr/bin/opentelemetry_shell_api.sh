@@ -227,6 +227,7 @@ otel_observe() {
   local command="${OTEL_SHELL_COMMANDLINE_OVERRIDE:-$*}"
   local command="${command#otel_observe }"
   local command="${command#_otel_observe }"
+  local command_signature="${OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE:-$$}"
   local attributes="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE"
   if \[ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0)"; fi
   if \[ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1)"; fi
@@ -250,7 +251,7 @@ otel_observe() {
     local stderr_pipe=$(\mktemp -u).opentelemetry_shell_$$.pipe
     \mkfifo $stderr_pipe
     ( (while IFS= read -r line; do otel_log_record $traceparent "$line"; \echo "$line" >&2; done < $stderr_pipe) & )
-    OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="${OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE:-$$}" _otel_call "$@" 2> $stderr_pipe || local exit_code=$?
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$command_signature" _otel_call "$@" 2> $stderr_pipe || local exit_code=$?
     \rm $stderr_pipe
   else
     OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" _otel_call "$@" || local exit_code=$?
