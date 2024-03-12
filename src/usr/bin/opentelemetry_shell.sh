@@ -260,8 +260,8 @@ _otel_start_script() {
     otel_span_attribute $otel_root_span_id net.peer.ip=$REMOTE_ADDR
   elif _otel_command_self | grep -q '/var/lib/dpkg/info' > /dev/null; then
     local cmdline="$(_otel_command_self | \sed 's/^.* \(\/var\/lib\/dpkg\/info\/.*\)$/\1/')"
-    otel_root_span_id="$(otel_span_start SERVER "$(\echo "$cmdline" | \rev | \cut -d'.' -f1 | \rev)")"
-    otel_span_attribute $otel_root_span_id debian.package.name="$(\echo "$cmdline" | \rev | \cut -d'/' -f1 | \cut -d'.' -f2- | \rev)"
+    otel_root_span_id="$(otel_span_start SERVER "$(\echo "$cmdline" | \cut -d'.' -f2- | \cut -d' ' -f1)")"
+    otel_span_attribute $otel_root_span_id debian.package.name="$(\echo "$cmdline" | \rev | \cut -d'/' -f1 | \rev | \cut -d'.' -f1)"
     otel_span_attribute $otel_root_span_id debian.package.operation="$(\echo "$cmdline" | \cut -d'.' -f2-)"
   elif ! \[ "$OTEL_SHELL_AUTO_INJECTED" = TRUE ] && \[ -z "$OTEL_TRACEPARENT" ]; then
     otel_root_span_id="$(otel_span_start SERVER "$(_otel_command_self)")"
