@@ -40,7 +40,7 @@ _otel_inject_shell_args_with_copy() {
   \echo -n " "
   if \[ "$is_script" -eq 1 ]; then _otel_escape_arg "$command"; elif \[ "$#" -gt 0 ]; then _otel_escape_arg "$1"; shift; else _otel_escape_arg "$shell"; fi
   # setup temporary script
-  if \[ "$is_script" = 0 ] && \[ "$#" -gt 0 ]; then shift; fi
+  # if \[ "$is_script" = 0 ] && \[ "$#" -gt 0 ]; then shift; fi
   \touch "$temporary_script"
   \chmod +x "$temporary_script"
   \echo "OTEL_SHELL_AUTO_INSTRUMENTATION_HINT=\"$temporary_script\"" >> "$temporary_script"
