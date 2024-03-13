@@ -256,7 +256,7 @@ otel_observe() {
   else
     OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$command_signature" _otel_call "$@" || local exit_code=$?
   fi
-  otel_span_deactivate
+  otel_span_deactivate $span_id
   # set custom attributes, set final attributes, finish span
   otel_span_attribute $span_id subprocess.exit_code=$exit_code
   if \[ "$exit_code" -ne "0" ]; then
