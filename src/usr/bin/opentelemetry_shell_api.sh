@@ -229,14 +229,10 @@ otel_observe() {
   local command="${command#_otel_observe }"
   local command_signature="${OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE:-$$}"
   local attributes="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE"
-  if \[ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0)"; fi
-  if \[ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1)"; fi
   unset OTEL_SHELL_SPAN_NAME_OVERRIDE
   unset OTEL_SHELL_SPAN_KIND_OVERRIDE
   unset OTEL_SHELL_COMMANDLINE_OVERRIDE
   unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
-  unset OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0
-  unset OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1
   # create span, set initial attributes
   local span_id=$(otel_span_start $kind "$name")
   otel_span_attribute $span_id subprocess.executable.name=$(\echo "$command" | \cut -d' ' -f1 | \rev | \cut -d'/' -f1 | \rev)
@@ -244,7 +240,11 @@ otel_observe() {
   otel_span_attribute $span_id subprocess.command="$command"
   otel_span_attribute $span_id subprocess.command_args="$(\echo "$command" | \cut -sd' ' -f2-)"
   # run command
-  local traceparent="$(otel_span_traceparent $span_id)" # we need to do this manually in case the shell is running several commands in parallel
+  otel_span_activate $span_id
+  if \[ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0)"; fi
+  if \[ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1)"; fi
+  unset OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0
+  unset OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1
   local exit_code=0
   if ! \[ -t 2 ] && \[ "$OTEL_SHELL_SUPPRESS_LOG_COLLECTION" != TRUE ]; then
     local traceparent=$OTEL_TRACEPARENT
@@ -256,6 +256,7 @@ otel_observe() {
   else
     OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$command_signature" OTEL_TRACEPARENT="$traceparent" _otel_call "$@" || local exit_code=$?
   fi
+  otel_span_deactivate
   # set custom attributes, set final attributes, finish span
   otel_span_attribute $span_id subprocess.exit_code=$exit_code
   if \[ "$exit_code" -ne "0" ]; then
