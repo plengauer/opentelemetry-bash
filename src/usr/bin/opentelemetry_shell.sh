@@ -101,10 +101,11 @@ _otel_dealiasify() {
   if \[ -z "$cmd_alias" ]; then return 1; fi
   if ! \alias $cmd_alias 2> /dev/null | \cut -d= -f2- | _otel_unquote | _otel_line_split | \grep -q '^_otel_'; then # e.g., bash => no, bash-ai => yes
     # this check "feels" like there may be cases where we potentially expand aliases too much
-    local cmd_alias="$(\alias $cmd_alias 2> /dev/null | \cut -d= -f2- | _otel_unquote | \cut -d' ' -f1 | \rev | \cut -d/ -f1 | \rev)" # e.g., bash
-    if \[ -z "$cmd_alias" ]; then return 1; fi
+    \alias cmd="$(\alias $cmd_alias 2> /dev/null | \cut -d= -f2- | _otel_unquote)" # e.g., alias ai='/bin/bash /usr/bin/bash-ai'
+    _otel_dealiasify $cmd
+    return $?
   fi
-  local cmd_aliased="$(\alias $cmd_alias 2> /dev/null | \cut -d= -f2- | _otel_unquote)" # e.g., _otel_inject_shell bash, _otel_inject_shell /bin/bash /usr/bin/bash-ai
+  local cmd_aliased="$(\alias $cmd_alias 2> /dev/null | \cut -d= -f2- | _otel_unquote)" # e.g., _otel_inject_shell bash
   if \[ -z "$cmd_aliased" ]; then return 2; fi
   local otel_cmds="$(\echo "$cmd_aliased" | _otel_line_split | \grep '^_otel_' | \grep -v '^_otel_observe' | _otel_line_join)" # e.g., _otel_inject_shell, _otel_inject_shell
   if \[ -z "$otel_cmds" ]; then return 3; fi
