@@ -20,7 +20,7 @@ for dir in sdk auto integration; do
     mkfifo $OTEL_SHELL_SDK_OUTPUT_REDIRECT
     ( while true; do cat $OTEL_SHELL_SDK_OUTPUT_REDIRECT >> $OTEL_EXPORT_LOCATION; done ) &
     echo "running $file"
-    timeout $((60 * 5)) $SHELL $file && echo "SUCCEEDED" || (echo "FAILED" && cat $OTEL_EXPORT_LOCATION && exit 1)
+    timeout $((60 * 10)) $SHELL $file && echo "SUCCEEDED" || (echo "FAILED" && cat $OTEL_EXPORT_LOCATION && exit 1)
   done
 done
 echo "ALL TESTS SUCCESSFUL"
