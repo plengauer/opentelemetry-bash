@@ -75,6 +75,10 @@ _otel_alias_prepend() {
   \alias $original_command='OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="code.filepath='$_otel_source_file_resolver',code.lineno='$_otel_source_line_resolver',code.function='$_otel_source_func_resolver'" '"$new_command"
 }
 
+_otel_has_alias() {
+  \[ -n "$(\alias $1 2> /dev/null)" ]
+}
+
 _otel_shebang() {
   local path="$(\which $1)"
   if \[ -z "$path" ] || \[ ! -f "$path" ]; then return 1; fi
@@ -85,40 +89,40 @@ _otel_shebang() {
 
 _otel_deshebangify() {
   local cmd=$1 # e.g., "upgrade"
-  if \[ -n "$(\alias $1 2> /dev/null)" ]; then return 1; fi
+  if _otel_has_alias $cmd; then return 1; fi
   local shebang="$(_otel_shebang $1)" # e.g., "/bin/bash -x"
   if \[ -z "$shebang" ]; then return 2; fi
   \alias $1="$shebang $(\which $1)" # e.g., alias upgrade='/bin/bash -x /usr/bin/upgrade'
 }
 
-_otel_alias_value() {
+_otel_resolve_alias() {
   \alias $1 2> /dev/null | \cut -d= -f2- | _otel_unquote
 }
 
-_otel_alias_stripped_value() {
-  _otel_alias_value $1 | _otel_line_split | \grep -q -v '^OTEL_' | \grep -q '^_otel_' | _otel_line_join | \cut -d' ' -f1 | \rev | \cut -d/ -f1 | \rev
+_otel_resolve_alias_cmd() {
+  _otel_resolve_alias $1 | _otel_line_split | \grep -q -v '^OTEL_' | \grep -q -v '^_otel_' | \head -n1 | \rev | \cut -d/ -f1 | \rev
 }
 
 _otel_dealiasify() {
   # e.g., alias upgrade='/bin/bash -x /usr/bin/upgrade'
   # e.g., alias bash='_otel_inject_shell _otel_observe bash'
   # e.g., alias ai=bash-ai
-  # e.g., alias bash-ai='/bin/bash /usr/bin/bash-ai'
+  # e.g., alias bash-ai='/bin/bash -x /usr/bin/bash-ai'
   local cmd=$1 # e.g., "upgrade", "ai"
-  local cmd_alias="$(_otel_alias_stripped_value $cmd)" # e.g., bash, bash-ai # additional indirection here needed
+  local cmd_alias="$(_otel_resolve_alias_cmd $cmd)" # e.g., upgrade => bash, ai => bash-ai # additional indirection here needed
   if \[ -z "$cmd_alias" ]; then return 1; fi
-  if \[ "$cmd" != "$cmd_alias" ] && \[ -n "$(\alias $cmd_alias 2> /dev/null)" ] && ! _otel_alias_value $cmd_alias | _otel_line_split | \grep -q '^_otel_'; then # e.g., bash => no, bash-ai => yes
+  if \[ "$cmd" != "$cmd_alias" ] && _otel_has_alias $cmd_alias && ! _otel_resolve_alias $cmd_alias | _otel_line_split | \grep -q '^_otel_'; then # e.g., bash => no, bash-ai => yes
     # this check "feels" like there may be cases where we potentially expand aliases too much
-    echo "DEBUG DEALISIFY $cmd" >&2
-    set -x
-    \alias $cmd="$(_otel_alias_stripped_value $cmd_alias) $(_otel_alias_stripped_value $cmd | cut -d' ' -f2-)" # e.g., alias ai='/bin/bash /usr/bin/bash-ai'
+    # echo "DEBUG DEALISIFY $cmd" >&2
+    # set -x
+    \alias $cmd="$(_otel_resolve_alias_cmd $cmd_alias) $(_otel_resolve_alias_cmd $cmd | cut -d' ' -f2-)" # e.g., alias ai='/bin/bash -x /usr/bin/bash-ai'
     _otel_dealiasify $cmd
-    set +x
+    # set +x
     return $?
   fi
-  local cmd_aliased="$(_otel_alias_value $cmd_alias)" # e.g., _otel_inject_shell bash
+  local cmd_aliased="$(_otel_resolve_alias $cmd_alias)" # e.g., bash => _otel_inject_shell bash
   if \[ -z "$cmd_aliased" ]; then return 2; fi
-  local otel_cmds="$(\echo "$cmd_aliased" | _otel_line_split | \grep '^_otel_' | \grep -v '^_otel_observe' | _otel_line_join)" # e.g., _otel_inject_shell, _otel_inject_shell
+  local otel_cmds="$(\echo "$cmd_aliased" | _otel_line_split | \grep -q '^_otel_' | \grep -q -v '^_otel_observe' | _otel_line_join)" # e.g., _otel_inject_shell bash => _otel_inject_shell
   if \[ -z "$otel_cmds" ]; then return 3; fi
   _otel_alias_prepend $cmd "$otel_cmds" # e.g., alias upgrade='_otel_inject_shell /bin/bash -x /usr/bin/upgrade', e.g., alias ai='_otel_inject_shell /bin/bash -x /usr/bin/bash-ai'
 }
