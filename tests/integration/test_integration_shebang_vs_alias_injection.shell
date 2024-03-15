@@ -9,7 +9,9 @@ alias ai=bash-ai
 # lets simulate the caller
 . /usr/bin/opentelemetry_shell.sh
 alias
+set -x
 ai some arguments
+set +x
 # lets assert
 assert_equals 0 $?
 span="$(resolve_span '.name == "/bin/bash -e /usr/bin/bash-ai some arguments"')"
