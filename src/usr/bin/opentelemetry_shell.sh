@@ -101,7 +101,7 @@ _otel_dealiasify() {
   if \[ -z "$cmd_alias" ]; then return 1; fi
   if \[ "$cmd" != "$cmd_alias" ] && \[ -n "$(\alias $cmd_alias 2> /dev/null)" ] && ! \alias $cmd_alias 2> /dev/null | \cut -d= -f2- | _otel_unquote | _otel_line_split | \grep -q '^_otel_'; then # e.g., bash => no, bash-ai => yes
     # this check "feels" like there may be cases where we potentially expand aliases too much
-    \echo DEBUG_DEALISIFY $cmd="$(\alias $cmd_alias 2> /dev/null | \cut -d= -f2- | _otel_unquote) $(\alias $cmd 2> /dev/null | \cut -d= -f2- | _otel_unquote | \cut -d' ' -f2-)" >&2
+    \echo DEBUG_DEALISIFY $cmd="$(\alias $cmd_alias 2> /dev/null | \cut -d= -f2- | _otel_unquote) $(\alias $cmd 2> /dev/null | \cut -d= -f2- | _otel_unquote | \cut -sd' ' -f2-)" >&2
     \alias $cmd="$(\alias $cmd_alias 2> /dev/null | \cut -d= -f2- | _otel_unquote) $(\alias $cmd 2> /dev/null | \cut -d= -f2- | _otel_unquote | \cut -d' ' -f2-)" # e.g., alias ai='/bin/bash /usr/bin/bash-ai'
     _otel_dealiasify $cmd
     return $?
