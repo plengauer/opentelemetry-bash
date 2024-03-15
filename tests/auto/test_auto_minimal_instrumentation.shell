@@ -1,7 +1,4 @@
-if [ "$SHELL" = "zsh" ]; then
-  return 0
-fi
-
+. ./assert.sh
 . /usr/bin/opentelemetry_shell.sh
 alias
 
@@ -19,5 +16,12 @@ if [ -n "$(alias alias | grep otel_observe)" ] || [ -n "$(alias unalias | grep o
   printf '%s' "aliased or unalias or . has been instrumented"
   exit 1
 fi
+
+file=$(mktemp)
+$SHELL -c '. /usr/bin/opentelemetry_shell.sh
+alias' | sed 's/^alias //g' | cut -d= -f1 > $file
+assert_equals "" "$(cat $file | grep '^OTEL_')"
+assert_equals "" "$(cat $file | grep '^_otel_')"
+assert_equals "" "$(cat $file | grep '^otel_')"
 
 exit 0

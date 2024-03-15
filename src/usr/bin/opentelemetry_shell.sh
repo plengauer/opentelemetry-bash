@@ -11,7 +11,7 @@ if \[ "$_otel_shell_injected" = "TRUE" ]; then
 fi
 _otel_shell_injected=TRUE
 
-. /usr/bin/opentelemetry_shell_api.sh
+\. /usr/bin/opentelemetry_shell_api.sh
 
 if \[ "$_otel_shell" = "bash" ] && \[ -n "$BASHPID" ] && \[ "$$" != "$BASHPID" ]; then
   echo "WARNING The OpenTelemetry shell file for auto-instrumentation is sourced in a subshell, automatic instrumentation will only be active within that subshell!" >&2
@@ -34,12 +34,12 @@ fi
 unset OTEL_SHELL_AUTO_INSTRUMENTATION_HINT
 
 if \[ "$_otel_shell" = "bash" ]; then
-  _otel_source_file_resolver='"${BASH_SOURCE[0]}"'
+  _otel_source_file_resolver='${BASH_SOURCE[0]}'
 else
-  _otel_source_file_resolver='"$0"'
+  _otel_source_file_resolver='$0'
 fi
-_otel_source_line_resolver='"$LINENO"'
-_otel_source_func_resolver='"$FUNCNAME"'
+_otel_source_line_resolver='$LINENO'
+_otel_source_func_resolver='$FUNCNAME'
 
 if \[ "$_otel_shell" = "bash" ]; then
   shopt -s expand_aliases &> /dev/null
@@ -148,7 +148,7 @@ _otel_filter_commands_by_instrumentation() {
 }
 
 _otel_filter_commands_by_special() {
-  \grep -v '^(alias|unalias|\.|source|exec)$'
+  \grep -v '^alias$' | \grep -v '^unalias$' | \grep -v '^\.$' | \grep -v '^source$' | \grep -v '^exec$' | \grep -v '^OTEL_' | \grep -v '^_otel_' | \grep -v '^otel_'
 }
 
 _otel_list_path_executables() {
@@ -164,7 +164,7 @@ _otel_list_alias_commands() {
 }
 
 _otel_list_aliased_commands() {
-  \alias | \cut -d= -f2- | _otel_line_split | \grep -v '^(OTEL_|_otel_)' | _otel_grep_valid_command
+  \alias | \cut -d= -f2- | _otel_line_split | _otel_grep_valid_command
 }
 
 _otel_list_builtin_commands() {
@@ -183,17 +183,49 @@ _otel_list_all_commands() {
 
 _otel_auto_instrument() {
   local hint="$1"
-  # both otel_filter_commands_by_file and _otel_filter_commands_by_instrumentation are functionally optional, but helps optimizing time because the following loop AND otel_instrument itself is expensive!
+
+  # cached?
+  ## we really have three options for the cache key
+  ## (1) using the hint - will not work when scripts are changing or called the same but very fast!
+  ## (2) using the resolved hint - will not work when new executables are added onto the system or their shebang changes or new bash.rc aliases are added
+  ## (3) using the filtered list of commands - will work in every case but slowest
+  local cache_key="$(_otel_list_all_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_hint "$hint" | \sort -u | \md5sum | \cut -d' ' -f1)"
+  local cache_file="$(\mktemp -u | \rev | \cut -d'/' -f2- | \rev)/opentelemetry_shell_$(_otel_package_version opentelemetry-shell)"_"$_otel_shell"_instrumentation_cache_"$cache_key".sh
+  if \[ -f "$cache_file" ]; then
+    eval "$(\cat $cache_file | \grep -v '^#' | \awk '{print "\\alias " $0 }')"
+    return $?
+  fi
+  
+  # special instrumentations
+  _otel_alias_prepend alias _otel_alias_and_instrument
+  _otel_alias_prepend unalias _otel_unalias_and_reinstrument
+  _otel_alias_prepend . _otel_instrument_and_source
+  if \[ "$_otel_shell" = "bash" ]; then _otel_alias_prepend source _otel_instrument_and_source; fi
+  
+  # custom instrumentations (injections and propagations)
+  for otel_custom_file in $(\ls /usr/bin | \grep '^opentelemetry_shell.custom.' | \grep '.sh$'); do \. "$otel_custom_file"; done
+  
+  # deshebangify commands, propagate special instrumentations into aliases, instrument all commands
+  ## (both otel_filter_commands_by_file and _otel_filter_commands_by_instrumentation are functionally optional, but helps optimizing time because the following loop AND otel_instrument itself is expensive!)
+  ## avoid piping directly into the loops, then it will be considered a subshell and aliases won't take effect here
   for cmd in $(_otel_list_path_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_hint "$hint" | \sort -u | _otel_line_join); do _otel_deshebangify $cmd || true; done
   for cmd in $(_otel_list_alias_commands | _otel_filter_commands_by_special | _otel_line_join); do _otel_dealiasify $cmd || true; done
   for cmd in $(_otel_list_all_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_instrumentation | _otel_filter_commands_by_hint "$hint" | \sort -u | _otel_line_join); do otel_instrument $cmd; done
+  
+  # super special instrumentations
+  \alias .='_otel_instrument_and_source "$#" "$@" .'
+  if \[ "$_otel_shell" = "bash" ]; then \alias source='_otel_instrument_and_source "$#" "$@" source'; fi
+  \alias exec='_otel_record_exec '$_otel_source_file_resolver' '$_otel_source_line_resolver'; exec'
+
+  # cache
+  if \[ "$(\alias | \wc -l)" -gt 50 ]; then \alias | \sed 's/^alias //' > "$cache_file"; else true; fi
 }
 
 _otel_alias_and_instrument() {
   local exit_code=0
   "$@" || local exit_code=$?
   shift
-  if \[ -n "$*" ]; then
+  if \[ -n "$*" ] && [ "${*#*=*}" != "$*" ]; then
     _otel_auto_instrument "$(\echo "$@" | _otel_line_split | \grep -m1 '=' 2> /dev/null | \tr '=' ' ')"
   fi
   return $exit_code
@@ -212,17 +244,19 @@ _otel_unalias_and_reinstrument() {
 }
 
 _otel_instrument_and_source() {
-  local file="$2"
-  if \[ -f "$file" ]; then
-    _otel_auto_instrument "$file"
-  fi
-  "$@"
+  local n="$1"
+  shift
+  local command="$(eval '\echo $'"$(($n+1))")"
+  local file="$(eval '\echo $'"$(($n+2))")"
+  if \[ -f "$file" ]; then _otel_auto_instrument "$file"; fi
+  eval "'$command' '$file' $(if \[ $# -gt $(($n + 2)) ]; then \seq $(($n + 2 + 1)) $#; else \seq 1 $n; fi | while read i; do \echo '"$'"$i"'"'; done | _otel_line_join)"
 }
 
 _otel_record_exec() {
   local file="$1"
   local line="$2"
   if \[ -n "$file" ] && \[ -n "$line" ] && \[ -f "$file" ]; then local command="$(\cat "$file" | \sed -n "$line"p | \grep -F 'exec' | \sed 's/^.*exec /exec /')"; fi
+  if \[ -n "$command" ] && \echo "$command" | \grep -q '^exec [0-9]>'; then return 0; fi
   if \[ -z "$command" ]; then local command="exec"; fi
   local span_id=$(otel_span_start INTERNAL "$command")
   if \[ "$(\printf '%s' "$command" | \sed 's/ \[0-9]*>.*$//')" != "exec" ]; then
@@ -234,38 +268,35 @@ _otel_record_exec() {
 
 _otel_start_script() {
   otel_init || return $?
-  if \[ "$OTEL_SHELL_AUTO_INJECTED" != "TRUE" ]; then
-    if \[ -n "$SSH_CLIENT"  ] && \[ -n "$SSH_CONNECTION" ]; then
-      otel_root_span_id=$(otel_span_start SERVER ssh)
-      otel_span_attribute $otel_root_span_id ssh.ip=$(\echo $SSH_CONNECTION | \cut -d' ' -f3)
-      otel_span_attribute $otel_root_span_id ssh.port=$(\echo $SSH_CONNECTION | \cut -d' ' -f4)
-      otel_span_attribute $otel_root_span_id net.peer.ip=$(\echo $SSH_CLIENT | \cut -d' ' -f1)
-      otel_span_attribute $otel_root_span_id net.peer.port=$(\echo $SSH_CLIENT | \cut -d' ' -f2)
-    elif \[ -n "$SERVER_SOFTWARE"  ] && \[ -n "$SCRIPT_NAME" ] && \[ -n "$SERVER_NAME" ] && \[ -n "$SERVER_PROTOCOL" ]; then
-      otel_root_span_id=$(otel_span_start SERVER GET)
-      otel_span_attribute $otel_root_span_id http.flavor=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f2)
-      otel_span_attribute $otel_root_span_id http.host=$SERVER_NAME:$SERVER_PORT
-      otel_span_attribute $otel_root_span_id http.route=$SCRIPT_NAME
-      otel_span_attribute $otel_root_span_id http.scheme=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f1 | \tr '[:upper:]' '[:lower:]')
-      otel_span_attribute $otel_root_span_id http.method=GET
-      otel_span_attribute $otel_root_span_id http.status_code=200
-      otel_span_attribute $otel_root_span_id http.status_text=OK
-      otel_span_attribute $otel_root_span_id http.target=$SCRIPT_NAME
-      otel_span_attribute $otel_root_span_id http.url=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f1 | \tr '[:upper:]' '[:lower:]')://$SERVER_NAME:$SERVER_PORT$SCRIPT_NAME
-      otel_span_attribute $otel_root_span_id net.peer.ip=$REMOTE_ADDR
-    elif \[ "$(_otel_command_self | \cut -d' ' -f2 | \rev | \cut -d/ -f2- | \rev)" = "/var/lib/dpkg/info" ] || \[ "$(_otel_command_self | \cut -d' ' -f2 | \rev | \cut -d/ -f2- | \rev)" = "/var/lib/dpkg/tmp.ci" ]; then
-      if \[ -z "$OTEL_TRACEPARENT" ]; then
-        otel_root_span_id=$(otel_span_start SERVER $(_otel_command_self | \cut -d' ' -f2 | \rev | \cut -d/ -f1 | \cut -d. -f1 | \rev))
-      else
-        otel_root_span_id=$(otel_span_start INTERNAL $(_otel_command_self | \cut -d' ' -f2 | \rev | \cut -d/ -f1 | \cut -d. -f1 | \rev))
-      fi
-      otel_span_attribute $otel_root_span_id debian.package.operation=$(_otel_command_self | \cut -d' ' -f2 | \rev | \cut -d/ -f1 | \rev | \cut -d. -f2) $(_otel_command_self | \cut -d' ' -f3)
-      otel_span_attribute $otel_root_span_id debian.package.name=$(_otel_command_self | \cut -d' ' -f2 | \rev | \cut -d/ -f1 | \rev | \cut -d. -f1)
-    else
-      otel_root_span_id=$(otel_span_start SERVER $(_otel_command_self))
-    fi
-    otel_span_activate $otel_root_span_id
+  if \[ -n "$SSH_CLIENT"  ] && \[ -n "$SSH_CONNECTION" ] && \[ "$(\cat /proc/$PPID/cmdline | \tr -d '\000' | \cut -d' ' -f1)" = "sshd:" ]; then
+    otel_root_span_id="$(otel_span_start SERVER ssh)"
+    otel_span_attribute $otel_root_span_id ssh.ip=$(\echo $SSH_CONNECTION | \cut -d' ' -f3)
+    otel_span_attribute $otel_root_span_id ssh.port=$(\echo $SSH_CONNECTION | \cut -d' ' -f4)
+    otel_span_attribute $otel_root_span_id net.peer.ip=$(\echo $SSH_CLIENT | \cut -d' ' -f1)
+    otel_span_attribute $otel_root_span_id net.peer.port=$(\echo $SSH_CLIENT | \cut -d' ' -f2)
+  elif \[ -n "$SERVER_SOFTWARE"  ] && \[ -n "$SCRIPT_NAME" ] && \[ -n "$SERVER_NAME" ] && \[ -n "$SERVER_PROTOCOL" ] && ! \[ "$OTEL_SHELL_AUTO_INJECTED" = "TRUE" ] && \[ "$(\cat /proc/$PPID/cmdline | \tr -d '\000' | \cut -d' ' -f1 | \rev | \cut -d'/' -f1 | \rev)" = "python3" ]; then
+    otel_root_span_id="$(otel_span_start SERVER GET)"
+    otel_span_attribute $otel_root_span_id http.flavor=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f2)
+    otel_span_attribute $otel_root_span_id http.host=$SERVER_NAME:$SERVER_PORT
+    otel_span_attribute $otel_root_span_id http.route=$SCRIPT_NAME
+    otel_span_attribute $otel_root_span_id http.scheme=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f1 | \tr '[:upper:]' '[:lower:]')
+    otel_span_attribute $otel_root_span_id http.method=GET
+    otel_span_attribute $otel_root_span_id http.status_code=200
+    otel_span_attribute $otel_root_span_id http.status_text=OK
+    otel_span_attribute $otel_root_span_id http.target=$SCRIPT_NAME
+    otel_span_attribute $otel_root_span_id http.url=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f1 | \tr '[:upper:]' '[:lower:]')://$SERVER_NAME:$SERVER_PORT$SCRIPT_NAME
+    otel_span_attribute $otel_root_span_id net.peer.ip=$REMOTE_ADDR
+  elif _otel_command_self | grep -q '/var/lib/dpkg/info' > /dev/null; then
+    local cmdline="$(_otel_command_self | \sed 's/^.* \(\/var\/lib\/dpkg\/info\/.*\)$/\1/')"
+    otel_root_span_id="$(otel_span_start SERVER "$(\echo "$cmdline" | \cut -d'.' -f2- | \cut -d' ' -f1)")"
+    otel_span_attribute $otel_root_span_id debian.package.name="$(\echo "$cmdline" | \rev | \cut -d'/' -f1 | \rev | \cut -d'.' -f1)"
+    otel_span_attribute $otel_root_span_id debian.package.operation="$(\echo "$cmdline" | \cut -d'.' -f2-)"
+  elif ! \[ "$OTEL_SHELL_AUTO_INJECTED" = TRUE ] && \[ -z "$OTEL_TRACEPARENT" ]; then
+    otel_root_span_id="$(otel_span_start SERVER "$(_otel_command_self)")"
+  elif ! \[ "$OTEL_SHELL_AUTO_INJECTED" = TRUE ] && \[ -n "$OTEL_TRACEPARENT" ]; then
+    otel_root_span_id="$(otel_span_start INTERNAL "$(_otel_command_self)")"
   fi
+  if [ -n "$otel_root_span_id" ]; then otel_span_activate $otel_root_span_id; fi
   unset OTEL_SHELL_AUTO_INJECTED
 }
 
@@ -281,13 +312,7 @@ _otel_end_script() {
   otel_shutdown
 }
 
-_otel_alias_prepend alias _otel_alias_and_instrument
-_otel_alias_prepend unalias _otel_unalias_and_reinstrument
-_otel_alias_prepend . _otel_instrument_and_source
-if \[ "$_otel_shell" = "bash" ]; then _otel_alias_prepend source _otel_instrument_and_source; fi
-for file in $(\ls /usr/bin | \grep '^opentelemetry_shell.custom.' | \grep '.sh$'); do \. "$file"; done
 _otel_auto_instrument "$_otel_shell_auto_instrumentation_hint"
-\alias exec='_otel_record_exec '$_otel_source_file_resolver' '$_otel_source_line_resolver'; exec'
 trap _otel_end_script EXIT
 
 _otel_start_script

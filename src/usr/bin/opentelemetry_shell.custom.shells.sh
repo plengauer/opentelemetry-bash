@@ -12,6 +12,7 @@ _otel_inject_shell_args_with_copy() {
   local is_script=0
   # command
   if \[ "$1" = "_otel_observe" ]; then _otel_escape_arg "$1"; \echo -n " "; shift; fi
+  local shell="$1"
   _otel_escape_arg "$1"; \echo -n " "
   shift
   # options and script or command string
@@ -28,14 +29,17 @@ _otel_inject_shell_args_with_copy() {
     fi
     shift
   done
+  local command="$1"
+  shift
   # abort in case its interactive or invalid aguments
   if \[ "$found_inner" -eq 0 ]; then return 0; fi 
   # finish command
-  _otel_escape_arg "$temporary_script"
+  _otel_escape_arg "-c"
+  \echo -n " "
+  _otel_escape_arg ". '$temporary_script'"
+  \echo -n " "
+  if \[ "$is_script" -eq 1 ]; then _otel_escape_arg "$command"; elif \[ "$#" -gt 0 ]; then _otel_escape_arg "$1"; shift; else _otel_escape_arg "$shell"; fi
   # setup temporary script
-  local command="$1"
-  shift
-  if \[ "$is_script" = 0 ] && \[ "$#" -gt 0 ]; then shift; fi
   \touch "$temporary_script"
   \chmod +x "$temporary_script"
   \echo "OTEL_SHELL_AUTO_INSTRUMENTATION_HINT=\"$temporary_script\"" >> "$temporary_script"
@@ -48,7 +52,7 @@ _otel_inject_shell_with_copy() {
   local cmdline="$({ set -- "$@"; if \[ "$1" = "_otel_observe" ]; then shift; fi; \echo -n "$*"; })"
   local temporary_script="$(\mktemp -u)"
   local exit_code=0
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$(\echo "$cmdline" | _otel_line_join)" \
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE \
     \eval "$(_otel_inject_shell_args_with_copy "$temporary_script" "$@")" || local exit_code=$? # should we do \eval _otel_call "$(.....)" here? is it safer concerning transport of the OTEL control variables?
   \rm "$temporary_script" || true
   return $exit_code

@@ -1,9 +1,10 @@
 if ! dpkg -s moreutils; then exit 0; fi
+if ! dpkg -s parallel; then exit 0; fi
 . ./assert.sh
 . /usr/bin/opentelemetry_shell.sh
 
-parallel echo -- a1 a2 a3
-span="$(resolve_span '.name == "parallel echo -- a1 a2 a3"')"
+parallel.moreutils echo -- a1 a2 a3
+span="$(resolve_span '.name == "parallel.moreutils echo -- a1 a2 a3"')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
 span="$(resolve_span '.name == "echo a1"')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
@@ -12,12 +13,42 @@ assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
 span="$(resolve_span '.name == "echo a3"')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
 
-parallel -- 'echo b1' 'echo b2' 'echo b3'
-span="$(resolve_span '.name == "parallel -- echo b1 echo b2 echo b3"')"
+parallel.moreutils -i echo {} i4 -- i1 i2 i3
+span="$(resolve_span '.name == "parallel.moreutils -i echo {} i4 -- i1 i2 i3"')"
+assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+span="$(resolve_span '.name == "echo i1 i4"')"
+assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+span="$(resolve_span '.name == "echo i2 i4"')"
+assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+span="$(resolve_span '.name == "echo i3 i4"')"
+assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+
+parallel.moreutils -- 'echo b1' 'echo b2' 'echo b3'
+span="$(resolve_span '.name == "parallel.moreutils -- echo b1 echo b2 echo b3"')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
 span="$(resolve_span '.name == "echo b1"')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
 span="$(resolve_span '.name == "echo b2"')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
 span="$(resolve_span '.name == "echo b3"')"
+assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+
+parallel echo ::: c1 c2 c3
+span="$(resolve_span '.name == "parallel echo ::: c1 c2 c3"')"
+assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+span="$(resolve_span '.name == "echo c1"')"
+assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+span="$(resolve_span '.name == "echo c2"')"
+assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+span="$(resolve_span '.name == "echo c3"')"
+assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+
+{ printf '%s\n' d1; printf '%s\n' d2; printf '%s\n' d3; } | parallel echo
+span="$(resolve_span '.name == "parallel echo"')"
+assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+span="$(resolve_span '.name == "echo d1"')"
+assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+span="$(resolve_span '.name == "echo d2"')"
+assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+span="$(resolve_span '.name == "echo d3"')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
