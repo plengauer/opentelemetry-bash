@@ -182,9 +182,9 @@ _otel_auto_instrument() {
   ## (2) using the resolved hint - will not work when new executables are added onto the system or their shebang changes or new bash.rc aliases are added
   ## (3) using the filtered list of commands - will work in every case but slowest
   local cache_key="$(_otel_list_all_commands | _otel_filter_commands_by_hint "$hint" | \md5sum | \cut -d' ' -f1)"
-  local cache_file="$(\mktemp -u | \rev | \cut -d'/' -f2- | \rev)/opentelemetry_shell_$(_otel_package_version)"_"$_otel_shell"_instrumentation_cache_"$cache_key".sh
+  local cache_file="$(\mktemp -u | \rev | \cut -d'/' -f2- | \rev)/opentelemetry_shell_$(_otel_package_version opentelemetry-shell)"_"$_otel_shell"_instrumentation_cache_"$cache_key".sh
   if \[ -f "$cache_file" ]; then
-    eval $(\cat $cache_file | \grep -v '^#' | \awk '{print "\alias \"" $0 "\""}')
+    eval $(\cat $cache_file | \grep -v '^#' | \awk '{print "\\alias \"" $0 "\""}')
     return $?
   fi
   
