@@ -46,7 +46,7 @@ if \[ "$_otel_shell" = "bash" ]; then
 fi
 
 _otel_unquote() {
-  \sed "s/^'\(.*\)'$/\1/" | sed 's/'\''\\'\'''\''//g'
+  \sed "s/^'\(.*\)'$/\1/" | \sed 's/'\''\\'\'''\''//g'
 }
 
 _otel_line_split() {
@@ -67,6 +67,7 @@ _otel_alias_prepend() {
       *"$prepend_command"*) return 0 ;;
       *) ;;
     esac
+set -x
     local previous_otel_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep '^_otel_' | _otel_line_join)"
     local previous_alias_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep -v '^_otel_' | _otel_line_join)"
     case "$previous_alias_command " in
@@ -75,6 +76,7 @@ _otel_alias_prepend() {
       *) ;;
     esac
     local new_command="$previous_otel_command $prepend_command $previous_alias_command"
+set +x
   fi
   
   \alias $original_command='OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="code.filepath='$_otel_source_file_resolver',code.lineno='$_otel_source_line_resolver',code.function='$_otel_source_func_resolver'" '"$new_command"
