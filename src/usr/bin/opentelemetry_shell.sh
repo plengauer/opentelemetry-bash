@@ -71,7 +71,7 @@ _otel_alias_prepend() {
     local previous_alias_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep -v '^_otel_' | _otel_line_join)"
     case "${previous_alias_command} " in
       "${original_command}") local previous_alias_command="'\\$previous_alias_command'" ;;
-      "${original_command} "*) local previous_alias_command="\\$previous_alias_command" ;; # TODO
+      "${original_command} "*) local previous_alias_command="'\\$original_command' $(\printf "$previous_alias_command" | \cut -d' ' -f2-)" ;;
       *) ;;
     esac
     local new_command="$previous_otel_command $prepend_command $previous_alias_command"
@@ -122,13 +122,6 @@ _otel_dealiasify() {
   local cmd=$1 # e.g., "upgrade", "ai", "l"
   local cmd_alias="$(_otel_resolve_alias_stripped_cmd $cmd)" # e.g., upgrade => bash, ai => bash-ai # additional indirection here needed #, l => ls
   if \[ -z "$cmd_alias" ]; then return 1; fi
-#  && ! _otel_resolve_alias $cmd_alias | _otel_line_split | \grep -q '^_otel_'
-#  if ! \[ "$no_indirect_resolve" = TRUE ] && \[ "$cmd" != "$cmd_alias" ] && _otel_has_alias $cmd_alias; then # e.g., bash => no, bash-ai => yes, ls => yes
-#    # this check "feels" like there may be cases where we potentially expand aliases too much
-#    \alias $cmd="$(_otel_resolve_alias $cmd_alias) $(_otel_resolve_alias_stripped $cmd | \cut -sd' ' -f2-)" # e.g., alias ai='/bin/bash -x /usr/bin/bash-ai -v', alias l='ls --color=auto --color=auto'
-#    no_indirect_resolve=TRUE _otel_dealiasify $cmd
-#    return $?
-#  fi
   local cmd_aliased="$(_otel_resolve_alias $cmd_alias)" # e.g., bash => _otel_inject_shell bash
   if \[ -z "$cmd_aliased" ]; then return 2; fi
   local otel_cmds="$(\echo "$cmd_aliased" | _otel_line_split | \grep '^_otel_' | \grep -v '^_otel_observe' | _otel_line_join)" # e.g., _otel_inject_shell bash => _otel_inject_shell
