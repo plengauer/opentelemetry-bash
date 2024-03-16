@@ -46,7 +46,7 @@ if \[ "$_otel_shell" = "bash" ]; then
 fi
 
 _otel_unquote() {
-  \sed "s/^'\(.*\)'$/\1/"
+  \sed "s/^'\(.*\)'$/\1/" | sed 's/'\''\\'\'''\''//g'
 }
 
 _otel_line_split() {
