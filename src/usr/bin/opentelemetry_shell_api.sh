@@ -248,6 +248,7 @@ _otel_line_join() {
 _otel_call() {
   # old versions of dash dont set env vars properly
   # more specifically they do not make variables that are set in front of commands part of the child process env vars but only of the local execution environment
+  \echo DEBUG OTEL CALL "$(_otel_escape_args "$@")" >&2
   if \[ "$_otel_shell" = "dash" ]; then
     \eval "$( { \printenv; \set; } | \grep '^OTEL_' | \cut -d= -f1 | \sort -u | \awk '{ print $1 "=\"$" $1 "\"" }' | _otel_line_join)" "$(_otel_escape_args "$@")"
   else
