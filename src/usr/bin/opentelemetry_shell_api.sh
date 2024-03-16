@@ -206,8 +206,8 @@ _otel_escape_arg_v1() {
 _otel_escape_arg_v2() {
   if \[ -z "$1" ]; then \printf "''";
   else
-    # -e 's/\\/\\\\/g' \
-    # -e 's/ /\\ /g' \
+    # -e 's/\\/\\\\/g'
+    # -e 's/ /\\ /g'
     \printf '%s' "$1" | \sed \
       -e 's/`/\\`/g' \
       -e 's/"/\\"/g' \
@@ -222,8 +222,8 @@ _otel_escape_arg_v2() {
       -e 's/;/\\;/g' \
       -e 's/\$/\\$/g' \
       -e 's/[[:space:]]/\\&/g'
-      #\
-      #-e ':a' -e '/\\n$/!{N;ba' -e '}' \
+      #
+      #-e ':a' -e '/\\n$/!{N;ba' -e '}'
       #-e 's/\n/\\&/g'
   fi
 }
