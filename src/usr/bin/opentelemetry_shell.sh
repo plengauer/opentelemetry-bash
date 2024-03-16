@@ -70,8 +70,10 @@ _otel_alias_prepend() {
     local previous_otel_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep '^_otel_' | _otel_line_join)"
     local previous_alias_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep -v '^_otel_' | _otel_line_join)"
     case "${previous_alias_command} " in
-      "${original_command}") local previous_alias_command="'\\$previous_alias_command'" ;;
+      "${original_command}") local previous_alias_command="'\\$original_command'" ;;
+      "'\\${original_command}'") local previous_alias_command="'\\$original_command'" ;;
       "${original_command} "*) local previous_alias_command="'\\$original_command' $(\printf "$previous_alias_command" | \cut -d' ' -f2-)" ;;
+      "'\\${original_command}' "*) local previous_alias_command="'\\$original_command' $(\printf "$previous_alias_command" | \cut -d' ' -f2-)" ;;
       *) ;;
     esac
     local new_command="$previous_otel_command $prepend_command $previous_alias_command"
@@ -240,7 +242,7 @@ _otel_auto_instrument() {
 
 _otel_alias_and_instrument() {
   local exit_code=0
-  "$@" || local exit_code=$?
+  \eval "$(_otel_escape_args"$@")" || local exit_code=$?
   shift
   if \[ -n "$*" ] && [ "${*#*=*}" != "$*" ]; then
     _otel_auto_instrument "$(\echo "$@" | _otel_line_split | \grep -m1 '=' 2> /dev/null | \tr '=' ' ')"
@@ -250,7 +252,7 @@ _otel_alias_and_instrument() {
 
 _otel_unalias_and_reinstrument() {
   local exit_code=0
-  "$@" || local exit_code=$?
+  \eval "$(_otel_escape_args"$@")" || local exit_code=$?
   shift
   if \[ "-a" = "$*" ]; then
     _otel_auto_instrument "$_otel_shell_auto_instrumentation_hint"
@@ -266,7 +268,7 @@ _otel_instrument_and_source() {
   local command="$(eval '\echo $'"$(($n+1))")"
   local file="$(eval '\echo $'"$(($n+2))")"
   if \[ -f "$file" ]; then _otel_auto_instrument "$file"; fi
-  eval "'$command' '$file' $(if \[ $# -gt $(($n + 2)) ]; then \seq $(($n + 2 + 1)) $#; else \seq 1 $n; fi | while read i; do \echo '"$'"$i"'"'; done | _otel_line_join)"
+  \eval "'$command' '$file' $(if \[ $# -gt $(($n + 2)) ]; then \seq $(($n + 2 + 1)) $#; else \seq 1 $n; fi | while read i; do \echo '"$'"$i"'"'; done | _otel_line_join)"
 }
 
 _otel_record_exec() {
