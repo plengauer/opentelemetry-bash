@@ -72,8 +72,8 @@ _otel_alias_prepend() {
     case "${previous_alias_command} " in
       "${original_command}") local previous_alias_command="'\\$original_command'" ;;
       "${original_command} "*) local previous_alias_command="'\\$original_command' $(\printf '%s' "$previous_alias_command" | \cut -d' ' -f2-)" ;;
-      "'\\${original_command}'") local previous_alias_command="'\\$original_command'" ;;
-      "'\\${original_command}' "*) local previous_alias_command="'\\$original_command' $(\printf '%s' "$previous_alias_command" | \cut -d' ' -f2-)" ;;
+      "'\\''\\${original_command}'\\''") local previous_alias_command="'\\$original_command'" ;;
+      "'\\''\\${original_command}'\\'' "*) local previous_alias_command="'\\$original_command' $(\printf '%s' "$previous_alias_command" | \cut -d' ' -f2-)" ;;
       *) ;;
     esac
     local new_command="$previous_otel_command $prepend_command $previous_alias_command"
