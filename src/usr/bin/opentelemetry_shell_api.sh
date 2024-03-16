@@ -214,7 +214,8 @@ _otel_call() {
   if \[ "$_otel_shell" = "dash" ]; then
     \eval "$( { \printenv; \set; } | \grep '^OTEL_' | \cut -d= -f1 | \sort -u | \awk '{ print $1 "=\"$" $1 "\"" }' | _otel_line_join)" "$(_otel_escape_args "$@")"
   else
-    "$@"
+#    "$@"
+    \eval "$(_otel_escape_args "$@")"
   fi
 }
 
