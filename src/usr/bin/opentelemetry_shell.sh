@@ -100,7 +100,7 @@ _otel_resolve_alias() {
 }
 
 _otel_resolve_alias_stripped() {
-  _otel_resolve_alias $1 | _otel_line_split | \grep -v '^OTEL_' | \grep -v '^_otel_'
+  _otel_resolve_alias $1 | _otel_line_split | \grep -v '^OTEL_' | \grep -v '^_otel_' | _otel_line_join
 }
 
 _otel_resolve_alias_stripped_cmd() {
@@ -112,12 +112,14 @@ _otel_dealiasify() {
   # e.g., alias bash='_otel_inject_shell _otel_observe bash'
   # e.g., alias ai=bash-ai -v
   # e.g., alias bash-ai='/bin/bash -x /usr/bin/bash-ai'
-  local cmd=$1 # e.g., "upgrade", "ai"
-  local cmd_alias="$(_otel_resolve_alias_stripped_cmd $cmd)" # e.g., upgrade => bash, ai => bash-ai # additional indirection here needed
+  # e.g., alias l=ls --color=auto
+  # e.g., alias ls=ls --color=auto
+  local cmd=$1 # e.g., "upgrade", "ai", "l"
+  local cmd_alias="$(_otel_resolve_alias_stripped_cmd $cmd)" # e.g., upgrade => bash, ai => bash-ai # additional indirection here needed #, l => ls
   if \[ -z "$cmd_alias" ]; then return 1; fi
-  if \[ "$cmd" != "$cmd_alias" ] && _otel_has_alias $cmd_alias && ! _otel_resolve_alias $cmd_alias | _otel_line_split | \grep -q '^_otel_'; then # e.g., bash => no, bash-ai => yes
+  if \[ "$cmd" != "$cmd_alias" ] && _otel_has_alias $cmd_alias && ! _otel_resolve_alias $cmd_alias | _otel_line_split | \grep -q '^_otel_'; then # e.g., bash => no, bash-ai => yes, ls => yes
     # this check "feels" like there may be cases where we potentially expand aliases too much
-    \alias $cmd="$(_otel_resolve_alias $cmd_alias) $(_otel_resolve_alias_stripped $cmd | cut -sd' ' -f2-)" # e.g., alias ai='/bin/bash -x /usr/bin/bash-ai -v'
+    \alias $cmd="$(_otel_resolve_alias $cmd_alias) $(_otel_resolve_alias_stripped $cmd | cut -sd' ' -f2-)" # e.g., alias ai='/bin/bash -x /usr/bin/bash-ai -v', alias l='ls --color=auto --color=auto'
     _otel_dealiasify $cmd
     return $?
   fi
