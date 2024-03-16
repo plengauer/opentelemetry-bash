@@ -76,7 +76,7 @@ _otel_alias_prepend() {
 }
 
 _otel_has_alias() {
-  \alias $1 &> /dev/null
+  \alias $1 1> /dev/null 2> /dev/null # for some reason &> does not work in built-in alias
 }
 
 _otel_shebang() {
