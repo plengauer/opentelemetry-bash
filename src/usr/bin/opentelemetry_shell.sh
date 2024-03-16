@@ -117,7 +117,8 @@ _otel_dealiasify() {
   local cmd=$1 # e.g., "upgrade", "ai", "l"
   local cmd_alias="$(_otel_resolve_alias_stripped_cmd $cmd)" # e.g., upgrade => bash, ai => bash-ai # additional indirection here needed #, l => ls
   if \[ -z "$cmd_alias" ]; then return 1; fi
-  if ! \[ "$no_indirect_resolve" = TRUE ] && \[ "$cmd" != "$cmd_alias" ] && _otel_has_alias $cmd_alias && ! _otel_resolve_alias $cmd_alias | _otel_line_split | \grep -q '^_otel_'; then # e.g., bash => no, bash-ai => yes, ls => yes
+#  && ! _otel_resolve_alias $cmd_alias | _otel_line_split | \grep -q '^_otel_'
+  if ! \[ "$no_indirect_resolve" = TRUE ] && \[ "$cmd" != "$cmd_alias" ] && _otel_has_alias $cmd_alias; then # e.g., bash => no, bash-ai => yes, ls => yes
     # this check "feels" like there may be cases where we potentially expand aliases too much
     \alias $cmd="$(_otel_resolve_alias $cmd_alias) $(_otel_resolve_alias_stripped $cmd | \cut -sd' ' -f2-)" # e.g., alias ai='/bin/bash -x /usr/bin/bash-ai -v', alias l='ls --color=auto --color=auto'
     no_indirect_resolve=TRUE _otel_dealiasify $cmd
