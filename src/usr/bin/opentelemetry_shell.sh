@@ -79,7 +79,7 @@ _otel_has_alias() {
   \alias $1 1> /dev/null 2> /dev/null # for some reason &> does not work in built-in alias
 }
 
-_otel_shebang() {
+_otel_resolve_shebang() {
   local path="$(\which $1)"
   if \[ -z "$path" ] || \[ ! -f "$path" ]; then return 1; fi
   read -r first_line < "$path"
@@ -90,7 +90,7 @@ _otel_shebang() {
 _otel_deshebangify() {
   local cmd=$1 # e.g., "upgrade"
   if _otel_has_alias $cmd; then return 1; fi
-  local shebang="$(_otel_shebang $1)" # e.g., "/bin/bash -x"
+  local shebang="$(_otel_resolve_shebang $1)" # e.g., "/bin/bash -x"
   if \[ -z "$shebang" ]; then return 2; fi
   \alias $1="$shebang $(\which $1)" # e.g., alias upgrade='/bin/bash -x /usr/bin/upgrade'
 }
