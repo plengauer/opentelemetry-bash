@@ -171,7 +171,7 @@ otel_log_record() {
   _otel_sdk_communicate "LOG_RECORD" "$traceparent" "$line"
 }
 
-_otel_escape_arg() {
+_otel_escape_arg_v1() {
    # that SO article shows why this is extra fun! https://stackoverflow.com/questions/16991270/newlines-at-the-end-get-removed-in-shell-scripts-why
   local do_escape=0
   if \[ -z "$1" ]; then
@@ -193,6 +193,34 @@ _otel_escape_arg() {
   else
     \printf '%s' "$1"
   fi
+}
+
+_otel_escape_arg_v2() {
+  if \[ -z "$1" ]; then \printf "''";
+  else
+    \printf '%s' "$1" | \sed \
+      -e 's/\\/\\\\/g' \
+      -e 's/ /\\ /g' \
+      -e 's/`/\\`/g' \
+      -e 's/"/\\"/g' \
+      -e "s/'/\\\'/g" \
+      -e 's/(/\\(/g' \
+      -e 's/)/\\)/g' \
+      -e 's/!/\\!/g' \
+      -e 's/</\\</g' \
+      -e 's/>/\\>/g' \
+      -e 's/|/\\|/g' \
+      -e 's/&/\\&/g' \
+      -e 's/;/\\;/g' \
+      -e 's/\$/\\$/g' \
+      -e 's/[[:space:]]/\\&/g' \
+      -e ':a' -e '/\\n$/!{N;ba' -e '}' \
+      -e 's/\n/\\&/g'
+  fi
+}
+
+_otel_escape_arg() {
+  _otel_escape_arg_v2 "$@"
 }
 
 _otel_escape_args() {
