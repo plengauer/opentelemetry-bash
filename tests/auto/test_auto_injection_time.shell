@@ -1,6 +1,8 @@
 . ./assert.sh
 . /usr/bin/opentelemetry_shell.sh
 
+\alias
+
 time echo hello world
 assert_equals 0 $?
 span="$(resolve_span '.name == "time echo hello world"')"
