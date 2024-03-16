@@ -69,11 +69,12 @@ _otel_alias_prepend() {
     esac
     local previous_otel_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep '^_otel_' | _otel_line_join)"
     local previous_alias_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep -v '^_otel_' | _otel_line_join)"
-    case "${previous_alias_command} " in
-      "${original_command}") local previous_alias_command="'\\$original_command'" ;;
-      "${original_command} "*) local previous_alias_command="'\\$original_command' $(\printf '%s' "$previous_alias_command" | \cut -d' ' -f2-)" ;;
-      "'\\''\\${original_command}'\\''") local previous_alias_command="'\\$original_command'" ;;
-      "'\\''\\${original_command}'\\'' "*) local previous_alias_command="'\\$original_command' $(\printf '%s' "$previous_alias_command" | \cut -d' ' -f2-)" ;;
+\echo "DEBUG DEBUG DEBUG <<<$previous_alias_command>>>" >&2
+    case "$previous_alias_command " in
+      "$original_command") local previous_alias_command="'\\$original_command'" ;;
+      "$original_command "*) local previous_alias_command="'\\$original_command' $(\printf '%s' "$previous_alias_command" | \cut -d' ' -f2-)" ;;
+      "'\\''\\$original_command'\\''") local previous_alias_command="'\\$original_command'" ;;
+      "'\\''\\$original_command'\\'' "*) local previous_alias_command="'\\$original_command' $(\printf '%s' "$previous_alias_command" | \cut -d' ' -f2-)" ;;
       *) ;;
     esac
     local new_command="$previous_otel_command $prepend_command $previous_alias_command"
