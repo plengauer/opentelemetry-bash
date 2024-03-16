@@ -71,10 +71,8 @@ _otel_alias_prepend() {
     local previous_alias_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep -v '^_otel_' | _otel_line_join)"
 \echo "DEBUG DEBUG DEBUG <<<$previous_alias_command>>>" >&2
     case "$previous_alias_command " in
-      "$original_command") local previous_alias_command="'\\$original_command'" ;;
-      "$original_command "*) local previous_alias_command="'\\$original_command' $(\printf '%s' "$previous_alias_command" | \cut -d' ' -f2-)" ;;
       "\\$original_command") local previous_alias_command="'\\$original_command'" ;;
-      "\\$original_command "*) local previous_alias_command="'\\$original_command' $(\printf '%s' "$previous_alias_command" | \cut -d' ' -f2-)" ;;
+      "\\$original_command "*) local previous_alias_command="'\\$original_command' $(\printf '%s' "$previous_alias_command" | \cut -sd' ' -f2-)" ;;
       *) ;;
     esac
     local new_command="$previous_otel_command $prepend_command $previous_alias_command"
