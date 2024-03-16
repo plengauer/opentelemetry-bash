@@ -171,6 +171,14 @@ otel_log_record() {
   _otel_sdk_communicate "LOG_RECORD" "$traceparent" "$line"
 }
 
+_otel_contains_linefeed() {
+  case "$1" in
+    *"
+"*) return 0;;
+    *) return 1;;
+  esac
+}
+
 _otel_escape_arg_v1() {
    # that SO article shows why this is extra fun! https://stackoverflow.com/questions/16991270/newlines-at-the-end-get-removed-in-shell-scripts-why
   local do_escape=0
@@ -180,7 +188,7 @@ _otel_escape_arg_v1() {
     local do_escape=1
   else
     case "$1X" in
-      *[[:space:]\&\<\>\|\'\"\(\)\`!\$\;\\]*) local do_escape=1 ;;
+      *[[:space:]\&\<\>\|\'\"\(\)\`!\$\;]*) local do_escape=1 ;;
       *) local do_escape=0 ;;
     esac
   fi
@@ -198,9 +206,9 @@ _otel_escape_arg_v1() {
 _otel_escape_arg_v2() {
   if \[ -z "$1" ]; then \printf "''";
   else
+    # -e 's/\\/\\\\/g' \
+    # -e 's/ /\\ /g' \
     \printf '%s' "$1" | \sed \
-      -e 's/\\/\\\\/g' \
-      -e 's/ /\\ /g' \
       -e 's/`/\\`/g' \
       -e 's/"/\\"/g' \
       -e "s/'/\\\'/g" \
@@ -221,7 +229,7 @@ _otel_escape_arg_v2() {
 }
 
 _otel_escape_arg() {
-  _otel_escape_arg_v2 "$@"
+  if _otel_contains_linefeed "$1"; then _otel_escape_arg_v1 "$1"; else _otel_escape_arg_v2 "$1"; fi
 }
 
 _otel_escape_args() {
@@ -240,6 +248,7 @@ _otel_line_join() {
 _otel_call() {
   # old versions of dash dont set env vars properly
   # more specifically they do not make variables that are set in front of commands part of the child process env vars but only of the local execution environment
+  if \[ "$1" ]; then 
   if \[ "$_otel_shell" = "dash" ]; then
     \eval "$( { \printenv; \set; } | \grep '^OTEL_' | \cut -d= -f1 | \sort -u | \awk '{ print $1 "=\"$" $1 "\"" }' | _otel_line_join)" "$(_otel_escape_args "$@")"
   else
