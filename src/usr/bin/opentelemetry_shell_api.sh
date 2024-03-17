@@ -66,7 +66,7 @@ _otel_resource_attributes() {
 }
 
 _otel_sdk_communicate() {
-  \printf '%s\n' "$*" >&7
+  \echo "$*" >&7 # do not allow linefeeds in here
 }
 
 otel_init() {
