@@ -9,7 +9,7 @@ _otel_inject_inner_command_args() {
   unset OTEL_SHELL_INJECT_INNER_COMMAND_MORE_ARGS
   # command
   case "$1" in
-    "\\"*) \echo -n "$1";;
+    "\\"*) \printf '%s' "$1";;
     *) _otel_escape_arg "$1";;
   esac
   if \[ "$1" = "_otel_observe" ]; then shift; \echo -n " "; _otel_escape_arg "$1"; fi
