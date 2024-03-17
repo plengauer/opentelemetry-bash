@@ -247,13 +247,21 @@ _otel_line_join() {
 }
 
 _otel_call() {
+  # the command is to be handled special when it starts with a \, because then it shouldnt be escaped to preserve behavior in eval
+  # \\cat would make the most sense is considered as the literal command with the name "\cat"
+  # '\cat' is interpreted as "do not alias" because of the quotes, and then the command \cat is not found
+  # \cat is cat without aliases => thats what we want
+  local command="$1"; shift
+  case "$command" in
+    "\\"*) ;;
+    *) local command="$(_otel_escape_arg "$command")"
+  esac
   # old versions of dash dont set env vars properly
   # more specifically they do not make variables that are set in front of commands part of the child process env vars but only of the local execution environment
   if \[ "$_otel_shell" = "dash" ]; then
-    \eval "$( { \printenv; \set; } | \grep '^OTEL_' | \cut -d= -f1 | \sort -u | \awk '{ print $1 "=\"$" $1 "\"" }' | _otel_line_join)" "$(_otel_escape_args "$@")"
+    \eval "$( { \printenv; \set; } | \grep '^OTEL_' | \cut -d= -f1 | \sort -u | \awk '{ print $1 "=\"$" $1 "\"" }' | _otel_line_join)" "$command" "$(_otel_escape_args "$@")"
   else
-#    "$@"
-    \eval "$(_otel_escape_args "$@")"
+    \eval "$command" "$(_otel_escape_args "$@")"
   fi
 }
 
