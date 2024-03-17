@@ -56,13 +56,13 @@ _otel_line_split() {
 _otel_alias_prepend() {
   local original_command=$1
   local prepend_command=$2
-\echo "DEBUG 1 <<<$original_command>>>" >&2
+\echo "DEBUG 1 <<<$original_command>>>"
 
   if \[ -z "$(\alias $original_command 2> /dev/null)" ]; then # fastpath
     local new_command="$prepend_command '\\$original_command'"
   else
     local previous_command="$(\alias $original_command 2> /dev/null | \cut -d= -f2- | _otel_unquote)"
-\echo "DEBUG 2 <<<$previous_command>>>" >&2
+\echo "DEBUG 2 <<<$previous_command>>>"
     if \[ -z "$previous_command" ]; then local previous_command="$original_command"; fi
     if \[ "${previous_command#OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE=}" != "$previous_command" ]; then local previous_command="$(\printf '%s' "$previous_command" | \cut -d" " -f2-)"; fi
     case "$previous_command" in
@@ -71,7 +71,7 @@ _otel_alias_prepend() {
     esac
     local previous_otel_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep '^_otel_' | _otel_line_join)"
     local previous_alias_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep -v '^_otel_' | _otel_line_join)"
-\echo "DEBUG 3 <<<$previous_alias_command>>>" >&2
+\echo "DEBUG 3 <<<$previous_alias_command>>>"
     case "$previous_alias_command" in
       "$original_command") local previous_alias_command="'\\$original_command'" ;;
       "$original_command "*) local previous_alias_command="'\\$original_command' $(\printf '%s' "$previous_alias_command" | \cut -sd' ' -f2-)" ;;
