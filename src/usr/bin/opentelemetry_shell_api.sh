@@ -270,10 +270,12 @@ otel_observe() {
   local name="${OTEL_SHELL_SPAN_NAME_OVERRIDE:-$*}"
   local name="${name#otel_observe }"
   local name="${name#_otel_observe }"
+  local name="${name#\\}"
   local kind="${OTEL_SHELL_SPAN_KIND_OVERRIDE:-INTERNAL}"
   local command="${OTEL_SHELL_COMMANDLINE_OVERRIDE:-$*}"
   local command="${command#otel_observe }"
   local command="${command#_otel_observe }"
+  local command="${command#\\}"
   local command_signature="${OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE:-$$}"
   local attributes="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE"
   unset OTEL_SHELL_SPAN_NAME_OVERRIDE
