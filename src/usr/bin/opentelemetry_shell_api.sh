@@ -21,7 +21,7 @@ _otel_command_real_self() {
 
 _otel_command_self() {
   if \[ -n "$_otel_commandline_override" ]; then
-    \echo "$_otel_commandline_override"
+    \printf '%s\n' "$_otel_commandline_override"
   else
     _otel_command_real_self
   fi
@@ -32,41 +32,41 @@ _otel_package_version() {
 }
 
 _otel_resource_attributes() {
-  \echo telemetry.sdk.name=opentelemetry
-  \echo telemetry.sdk.language=shell
-  \echo telemetry.sdk.version=$(_otel_package_version opentelemetry-shell)
+  \printf '%s\n' telemetry.sdk.name=opentelemetry
+  \printf '%s\n' telemetry.sdk.language=shell
+  \printf '%s\n' telemetry.sdk.version=$(_otel_package_version opentelemetry-shell)
 
-  \echo process.pid=$$
-  \echo process.executable.name=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
-  \echo process.executable.path=$(\readlink /proc/$$/exe)
-  \echo process.command=$(_otel_command_self)
-  \echo process.command_args=$(_otel_command_self | \cut -d' ' -f2-)
-  \echo process.owner=$(\whoami)
-  \echo process.runtime.name=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
-  \echo process.runtime.version=$(_otel_package_version $(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev))
-  \echo process.runtime.options=$-
+  \printf '%s\n' process.pid=$$
+  \printf '%s\n' process.executable.name=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
+  \printf '%s\n' process.executable.path=$(\readlink /proc/$$/exe)
+  \printf '%s\n' process.command=$(_otel_command_self)
+  \printf '%s\n' process.command_args=$(_otel_command_self | \cut -d' ' -f2-)
+  \printf '%s\n' process.owner=$(\whoami)
+  \printf '%s\n' process.runtime.name=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
+  \printf '%s\n' process.runtime.version=$(_otel_package_version $(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev))
+  \printf '%s\n' process.runtime.options=$-
   case $_otel_shell in
-       sh) \echo process.runtime.description="Bourne Shell" ;;
-     dash) \echo process.runtime.description="Debian Almquist Shell" ;;
-     bash) \echo process.runtime.description="Bourne Again Shell" ;;
-      zsh) \echo process.runtime.description="Z Shell" ;;
-      ksh) \echo process.runtime.description="Korn Shell" ;;
-    pdksh) \echo process.runtime.description="Public Domain Korn Shell" ;;
-     posh) \echo process.runtime.description="Policy-compliant Ordinary Shell" ;;
-     yash) \echo process.runtime.description="Yet Another Shell" ;;
-     bosh) \echo process.runtime.description="Bourne Shell" ;;
-     fish) \echo process.runtime.description="Friendly Interactive Shell" ;;
-        *) \echo process.runtime.description=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev) ;;
+       sh) \printf '%s\n' process.runtime.description="Bourne Shell" ;;
+     dash) \printf '%s\n' process.runtime.description="Debian Almquist Shell" ;;
+     bash) \printf '%s\n' process.runtime.description="Bourne Again Shell" ;;
+      zsh) \printf '%s\n' process.runtime.description="Z Shell" ;;
+      ksh) \printf '%s\n' process.runtime.description="Korn Shell" ;;
+    pdksh) \printf '%s\n' process.runtime.description="Public Domain Korn Shell" ;;
+     posh) \printf '%s\n' process.runtime.description="Policy-compliant Ordinary Shell" ;;
+     yash) \printf '%s\n' process.runtime.description="Yet Another Shell" ;;
+     bosh) \printf '%s\n' process.runtime.description="Bourne Shell" ;;
+     fish) \printf '%s\n' process.runtime.description="Friendly Interactive Shell" ;;
+        *) \printf '%s\n' process.runtime.description=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev) ;;
   esac
 
-  \echo service.name="${OTEL_SERVICE_NAME:-unknown_service}"
-  \echo service.version=$OTEL_SERVICE_VERSION
-  \echo service.namespace=$OTEL_SERVICE_NAMESPACE
-  \echo service.instance.id=$OTEL_SERVICE_INSTANCE_ID
+  \printf '%s\n' service.name="${OTEL_SERVICE_NAME:-unknown_service}"
+  \printf '%s\n' service.version=$OTEL_SERVICE_VERSION
+  \printf '%s\n' service.namespace=$OTEL_SERVICE_NAMESPACE
+  \printf '%s\n' service.instance.id=$OTEL_SERVICE_INSTANCE_ID
 }
 
 _otel_sdk_communicate() {
-  \echo "$*" >&7
+  \printf '%s\n' "$*" >&7
 }
 
 otel_init() {
@@ -138,8 +138,8 @@ otel_span_activate() {
 }
 
 otel_span_deactivate() {
-  export OTEL_TRACEPARENT=$(\echo $OTEL_TRACEPARENT_STACK | \cut -d'/' -f1)
-  export OTEL_TRACEPARENT_STACK=$(\echo $OTEL_TRACEPARENT_STACK | \cut -d'/' -f2-)
+  export OTEL_TRACEPARENT=$(\printf '%s' $OTEL_TRACEPARENT_STACK | \cut -d'/' -f1)
+  export OTEL_TRACEPARENT_STACK=$(\printf '%s' $OTEL_TRACEPARENT_STACK | \cut -d'/' -f2-)
 }
 
 otel_metric_create() {
@@ -285,10 +285,10 @@ otel_observe() {
   unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
   # create span, set initial attributes
   local span_id=$(otel_span_start $kind "$name")
-  otel_span_attribute $span_id subprocess.executable.name=$(\echo "$command" | \cut -d' ' -f1 | \rev | \cut -d'/' -f1 | \rev)
-  otel_span_attribute $span_id subprocess.executable.path="$(\which $(\echo "$command" | \cut -d' ' -f1))"
+  otel_span_attribute $span_id subprocess.executable.name=$(\printf '%s' "$command" | \cut -d' ' -f1 | \rev | \cut -d'/' -f1 | \rev)
+  otel_span_attribute $span_id subprocess.executable.path="$(\which $(\printf '%s' "$command" | \cut -d' ' -f1))"
   otel_span_attribute $span_id subprocess.command="$command"
-  otel_span_attribute $span_id subprocess.command_args="$(\echo "$command" | \cut -sd' ' -f2-)"
+  otel_span_attribute $span_id subprocess.command_args="$(\printf '%s' "$command" | \cut -sd' ' -f2-)"
   # run command
   otel_span_activate $span_id
   if \[ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0)"; fi
@@ -300,7 +300,7 @@ otel_observe() {
     local traceparent=$OTEL_TRACEPARENT
     local stderr_pipe=$(\mktemp -u).opentelemetry_shell_$$.pipe
     \mkfifo $stderr_pipe
-    ( (while IFS= read -r line; do otel_log_record $traceparent "$line"; \echo "$line" >&2; done < $stderr_pipe) & )
+    ( (while IFS= read -r line; do otel_log_record $traceparent "$line"; \printf '%s\n' "$line" >&2; done < $stderr_pipe) & )
     OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$command_signature" _otel_call "$@" 2> $stderr_pipe || local exit_code=$?
     \rm $stderr_pipe
   else
