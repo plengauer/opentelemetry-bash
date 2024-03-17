@@ -300,7 +300,7 @@ otel_observe() {
     local traceparent=$OTEL_TRACEPARENT
     local stderr_pipe=$(\mktemp -u).opentelemetry_shell_$$.pipe
     \mkfifo $stderr_pipe
-    ( (while IFS= read -r line; do otel_log_record $traceparent "$line"; \printf '%s\n' "$line" >&2; done < $stderr_pipe) & )
+    ( (while IFS= read -r line; do otel_log_record $traceparent "$line"; \printf '%s' "$line" >&2; done < $stderr_pipe) & )
     OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$command_signature" _otel_call "$@" 2> $stderr_pipe || local exit_code=$?
     \rm $stderr_pipe
   else
