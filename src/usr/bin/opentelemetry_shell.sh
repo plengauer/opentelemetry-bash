@@ -253,7 +253,7 @@ _otel_alias_and_instrument() {
 _otel_unalias_and_reinstrument() {
   shift
   local exit_code=0
-  \eval "'unalias'" "$(_otel_escape_args"$@")" || local exit_code=$?
+  \eval "'unalias'" "$(_otel_escape_args "$@")" || local exit_code=$?
   if \[ "-a" = "$*" ]; then
     _otel_auto_instrument "$_otel_shell_auto_instrumentation_hint"
   else
