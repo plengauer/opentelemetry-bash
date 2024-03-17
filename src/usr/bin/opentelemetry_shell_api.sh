@@ -230,8 +230,7 @@ _otel_escape_arg_v2() {
 }
 
 _otel_escape_arg() {
-  _otel_escape_arg_v1 "$1"
-  # if _otel_contains_linefeed "$1"; then _otel_escape_arg_v1 "$1"; else _otel_escape_arg_v2 "$1"; fi
+  if _otel_contains_linefeed "$1"; then _otel_escape_arg_v1 "$1"; else _otel_escape_arg_v2 "$1"; fi
 }
 
 _otel_escape_args() {
