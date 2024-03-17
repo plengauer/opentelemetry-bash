@@ -6,7 +6,7 @@
 
 _otel_inject_parallel_moreutils_arguments() {
   case "$1" in
-    "\\"*) \echo -n "$1";;
+    "\\"*) \printf '%s' "$1";;
     *) _otel_escape_arg "$1";;
   esac
   if \[ "$1" = "_otel_observe" ]; then shift; \echo -n " "; _otel_escape_arg "$1"; fi
