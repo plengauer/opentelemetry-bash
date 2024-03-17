@@ -188,7 +188,7 @@ _otel_escape_arg_v1() {
     local do_escape=1
   else
     case "$1X" in
-      *[[:space:]\&\<\>\|\'\"\(\)\`!\$\;]*) local do_escape=1 ;;
+      *[[:space:]\&\<\>\|\'\"\(\)\`!\$\;\\]*) local do_escape=1 ;;
       *) local do_escape=0 ;;
     esac
   fi
