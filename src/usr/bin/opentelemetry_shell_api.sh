@@ -32,37 +32,37 @@ _otel_package_version() {
 }
 
 _otel_resource_attributes() {
-  \printf '%s\n' telemetry.sdk.name=opentelemetry
-  \printf '%s\n' telemetry.sdk.language=shell
-  \printf '%s\n' telemetry.sdk.version=$(_otel_package_version opentelemetry-shell)
+  \echo telemetry.sdk.name=opentelemetry
+  \echo telemetry.sdk.language=shell
+  \echo telemetry.sdk.version=$(_otel_package_version opentelemetry-shell)
 
-  \printf '%s\n' process.pid=$$
-  \printf '%s\n' process.executable.name=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
-  \printf '%s\n' process.executable.path=$(\readlink /proc/$$/exe)
-  \printf '%s\n' process.command=$(_otel_command_self)
-  \printf '%s\n' process.command_args=$(_otel_command_self | \cut -d' ' -f2-)
-  \printf '%s\n' process.owner=$(\whoami)
-  \printf '%s\n' process.runtime.name=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
-  \printf '%s\n' process.runtime.version=$(_otel_package_version $(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev))
-  \printf '%s\n' process.runtime.options=$-
+  \echo process.pid=$$
+  \echo process.executable.name=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
+  \echo process.executable.path=$(\readlink /proc/$$/exe)
+  \echo process.command=$(_otel_command_self)
+  \echo process.command_args=$(_otel_command_self | \cut -d' ' -f2-)
+  \echo process.owner=$(\whoami)
+  \echo process.runtime.name=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
+  \echo process.runtime.version=$(_otel_package_version $(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev))
+  \echo process.runtime.options=$-
   case $_otel_shell in
-       sh) \printf '%s\n' process.runtime.description="Bourne Shell" ;;
-     dash) \printf '%s\n' process.runtime.description="Debian Almquist Shell" ;;
-     bash) \printf '%s\n' process.runtime.description="Bourne Again Shell" ;;
-      zsh) \printf '%s\n' process.runtime.description="Z Shell" ;;
-      ksh) \printf '%s\n' process.runtime.description="Korn Shell" ;;
-    pdksh) \printf '%s\n' process.runtime.description="Public Domain Korn Shell" ;;
-     posh) \printf '%s\n' process.runtime.description="Policy-compliant Ordinary Shell" ;;
-     yash) \printf '%s\n' process.runtime.description="Yet Another Shell" ;;
-     bosh) \printf '%s\n' process.runtime.description="Bourne Shell" ;;
-     fish) \printf '%s\n' process.runtime.description="Friendly Interactive Shell" ;;
-        *) \printf '%s\n' process.runtime.description=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev) ;;
+       sh) \echo process.runtime.description="Bourne Shell" ;;
+     dash) \echo process.runtime.description="Debian Almquist Shell" ;;
+     bash) \echo process.runtime.description="Bourne Again Shell" ;;
+      zsh) \echo process.runtime.description="Z Shell" ;;
+      ksh) \echo process.runtime.description="Korn Shell" ;;
+    pdksh) \echo process.runtime.description="Public Domain Korn Shell" ;;
+     posh) \echo process.runtime.description="Policy-compliant Ordinary Shell" ;;
+     yash) \echo process.runtime.description="Yet Another Shell" ;;
+     bosh) \echo process.runtime.description="Bourne Shell" ;;
+     fish) \echo process.runtime.description="Friendly Interactive Shell" ;;
+        *) \echo process.runtime.description=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev) ;;
   esac
 
-  \printf '%s\n' service.name="${OTEL_SERVICE_NAME:-unknown_service}"
-  \printf '%s\n' service.version=$OTEL_SERVICE_VERSION
-  \printf '%s\n' service.namespace=$OTEL_SERVICE_NAMESPACE
-  \printf '%s\n' service.instance.id=$OTEL_SERVICE_INSTANCE_ID
+  \echo service.name="${OTEL_SERVICE_NAME:-unknown_service}"
+  \echo service.version=$OTEL_SERVICE_VERSION
+  \echo service.namespace=$OTEL_SERVICE_NAMESPACE
+  \echo service.instance.id=$OTEL_SERVICE_INSTANCE_ID
 }
 
 _otel_sdk_communicate() {
@@ -80,7 +80,7 @@ otel_init() {
     fi
   fi
   \mkfifo $_otel_remote_sdk_pipe
-  eval "$(\cat /opt/opentelemetry_shell/venv/bin/activate | \sed 's/\[/\\\[/g')"
+  \eval "$(\cat /opt/opentelemetry_shell/venv/bin/activate | \sed 's/\[/\\\[/g')"
   (\python3 /usr/bin/opentelemetry_shell_sdk.py $_otel_remote_sdk_pipe "shell" $(_otel_package_version opentelemetry-shell) > "$sdk_output" 2> "$sdk_output" &)
   deactivate
   \exec 7> $_otel_remote_sdk_pipe
