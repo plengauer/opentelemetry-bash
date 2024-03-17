@@ -60,7 +60,8 @@ _otel_alias_prepend() {
   local prepend_command=$2
 
   if \[ -z "$(\alias $original_command 2> /dev/null)" ]; then # fastpath
-    local new_command="$prepend_command '\\$original_command'"
+#   local new_command="$prepend_command '\\$original_command'"
+    local new_command="$(\printf '%s' "$prepend_command '\\$original_command'")" # need to use printf to handle backslashes consistently across shells
   else
     local previous_command="$(\alias $original_command 2> /dev/null | \cut -d= -f2- | _otel_unquote)"
     if \[ -z "$previous_command" ]; then local previous_command="$original_command"; fi
@@ -72,10 +73,14 @@ _otel_alias_prepend() {
     local previous_otel_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep '^_otel_' | _otel_line_join)"
     local previous_alias_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep -v '^_otel_' | _otel_line_join)"
     case "$previous_alias_command" in
-      "$original_command") local previous_alias_command="'\\$original_command'" ;;
-      "$original_command "*) local previous_alias_command="'\\$original_command' $(\printf '%s' "$previous_alias_command" | \cut -sd' ' -f2-)" ;;
-      "\\$original_command") local previous_alias_command="'\\$original_command'" ;;
-      "\\$original_command "*) local previous_alias_command="'\\$original_command' $(\printf '%s' "$previous_alias_command" | \cut -sd' ' -f2-)" ;;
+#     "$original_command") local previous_alias_command="'\\$original_command'" ;;
+#     "$original_command "*) local previous_alias_command="'\\$original_command' $(\printf '%s' "$previous_alias_command" | \cut -sd' ' -f2-)" ;;
+#     "\\$original_command") local previous_alias_command="'\\$original_command'" ;;
+#     "\\$original_command "*) local previous_alias_command="'\\$original_command' $(\printf '%s' "$previous_alias_command" | \cut -sd' ' -f2-)" ;;
+      "$original_command") local previous_alias_command="$(\printf '%s' "'\\$original_command'")" ;;
+      "$original_command "*) local previous_alias_command="$(\printf '%s' "'\\$original_command' $(\printf '%s' "$previous_alias_command" | \cut -sd' ' -f2-)")" ;;
+      "\\$original_command") local previous_alias_command="$(\printf '%s' "'\\$original_command'")" ;;
+      "\\$original_command "*) local previous_alias_command="$(\printf '%s' "'\\$original_command' $(\printf '%s' "$previous_alias_command" | \cut -sd' ' -f2-)")" ;;
       *) ;;
     esac
     local new_command="$previous_otel_command $prepend_command $previous_alias_command"
