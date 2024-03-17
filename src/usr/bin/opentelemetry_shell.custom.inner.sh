@@ -8,13 +8,13 @@ _otel_inject_inner_command_args() {
   local more_args="$OTEL_SHELL_INJECT_INNER_COMMAND_MORE_ARGS"
   unset OTEL_SHELL_INJECT_INNER_COMMAND_MORE_ARGS
   # command
-  if \[ "$1" = "_otel_observe" ]; then \echo -n "$1 "; shift; fi
+  case "$1" in
+    "\\"*) \echo -n "$1";;
+    *) _otel_escape_arg "$1";;
+  esac
+  if \[ "$1" = "_otel_observe" ]; then shift; \echo -n " "; _otel_escape_arg "$1"; fi
   local command="$1"
   shift
-  case "$command" in
-    "\\"*) \echo -n "$command";;
-    *) _otel_escape_arg "$command";;
-  esac
   # options
   # -option or not executable file 
   while \[ "$#" -gt 0 ] && ( \[ "${1%"${1#?}"}" = "-" ] || ! ( \[ -x "$1" ] || \[ -x "$(\which "$1")" ] ) ); do \echo -n " "; _otel_escape_arg "$1"; shift; done
