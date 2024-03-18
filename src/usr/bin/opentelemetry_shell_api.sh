@@ -66,7 +66,7 @@ _otel_resource_attributes() {
 }
 
 _otel_sdk_communicate() {
-  \echo "$*" >&7 # do not allow linefeeds in here
+  \echo "$*" | \tr -d '\000-\037' >&7
 }
 
 otel_init() {
