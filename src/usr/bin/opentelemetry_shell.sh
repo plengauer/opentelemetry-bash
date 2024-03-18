@@ -176,6 +176,9 @@ _otel_list_all_commands() {
 _otel_auto_instrument() {
   local hint="$1"
 
+  # custom instrumentations (injections and propagations) (do it before cache so the functions are defined)
+  for otel_custom_file in $(\ls /usr/bin | \grep '^opentelemetry_shell.custom.' | \grep '.sh$'); do \. "$otel_custom_file"; done
+
   # cached?
   ## we really have three options for the cache key
   ## (1) using the hint - will not work when scripts are changing or called the same but very fast!
@@ -193,9 +196,6 @@ _otel_auto_instrument() {
   _otel_alias_prepend unalias _otel_unalias_and_reinstrument
   _otel_alias_prepend . _otel_instrument_and_source
   if \[ "$_otel_shell" = "bash" ]; then _otel_alias_prepend source _otel_instrument_and_source; fi
-  
-  # custom instrumentations (injections and propagations)
-  for otel_custom_file in $(\ls /usr/bin | \grep '^opentelemetry_shell.custom.' | \grep '.sh$'); do \. "$otel_custom_file"; done
   
   # deshebangify commands, propagate special instrumentations into aliases, instrument all commands
   ## (both otel_filter_commands_by_file and _otel_filter_commands_by_instrumentation are functionally optional, but helps optimizing time because the following loop AND otel_instrument itself is expensive!)
