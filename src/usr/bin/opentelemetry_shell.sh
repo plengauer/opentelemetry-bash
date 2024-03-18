@@ -184,7 +184,8 @@ _otel_auto_instrument() {
   local cache_key="$(_otel_list_all_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_hint "$hint" | \sort -u | \md5sum | \cut -d' ' -f1)"
   local cache_file="$(\mktemp -u | \rev | \cut -d'/' -f2- | \rev)/opentelemetry_shell_$(_otel_package_version opentelemetry-shell)"_"$_otel_shell"_instrumentation_cache_"$cache_key".sh
   if \[ -f "$cache_file" ]; then
-    eval "$(\cat $cache_file | \grep -v '^#' | \awk '{print "\\alias " $0 }')"
+    for otel_custom_file in $(\ls /usr/bin | \grep '^opentelemetry_shell.custom.' | \grep '.sh$'); do \eval "$(\cat "$otel_custom_file" | \grep -v '_otel_alias_prepend')"; done
+    \eval "$(\cat $cache_file | \grep -v '^#' | \awk '{print "\\alias " $0 }')"
     return $?
   fi
   
@@ -193,7 +194,7 @@ _otel_auto_instrument() {
   _otel_alias_prepend unalias _otel_unalias_and_reinstrument
   _otel_alias_prepend . _otel_instrument_and_source
   if \[ "$_otel_shell" = "bash" ]; then _otel_alias_prepend source _otel_instrument_and_source; fi
-  
+
   # custom instrumentations (injections and propagations)
   for otel_custom_file in $(\ls /usr/bin | \grep '^opentelemetry_shell.custom.' | \grep '.sh$'); do \. "$otel_custom_file"; done
   
