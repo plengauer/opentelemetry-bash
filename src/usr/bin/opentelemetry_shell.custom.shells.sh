@@ -12,7 +12,11 @@ _otel_inject_shell_args_with_copy() {
   local is_script=0
   # command
   if \[ "$1" = "_otel_observe" ]; then _otel_escape_arg "$1"; \echo -n " "; shift; fi
-  local shell="$1"
+  local shell="${1#\\}"
+  case "$1" in
+    "\\"*) \printf '%s' "$1";;
+    *) _otel_escape_arg "$1";;
+  esac
   _otel_escape_arg "$1"; \echo -n " "
   shift
   # options and script or command string
