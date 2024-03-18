@@ -10,7 +10,7 @@ _otel_inject_shell_args_with_c_flag() {
   local injection=". /usr/bin/opentelemetry_shell.sh"
   # command
   if \[ "$1" = "_otel_observe" ]; then _otel_escape_arg "$1"; \echo -n " "; shift; fi
-  local dollar_zero="$1" # in case its not a script, $0 becomes the executable
+  local dollar_zero="${1#\\}" # in case its not a script, $0 becomes the executable
   _otel_escape_arg "$1"; \echo -n " "
   shift
   # options and script or command string
