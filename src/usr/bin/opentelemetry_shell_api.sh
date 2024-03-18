@@ -66,7 +66,7 @@ _otel_resource_attributes() {
 }
 
 _otel_sdk_communicate() {
-  \echo "$*" | \tr -d '\000-\037' >&7
+  \echo "$*" >&7 # tr -d '\000-\037'
 }
 
 otel_init() {
