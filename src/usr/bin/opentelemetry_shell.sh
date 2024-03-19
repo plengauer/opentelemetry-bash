@@ -83,7 +83,7 @@ _otel_auto_instrument() {
   \alias exec='_otel_record_exec '$_otel_source_file_resolver' '$_otel_source_line_resolver'; exec'
 
   # cache
-  if \[ "$(\alias | \wc -l)" -gt 50 ]; then \alias | \sed 's/^alias //' > "$cache_file"; else true; fi
+  if \[ "$(\alias | \wc -l)" -gt 25 ]; then \alias | \sed 's/^alias //' > "$cache_file"; else true; fi
 }
 
 _otel_list_all_commands() {
