@@ -166,28 +166,28 @@ _otel_dealiasify() {
   # e.g., alias bash-ai='/bin/bash -x /usr/bin/bash-ai'
   # e.g., alias l=ls --color=auto
   # e.g., alias ls=ls --color=auto
-  local cmd=$1 # e.g., "upgrade", "ai", "l"
+  local cmd="$1" # e.g., "upgrade", "ai", "l"
   local full_alias="$(_otel_resolve_alias "$cmd")"
   case "$full_alias" in
     "/"*) ;;
     "."*) ;;
-    *) return 4;;
+    *) return 1;;
   esac
   local cmd_alias="$(\printf '%s' "$full_alias" | _otel_line_split | \grep -v '^OTEL_' | \grep -v '^_otel_' | \head -n1 | \rev | \cut -d/ -f1 | \rev)" # e.g., upgrade => bash
-  if \[ -z "$cmd_alias" ]; then return 1; fi
+  if \[ -z "$cmd_alias" ]; then return 2; fi
   local cmd_aliased="$(_otel_resolve_alias $cmd_alias)" # e.g., bash => _otel_inject_shell bash
-  if \[ -z "$cmd_aliased" ]; then return 2; fi
+  if \[ -z "$cmd_aliased" ]; then return 3; fi
   local otel_cmds="$(\printf '%s' "$cmd_aliased" | _otel_line_split | \grep '^_otel_' | \grep -v '^_otel_observe' | _otel_line_join)" # e.g., _otel_inject_shell bash => _otel_inject_shell
-  if \[ -z "$otel_cmds" ]; then return 3; fi
-  _otel_alias_prepend $cmd "$otel_cmds" # e.g., alias upgrade='_otel_inject_shell /bin/bash -x /usr/bin/upgrade'
+  if \[ -z "$otel_cmds" ]; then return 4; fi
+  _otel_alias_prepend "$cmd" "$otel_cmds" # e.g., alias upgrade='_otel_inject_shell /bin/bash -x /usr/bin/upgrade'
 }
 
 _otel_has_alias() {
-  \alias $1 1> /dev/null 2> /dev/null # for some reason &> does not work in built-in alias
+  \alias "$1" 1> /dev/null 2> /dev/null # for some reason &> does not work in built-in alias
 }
 
 _otel_resolve_alias() {
-  \alias $1 2> /dev/null | \cut -d= -f2- | _otel_unquote
+  \alias "$1" 2> /dev/null | \cut -d= -f2- | _otel_unquote
 }
 
 otel_instrument() {
