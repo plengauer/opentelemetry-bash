@@ -283,7 +283,7 @@ _otel_escape_arg() {
 }
 
 _otel_line_join() {
-  \sed '/^$/d' | \tr '\n' ' ' | \sed 's/ $//'
+  \tr '\n' ' '
 }
 
 _otel_line_split() {
