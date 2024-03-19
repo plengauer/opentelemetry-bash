@@ -95,51 +95,51 @@ _otel_package_version() {
 }
 
 otel_span_start() {
-  local kind=$1
+  local kind="$1"
   shift
   local name="$*"
-  local response_pipe=$(\mktemp -u)_opentelemetry_shell_$$.pipe
-  \mkfifo $response_pipe
+  local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
+  \mkfifo "$response_pipe"
   _otel_sdk_communicate "SPAN_START $response_pipe $OTEL_TRACEPARENT $kind $name"
-  \cat $response_pipe
-  \rm $response_pipe &> /dev/null
+  \cat "$response_pipe"
+  \rm "$response_pipe" &> /dev/null
 }
 
 otel_span_end() {
-  local span_id=$1
+  local span_id="$1"
   _otel_sdk_communicate "SPAN_END $span_id"
 }
 
 otel_span_error() {
-  local span_id=$1
+  local span_id="$1"
   _otel_sdk_communicate "SPAN_ERROR $span_id"
 }
 
 otel_span_attribute() {
-  local span_id=$1
+  local span_id="$1"
   shift
   local kvp="$*"
   _otel_sdk_communicate "SPAN_ATTRIBUTE $span_id $kvp"
 }
 
 otel_span_traceparent() {
-  local span_id=$1
-  local response_pipe=$(\mktemp -u)_opentelemetry_shell_$$.pipe
-  \mkfifo $response_pipe
+  local span_id="$1"
+  local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
+  \mkfifo "$response_pipe"
   _otel_sdk_communicate "SPAN_TRACEPARENT $response_pipe $span_id"
-  \cat $response_pipe
-  \rm $response_pipe &> /dev/null
+  \cat "$response_pipe"
+  \rm "$response_pipe" &> /dev/null
 }
 
 otel_span_activate() {
-  local span_id=$1
-  export OTEL_TRACEPARENT_STACK=$OTEL_TRACEPARENT/$OTEL_TRACEPARENT_STACK
-  export OTEL_TRACEPARENT=$(otel_span_traceparent $span_id)
+  local span_id="$1"
+  export OTEL_TRACEPARENT_STACK="$OTEL_TRACEPARENT/$OTEL_TRACEPARENT_STACK"
+  export OTEL_TRACEPARENT="$(otel_span_traceparent $span_id)"
 }
 
 otel_span_deactivate() {
-  export OTEL_TRACEPARENT=$(\printf '%s' $OTEL_TRACEPARENT_STACK | \cut -d'/' -f1)
-  export OTEL_TRACEPARENT_STACK=$(\printf '%s' $OTEL_TRACEPARENT_STACK | \cut -d'/' -f2-)
+  export OTEL_TRACEPARENT="$(\printf '%s' $OTEL_TRACEPARENT_STACK | \cut -d'/' -f1)"
+  export OTEL_TRACEPARENT_STACK="$(\printf '%s' $OTEL_TRACEPARENT_STACK | \cut -d'/' -f2-)"
 }
 
 otel_metric_create() {
