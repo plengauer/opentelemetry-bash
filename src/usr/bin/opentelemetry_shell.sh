@@ -153,7 +153,7 @@ _otel_deshebangify() {
 
 _otel_resolve_shebang() {
   local path="$(\which "$1")"
-  if \[ -z "$path" ] || \[ ! -f "$path" ]; then return 1; fi
+  if \[ -z "$path" ] || ! \[ -x "$path" ]; then return 1; fi
   read -r first_line < "$path"
   if \[ "$(\echo "$first_line" | \cut -c 1-2)" != '#!' ]; then return 2; fi
   \echo "$first_line" | \cut -c 3- | \awk '{$1=$1};1'
