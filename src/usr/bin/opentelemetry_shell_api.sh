@@ -100,26 +100,26 @@ otel_span_start() {
   local name="$*"
   local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
   \mkfifo "$response_pipe"
-  _otel_sdk_communicate "SPAN_START $response_pipe $OTEL_TRACEPARENT $kind $name"
+  _otel_sdk_communicate "SPAN_START" "$response_pipe" "$OTEL_TRACEPARENT" "$kind" "$name"
   \cat "$response_pipe"
   \rm "$response_pipe" &> /dev/null
 }
 
 otel_span_end() {
   local span_id="$1"
-  _otel_sdk_communicate "SPAN_END $span_id"
+  _otel_sdk_communicate "SPAN_END" "$span_id"
 }
 
 otel_span_error() {
   local span_id="$1"
-  _otel_sdk_communicate "SPAN_ERROR $span_id"
+  _otel_sdk_communicate "SPAN_ERROR" "$span_id"
 }
 
 otel_span_attribute() {
   local span_id="$1"
   shift
   local kvp="$*"
-  _otel_sdk_communicate "SPAN_ATTRIBUTE $span_id $kvp"
+  _otel_sdk_communicate "SPAN_ATTRIBUTE" "$span_id" "$kvp"
 }
 
 otel_span_traceparent() {
