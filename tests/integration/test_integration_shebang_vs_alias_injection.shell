@@ -9,6 +9,7 @@ alias ai=bash-ai
 # lets simulate the caller
 . /usr/bin/opentelemetry_shell.sh
 alias
+export OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE
 set -x
 ai some arguments
 set +x
