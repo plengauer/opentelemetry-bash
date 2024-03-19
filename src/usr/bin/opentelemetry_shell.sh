@@ -238,23 +238,23 @@ _otel_observe() {
 _otel_alias_and_instrument() {
   shift
   local exit_code=0
-  \eval "'alias'" "$(_otel_escape_args "$@")" || local exit_code=$?
+  \eval "'alias'" "$(_otel_escape_args "$@")" || local exit_code="$?"
   if \[ -n "$*" ] && [ "${*#*=*}" != "$*" ]; then
-    _otel_auto_instrument "$(\echo "$@" | _otel_line_split | \grep -m1 '=' 2> /dev/null | \tr '=' ' ')"
+    _otel_auto_instrument "$(\echo "$*" | _otel_line_split | \grep -m1 '=' 2> /dev/null | \tr '=' ' ')"
   fi
-  return $exit_code
+  return "$exit_code"
 }
 
 _otel_unalias_and_reinstrument() {
   shift
   local exit_code=0
-  \eval "'unalias'" "$(_otel_escape_args "$@")" || local exit_code=$?
+  \eval "'unalias'" "$(_otel_escape_args "$@")" || local exit_code="$?"
   if \[ "-a" = "$*" ]; then
     _otel_auto_instrument "$_otel_shell_auto_instrumentation_hint"
   else
     _otel_auto_instrument "$*"
   fi
-  return $exit_code
+  return "$exit_code"
 }
 
 _otel_instrument_and_source() {
@@ -272,11 +272,11 @@ _otel_record_exec() {
   if \[ -n "$file" ] && \[ -n "$line" ] && \[ -f "$file" ]; then local command="$(\cat "$file" | \sed -n "$line"p | \grep -F 'exec' | \sed 's/^.*exec /exec /')"; fi
   if \[ -n "$command" ] && \echo "$command" | \grep -q '^exec [0-9]>'; then return 0; fi
   if \[ -z "$command" ]; then local command="exec"; fi
-  local span_id=$(otel_span_start INTERNAL "$command")
+  local span_id="$(otel_span_start INTERNAL "$command")"
   if \[ "$(\printf '%s' "$command" | \sed 's/ \[0-9]*>.*$//')" != "exec" ]; then
-    otel_span_activate $span_id
+    otel_span_activate "$span_id"
   fi
-  otel_span_end $span_id
+  otel_span_end "$span_id"
   _otel_sdk_communicate 'SPAN_AUTO_END'
 }
 
@@ -284,27 +284,27 @@ _otel_start_script() {
   otel_init || return $?
   if \[ -n "$SSH_CLIENT"  ] && \[ -n "$SSH_CONNECTION" ] && \[ "$(\cat /proc/$PPID/cmdline | \tr -d '\000' | \cut -d' ' -f1)" = "sshd:" ]; then
     otel_root_span_id="$(otel_span_start SERVER ssh)"
-    otel_span_attribute $otel_root_span_id ssh.ip=$(\echo $SSH_CONNECTION | \cut -d' ' -f3)
-    otel_span_attribute $otel_root_span_id ssh.port=$(\echo $SSH_CONNECTION | \cut -d' ' -f4)
-    otel_span_attribute $otel_root_span_id net.peer.ip=$(\echo $SSH_CLIENT | \cut -d' ' -f1)
-    otel_span_attribute $otel_root_span_id net.peer.port=$(\echo $SSH_CLIENT | \cut -d' ' -f2)
-  elif \[ -n "$SERVER_SOFTWARE"  ] && \[ -n "$SCRIPT_NAME" ] && \[ -n "$SERVER_NAME" ] && \[ -n "$SERVER_PROTOCOL" ] && ! \[ "$OTEL_SHELL_AUTO_INJECTED" = "TRUE" ] && \[ "$(\cat /proc/$PPID/cmdline | \tr -d '\000' | \cut -d' ' -f1 | \rev | \cut -d'/' -f1 | \rev)" = "python3" ]; then
+    otel_span_attribute $otel_root_span_id ssh.ip="$(\echo $SSH_CONNECTION | \cut -d ' ' -f 3)"
+    otel_span_attribute $otel_root_span_id ssh.port="$(\echo $SSH_CONNECTION | \cut -d ' ' -f 4)"
+    otel_span_attribute $otel_root_span_id net.peer.ip="$(\echo $SSH_CLIENT | \cut -d ' ' -f 1)"
+    otel_span_attribute $otel_root_span_id net.peer.port="$(\echo $SSH_CLIENT | \cut -d ' ' -f 2)"
+  elif \[ -n "$SERVER_SOFTWARE"  ] && \[ -n "$SCRIPT_NAME" ] && \[ -n "$SERVER_NAME" ] && \[ -n "$SERVER_PROTOCOL" ] && ! \[ "$OTEL_SHELL_AUTO_INJECTED" = "TRUE" ] && \[ "$(\cat "/proc/$PPID/cmdline" | \tr -d '\000' | \cut -d ' ' -f 1 | \rev | \cut -d / -f 1 | \rev)" = "python3" ]; then
     otel_root_span_id="$(otel_span_start SERVER GET)"
-    otel_span_attribute $otel_root_span_id http.flavor=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f2)
-    otel_span_attribute $otel_root_span_id http.host=$SERVER_NAME:$SERVER_PORT
-    otel_span_attribute $otel_root_span_id http.route=$SCRIPT_NAME
-    otel_span_attribute $otel_root_span_id http.scheme=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f1 | \tr '[:upper:]' '[:lower:]')
+    otel_span_attribute $otel_root_span_id http.flavor="$(\echo $SERVER_PROTOCOL | \cut -d / -f 2)"
+    otel_span_attribute $otel_root_span_id http.host="$SERVER_NAME:$SERVER_PORT"
+    otel_span_attribute $otel_root_span_id http.route="$SCRIPT_NAME"
+    otel_span_attribute $otel_root_span_id http.scheme="$(\echo $SERVER_PROTOCOL | \cut -d / -f 1 | \tr '[:upper:]' '[:lower:]')"
     otel_span_attribute $otel_root_span_id http.method=GET
     otel_span_attribute $otel_root_span_id http.status_code=200
     otel_span_attribute $otel_root_span_id http.status_text=OK
-    otel_span_attribute $otel_root_span_id http.target=$SCRIPT_NAME
-    otel_span_attribute $otel_root_span_id http.url=$(\echo $SERVER_PROTOCOL | \cut -d'/' -f1 | \tr '[:upper:]' '[:lower:]')://$SERVER_NAME:$SERVER_PORT$SCRIPT_NAME
-    otel_span_attribute $otel_root_span_id net.peer.ip=$REMOTE_ADDR
+    otel_span_attribute $otel_root_span_id http.target="$SCRIPT_NAME"
+    otel_span_attribute $otel_root_span_id http.url="$(\echo "$SERVER_PROTOCOL" | \cut -d / -f 1 | \tr '[:upper:]' '[:lower:]')://$SERVER_NAME:$SERVER_PORT$SCRIPT_NAME"
+    otel_span_attribute $otel_root_span_id net.peer.ip="$REMOTE_ADDR"
   elif _otel_command_self | grep -q '/var/lib/dpkg/info' > /dev/null; then
     local cmdline="$(_otel_command_self | \sed 's/^.* \(\/var\/lib\/dpkg\/info\/.*\)$/\1/')"
-    otel_root_span_id="$(otel_span_start SERVER "$(\echo "$cmdline" | \cut -d'.' -f2- | \cut -d' ' -f1)")"
-    otel_span_attribute $otel_root_span_id debian.package.name="$(\echo "$cmdline" | \rev | \cut -d'/' -f1 | \rev | \cut -d'.' -f1)"
-    otel_span_attribute $otel_root_span_id debian.package.operation="$(\echo "$cmdline" | \cut -d'.' -f2-)"
+    otel_root_span_id="$(otel_span_start SERVER "$(\echo "$cmdline" | \cut -d . -f 2- | \cut -d ' ' -f 1)")"
+    otel_span_attribute $otel_root_span_id debian.package.name="$(\echo "$cmdline" | \rev | \cut -d / -f 1 | \rev | \cut -d . -f 1)"
+    otel_span_attribute $otel_root_span_id debian.package.operation="$(\echo "$cmdline" | \cut -d . -f 2-)"
   elif ! \[ "$OTEL_SHELL_AUTO_INJECTED" = TRUE ] && \[ -z "$OTEL_TRACEPARENT" ]; then
     otel_root_span_id="$(otel_span_start SERVER "$(_otel_command_self)")"
   elif ! \[ "$OTEL_SHELL_AUTO_INJECTED" = TRUE ] && \[ -n "$OTEL_TRACEPARENT" ]; then
@@ -315,13 +315,13 @@ _otel_start_script() {
 }
 
 _otel_end_script() {
-  local exit_code=$?
+  local exit_code="$?"
   if \[ -n "$otel_root_span_id" ]; then
-    if \[ "$exit_code" -ne "0" ]; then
-      otel_span_error $otel_root_span_id
+    if \[ "$exit_code" -ne 0 ]; then
+      otel_span_error "$otel_root_span_id"
     fi
     otel_span_deactivate
-    otel_span_end $otel_root_span_id
+    otel_span_end "$otel_root_span_id"
   fi
   otel_shutdown
 }
