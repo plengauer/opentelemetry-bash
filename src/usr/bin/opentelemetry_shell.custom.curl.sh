@@ -4,7 +4,7 @@
 
 _otel_propagate_curl() {
   local command="$(\printf '%s' "$*" | \sed 's/^_otel_observe //')"
-  local url=$(\printf '%s' | \awk '{for(i=1;i<=NF;i++) if ($i ~ /^http/) print $i}')
+  local url=$(\printf '%s' "$*" | \awk '{for(i=1;i<=NF;i++) if ($i ~ /^http/) print $i}')
   local scheme=http # TODO
   local target=$(\printf '%s' /${url#*//*/})
   local host=$(\printf '%s' ${url} | \awk -F/ '{print $3}')
