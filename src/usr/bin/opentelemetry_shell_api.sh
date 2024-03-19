@@ -126,7 +126,7 @@ otel_span_traceparent() {
   local span_id="$1"
   local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
   \mkfifo "$response_pipe"
-  _otel_sdk_communicate "SPAN_TRACEPARENT $response_pipe $span_id"
+  _otel_sdk_communicate "SPAN_TRACEPARENT" "$response_pipe" "$span_id"
   \cat "$response_pipe"
   \rm "$response_pipe" &> /dev/null
 }
@@ -138,8 +138,8 @@ otel_span_activate() {
 }
 
 otel_span_deactivate() {
-  export OTEL_TRACEPARENT="$(\printf '%s' $OTEL_TRACEPARENT_STACK | \cut -d / -f 1)"
-  export OTEL_TRACEPARENT_STACK="$(\printf '%s' $OTEL_TRACEPARENT_STACK | \cut -d / -f 2-)"
+  export OTEL_TRACEPARENT="$(\printf '%s' "$OTEL_TRACEPARENT_STACK" | \cut -d / -f 1)"
+  export OTEL_TRACEPARENT_STACK="$(\printf '%s' "$OTEL_TRACEPARENT_STACK" | \cut -d / -f 2-)"
 }
 
 otel_metric_create() {
