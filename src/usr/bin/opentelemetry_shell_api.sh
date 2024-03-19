@@ -138,8 +138,8 @@ otel_span_activate() {
 }
 
 otel_span_deactivate() {
-  export OTEL_TRACEPARENT="$(\printf '%s' $OTEL_TRACEPARENT_STACK | \cut -d'/' -f1)"
-  export OTEL_TRACEPARENT_STACK="$(\printf '%s' $OTEL_TRACEPARENT_STACK | \cut -d'/' -f2-)"
+  export OTEL_TRACEPARENT="$(\printf '%s' $OTEL_TRACEPARENT_STACK | \cut -d / -f 1)"
+  export OTEL_TRACEPARENT_STACK="$(\printf '%s' $OTEL_TRACEPARENT_STACK | \cut -d / -f 2-)"
 }
 
 otel_metric_create() {
