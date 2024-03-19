@@ -6,7 +6,7 @@
 ##################################################################################################
 
 _otel_remote_sdk_pipe=$(\mktemp -u)_opentelemetry_shell_$$.pipe
-_otel_shell=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
+_otel_shell=$(\readlink /proc/$$/exe | \rev | \cut -d / -f 1 | \rev)
 if \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "$PPID" ] || \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "0" ]; then _otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"; fi
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE
@@ -50,13 +50,13 @@ _otel_resource_attributes() {
   \echo telemetry.sdk.version=$(_otel_package_version opentelemetry-shell)
 
   \echo process.pid=$$
-  \echo process.executable.name=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
+  \echo process.executable.name=$(\readlink /proc/$$/exe | \rev | \cut -d / -f 1 | \rev)
   \echo process.executable.path=$(\readlink /proc/$$/exe)
   \echo process.command=$(_otel_command_self)
-  \echo process.command_args=$(_otel_command_self | \cut -d' ' -f2-)
+  \echo process.command_args=$(_otel_command_self | \cut -d ' ' -f 2-)
   \echo process.owner=$(\whoami)
-  \echo process.runtime.name=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
-  \echo process.runtime.version=$(_otel_package_version $(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev))
+  \echo process.runtime.name=$(\readlink /proc/$$/exe | \rev | \cut -d / -f 1 | \rev)
+  \echo process.runtime.version=$(_otel_package_version $(\readlink /proc/$$/exe | \rev | \cut -d / -f 1 | \rev))
   \echo process.runtime.options=$-
   case $_otel_shell in
        sh) \echo process.runtime.description="Bourne Shell" ;;
@@ -69,7 +69,7 @@ _otel_resource_attributes() {
      yash) \echo process.runtime.description="Yet Another Shell" ;;
      bosh) \echo process.runtime.description="Bourne Shell" ;;
      fish) \echo process.runtime.description="Friendly Interactive Shell" ;;
-        *) \echo process.runtime.description=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev) ;;
+        *) \echo process.runtime.description=$(\readlink /proc/$$/exe | \rev | \cut -d / -f 1 | \rev) ;;
   esac
 
   \echo service.name="${OTEL_SERVICE_NAME:-unknown_service}"
@@ -138,8 +138,8 @@ otel_span_activate() {
 }
 
 otel_span_deactivate() {
-  export OTEL_TRACEPARENT=$(\printf '%s' $OTEL_TRACEPARENT_STACK | \cut -d'/' -f1)
-  export OTEL_TRACEPARENT_STACK=$(\printf '%s' $OTEL_TRACEPARENT_STACK | \cut -d'/' -f2-)
+  export OTEL_TRACEPARENT=$(\printf '%s' $OTEL_TRACEPARENT_STACK | \cut -d / -f 1)
+  export OTEL_TRACEPARENT_STACK=$(\printf '%s' $OTEL_TRACEPARENT_STACK | \cut -d / -f 2-)
 }
 
 otel_metric_create() {
@@ -183,10 +183,10 @@ otel_observe() {
   unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
   # create span, set initial attributes
   local span_id=$(otel_span_start $kind "$name")
-  otel_span_attribute $span_id subprocess.executable.name=$(\printf '%s' "$command" | \cut -d' ' -f1 | \rev | \cut -d'/' -f1 | \rev)
-  otel_span_attribute $span_id subprocess.executable.path="$(\which $(\printf '%s' "$command" | \cut -d' ' -f1))"
+  otel_span_attribute $span_id subprocess.executable.name=$(\printf '%s' "$command" | \cut -d ' ' -f 1 | \rev | \cut -d / -f 1 | \rev)
+  otel_span_attribute $span_id subprocess.executable.path="$(\which $(\printf '%s' "$command" | \cut -d ' ' -f 1))"
   otel_span_attribute $span_id subprocess.command="$command"
-  otel_span_attribute $span_id subprocess.command_args="$(\printf '%s' "$command" | \cut -sd' ' -f2-)"
+  otel_span_attribute $span_id subprocess.command_args="$(\printf '%s' "$command" | \cut -sd ' ' -f 2-)"
   # run command
   otel_span_activate $span_id
   if \[ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0)"; fi
@@ -243,7 +243,7 @@ _otel_call() {
   # old versions of dash dont set env vars properly
   # more specifically they do not make variables that are set in front of commands part of the child process env vars but only of the local execution environment
   if \[ "$_otel_shell" = "dash" ]; then
-    \eval "$( { \printenv; \set; } | \grep '^OTEL_' | \cut -d= -f1 | \sort -u | \awk '{ print $1 "=\"$" $1 "\"" }' | _otel_line_join)" "$command" "$(_otel_escape_args "$@")"
+    \eval "$( { \printenv; \set; } | \grep '^OTEL_' | \cut -d = -f 1 | \sort -u | \awk '{ print $1 "=\"$" $1 "\"" }' | _otel_line_join)" "$command" "$(_otel_escape_args "$@")"
   else
     \eval "$command" "$(_otel_escape_args "$@")"
   fi
