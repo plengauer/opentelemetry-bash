@@ -106,14 +106,6 @@ _otel_resolve_alias() {
   \alias $1 2> /dev/null | \cut -d= -f2- | _otel_unquote
 }
 
-_otel_resolve_alias_stripped() {
-  _otel_resolve_alias $1 | _otel_line_split | \grep -v '^OTEL_' | \grep -v '^_otel_' | _otel_line_join
-}
-
-_otel_resolve_alias_stripped_cmd() {
-  _otel_resolve_alias $1 | _otel_line_split | \grep -v '^OTEL_' | \grep -v '^_otel_' | \head -n1 | \rev | \cut -d/ -f1 | \rev
-}
-
 _otel_dealiasify() {
   # e.g., alias upgrade='/bin/bash -x /usr/bin/upgrade'
   # e.g., alias bash='_otel_inject_shell _otel_observe bash'
