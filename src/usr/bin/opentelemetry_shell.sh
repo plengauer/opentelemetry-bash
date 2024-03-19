@@ -144,19 +144,19 @@ _otel_filter_by_validity() {
 }
 
 _otel_deshebangify() {
-  local cmd=$1 # e.g., "upgrade"
-  if _otel_has_alias $cmd; then return 1; fi
-  local shebang="$(_otel_resolve_shebang $1)" # e.g., "/bin/bash -x"
+  local cmd="$1" # e.g., "upgrade"
+  if _otel_has_alias "$cmd"; then return 1; fi
+  local shebang="$(_otel_resolve_shebang "$1")" # e.g., "/bin/bash -x"
   if \[ -z "$shebang" ]; then return 2; fi
-  \alias $1="$shebang $(\which $1)" # e.g., alias upgrade='/bin/bash -x /usr/bin/upgrade'
+  \alias "$1=$shebang $(\which "$1")" # e.g., alias upgrade='/bin/bash -x /usr/bin/upgrade'
 }
 
 _otel_resolve_shebang() {
-  local path="$(\which $1)"
+  local path="$(\which "$1")"
   if \[ -z "$path" ] || \[ ! -f "$path" ]; then return 1; fi
   read -r first_line < "$path"
-  if \[ "$(\echo "$first_line" | \cut -c1-2)" != '#!' ]; then return 2; fi
-  \echo "$first_line" | \cut -c3- | \awk '{$1=$1};1'
+  if \[ "$(\echo "$first_line" | \cut -c 1-2)" != '#!' ]; then return 2; fi
+  \echo "$first_line" | \cut -c 3- | \awk '{$1=$1};1'
 }
 
 _otel_dealiasify() {
