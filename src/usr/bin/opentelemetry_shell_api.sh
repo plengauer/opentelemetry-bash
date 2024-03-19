@@ -134,7 +134,7 @@ otel_span_traceparent() {
 otel_span_activate() {
   local span_id="$1"
   export OTEL_TRACEPARENT_STACK="$OTEL_TRACEPARENT/$OTEL_TRACEPARENT_STACK"
-  export OTEL_TRACEPARENT="$(otel_span_traceparent $span_id)"
+  export OTEL_TRACEPARENT="$(otel_span_traceparent "$span_id")"
 }
 
 otel_span_deactivate() {
