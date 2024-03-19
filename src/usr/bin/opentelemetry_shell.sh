@@ -46,8 +46,6 @@ if \[ "$_otel_shell" = "bash" ]; then
 fi
 
 _otel_unquote() {
-  # \sed "s/^'\(.*\)'$/\1/" | \sed 's/'\''\\'\'''\''//g'
-  # '\'' => ', '"'"' => ', '"'" => ''
   \sed 's/'\''\\'\'''\''/'\''/g' | \sed 's/'\''"'\''"'\''/'\''/g' | \sed 's/'\''"'\''"/'\'''\''/g' | \sed "s/^'\(.*\)'$/\1/" 
 }
 
@@ -60,7 +58,6 @@ _otel_alias_prepend() {
   local prepend_command=$2
 
   if \[ -z "$(\alias $original_command 2> /dev/null)" ]; then # fastpath
-#   local new_command="$prepend_command '\\$original_command'"
     local new_command="$(\printf '%s' "$prepend_command '\\$original_command'")" # need to use printf to handle backslashes consistently across shells
   else
     local previous_command="$(\alias $original_command 2> /dev/null | \cut -d= -f2- | _otel_unquote)"
@@ -73,10 +70,6 @@ _otel_alias_prepend() {
     local previous_otel_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep '^_otel_' | _otel_line_join)"
     local previous_alias_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep -v '^_otel_' | _otel_line_join)"
     case "$previous_alias_command" in
-#     "$original_command") local previous_alias_command="'\\$original_command'" ;;
-#     "$original_command "*) local previous_alias_command="'\\$original_command' $(\printf '%s' "$previous_alias_command" | \cut -sd' ' -f2-)" ;;
-#     "\\$original_command") local previous_alias_command="'\\$original_command'" ;;
-#     "\\$original_command "*) local previous_alias_command="'\\$original_command' $(\printf '%s' "$previous_alias_command" | \cut -sd' ' -f2-)" ;;
       "$original_command") local previous_alias_command="$(\printf '%s' "'\\$original_command'")" ;;
       "$original_command "*) local previous_alias_command="$(\printf '%s' "'\\$original_command' $(\printf '%s' "$previous_alias_command" | \cut -sd' ' -f2-)")" ;;
       "\\$original_command") local previous_alias_command="$(\printf '%s' "'\\$original_command'")" ;;
@@ -85,7 +78,7 @@ _otel_alias_prepend() {
     esac
     local new_command="$previous_otel_command $prepend_command $previous_alias_command"
   fi
-  
+
   \alias $original_command='OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="code.filepath='$_otel_source_file_resolver',code.lineno='$_otel_source_line_resolver',code.function='$_otel_source_func_resolver'" '"$new_command"
 }
 
@@ -129,13 +122,19 @@ _otel_dealiasify() {
   # e.g., alias l=ls --color=auto
   # e.g., alias ls=ls --color=auto
   local cmd=$1 # e.g., "upgrade", "ai", "l"
-  local cmd_alias="$(_otel_resolve_alias_stripped_cmd $cmd)" # e.g., upgrade => bash, ai => bash-ai # additional indirection here needed #, l => ls
+  local full_alias="$(_otel_resolve_alias "$cmd")"
+  case "$full_alias" in
+    "/"*) ;;
+    "."*) ;;
+    *) return 4;;
+  esac
+  local cmd_alias="$(\printf '%s' "$full_alias" | _otel_line_split | \grep -v '^OTEL_' | \grep -v '^_otel_' | \head -n1 | \rev | \cut -d/ -f1 | \rev)" # e.g., upgrade => bash
   if \[ -z "$cmd_alias" ]; then return 1; fi
   local cmd_aliased="$(_otel_resolve_alias $cmd_alias)" # e.g., bash => _otel_inject_shell bash
   if \[ -z "$cmd_aliased" ]; then return 2; fi
-  local otel_cmds="$(\echo "$cmd_aliased" | _otel_line_split | \grep '^_otel_' | \grep -v '^_otel_observe' | _otel_line_join)" # e.g., _otel_inject_shell bash => _otel_inject_shell
+  local otel_cmds="$(\printf '%s' "$cmd_aliased" | _otel_line_split | \grep '^_otel_' | \grep -v '^_otel_observe' | _otel_line_join)" # e.g., _otel_inject_shell bash => _otel_inject_shell
   if \[ -z "$otel_cmds" ]; then return 3; fi
-  _otel_alias_prepend $cmd "$otel_cmds" # e.g., alias upgrade='_otel_inject_shell /bin/bash -x /usr/bin/upgrade', e.g., alias ai='_otel_inject_shell /bin/bash -x /usr/bin/bash-ai -v'
+  _otel_alias_prepend $cmd "$otel_cmds" # e.g., alias upgrade='_otel_inject_shell /bin/bash -x /usr/bin/upgrade'
 }
 
 _otel_observe() {
@@ -221,23 +220,23 @@ _otel_auto_instrument() {
     eval "$(\cat $cache_file | \grep -v '^#' | \awk '{print "\\alias " $0 }')"
     return $?
   fi
-  
+
   # special instrumentations
   _otel_alias_prepend alias _otel_alias_and_instrument
   _otel_alias_prepend unalias _otel_unalias_and_reinstrument
   _otel_alias_prepend . _otel_instrument_and_source
   if \[ "$_otel_shell" = "bash" ]; then _otel_alias_prepend source _otel_instrument_and_source; fi
-  
+
   # custom instrumentations (injections and propagations)
   for otel_custom_file in $(\ls /usr/bin | \grep '^opentelemetry_shell.custom.' | \grep '.sh$'); do \. "$otel_custom_file"; done
-  
+
   # deshebangify commands, propagate special instrumentations into aliases, instrument all commands
   ## (both otel_filter_commands_by_file and _otel_filter_commands_by_instrumentation are functionally optional, but helps optimizing time because the following loop AND otel_instrument itself is expensive!)
   ## avoid piping directly into the loops, then it will be considered a subshell and aliases won't take effect here
   for cmd in $(_otel_list_path_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_hint "$hint" | \sort -u | _otel_line_join); do _otel_deshebangify $cmd || true; done
   for cmd in $(_otel_list_alias_commands | _otel_filter_commands_by_special | _otel_line_join); do _otel_dealiasify $cmd || true; done
   for cmd in $(_otel_list_all_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_instrumentation | _otel_filter_commands_by_hint "$hint" | \sort -u | _otel_line_join); do otel_instrument $cmd; done
-  
+
   # super special instrumentations
   \alias .='_otel_instrument_and_source "$#" "$@" .'
   if \[ "$_otel_shell" = "bash" ]; then \alias source='_otel_instrument_and_source "$#" "$@" source'; fi
