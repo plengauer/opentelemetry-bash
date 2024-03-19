@@ -14,7 +14,7 @@ _otel_shell_injected=TRUE
 \. /usr/bin/opentelemetry_shell_api.sh
 
 if \[ "$_otel_shell" = "bash" ] && \[ -n "$BASHPID" ] && \[ "$$" != "$BASHPID" ]; then
-  echo "WARNING The OpenTelemetry shell file for auto-instrumentation is sourced in a subshell, automatic instrumentation will only be active within that subshell!" >&2
+  \echo "WARNING The OpenTelemetry shell file for auto-instrumentation is sourced in a subshell, automatic instrumentation will only be active within that subshell!" >&2
 fi
 
 case "$-" in
@@ -26,7 +26,7 @@ if \[ "$_otel_is_interactive" = "TRUE" ]; then
   _otel_shell_auto_instrumentation_hint=""
 elif \[ -n "$OTEL_SHELL_AUTO_INSTRUMENTATION_HINT" ]; then
   _otel_shell_auto_instrumentation_hint="$OTEL_SHELL_AUTO_INSTRUMENTATION_HINT"
-elif \[ "$(\readlink -f "$(\which "$0")" | \rev | \cut -d/ -f1 | \rev)" = "$(\readlink -f /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)" ]; then
+elif \[ "$(\readlink -f "$(\which "$0")" | \rev | \cut -d/ -f1 | \rev)" = "$(\readlink -f "/proc/$$/exe" | \rev | \cut -d/ -f1 | \rev)" ]; then
   _otel_shell_auto_instrumentation_hint=""
 else
   _otel_shell_auto_instrumentation_hint="$0"
@@ -54,7 +54,7 @@ _otel_auto_instrument() {
   ## (2) using the resolved hint - will not work when new executables are added onto the system or their shebang changes or new bash.rc aliases are added
   ## (3) using the filtered list of commands - will work in every case but slowest
   local cache_key="$(_otel_list_all_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_hint "$hint" | \sort -u | \md5sum | \cut -d' ' -f1)"
-  local cache_file="$(\mktemp -u | \rev | \cut -d'/' -f2- | \rev)/opentelemetry_shell_$(_otel_package_version opentelemetry-shell)"_"$_otel_shell"_instrumentation_cache_"$cache_key".sh
+  local cache_file="$(\mktemp -u | \rev | \cut -d'/' -f2- | \rev)/opentelemetry_shell_$(_otel_package_version opentelemetry-shell)"_"$_otel_shell"_instrumentation_cache_"$cache_key".aliases
   if \[ -f "$cache_file" ]; then
     for otel_custom_file in $(\ls /usr/bin | \grep '^opentelemetry_shell.custom.' | \grep '.sh$'); do \eval "$(\cat "/usr/bin/$otel_custom_file" | \grep -v '_otel_alias_prepend')"; done
     \eval "$(\cat $cache_file | \grep -v '^#' | \awk '{print "\\alias " $0 }')"
@@ -68,7 +68,7 @@ _otel_auto_instrument() {
   if \[ "$_otel_shell" = "bash" ]; then _otel_alias_prepend source _otel_instrument_and_source; fi
 
   # custom instrumentations (injections and propagations)
-  for otel_custom_file in $(\ls /usr/bin | \grep '^opentelemetry_shell.custom.' | \grep '.sh$'); do \. "$otel_custom_file"; done
+  for otel_custom_file in $(\ls /usr/bin | \grep '^opentelemetry_shell.custom.' | \grep '.sh$'); do \. /usr/bin/"$otel_custom_file"; done
 
   # deshebangify commands, propagate special instrumentations into aliases, instrument all commands
   ## (both otel_filter_commands_by_file and _otel_filter_commands_by_instrumentation are functionally optional, but helps optimizing time because the following loop AND otel_instrument itself is expensive!)
