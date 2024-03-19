@@ -5,8 +5,8 @@
 # All variables are for internal use only and therefore subject to change without notice!        #
 ##################################################################################################
 
-_otel_remote_sdk_pipe=$(\mktemp -u)_opentelemetry_shell_$$.pipe
-_otel_shell=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
+_otel_remote_sdk_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
+_otel_shell="$(\readlink "/proc/$$/exe" | \rev | \cut -d/ -f1 | \rev)"
 if \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "$PPID" ] || \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "0" ]; then _otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"; fi
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE
