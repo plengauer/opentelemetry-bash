@@ -143,24 +143,24 @@ otel_span_deactivate() {
 }
 
 otel_metric_create() {
-  local metric_name=$1
-  local response_pipe=$(\mktemp -u)_opentelemetry_shell_$$.pipe
-  \mkfifo $response_pipe
+  local metric_name="$1"
+  local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
+  \mkfifo "$response_pipe"
   _otel_sdk_communicate "METRIC_CREATE" "$response_pipe" "$metric_name"
-  \cat $response_pipe
-  \rm $response_pipe &> /dev/null
+  \cat "$response_pipe"
+  \rm "$response_pipe" &> /dev/null
 }
 
 otel_metric_attribute() {
-  local metric_id=$1
+  local metric_id="$1"
   shift
   local kvp="$*"
   _otel_sdk_communicate "METRIC_ATTRIBUTE" "$metric_id" "$kvp"
 }
 
 otel_metric_add() {
-  local metric_id=$1
-  local value=$2
+  local metric_id="$1"
+  local value="$2"
   _otel_sdk_communicate "METRIC_ADD" "$metric_id" "$value"
 }
 
