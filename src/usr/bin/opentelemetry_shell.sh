@@ -45,159 +45,6 @@ if \[ "$_otel_shell" = "bash" ]; then
   shopt -s expand_aliases &> /dev/null
 fi
 
-_otel_unquote() {
-  \sed 's/'\''\\'\'''\''/'\''/g' | \sed 's/'\''"'\''"'\''/'\''/g' | \sed 's/'\''"'\''"/'\'''\''/g' | \sed "s/^'\(.*\)'$/\1/" 
-}
-
-_otel_line_split() {
-  \tr ' ' '\n'
-}
-
-_otel_alias_prepend() {
-  local original_command=$1
-  local prepend_command=$2
-
-  if \[ -z "$(\alias $original_command 2> /dev/null)" ]; then # fastpath
-    local new_command="$(\printf '%s' "$prepend_command '\\$original_command'")" # need to use printf to handle backslashes consistently across shells
-  else
-    local previous_command="$(\alias $original_command 2> /dev/null | \cut -d= -f2- | _otel_unquote)"
-    if \[ -z "$previous_command" ]; then local previous_command="$original_command"; fi
-    if \[ "${previous_command#OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE=}" != "$previous_command" ]; then local previous_command="$(\printf '%s' "$previous_command" | \cut -d" " -f2-)"; fi
-    case "$previous_command" in
-      *"$prepend_command"*) return 0 ;;
-      *) ;;
-    esac
-    local previous_otel_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep '^_otel_' | _otel_line_join)"
-    local previous_alias_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep -v '^_otel_' | _otel_line_join)"
-    case "$previous_alias_command" in
-      "$original_command") local previous_alias_command="$(\printf '%s' "'\\$original_command'")" ;;
-      "$original_command "*) local previous_alias_command="$(\printf '%s' "'\\$original_command' $(\printf '%s' "$previous_alias_command" | \cut -sd' ' -f2-)")" ;;
-      "\\$original_command") local previous_alias_command="$(\printf '%s' "'\\$original_command'")" ;;
-      "\\$original_command "*) local previous_alias_command="$(\printf '%s' "'\\$original_command' $(\printf '%s' "$previous_alias_command" | \cut -sd' ' -f2-)")" ;;
-      *) ;;
-    esac
-    local new_command="$previous_otel_command $prepend_command $previous_alias_command"
-  fi
-
-  \alias $original_command='OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="code.filepath='$_otel_source_file_resolver',code.lineno='$_otel_source_line_resolver',code.function='$_otel_source_func_resolver'" '"$new_command"
-}
-
-_otel_has_alias() {
-  \alias $1 1> /dev/null 2> /dev/null # for some reason &> does not work in built-in alias
-}
-
-_otel_resolve_shebang() {
-  local path="$(\which $1)"
-  if \[ -z "$path" ] || \[ ! -f "$path" ]; then return 1; fi
-  read -r first_line < "$path"
-  if \[ "$(\echo "$first_line" | \cut -c1-2)" != '#!' ]; then return 2; fi
-  \echo "$first_line" | \cut -c3- | \awk '{$1=$1};1'
-}
-
-_otel_deshebangify() {
-  local cmd=$1 # e.g., "upgrade"
-  if _otel_has_alias $cmd; then return 1; fi
-  local shebang="$(_otel_resolve_shebang $1)" # e.g., "/bin/bash -x"
-  if \[ -z "$shebang" ]; then return 2; fi
-  \alias $1="$shebang $(\which $1)" # e.g., alias upgrade='/bin/bash -x /usr/bin/upgrade'
-}
-
-_otel_resolve_alias() {
-  \alias $1 2> /dev/null | \cut -d= -f2- | _otel_unquote
-}
-
-_otel_dealiasify() {
-  # e.g., alias upgrade='/bin/bash -x /usr/bin/upgrade'
-  # e.g., alias bash='_otel_inject_shell _otel_observe bash'
-  # e.g., alias ai=bash-ai -v
-  # e.g., alias bash-ai='/bin/bash -x /usr/bin/bash-ai'
-  # e.g., alias l=ls --color=auto
-  # e.g., alias ls=ls --color=auto
-  local cmd=$1 # e.g., "upgrade", "ai", "l"
-  local full_alias="$(_otel_resolve_alias "$cmd")"
-  case "$full_alias" in
-    "/"*) ;;
-    "."*) ;;
-    *) return 4;;
-  esac
-  local cmd_alias="$(\printf '%s' "$full_alias" | _otel_line_split | \grep -v '^OTEL_' | \grep -v '^_otel_' | \head -n1 | \rev | \cut -d/ -f1 | \rev)" # e.g., upgrade => bash
-  if \[ -z "$cmd_alias" ]; then return 1; fi
-  local cmd_aliased="$(_otel_resolve_alias $cmd_alias)" # e.g., bash => _otel_inject_shell bash
-  if \[ -z "$cmd_aliased" ]; then return 2; fi
-  local otel_cmds="$(\printf '%s' "$cmd_aliased" | _otel_line_split | \grep '^_otel_' | \grep -v '^_otel_observe' | _otel_line_join)" # e.g., _otel_inject_shell bash => _otel_inject_shell
-  if \[ -z "$otel_cmds" ]; then return 3; fi
-  _otel_alias_prepend $cmd "$otel_cmds" # e.g., alias upgrade='_otel_inject_shell /bin/bash -x /usr/bin/upgrade'
-}
-
-_otel_observe() {
-  otel_observe "$@"
-}
-
-otel_instrument() {
-  _otel_alias_prepend $1 '_otel_observe'
-}
-
-otel_outstrument() {
-  \unalias $1 1> /dev/null 2> /dev/null || true
-}
-
-_otel_grep_valid_command() {
-  \grep -E '^[a-zA-Z0-9._\[][a-zA-Z0-9 ._-]*$'
-}
-
-_otel_filter_commands_by_hint() {
-  local hint="$1"
-  if \[ -n "$hint" ]; then
-    if \[ -f "$hint" ] && \[ "$(\readlink -f /proc/$$/exe)" != "$(\readlink -f $hint)" ] && \[ "$hint" != "/usr/bin/opentelemetry_shell.sh" ]; then local hint="$(\cat "$hint")"; fi
-    \grep -xF "$(\echo "$hint" | \tr -s ' $=";(){}/\\!#~^'\' '\n' | _otel_grep_valid_command)"
-  else
-    \cat
-  fi
-}
-
-_otel_filter_commands_by_instrumentation() {
-  local pre_instrumented_executables="$(\alias | \grep -F '_otel_observe' | \sed 's/^alias //' | \cut -d= -f1)"
-  if \[ -n "$pre_instrumented_executables" ]; then
-    \grep -xFv "$pre_instrumented_executables" 
-  else
-    \cat
-  fi
-}
-
-_otel_filter_commands_by_special() {
-  \grep -v '^alias$' | \grep -v '^unalias$' | \grep -v '^\.$' | \grep -v '^source$' | \grep -v '^exec$' | \grep -v '^OTEL_' | \grep -v '^_otel_' | \grep -v '^otel_'
-}
-
-_otel_list_path_executables() {
-  \echo "$PATH" | \tr ' ' '\n' | \tr ':' '\n' | while read dir; do \find $dir -maxdepth 1 -type f,l -executable 2> /dev/null; done
-}
-
-_otel_list_path_commands() {
-  _otel_list_path_executables | \rev | \cut -d / -f1 | \rev
-}
-
-_otel_list_alias_commands() {
-  \alias | \sed 's/^alias //' | \grep -vF '[=' | \awk -F'=' '{ var=$1; sub($1 FS,""); } ! ($0 ~ "^'\''((OTEL_|_otel_).* )*" var "'\''$") { print var }'
-}
-
-_otel_list_aliased_commands() {
-  \alias | \cut -d= -f2- | _otel_line_split | _otel_grep_valid_command
-}
-
-_otel_list_builtin_commands() {
-  \echo type
-  if \[ "$_otel_shell" = "bash" ]; then
-    \echo history
-  fi
-}
-
-_otel_list_all_commands() {
-  _otel_list_path_commands
-  _otel_list_alias_commands
-  _otel_list_aliased_commands
-  _otel_list_builtin_commands
-}
-
 _otel_auto_instrument() {
   local hint="$1"
 
@@ -237,6 +84,155 @@ _otel_auto_instrument() {
 
   # cache
   if \[ "$(\alias | \wc -l)" -gt 50 ]; then \alias | \sed 's/^alias //' > "$cache_file"; else true; fi
+}
+
+_otel_list_all_commands() {
+  _otel_list_path_commands
+  _otel_list_alias_commands
+  _otel_list_aliased_commands
+  _otel_list_builtin_commands
+}
+
+_otel_list_path_commands() {
+  _otel_list_path_executables | \rev | \cut -d / -f1 | \rev
+}
+
+_otel_list_path_executables() {
+  \echo "$PATH" | \tr ' ' '\n' | \tr ':' '\n' | while read dir; do \find $dir -maxdepth 1 -type f,l -executable 2> /dev/null; done
+}
+
+_otel_list_alias_commands() {
+  \alias | \sed 's/^alias //' | \grep -vF '[=' | \awk -F'=' '{ var=$1; sub($1 FS,""); } ! ($0 ~ "^'\''((OTEL_|_otel_).* )*" var "'\''$") { print var }'
+}
+
+_otel_list_aliased_commands() {
+  \alias | \cut -d= -f2- | _otel_line_split | _otel_filter_by_validity
+}
+
+_otel_list_builtin_commands() {
+  \echo type
+  if \[ "$_otel_shell" = "bash" ]; then
+    \echo history
+  fi
+}
+
+_otel_filter_commands_by_hint() {
+  local hint="$1"
+  if \[ -n "$hint" ]; then
+    if \[ -f "$hint" ] && \[ "$(\readlink -f /proc/$$/exe)" != "$(\readlink -f $hint)" ] && \[ "$hint" != "/usr/bin/opentelemetry_shell.sh" ]; then local hint="$(\cat "$hint")"; fi
+    \grep -xF "$(\echo "$hint" | \tr -s ' $=";(){}/\\!#~^'\' '\n' | _otel_filter_by_validity)"
+  else
+    \cat
+  fi
+}
+
+_otel_filter_commands_by_instrumentation() {
+  local pre_instrumented_executables="$(\alias | \grep -F '_otel_observe' | \sed 's/^alias //' | \cut -d= -f1)"
+  if \[ -n "$pre_instrumented_executables" ]; then
+    \grep -xFv "$pre_instrumented_executables" 
+  else
+    \cat
+  fi
+}
+
+_otel_filter_commands_by_special() {
+  \grep -v '^alias$' | \grep -v '^unalias$' | \grep -v '^\.$' | \grep -v '^source$' | \grep -v '^exec$' | \grep -v '^OTEL_' | \grep -v '^_otel_' | \grep -v '^otel_'
+}
+
+_otel_filter_by_validity() {
+  \grep -E '^[a-zA-Z0-9._\[][a-zA-Z0-9 ._-]*$'
+}
+
+_otel_deshebangify() {
+  local cmd=$1 # e.g., "upgrade"
+  if _otel_has_alias $cmd; then return 1; fi
+  local shebang="$(_otel_resolve_shebang $1)" # e.g., "/bin/bash -x"
+  if \[ -z "$shebang" ]; then return 2; fi
+  \alias $1="$shebang $(\which $1)" # e.g., alias upgrade='/bin/bash -x /usr/bin/upgrade'
+}
+
+_otel_resolve_shebang() {
+  local path="$(\which $1)"
+  if \[ -z "$path" ] || \[ ! -f "$path" ]; then return 1; fi
+  read -r first_line < "$path"
+  if \[ "$(\echo "$first_line" | \cut -c1-2)" != '#!' ]; then return 2; fi
+  \echo "$first_line" | \cut -c3- | \awk '{$1=$1};1'
+}
+
+_otel_dealiasify() {
+  # e.g., alias upgrade='/bin/bash -x /usr/bin/upgrade'
+  # e.g., alias bash='_otel_inject_shell _otel_observe bash'
+  # e.g., alias ai=bash-ai -v
+  # e.g., alias bash-ai='/bin/bash -x /usr/bin/bash-ai'
+  # e.g., alias l=ls --color=auto
+  # e.g., alias ls=ls --color=auto
+  local cmd=$1 # e.g., "upgrade", "ai", "l"
+  local full_alias="$(_otel_resolve_alias "$cmd")"
+  case "$full_alias" in
+    "/"*) ;;
+    "."*) ;;
+    *) return 4;;
+  esac
+  local cmd_alias="$(\printf '%s' "$full_alias" | _otel_line_split | \grep -v '^OTEL_' | \grep -v '^_otel_' | \head -n1 | \rev | \cut -d/ -f1 | \rev)" # e.g., upgrade => bash
+  if \[ -z "$cmd_alias" ]; then return 1; fi
+  local cmd_aliased="$(_otel_resolve_alias $cmd_alias)" # e.g., bash => _otel_inject_shell bash
+  if \[ -z "$cmd_aliased" ]; then return 2; fi
+  local otel_cmds="$(\printf '%s' "$cmd_aliased" | _otel_line_split | \grep '^_otel_' | \grep -v '^_otel_observe' | _otel_line_join)" # e.g., _otel_inject_shell bash => _otel_inject_shell
+  if \[ -z "$otel_cmds" ]; then return 3; fi
+  _otel_alias_prepend $cmd "$otel_cmds" # e.g., alias upgrade='_otel_inject_shell /bin/bash -x /usr/bin/upgrade'
+}
+
+_otel_has_alias() {
+  \alias $1 1> /dev/null 2> /dev/null # for some reason &> does not work in built-in alias
+}
+
+_otel_resolve_alias() {
+  \alias $1 2> /dev/null | \cut -d= -f2- | _otel_unquote
+}
+
+otel_instrument() {
+  _otel_alias_prepend $1 '_otel_observe'
+}
+
+otel_outstrument() {
+  \unalias $1 1> /dev/null 2> /dev/null || true
+}
+
+_otel_alias_prepend() {
+  local original_command=$1
+  local prepend_command=$2
+
+  if \[ -z "$(\alias $original_command 2> /dev/null)" ]; then # fastpath
+    local new_command="$(\printf '%s' "$prepend_command '\\$original_command'")" # need to use printf to handle backslashes consistently across shells
+  else
+    local previous_command="$(\alias $original_command 2> /dev/null | \cut -d= -f2- | _otel_unquote)"
+    if \[ -z "$previous_command" ]; then local previous_command="$original_command"; fi
+    if \[ "${previous_command#OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE=}" != "$previous_command" ]; then local previous_command="$(\printf '%s' "$previous_command" | \cut -d" " -f2-)"; fi
+    case "$previous_command" in
+      *"$prepend_command"*) return 0 ;;
+      *) ;;
+    esac
+    local previous_otel_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep '^_otel_' | _otel_line_join)"
+    local previous_alias_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep -v '^_otel_' | _otel_line_join)"
+    case "$previous_alias_command" in
+      "$original_command") local previous_alias_command="$(\printf '%s' "'\\$original_command'")" ;;
+      "$original_command "*) local previous_alias_command="$(\printf '%s' "'\\$original_command' $(\printf '%s' "$previous_alias_command" | \cut -sd' ' -f2-)")" ;;
+      "\\$original_command") local previous_alias_command="$(\printf '%s' "'\\$original_command'")" ;;
+      "\\$original_command "*) local previous_alias_command="$(\printf '%s' "'\\$original_command' $(\printf '%s' "$previous_alias_command" | \cut -sd' ' -f2-)")" ;;
+      *) ;;
+    esac
+    local new_command="$previous_otel_command $prepend_command $previous_alias_command"
+  fi
+
+  \alias $original_command='OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="code.filepath='$_otel_source_file_resolver',code.lineno='$_otel_source_line_resolver',code.function='$_otel_source_func_resolver'" '"$new_command"
+}
+
+_otel_unquote() {
+  \sed 's/'\''\\'\'''\''/'\''/g' | \sed 's/'\''"'\''"'\''/'\''/g' | \sed 's/'\''"'\''"/'\'''\''/g' | \sed "s/^'\(.*\)'$/\1/" 
+}
+
+_otel_observe() {
+  otel_observe "$@"
 }
 
 _otel_alias_and_instrument() {
