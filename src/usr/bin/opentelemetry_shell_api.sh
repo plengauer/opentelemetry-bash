@@ -47,18 +47,18 @@ _otel_sdk_communicate() {
 _otel_resource_attributes() {
   \echo telemetry.sdk.name=opentelemetry
   \echo telemetry.sdk.language=shell
-  \echo telemetry.sdk.version=$(_otel_package_version opentelemetry-shell)
+  \echo telemetry.sdk.version="$(_otel_package_version opentelemetry-shell)"
 
-  \echo process.pid=$$
-  \echo process.executable.name=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
-  \echo process.executable.path=$(\readlink /proc/$$/exe)
-  \echo process.command=$(_otel_command_self)
-  \echo process.command_args=$(_otel_command_self | \cut -d' ' -f2-)
-  \echo process.owner=$(\whoami)
-  \echo process.runtime.name=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)
-  \echo process.runtime.version=$(_otel_package_version $(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev))
-  \echo process.runtime.options=$-
-  case $_otel_shell in
+  \echo process.pid="$$"
+  \echo process.executable.name="$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)"
+  \echo process.executable.path="$(\readlink /proc/$$/exe)"
+  \echo process.command="$(_otel_command_self)"
+  \echo process.command_args="$(_otel_command_self | \cut -d' ' -f2-)"
+  \echo process.owner="$(\whoami)"
+  \echo process.runtime.name="$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)"
+  \echo process.runtime.version="$(_otel_package_version $(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev))"
+  \echo process.runtime.options="$-"
+  case "$_otel_shell" in
        sh) \echo process.runtime.description="Bourne Shell" ;;
      dash) \echo process.runtime.description="Debian Almquist Shell" ;;
      bash) \echo process.runtime.description="Bourne Again Shell" ;;
@@ -69,13 +69,13 @@ _otel_resource_attributes() {
      yash) \echo process.runtime.description="Yet Another Shell" ;;
      bosh) \echo process.runtime.description="Bourne Shell" ;;
      fish) \echo process.runtime.description="Friendly Interactive Shell" ;;
-        *) \echo process.runtime.description=$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev) ;;
+        *) \echo process.runtime.description="$(\readlink /proc/$$/exe | \rev | \cut -d/ -f1 | \rev)" ;;
   esac
 
   \echo service.name="${OTEL_SERVICE_NAME:-unknown_service}"
-  \echo service.version=$OTEL_SERVICE_VERSION
-  \echo service.namespace=$OTEL_SERVICE_NAMESPACE
-  \echo service.instance.id=$OTEL_SERVICE_INSTANCE_ID
+  \echo service.version="$OTEL_SERVICE_VERSION"
+  \echo service.namespace="$OTEL_SERVICE_NAMESPACE"
+  \echo service.instance.id="$OTEL_SERVICE_INSTANCE_ID"
 }
 
 _otel_command_self() {
@@ -87,7 +87,7 @@ _otel_command_self() {
 }
 
 _otel_command_real_self() {
-  \ps -p $$ -o args | \grep -v COMMAND || \cat /proc/$$/cmdline | \tr -d '\000'
+  \ps -p "$$" -o args | \grep -v COMMAND || \cat "/proc/$$/cmdline" | \tr -d '\000'
 }
 
 _otel_package_version() {
