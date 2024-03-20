@@ -5,8 +5,8 @@
 # All variables are for internal use only and therefore subject to change without notice!        #
 ##################################################################################################
 
-_otel_remote_sdk_pipe=$(\mktemp -u)_opentelemetry_shell_$$.pipe
-_otel_shell=$(\readlink /proc/$$/exe | \rev | \cut -d / -f 1 | \rev)
+_otel_remote_sdk_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
+_otel_shell="$(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)"
 if \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "$PPID" ] || \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "0" ]; then _otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"; fi
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE
@@ -16,20 +16,13 @@ unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
 unset OTEL_SHELL_SUPPRESS_LOG_COLLECTION
 
 otel_init() {
-  if \[ -n "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" ]; then
-    local sdk_output=$OTEL_SHELL_SDK_OUTPUT_REDIRECT
-  else
-    if \[ -e "/dev/stderr" ] && \[ -e "$(\readlink -f /dev/stderr)" ]; then
-      local sdk_output=/dev/stderr
-    else
-      local sdk_output=/dev/null
-    fi
-  fi
-  \mkfifo $_otel_remote_sdk_pipe
+  if \[ -e "/dev/stderr" ] && \[ -e "$(\readlink -f /dev/stderr)" ]; then local sdk_output=/dev/stderr; else local sdk_output=/dev/null; fi
+  local sdk_output="${OTEL_SHELL_SDK_OUTPUT_REDIRECT:-$sdk_output}"
+  \mkfifo "$_otel_remote_sdk_pipe"
   \eval "$(\cat /opt/opentelemetry_shell/venv/bin/activate | \sed 's/\[/\\\[/g')"
-  (\python3 /usr/bin/opentelemetry_shell_sdk.py $_otel_remote_sdk_pipe "shell" $(_otel_package_version opentelemetry-shell) > "$sdk_output" 2> "$sdk_output" &)
+  (\python3 /usr/bin/opentelemetry_shell_sdk.py "$_otel_remote_sdk_pipe" "shell" $(_otel_package_version opentelemetry-shell) > "$sdk_output" 2> "$sdk_output" &)
   deactivate
-  \exec 7> $_otel_remote_sdk_pipe
+  \exec 7> "$_otel_remote_sdk_pipe"
   _otel_resource_attributes | while IFS= read -r kvp; do _otel_sdk_communicate "RESOURCE_ATTRIBUTE" "$kvp"; done
   _otel_sdk_communicate "INIT"
 }
@@ -37,7 +30,7 @@ otel_init() {
 otel_shutdown() {
   _otel_sdk_communicate "SHUTDOWN"
   \exec 7>&-
-  \rm $_otel_remote_sdk_pipe
+  \rm "$_otel_remote_sdk_pipe"
 }
 
 _otel_sdk_communicate() {
@@ -47,18 +40,18 @@ _otel_sdk_communicate() {
 _otel_resource_attributes() {
   \echo telemetry.sdk.name=opentelemetry
   \echo telemetry.sdk.language=shell
-  \echo telemetry.sdk.version=$(_otel_package_version opentelemetry-shell)
+  \echo telemetry.sdk.version="$(_otel_package_version opentelemetry-shell)"
 
-  \echo process.pid=$$
-  \echo process.executable.name=$(\readlink /proc/$$/exe | \rev | \cut -d / -f 1 | \rev)
-  \echo process.executable.path=$(\readlink /proc/$$/exe)
-  \echo process.command=$(_otel_command_self)
-  \echo process.command_args=$(_otel_command_self | \cut -d ' ' -f 2-)
-  \echo process.owner=$(\whoami)
-  \echo process.runtime.name=$(\readlink /proc/$$/exe | \rev | \cut -d / -f 1 | \rev)
-  \echo process.runtime.version=$(_otel_package_version $(\readlink /proc/$$/exe | \rev | \cut -d / -f 1 | \rev))
-  \echo process.runtime.options=$-
-  case $_otel_shell in
+  \echo process.pid="$$"
+  \echo process.executable.name="$(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)"
+  \echo process.executable.path="$(\readlink "/proc/$$/exe")"
+  \echo process.command="$(_otel_command_self)"
+  \echo process.command_args="$(_otel_command_self | \cut -d ' ' -f 2-)"
+  \echo process.owner="$(\whoami)"
+  \echo process.runtime.name="$(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)"
+  \echo process.runtime.version="$(_otel_package_version $(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev))"
+  \echo process.runtime.options="$-"
+  case "$_otel_shell" in
        sh) \echo process.runtime.description="Bourne Shell" ;;
      dash) \echo process.runtime.description="Debian Almquist Shell" ;;
      bash) \echo process.runtime.description="Bourne Again Shell" ;;
@@ -69,13 +62,13 @@ _otel_resource_attributes() {
      yash) \echo process.runtime.description="Yet Another Shell" ;;
      bosh) \echo process.runtime.description="Bourne Shell" ;;
      fish) \echo process.runtime.description="Friendly Interactive Shell" ;;
-        *) \echo process.runtime.description=$(\readlink /proc/$$/exe | \rev | \cut -d / -f 1 | \rev) ;;
+        *) \echo process.runtime.description="$(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)" ;;
   esac
 
   \echo service.name="${OTEL_SERVICE_NAME:-unknown_service}"
-  \echo service.version=$OTEL_SERVICE_VERSION
-  \echo service.namespace=$OTEL_SERVICE_NAMESPACE
-  \echo service.instance.id=$OTEL_SERVICE_INSTANCE_ID
+  \echo service.version="$OTEL_SERVICE_VERSION"
+  \echo service.namespace="$OTEL_SERVICE_NAMESPACE"
+  \echo service.instance.id="$OTEL_SERVICE_INSTANCE_ID"
 }
 
 _otel_command_self() {
@@ -87,7 +80,7 @@ _otel_command_self() {
 }
 
 _otel_command_real_self() {
-  \ps -p $$ -o args | \grep -v COMMAND || \cat /proc/$$/cmdline | \tr -d '\000'
+  \ps -p "$$" -o args | \grep -v COMMAND || \cat "/proc/$$/cmdline" | \tr -d '\000'
 }
 
 _otel_package_version() {
@@ -95,72 +88,72 @@ _otel_package_version() {
 }
 
 otel_span_start() {
-  local kind=$1
+  local kind="$1"
   shift
   local name="$*"
-  local response_pipe=$(\mktemp -u)_opentelemetry_shell_$$.pipe
-  \mkfifo $response_pipe
-  _otel_sdk_communicate "SPAN_START $response_pipe $OTEL_TRACEPARENT $kind $name"
-  \cat $response_pipe
-  \rm $response_pipe &> /dev/null
+  local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
+  \mkfifo "$response_pipe"
+  _otel_sdk_communicate "SPAN_START" "$response_pipe" "$OTEL_TRACEPARENT" "$kind" "$name"
+  \cat "$response_pipe"
+  \rm "$response_pipe" &> /dev/null
 }
 
 otel_span_end() {
-  local span_id=$1
-  _otel_sdk_communicate "SPAN_END $span_id"
+  local span_id="$1"
+  _otel_sdk_communicate "SPAN_END" "$span_id"
 }
 
 otel_span_error() {
-  local span_id=$1
-  _otel_sdk_communicate "SPAN_ERROR $span_id"
+  local span_id="$1"
+  _otel_sdk_communicate "SPAN_ERROR" "$span_id"
 }
 
 otel_span_attribute() {
-  local span_id=$1
+  local span_id="$1"
   shift
   local kvp="$*"
-  _otel_sdk_communicate "SPAN_ATTRIBUTE $span_id $kvp"
+  _otel_sdk_communicate "SPAN_ATTRIBUTE" "$span_id" "$kvp"
 }
 
 otel_span_traceparent() {
-  local span_id=$1
-  local response_pipe=$(\mktemp -u)_opentelemetry_shell_$$.pipe
-  \mkfifo $response_pipe
-  _otel_sdk_communicate "SPAN_TRACEPARENT $response_pipe $span_id"
-  \cat $response_pipe
-  \rm $response_pipe &> /dev/null
+  local span_id="$1"
+  local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
+  \mkfifo "$response_pipe"
+  _otel_sdk_communicate "SPAN_TRACEPARENT" "$response_pipe" "$span_id"
+  \cat "$response_pipe"
+  \rm "$response_pipe" &> /dev/null
 }
 
 otel_span_activate() {
-  local span_id=$1
-  export OTEL_TRACEPARENT_STACK=$OTEL_TRACEPARENT/$OTEL_TRACEPARENT_STACK
-  export OTEL_TRACEPARENT=$(otel_span_traceparent $span_id)
+  local span_id="$1"
+  export OTEL_TRACEPARENT_STACK="$OTEL_TRACEPARENT/$OTEL_TRACEPARENT_STACK"
+  export OTEL_TRACEPARENT="$(otel_span_traceparent "$span_id")"
 }
 
 otel_span_deactivate() {
-  export OTEL_TRACEPARENT=$(\printf '%s' $OTEL_TRACEPARENT_STACK | \cut -d / -f 1)
-  export OTEL_TRACEPARENT_STACK=$(\printf '%s' $OTEL_TRACEPARENT_STACK | \cut -d / -f 2-)
+  export OTEL_TRACEPARENT="$(\printf '%s' "$OTEL_TRACEPARENT_STACK" | \cut -d / -f 1)"
+  export OTEL_TRACEPARENT_STACK="$(\printf '%s' "$OTEL_TRACEPARENT_STACK" | \cut -d / -f 2-)"
 }
 
 otel_metric_create() {
-  local metric_name=$1
-  local response_pipe=$(\mktemp -u)_opentelemetry_shell_$$.pipe
-  \mkfifo $response_pipe
+  local metric_name="$1"
+  local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
+  \mkfifo "$response_pipe"
   _otel_sdk_communicate "METRIC_CREATE" "$response_pipe" "$metric_name"
-  \cat $response_pipe
-  \rm $response_pipe &> /dev/null
+  \cat "$response_pipe"
+  \rm "$response_pipe" &> /dev/null
 }
 
 otel_metric_attribute() {
-  local metric_id=$1
+  local metric_id="$1"
   shift
   local kvp="$*"
   _otel_sdk_communicate "METRIC_ATTRIBUTE" "$metric_id" "$kvp"
 }
 
 otel_metric_add() {
-  local metric_id=$1
-  local value=$2
+  local metric_id="$1"
+  local value="$2"
   _otel_sdk_communicate "METRIC_ADD" "$metric_id" "$value"
 }
 
@@ -182,49 +175,51 @@ otel_observe() {
   unset OTEL_SHELL_COMMANDLINE_OVERRIDE
   unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
   # create span, set initial attributes
-  local span_id=$(otel_span_start $kind "$name")
-  otel_span_attribute $span_id subprocess.executable.name=$(\printf '%s' "$command" | \cut -d ' ' -f 1 | \rev | \cut -d / -f 1 | \rev)
-  otel_span_attribute $span_id subprocess.executable.path="$(\which $(\printf '%s' "$command" | \cut -d ' ' -f 1))"
-  otel_span_attribute $span_id subprocess.command="$command"
-  otel_span_attribute $span_id subprocess.command_args="$(\printf '%s' "$command" | \cut -sd ' ' -f 2-)"
+  local span_id="$(otel_span_start "$kind" "$name")"
+  otel_span_attribute "$span_id" subprocess.executable.name="$(\printf '%s' "$command" | \cut -d' ' -f1 | \rev | \cut -d / -f 1 | \rev)"
+  otel_span_attribute "$span_id" subprocess.executable.path="$(\which "$(\printf '%s' "$command" | \cut -d ' ' -f 1)")"
+  otel_span_attribute "$span_id" subprocess.command="$command"
+  otel_span_attribute "$span_id" subprocess.command_args="$(\printf '%s' "$command" | \cut -sd ' ' -f 2-)"
   # run command
-  otel_span_activate $span_id
+  otel_span_activate "$span_id"
   if \[ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0)"; fi
   if \[ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1)"; fi
   unset OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0
   unset OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1
   local exit_code=0
   if ! \[ -t 2 ] && \[ "$OTEL_SHELL_SUPPRESS_LOG_COLLECTION" != TRUE ]; then
-    local traceparent=$OTEL_TRACEPARENT
-    local stderr_pipe=$(\mktemp -u).opentelemetry_shell_$$.pipe
-    \mkfifo $stderr_pipe
-    ( (while IFS= read -r line; do _otel_log_record $traceparent "$line"; \echo "$line" >&2; done < $stderr_pipe) & )
-    OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$command_signature" _otel_call "$@" 2> $stderr_pipe || local exit_code=$?
-    \rm $stderr_pipe
+    local traceparent="$OTEL_TRACEPARENT"
+    local stderr_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
+    \mkfifo "$stderr_pipe"
+    ( (while IFS= read -r line; do _otel_log_record "$traceparent" "$line"; \echo "$line" >&2; done < "$stderr_pipe") & )
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$command_signature" _otel_call "$@" 2> "$stderr_pipe" || local exit_code="$?"
+    \rm "$stderr_pipe"
   else
-    OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$command_signature" _otel_call "$@" || local exit_code=$?
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$command_signature" _otel_call "$@" || local exit_code="$?"
   fi
-  otel_span_deactivate $span_id
+  otel_span_deactivate "$span_id"
   # set custom attributes, set final attributes, finish span
-  otel_span_attribute $span_id subprocess.exit_code=$exit_code
-  if \[ "$exit_code" -ne "0" ]; then
-    otel_span_error $span_id
+  otel_span_attribute "$span_id" subprocess.exit_code="$exit_code"
+  if \[ "$exit_code" -ne 0 ]; then
+    otel_span_error "$span_id"
   fi
   if \[ -n "$attributes" ]; then
+    local OLD_IFS="$IFS"
     local IFS=','
     set -- $attributes
+    IFS="$OLD_IFS"
     for attribute in "$@"; do
       if \[ -n "$attribute" ]; then
-        otel_span_attribute $span_id "$attribute"
+        otel_span_attribute "$span_id" "$attribute"
       fi
     done
   fi
-  otel_span_end $span_id
-  return $exit_code
+  otel_span_end "$span_id"
+  return "$exit_code"
 }
 
 _otel_log_record() {
-  local traceparent=$1
+  local traceparent="$1"
   shift
   local line="$*"
   _otel_sdk_communicate "LOG_RECORD" "$traceparent" "$line"
