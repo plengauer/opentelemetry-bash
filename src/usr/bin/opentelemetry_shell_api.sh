@@ -119,7 +119,7 @@ otel_span_attribute() {
   local span_id="$1"
   shift
   local kvp="$*"
-  _otel_sdk_communicate "SPAN_ATTRIBUTE" "$span_id" "$kvp"
+  _otel_sdk_communicate "SPAN_ATTRIBUTE" "$span_id $kvp"
 }
 
 otel_span_traceparent() {
