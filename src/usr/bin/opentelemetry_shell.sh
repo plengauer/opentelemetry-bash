@@ -119,7 +119,7 @@ _otel_list_builtin_commands() {
 _otel_filter_commands_by_hint() {
   local hint="$1"
   if \[ -n "$hint" ]; then
-    if \[ -f "$hint" ] && \[ "$(\readlink -f /proc/$$/exe)" != "$(\readlink -f $hint)" ] && \[ "$hint" != "/usr/bin/opentelemetry_shell.sh" ]; then local hint="$(\cat "$hint")"; fi
+    if \[ -f "$hint" ] && \[ "$(\readlink -f "/proc/$$/exe")" != "$(\readlink -f "$hint")" ] && \[ "$hint" != "/usr/bin/opentelemetry_shell.sh" ]; then local hint="$(\cat "$hint")"; fi
     \grep -xF "$(\echo "$hint" | \tr -s ' $=";(){}/\\!#~^'\' '\n' | _otel_filter_by_validity)"
   else
     \cat
@@ -127,7 +127,7 @@ _otel_filter_commands_by_hint() {
 }
 
 _otel_filter_commands_by_instrumentation() {
-  local pre_instrumented_executables="$(\alias | \grep -F '_otel_observe' | \sed 's/^alias //' | \cut -d= -f1)"
+  local pre_instrumented_executables="$(\alias | \grep -F '_otel_observe' | \sed 's/^alias //' | \cut -d = -f 1)"
   if \[ -n "$pre_instrumented_executables" ]; then
     \grep -xFv "$pre_instrumented_executables" 
   else
@@ -136,7 +136,7 @@ _otel_filter_commands_by_instrumentation() {
 }
 
 _otel_filter_commands_by_special() {
-  \grep -v '^alias$' | \grep -v '^unalias$' | \grep -v '^\.$' | \grep -v '^source$' | \grep -v '^exec$' | \grep -v '^OTEL_' | \grep -v '^_otel_' | \grep -v '^otel_'
+  \grep -vE '^(alias|unalias|\.|source|exec)$' | \grep -vE '^(OTEL_|_otel_|otel_)'
 }
 
 _otel_filter_by_validity() {
