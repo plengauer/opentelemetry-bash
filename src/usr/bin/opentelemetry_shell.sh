@@ -94,11 +94,11 @@ _otel_list_all_commands() {
 }
 
 _otel_list_path_commands() {
-  _otel_list_path_executables | \rev | \cut -d / -f1 | \rev
+  _otel_list_path_executables | \rev | \cut -d / -f 1 | \rev
 }
 
 _otel_list_path_executables() {
-  \echo "$PATH" | \tr ' ' '\n' | \tr ':' '\n' | while read dir; do \find $dir -maxdepth 1 -type f,l -executable 2> /dev/null; done
+  \echo "$PATH" | \tr ':' '\n' | while read dir; do \find "$dir" -maxdepth 1 -type f,l -executable 2> /dev/null; done
 }
 
 _otel_list_alias_commands() {
@@ -106,7 +106,7 @@ _otel_list_alias_commands() {
 }
 
 _otel_list_aliased_commands() {
-  \alias | \cut -d= -f2- | _otel_line_split | _otel_filter_by_validity
+  \alias | \cut -d = -f 2- | _otel_line_split | _otel_filter_by_validity
 }
 
 _otel_list_builtin_commands() {
