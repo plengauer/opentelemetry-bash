@@ -1,8 +1,9 @@
 Package: opentelemetry-shell
-Version: 3.14.3
+Version: 3.15.0
 Architecture: all
-Depends: awk, apt, procps, python3, python3-pip, python3-venv
+Depends: coreutils, util-linux, grep, sed, awk, dpkg | apt, procps, python3, python3-pip, python3-venv
+Enhances: dash, bash
 Priority: extra
 Maintainer: Philipp Lengauer <p.lengauer@gmail.com>
 Homepage: https://github.com/plengauer/opentelemetry-bash
-Description: Generating open-telemetry traces from shell scripts
+Description: Generate open telemetry traces, metrics, and logs from shell scripts
