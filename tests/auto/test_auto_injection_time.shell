@@ -1,7 +1,10 @@
 . ./assert.sh
 . /usr/bin/opentelemetry_shell.sh
 
+export OTEL_SHELL_SUPPRESS_LOG_COLLECTIOn
+set -x
 time echo hello world
+set +x
 assert_equals 0 $?
 span="$(resolve_span '.name == "time echo hello world"')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
