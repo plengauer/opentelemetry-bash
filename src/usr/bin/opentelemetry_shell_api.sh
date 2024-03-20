@@ -100,7 +100,7 @@ otel_span_start() {
   local name="$*"
   local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
   \mkfifo "$response_pipe"
-  _otel_sdk_communicate "SPAN_START" "$response_pipe" "$OTEL_TRACEPARENT" "$kind $name"
+  _otel_sdk_communicate "SPAN_START" "$response_pipe" "$OTEL_TRACEPARENT" "$kind" "$name"
   \cat "$response_pipe"
   \rm "$response_pipe" &> /dev/null
 }
@@ -211,8 +211,10 @@ otel_observe() {
     otel_span_error $span_id
   fi
   if \[ -n "$attributes" ]; then
+    local OLD_IFS="$IFS"
     local IFS=','
     set -- $attributes
+    IFS="$OLD_IFS"
     for attribute in "$@"; do
       if \[ -n "$attribute" ]; then
         otel_span_attribute $span_id "$attribute"
