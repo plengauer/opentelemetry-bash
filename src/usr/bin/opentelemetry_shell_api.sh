@@ -175,49 +175,49 @@ otel_observe() {
   unset OTEL_SHELL_COMMANDLINE_OVERRIDE
   unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
   # create span, set initial attributes
-  local span_id=$(otel_span_start $kind "$name")
-  otel_span_attribute $span_id subprocess.executable.name=$(\printf '%s' "$command" | \cut -d' ' -f1 | \rev | \cut -d'/' -f1 | \rev)
-  otel_span_attribute $span_id subprocess.executable.path="$(\which $(\printf '%s' "$command" | \cut -d' ' -f1))"
-  otel_span_attribute $span_id subprocess.command="$command"
-  otel_span_attribute $span_id subprocess.command_args="$(\printf '%s' "$command" | \cut -sd' ' -f2-)"
+  local span_id="$(otel_span_start "$kind" "$name")"
+  otel_span_attribute "$span_id" subprocess.executable.name="$(\printf '%s' "$command" | \cut -d' ' -f1 | \rev | \cut -d'/' -f1 | \rev)"
+  otel_span_attribute "$span_id" subprocess.executable.path="$(\which $(\printf '%s' "$command" | \cut -d' ' -f1))"
+  otel_span_attribute "$span_id" subprocess.command="$command"
+  otel_span_attribute "$span_id" subprocess.command_args="$(\printf '%s' "$command" | \cut -sd' ' -f2-)"
   # run command
-  otel_span_activate $span_id
+  otel_span_activate "$span_id"
   if \[ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0)"; fi
   if \[ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1)"; fi
   unset OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0
   unset OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1
   local exit_code=0
   if ! \[ -t 2 ] && \[ "$OTEL_SHELL_SUPPRESS_LOG_COLLECTION" != TRUE ]; then
-    local traceparent=$OTEL_TRACEPARENT
-    local stderr_pipe=$(\mktemp -u).opentelemetry_shell_$$.pipe
-    \mkfifo $stderr_pipe
-    ( (while IFS= read -r line; do _otel_log_record $traceparent "$line"; \echo "$line" >&2; done < $stderr_pipe) & )
-    OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$command_signature" _otel_call "$@" 2> $stderr_pipe || local exit_code=$?
-    \rm $stderr_pipe
+    local traceparent="$OTEL_TRACEPARENT"
+    local stderr_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
+    \mkfifo "$stderr_pipe"
+    ( (while IFS= read -r line; do _otel_log_record "$traceparent" "$line"; \echo "$line" >&2; done < "$stderr_pipe") & )
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$command_signature" _otel_call "$@" 2> "$stderr_pipe" || local exit_code="$?"
+    \rm "$stderr_pipe"
   else
-    OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$command_signature" _otel_call "$@" || local exit_code=$?
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$command_signature" _otel_call "$@" || local exit_code="$?"
   fi
-  otel_span_deactivate $span_id
+  otel_span_deactivate "$span_id"
   # set custom attributes, set final attributes, finish span
-  otel_span_attribute $span_id subprocess.exit_code=$exit_code
-  if \[ "$exit_code" -ne "0" ]; then
-    otel_span_error $span_id
+  otel_span_attribute "$span_id" subprocess.exit_code="$exit_code"
+  if \[ "$exit_code" -ne 0 ]; then
+    otel_span_error "$span_id"
   fi
   if \[ -n "$attributes" ]; then
     local IFS=','
     set -- $attributes
     for attribute in "$@"; do
       if \[ -n "$attribute" ]; then
-        otel_span_attribute $span_id "$attribute"
+        otel_span_attribute "$span_id" "$attribute"
       fi
     done
   fi
-  otel_span_end $span_id
-  return $exit_code
+  otel_span_end "$span_id"
+  return "$exit_code"
 }
 
 _otel_log_record() {
-  local traceparent=$1
+  local traceparent="$1"
   shift
   local line="$*"
   _otel_sdk_communicate "LOG_RECORD" "$traceparent" "$line"
