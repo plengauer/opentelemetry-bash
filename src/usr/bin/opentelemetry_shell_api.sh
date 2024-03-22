@@ -7,7 +7,6 @@
 
 _otel_remote_sdk_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
 _otel_shell="$(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)"
-_otel_version="$(_otel_package_version opentelemetry-shell)"
 if \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "$PPID" ] || \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "0" ]; then _otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"; fi
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE
@@ -21,7 +20,7 @@ otel_init() {
   local sdk_output="${OTEL_SHELL_SDK_OUTPUT_REDIRECT:-$sdk_output}"
   \mkfifo "$_otel_remote_sdk_pipe"
   \eval "$(\cat /opt/opentelemetry_shell/venv/bin/activate | \sed 's/\[/\\\[/g')"
-  (\python3 /usr/bin/opentelemetry_shell_sdk.py "$_otel_remote_sdk_pipe" "shell" "$_otel_version" > "$sdk_output" 2> "$sdk_output" &)
+  (\python3 /usr/bin/opentelemetry_shell_sdk.py "$_otel_remote_sdk_pipe" "shell" "$(_otel_package_version opentelemetry-shell)" > "$sdk_output" 2> "$sdk_output" &)
   deactivate
   \exec 7> "$_otel_remote_sdk_pipe"
   _otel_resource_attributes | while IFS= read -r kvp; do _otel_sdk_communicate "RESOURCE_ATTRIBUTE" "$kvp"; done
@@ -41,7 +40,7 @@ _otel_sdk_communicate() {
 _otel_resource_attributes() {
   \echo telemetry.sdk.name=opentelemetry
   \echo telemetry.sdk.language=shell
-  \echo telemetry.sdk.version="$_otel_version"
+  \echo telemetry.sdk.version="$(_otel_package_version opentelemetry-shell)"
 
   local process_command="$(_otel_command_self)"
   local process_executable_path="$(\readlink "/proc/$$/exe")"
