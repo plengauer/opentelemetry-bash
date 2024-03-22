@@ -106,10 +106,10 @@ def handle(scope, version, command, arguments):
     elif command == 'INIT':
         final_resources = get_aggregated_resources([
                 AwsEC2ResourceDetector(),
+                OracleResourceDetector(),
                 KubernetesResourceDetector(),
                 DockerResourceDetector(),
                 OTELResourceDetector(),
-                OracleResourceDetector(),
             ]).merge(Resource.create(resource))
 
         if os.environ.get('OTEL_SHELL_TRACES_ENABLE') == 'TRUE':
