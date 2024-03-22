@@ -77,27 +77,25 @@ next_metric_id = 0
 auto_end = False
 
 def main():
-    fifo_path = sys.argv[1]
-    scope = sys.argv[2]
-    version = sys.argv[3]
-    with open(fifo_path, 'r') as fifo:
-        for line in fifo:
-            line = line.strip()
-            if len(line) == 0:
-                continue
-            tokens = line.split(' ', 1)
-            tokens = [token for token in tokens if token]
-            try:
-                handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-            except EOFError:
-                sys.exit(0)
-            except:
-                print('SDK Error: ' + line, file=sys.stderr)
-                traceback.print_exc()
+    scope = sys.argv[1]
+    version = sys.argv[2]
+    for line in sys.stdin:
+        line = line.strip()
+        if len(line) == 0:
+            continue
+        tokens = line.split(' ', 1)
+        tokens = [token for token in tokens if token]
         try:
-            handle(scope, version, 'SHUTDOWN', None)
+            handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
         except EOFError:
             sys.exit(0)
+        except:
+            print('SDK Error: ' + line, file=sys.stderr)
+            traceback.print_exc()
+    try:
+        handle(scope, version, 'SHUTDOWN', None)
+    except EOFError:
+        sys.exit(0)
 
 def handle(scope, version, command, arguments):
     global auto_end
