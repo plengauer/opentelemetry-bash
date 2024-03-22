@@ -1,0 +1,3 @@
+. ./assert.sh
+. /usr/bin/opentelemetry_shell.sh
+assert_equals "$(\which flock)" "$(which flock)"
