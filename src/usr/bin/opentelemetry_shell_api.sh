@@ -34,7 +34,7 @@ otel_shutdown() {
 }
 
 _otel_sdk_communicate() {
-  \echo "$*" >&7 # tr -d '\000-\037'
+  IFS=' ' \echo "$*" >&7 # tr -d '\000-\037'
 }
 
 _otel_resource_attributes() {
@@ -89,8 +89,7 @@ _otel_package_version() {
 
 otel_span_start() {
   local kind="$1"
-  shift
-  local name="$*"
+  local name="$2"
   local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
   \mkfifo "$response_pipe"
   _otel_sdk_communicate "SPAN_START" "$response_pipe" "$OTEL_TRACEPARENT" "$kind" "$name"
@@ -110,8 +109,7 @@ otel_span_error() {
 
 otel_span_attribute() {
   local span_id="$1"
-  shift
-  local kvp="$*"
+  local kvp="$2"
   _otel_sdk_communicate "SPAN_ATTRIBUTE" "$span_id" "$kvp"
 }
 
@@ -146,8 +144,7 @@ otel_metric_create() {
 
 otel_metric_attribute() {
   local metric_id="$1"
-  shift
-  local kvp="$*"
+  local kvp="$2"
   _otel_sdk_communicate "METRIC_ATTRIBUTE" "$metric_id" "$kvp"
 }
 
@@ -159,12 +156,13 @@ otel_metric_add() {
 
 otel_observe() {
   # validate and clean arguments
-  local name="${OTEL_SHELL_SPAN_NAME_OVERRIDE:-$*}"
+  IFS=' ' local args="$*"
+  local name="${OTEL_SHELL_SPAN_NAME_OVERRIDE:-$args}"
   local name="${name#otel_observe }"
   local name="${name#_otel_observe }"
   local name="${name#\\}"
   local kind="${OTEL_SHELL_SPAN_KIND_OVERRIDE:-INTERNAL}"
-  local command="${OTEL_SHELL_COMMANDLINE_OVERRIDE:-$*}"
+  local command="${OTEL_SHELL_COMMANDLINE_OVERRIDE:-$args}"
   local command="${command#otel_observe }"
   local command="${command#_otel_observe }"
   local command="${command#\\}"
@@ -221,7 +219,7 @@ otel_observe() {
 _otel_log_record() {
   local traceparent="$1"
   shift
-  local line="$*"
+  IFS=' ' local line="$*"
   _otel_sdk_communicate "LOG_RECORD" "$traceparent" "$line"
 }
 
