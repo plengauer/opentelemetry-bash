@@ -1,3 +1,4 @@
+#!/opt/opentelemetry_shell/venv/bin/python
 import sys
 import os
 import time
