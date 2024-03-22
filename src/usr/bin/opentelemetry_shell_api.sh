@@ -47,7 +47,7 @@ _otel_resource_attributes() {
   \echo process.command_args="$(_otel_command_self | \cut -d ' ' -f 2-)"
   \echo process.owner="$(\whoami)"
   \echo process.runtime.name="$(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)"
-  \echo process.runtime.version="$(_otel_package_version $(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev))"
+  \echo process.runtime.version="$(_otel_package_version "$(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)")"
   \echo process.runtime.options="$-"
   case "$_otel_shell" in
        sh) \echo process.runtime.description="Bourne Shell" ;;
