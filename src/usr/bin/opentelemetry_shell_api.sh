@@ -19,7 +19,7 @@ otel_init() {
   if \[ -e "/dev/stderr" ] && \[ -e "$(\readlink -f /dev/stderr)" ]; then local sdk_output=/dev/stderr; else local sdk_output=/dev/null; fi
   local sdk_output="${OTEL_SHELL_SDK_OUTPUT_REDIRECT:-$sdk_output}"
   \mkfifo "$_otel_remote_sdk_pipe"
-  (\opentelemetry_shell_sdk "shell" "$(_otel_package_version opentelemetry-shell)" < "$otel_remote_sdk_pipe" > "$sdk_output" 2> "$sdk_output" &)
+  (\opentelemetry_shell_sdk "shell" "$(_otel_package_version opentelemetry-shell)" < "$_otel_remote_sdk_pipe" > "$sdk_output" 2> "$sdk_output" &)
   \exec 7> "$_otel_remote_sdk_pipe"
   _otel_resource_attributes | while IFS= read -r kvp; do _otel_sdk_communicate "RESOURCE_ATTRIBUTE" "$kvp"; done
   _otel_sdk_communicate "INIT"
