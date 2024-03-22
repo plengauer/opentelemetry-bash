@@ -1,6 +1,7 @@
 . ./assert.sh
 . /usr/bin/opentelemetry_shell.sh
 
+export OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE
 set -x
 time echo hello world
 set +x
