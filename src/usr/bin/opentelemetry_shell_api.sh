@@ -34,7 +34,7 @@ otel_shutdown() {
 }
 
 _otel_sdk_communicate() {
-  IFS=' ' \echo "$*" >&7 # tr -d '\000-\037'
+  IFS= \echo "$*" >&7 # tr -d '\000-\037'
 }
 
 _otel_resource_attributes() {
@@ -156,7 +156,7 @@ otel_metric_add() {
 
 otel_observe() {
   # validate and clean arguments
-  IFS=' ' local args="$*"
+  IFS= local args="$*"
   local name="${OTEL_SHELL_SPAN_NAME_OVERRIDE:-$args}"
   local name="${name#otel_observe }"
   local name="${name#_otel_observe }"
@@ -219,7 +219,7 @@ otel_observe() {
 _otel_log_record() {
   local traceparent="$1"
   shift
-  IFS=' ' local line="$*"
+  IFS= local line="$*"
   _otel_sdk_communicate "LOG_RECORD" "$traceparent" "$line"
 }
 
