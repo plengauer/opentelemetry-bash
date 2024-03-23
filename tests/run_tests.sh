@@ -7,7 +7,7 @@ if [ "$SHELL" = "" ]; then
 fi
 
 # (while sleep 15; do pstree -a -c -p; done) &
-for dir in sdk auto integration; do
+for dir in unit sdk auto integration; do
   for file in $(find $dir -iname 'test_*.shell') $(find $dir -iname 'test_*.'$SHELL); do
     export OTEL_EXPORT_LOCATION=$(mktemp -u).sdk.out
     export OTEL_SHELL_SDK_OUTPUT_REDIRECT=$(mktemp -u).pipe

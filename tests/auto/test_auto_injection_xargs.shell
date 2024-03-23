@@ -24,3 +24,6 @@ assert_equals "xargs -I {} echo {}" "$(\echo "$span" | jq -r '.resource.attribut
 assert_equals 'hello
 world
 3' "$(echo hello world 3 | xargs printf '%s\n%s\n%s')"
+
+text='foo;bar'
+assert_equals "$text" "$(echo "$text" | xargs echo)"
