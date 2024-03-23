@@ -49,7 +49,7 @@ _otel_inject_shell_args_with_copy() {
 }
 
 _otel_inject_shell_with_copy() {
-  local cmdline="$({ set -- "$@"; if \[ "$1" = "_otel_observe" ]; then shift; fi; IFS=' ' \printf '%s' "$*"; })"
+  local cmdline="$({ set -- "$@"; if \[ "$1" = "_otel_observe" ]; then shift; fi; \printf '%s' "$*"; })"
   local temporary_script="$(\mktemp -u)"
   local exit_code=0
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE \
