@@ -3,7 +3,7 @@
 # wget -O - https://www.google.at => wget -O - https://www.google.at '--header=traceparent: 00-XXXXXX-01'
 
 _otel_propagate_wget() {
-  local command="$(IFS=' ' \printf '%s' "$*" | \sed 's/^_otel_observe //')"
+  local command="$(\printf '%s' "$*" | \sed 's/^_otel_observe //')"
   local url=$(\printf '%s' "$command" | \awk '{for(i=1;i<=NF;i++) if ($i ~ /^http/) print $i}')
   local scheme=http # TODO
   local target=$(\printf '%s' /${url#*//*/})
