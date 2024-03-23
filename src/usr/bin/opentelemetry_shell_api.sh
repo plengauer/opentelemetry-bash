@@ -33,7 +33,7 @@ otel_shutdown() {
 }
 
 _otel_sdk_communicate() {
-  \echo "$*" >&7 # tr -d '\000-\037'
+  \echo "$@" >&7 # tr -d '\000-\037'
 }
 
 _otel_resource_attributes() {
@@ -91,8 +91,7 @@ _otel_package_version() {
 
 otel_span_start() {
   local kind="$1"
-  shift
-  local name="$*"
+  local name="$2"
   local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
   \mkfifo "$response_pipe"
   _otel_sdk_communicate "SPAN_START" "$response_pipe" "$OTEL_TRACEPARENT" "$kind" "$name"
@@ -112,8 +111,7 @@ otel_span_error() {
 
 otel_span_attribute() {
   local span_id="$1"
-  shift
-  local kvp="$*"
+  local kvp="$2"
   _otel_sdk_communicate "SPAN_ATTRIBUTE" "$span_id" "$kvp"
 }
 
@@ -148,8 +146,7 @@ otel_metric_create() {
 
 otel_metric_attribute() {
   local metric_id="$1"
-  shift
-  local kvp="$*"
+  local kvp="$2"
   _otel_sdk_communicate "METRIC_ATTRIBUTE" "$metric_id" "$kvp"
 }
 
@@ -161,12 +158,13 @@ otel_metric_add() {
 
 otel_observe() {
   # validate and clean arguments
-  local name="${OTEL_SHELL_SPAN_NAME_OVERRIDE:-$*}"
+  local dollar_star="$(_otel_dollar_star "$@")"
+  local name="${OTEL_SHELL_SPAN_NAME_OVERRIDE:-$dollar_star}"
   local name="${name#otel_observe }"
   local name="${name#_otel_observe }"
   local name="${name#\\}"
   local kind="${OTEL_SHELL_SPAN_KIND_OVERRIDE:-INTERNAL}"
-  local command="${OTEL_SHELL_COMMANDLINE_OVERRIDE:-$*}"
+  local command="${OTEL_SHELL_COMMANDLINE_OVERRIDE:-$dollar_star}"
   local command="${command#otel_observe }"
   local command="${command#_otel_observe }"
   local command="${command#\\}"
@@ -223,7 +221,7 @@ otel_observe() {
 _otel_log_record() {
   local traceparent="$1"
   shift
-  local line="$*"
+  local line="$(_otel_dollar_star "$@")"
   _otel_sdk_communicate "LOG_RECORD" "$traceparent" "$line"
 }
 
@@ -285,4 +283,12 @@ _otel_line_join() {
 
 _otel_line_split() {
   \tr ' ' '\n'
+}
+
+# this is functionally equivalent with "$*" but does not require IFS to be set properly
+_otel_dollar_star() {
+  # \echo "$*" # dont do this because it uses the IFS which may not be set properly (and we dont wanna reset and cause a sideeffect, especially because we would have to set empty and unset state of IFS properly)
+  # \echo "$@" # dont do this because it starts interpreting backslashes
+  local IFS=' '
+  \printf '%s' "$*"
 }
