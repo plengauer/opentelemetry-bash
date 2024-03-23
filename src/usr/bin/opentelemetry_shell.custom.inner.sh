@@ -50,6 +50,7 @@ _otel_alias_prepend timeout _otel_inject_inner_command
 _otel_alias_prepend watch _otel_inject_inner_command
 _otel_alias_prepend at _otel_inject_inner_command
 _otel_alias_prepend flock _otel_inject_inner_command
+_otel_alias_prepend xargs _otel_inject_inner_command
 
 # sudo apt-get update => sudo sh -c '. /otel.sh; apt-get update' 'sudo'
 
@@ -58,28 +59,3 @@ _otel_inject_sudo() {
 }
 
 _otel_alias_prepend sudo _otel_inject_sudo
-
-# xargs -I {} rm -rf {} => xargs -I {} sh -c '. /otel.sh; rm -rf {}'
-# xargs rm -rf => xargs -I {} rm -rf {} => xargs -I {} sh -c '. /otel.sh; rm -rf {}'
-
-_otel_inject_xargs() {
-  case "$*" in
-    *' -I '*) _otel_inject_inner_command "$@" ;;
-    *)
-      if \[ "$1" = "_otel_observe" ]; then
-        shift; local executable="_otel_observe $1"
-      else
-        local executable="$1"
-      fi
-      local cmdline="$*"
-      shift
-      if \[ -z "$*" ]; then
-        $executable
-      else
-        OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" _otel_inject_xargs $executable -I '{}' "$@" '{}'
-      fi
-      ;;
-  esac
-}
-
-_otel_alias_prepend xargs _otel_inject_inner_command
