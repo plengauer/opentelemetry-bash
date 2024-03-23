@@ -46,7 +46,6 @@ if \[ "$_otel_shell" = "bash" ]; then
 fi
 
 _otel_auto_instrument() {
-  if \[ -n "$IFS" ]; then local IFS_BACKUP="$IFS"; unset IFS; fi
   local hint="$1"
 
   # cached?
@@ -59,7 +58,6 @@ _otel_auto_instrument() {
   if \[ -f "$cache_file" ]; then
     for otel_custom_file in $(\ls /usr/bin | \grep '^opentelemetry_shell.custom.' | \grep '.sh$'); do \eval "$(\cat "/usr/bin/$otel_custom_file" | \grep -v '_otel_alias_prepend')"; done
     \eval "$(\cat $cache_file | \grep -v '^#' | \awk '{print "\\alias " $0 }')"
-    if \[ -n "$IFS_BACKUP" ]; then IFS="$IFS_BACKUP"; fi
     return $?
   fi
 
@@ -86,7 +84,6 @@ _otel_auto_instrument() {
 
   # cache
   if \[ "$(\alias | \wc -l)" -gt 25 ]; then \alias | \sed 's/^alias //' > "$cache_file"; else true; fi
-  if \[ -n "$IFS_BACKUP" ]; then IFS="$IFS_BACKUP"; fi
 }
 
 _otel_list_all_commands() {
@@ -101,7 +98,7 @@ _otel_list_path_commands() {
 }
 
 _otel_list_path_executables() {
-  IFS=':' for dir in $PATH; do \find "$dir" -maxdepth 1 -type f,l -executable 2> /dev/null; done
+  \echo "$PATH" | \tr ':' '\n' | while read -r dir; do \find "$dir" -maxdepth 1 -type f,l -executable 2> /dev/null; done
 }
 
 _otel_list_alias_commands() {
