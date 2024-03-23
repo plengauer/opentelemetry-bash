@@ -3,7 +3,7 @@
 # curl -v https://www.google.at => curl -v https://www.google.at -H 'traceparent: 00-XXXXXX-01'
 
 _otel_propagate_curl() {
-  local command="$(\printf '%s' "$*" | \sed 's/^_otel_observe //')"
+  local command="$(_otel_dollar_star "$@" | \sed 's/^_otel_observe //')"
   local url=$(\printf '%s' "$command" | \awk '{for(i=1;i<=NF;i++) if ($i ~ /^http/) print $i}')
   local scheme=http # TODO
   local target=$(\printf '%s' /${url#*//*/})
