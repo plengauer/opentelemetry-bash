@@ -41,28 +41,31 @@ _otel_resource_attributes() {
   \echo telemetry.sdk.language=shell
   \echo telemetry.sdk.version="$(_otel_package_version opentelemetry-shell)"
 
+  local process_command="$(_otel_command_self)"
+  local process_executable_path="$(\readlink "/proc/$$/exe")"
+  local process_executable_name="$(\printf '%s' "$process_executable_path" | \rev | \cut -d / -f 1 | \rev)"
   \echo process.pid="$$"
-  \echo process.executable.name="$(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)"
-  \echo process.executable.path="$(\readlink "/proc/$$/exe")"
-  \echo process.command="$(_otel_command_self)"
-  \echo process.command_args="$(_otel_command_self | \cut -d ' ' -f 2-)"
+  \echo process.executable.name="$process_executable_name"
+  \echo process.executable.path="$process_executable_path"
+  \echo process.command="$process_command"
+  \echo process.command_args="$(\printf '%s' "$process_command" | \cut -d ' ' -f 2-)"
   \echo process.owner="$(\whoami)"
-  \echo process.runtime.name="$(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)"
-  \echo process.runtime.version="$(_otel_package_version $(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev))"
-  \echo process.runtime.options="$-"
   case "$_otel_shell" in
-       sh) \echo process.runtime.description="Bourne Shell" ;;
-     dash) \echo process.runtime.description="Debian Almquist Shell" ;;
-     bash) \echo process.runtime.description="Bourne Again Shell" ;;
-      zsh) \echo process.runtime.description="Z Shell" ;;
-      ksh) \echo process.runtime.description="Korn Shell" ;;
-    pdksh) \echo process.runtime.description="Public Domain Korn Shell" ;;
-     posh) \echo process.runtime.description="Policy-compliant Ordinary Shell" ;;
-     yash) \echo process.runtime.description="Yet Another Shell" ;;
-     bosh) \echo process.runtime.description="Bourne Shell" ;;
-     fish) \echo process.runtime.description="Friendly Interactive Shell" ;;
-        *) \echo process.runtime.description="$(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)" ;;
+       sh) \echo process.runtime.name="Bourne Shell" ;;
+      ash) \echo process.runtime.name="Almquist Shell" ;;
+     dash) \echo process.runtime.name="Debian Almquist Shell" ;;
+     bash) \echo process.runtime.name="Bourne Again Shell" ;;
+      zsh) \echo process.runtime.name="Z Shell" ;;
+      ksh) \echo process.runtime.name="Korn Shell" ;;
+    pdksh) \echo process.runtime.name="Public Domain Korn Shell" ;;
+     posh) \echo process.runtime.name="Policy-compliant Ordinary Shell" ;;
+     yash) \echo process.runtime.name="Yet Another Shell" ;;
+     bosh) \echo process.runtime.name="Bourne Shell" ;;
+     fish) \echo process.runtime.name="Friendly Interactive Shell" ;;
+        *) \echo process.runtime.name="$process_executable_name" ;;
   esac
+  \echo process.runtime.version="$(_otel_package_version "$process_executable_name")"
+  \echo process.runtime.options="$-"
 
   \echo service.name="${OTEL_SERVICE_NAME:-unknown_service}"
   \echo service.version="$OTEL_SERVICE_VERSION"
