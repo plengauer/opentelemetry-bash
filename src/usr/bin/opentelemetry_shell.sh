@@ -224,7 +224,7 @@ _otel_alias_prepend() {
     local new_command="$previous_otel_command $prepend_command $previous_alias_command"
   fi
 
-  \alias "$original_command"='IFS=' ' OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="code.filepath='$_otel_source_file_resolver',code.lineno='$_otel_source_line_resolver',code.function='$_otel_source_func_resolver'" '"$new_command"
+  \alias "$original_command"="IFS=' ' "'OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="code.filepath='$_otel_source_file_resolver',code.lineno='$_otel_source_line_resolver',code.function='$_otel_source_func_resolver'" '"$new_command"
 }
 
 _otel_unquote() {
