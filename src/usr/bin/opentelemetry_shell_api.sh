@@ -283,6 +283,10 @@ _otel_line_split() {
   \tr ' ' '\n'
 }
 
+# this is functionally equivalent with "$*" but does not require IFS to be set properly
 _otel_dollar_star() {
-  \echo "$@" # this is functionally equivalent with "$*" but does not require IFS to be set properly
+  # \echo "$*" # dont do this because it uses the IFS which may not be set properly (and we dont wanna reset and cause a sideeffect)
+  # \echo "$@" # dont do this because it starts interpreting backslashes
+  local IFS=' '
+  \printf '%s' "$*"
 }
