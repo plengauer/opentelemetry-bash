@@ -34,7 +34,7 @@ otel_shutdown() {
 }
 
 _otel_sdk_communicate() {
-  \echo "$*" >&7 # tr -d '\000-\037'
+  \echo "$@" >&7 # tr -d '\000-\037'
 }
 
 _otel_resource_attributes() {
