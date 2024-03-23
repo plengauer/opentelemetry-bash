@@ -98,7 +98,7 @@ _otel_list_path_commands() {
 }
 
 _otel_list_path_executables() {
-  \echo "$PATH" | \tr ':' '\n' | while read -r dir; do \find "$dir" -maxdepth 1 -type f,l -executable 2> /dev/null; done
+  \echo "$PATH" | \tr ':' '\n' | while read dir; do \find "$dir" -maxdepth 1 -type f,l -executable 2> /dev/null; done
 }
 
 _otel_list_alias_commands() {
