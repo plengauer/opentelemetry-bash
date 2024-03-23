@@ -156,12 +156,13 @@ otel_metric_add() {
 
 otel_observe() {
   # validate and clean arguments
-  local name="${OTEL_SHELL_SPAN_NAME_OVERRIDE:-$*}"
+  local dollar_star="$(_otel_dollar_star "$@")"
+  local name="${OTEL_SHELL_SPAN_NAME_OVERRIDE:-$dollar_star}"
   local name="${name#otel_observe }"
   local name="${name#_otel_observe }"
   local name="${name#\\}"
   local kind="${OTEL_SHELL_SPAN_KIND_OVERRIDE:-INTERNAL}"
-  local command="${OTEL_SHELL_COMMANDLINE_OVERRIDE:-$*}"
+  local command="${OTEL_SHELL_COMMANDLINE_OVERRIDE:-$dollar_star}"
   local command="${command#otel_observe }"
   local command="${command#_otel_observe }"
   local command="${command#\\}"
@@ -218,7 +219,7 @@ otel_observe() {
 _otel_log_record() {
   local traceparent="$1"
   shift
-  local line="$*"
+  local line="$(_otel_dollar_star "$@")"
   _otel_sdk_communicate "LOG_RECORD" "$traceparent" "$line"
 }
 
@@ -280,4 +281,8 @@ _otel_line_join() {
 
 _otel_line_split() {
   \tr ' ' '\n'
+}
+
+_otel_dollar_star() {
+  \echo "$@" # this is functionally equivalent with "$*" but does not require IFS to be set properly
 }
