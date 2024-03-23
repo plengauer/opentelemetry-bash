@@ -47,6 +47,8 @@ fi
 
 _otel_auto_instrument() {
   local hint="$1"
+  local IFS=' 
+'
 
   # cached?
   ## we really have three options for the cache key
@@ -240,7 +242,7 @@ _otel_alias_and_instrument() {
   local exit_code=0
   \eval "'alias'" "$(_otel_escape_args "$@")" || local exit_code="$?"
   if \[ -n "$*" ] && \[ "${*#*=*}" != "$*" ]; then
-    _otel_auto_instrument "$(\echo "$*" | _otel_line_split | \grep -m1 '=' 2> /dev/null | \tr '=' ' ')"
+    _otel_auto_instrument "$(_otel_dollar_star "$@" | _otel_line_split | \grep -m1 '=' 2> /dev/null | \tr '=' ' ')"
   fi
   return "$exit_code"
 }
@@ -252,7 +254,7 @@ _otel_unalias_and_reinstrument() {
   if \[ "-a" = "$*" ]; then
     _otel_auto_instrument "$_otel_shell_auto_instrumentation_hint"
   else
-    _otel_auto_instrument "$*"
+    _otel_auto_instrument "$(_otel_dollar_star "$@")"
   fi
   return "$exit_code"
 }
