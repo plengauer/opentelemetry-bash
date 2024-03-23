@@ -19,9 +19,8 @@ otel_init() {
   if \[ -e "/dev/stderr" ] && \[ -e "$(\readlink -f /dev/stderr)" ]; then local sdk_output=/dev/stderr; else local sdk_output=/dev/null; fi
   local sdk_output="${OTEL_SHELL_SDK_OUTPUT_REDIRECT:-$sdk_output}"
   \mkfifo "$_otel_remote_sdk_pipe"
-  \eval "$(\cat /opt/opentelemetry_shell/venv/bin/activate | \sed 's/\[/\\\[/g')"
-  (\python3 /usr/bin/opentelemetry_shell_sdk.py "$_otel_remote_sdk_pipe" "shell" "$(_otel_package_version opentelemetry-shell)" > "$sdk_output" 2> "$sdk_output" &)
-  deactivate
+  # several weird things going on in the next line, (1) using '((' fucks up the syntax highlighting in github while '( (' does not, and (2) &> causes weird buffering / late flushing behavior
+  ( (\opentelemetry_shell_sdk "shell" "$(_otel_package_version opentelemetry-shell)" < "$_otel_remote_sdk_pipe" 1> "$sdk_output" 2> "$sdk_output") &)
   \exec 7> "$_otel_remote_sdk_pipe"
   _otel_resource_attributes | while IFS= read -r kvp; do _otel_sdk_communicate "RESOURCE_ATTRIBUTE" "$kvp"; done
   _otel_sdk_communicate "INIT"
