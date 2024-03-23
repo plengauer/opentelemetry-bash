@@ -46,6 +46,8 @@ if \[ "$_otel_shell" = "bash" ]; then
 fi
 
 _otel_auto_instrument() {
+  local IFS_BACKUP="$IFS"
+  unset IFS
   local hint="$1"
 
   # cached?
@@ -58,6 +60,7 @@ _otel_auto_instrument() {
   if \[ -f "$cache_file" ]; then
     for otel_custom_file in $(\ls /usr/bin | \grep '^opentelemetry_shell.custom.' | \grep '.sh$'); do \eval "$(\cat "/usr/bin/$otel_custom_file" | \grep -v '_otel_alias_prepend')"; done
     \eval "$(\cat $cache_file | \grep -v '^#' | \awk '{print "\\alias " $0 }')"
+    IFS="$IFS_BACKUP"
     return $?
   fi
 
@@ -84,6 +87,7 @@ _otel_auto_instrument() {
 
   # cache
   if \[ "$(\alias | \wc -l)" -gt 25 ]; then \alias | \sed 's/^alias //' > "$cache_file"; else true; fi
+  IFS="$IFS_BACKUP"
 }
 
 _otel_list_all_commands() {
