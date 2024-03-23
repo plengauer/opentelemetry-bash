@@ -239,8 +239,8 @@ _otel_alias_and_instrument() {
   shift
   local exit_code=0
   \eval "'alias'" "$(_otel_escape_args "$@")" || local exit_code="$?"
-  if \[ -n "$*" ] && IFS=' ' \[ "${*#*=*}" != "$*" ]; then
-    _otel_auto_instrument "$(IFS=' ' \echo "$*" | _otel_line_split | \grep -m1 '=' 2> /dev/null | \tr '=' ' ')"
+  if \[ -n "$*" ] && \[ "${*#*=*}" != "$*" ]; then
+    _otel_auto_instrument "$(\echo "$*" | _otel_line_split | \grep -m1 '=' 2> /dev/null | \tr '=' ' ')"
   fi
   return "$exit_code"
 }
@@ -252,7 +252,7 @@ _otel_unalias_and_reinstrument() {
   if \[ "-a" = "$*" ]; then
     _otel_auto_instrument "$_otel_shell_auto_instrumentation_hint"
   else
-    IFS=' ' _otel_auto_instrument "$*"
+    _otel_auto_instrument "$*"
   fi
   return "$exit_code"
 }
