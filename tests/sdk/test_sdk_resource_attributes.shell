@@ -22,12 +22,14 @@ assert_not_equals "null" $(echo "$span" | jq -r '.resource.attributes."process.e
 assert_not_equals "null" $(echo "$span" | jq -r '.resource.attributes."process.command"')
 assert_not_equals "null" $(echo "$span" | jq -r '.resource.attributes."process.command_args"')
 assert_not_equals "null" $(echo "$span" | jq -r '.resource.attributes."process.owner"')
-if [ "$SHELL" = "sh" ] || [ "$SHELL" = "ash" ]; then
-  assert_equals "dash" $(echo "$span" | jq -r '.resource.attributes."process.runtime.name"')
+if [ "$SHELL" = "sh" ] || [ "$SHELL" = "ash" ] || [ "$SHELL" = "dash" ]; then
+  assert_equals "Debian Almquist Shell" "$(echo "$span" | jq -r '.resource.attributes."process.runtime.name"')"
+elif [ "$SHELL" = "bash" ]; then
+  assert_equals "Bourne Again Shell" "$(echo "$span" | jq -r '.resource.attributes."process.runtime.name"')"
 else
-  assert_equals "$SHELL" $(echo "$span" | jq -r '.resource.attributes."process.runtime.name"')
+  exit 1
 fi
-assert_not_equals "null" $(echo "$span" | jq -r '.resource.attributes."process.runtime.description"')
+assert_equals "null" $(echo "$span" | jq -r '.resource.attributes."process.runtime.description"')
 # assert_not_equals "null" $(echo "$span" | jq -r '.resource.attributes."process.runtime.version"')
 # assert_not_equals "null" $(echo "$span" | jq -r '.resource.attributes."host.name"')
 assert_equals "$OTEL_SERVICE_NAME" $(echo "$span" | jq -r '.resource.attributes."service.name"')

@@ -1,6 +1,15 @@
-#!/bin/bash
-set -e
-python3 -m venv /opt/opentelemetry_shell/venv
-source /opt/opentelemetry_shell/venv/bin/activate
-pip3 install -r /opt/opentelemetry_shell/requirements.txt
-deactivate
+#!/bin/bash -e
+rm -rf /opt/opentelemetry_bash &> /dev/null || true # clean the old install directory
+if [ "$1" = 'abort-configure' ] || [ "$1" = 'abort-upgrade' ] || [ "$1" = 'abort-remove' ] || [ "$1" = 'abort-deconfigure' ]; then
+  true
+elif [ "$1" = 'triggered' ] || [ "$1" = 'reconfigure' ]; then
+  true
+elif [ "$1" = 'configure' ]; then
+  rm -rf /opt/opentelemetry_shell/venv 2> /dev/null || true
+  python3 -m venv /opt/opentelemetry_shell/venv
+  source /opt/opentelemetry_shell/venv/bin/activate
+  pip3 install -r /opt/opentelemetry_shell/requirements.txt
+  deactivate
+else
+  exit 1
+fi
