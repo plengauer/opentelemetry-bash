@@ -28,7 +28,7 @@ _otel_inject_inner_command_args() {
   \echo -n " sh -c '. /usr/bin/opentelemetry_shell.sh
 "
   while \[ "$#" -gt 0 ]; do \echo -n " "; no_quote=1 _otel_escape_arg "$(_otel_escape_arg "$1")"; shift; done
-  \echo -n " "; no_quote=1 _otel_escape_arg "$(_otel_escape_arg '"$@"')"
+  \echo -n " "; no_quote=1 _otel_escape_arg '"$@"'
   \printf '%s' "' $(_otel_escape_arg "${command#\\}")"
 }
 
