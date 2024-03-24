@@ -1,3 +1,4 @@
+#!/opt/opentelemetry_shell/venv/bin/python
 import sys
 import os
 import time
@@ -44,6 +45,29 @@ class AwsEC2ResourceDetector(ResourceDetector):
         except:
             return Resource.create({})
 
+class OracleResourceDetector(ResourceDetector):
+    def detect(self) -> Resource:
+        try:
+            metadata = self.fetch_metadata()
+            resource = Resource.create({
+                "cloud.provider": "oracle",
+                "cloud.region": metadata['region'],
+                "cloud.availability_zone": metadata['availabilityDomain'],
+                "cloud.account_id": metadata['tenantId'],
+                "host.type": metadata['shape'],
+                "host.name": metadata['hostname'],
+                "host.id": metadata['id'],
+                "host.image_id": metadata['image']
+            })
+            return resource
+        except Exception:
+            return Resource({})
+
+    def fetch_metadata(self):
+        response = requests.get('http://169.254.169.254/opc/v1/instance/', headers={'Authorization': 'Bearer Oracle'})
+        response.raise_for_status()  # Raise an exception for 4xx or 5xx status codes
+        return response.json()
+
 resource = {}
 spans = {}
 next_span_id = 0
@@ -53,27 +77,25 @@ next_metric_id = 0
 auto_end = False
 
 def main():
-    fifo_path = sys.argv[1]
-    scope = sys.argv[2]
-    version = sys.argv[3]
-    with open(fifo_path, 'r') as fifo:
-        for line in fifo:
-            line = line.strip()
-            if len(line) == 0:
-                continue
-            tokens = line.split(' ', 1)
-            tokens = [token for token in tokens if token]
-            try:
-                handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-            except EOFError:
-                sys.exit(0)
-            except:
-                print('SDK Error: ' + line, file=sys.stderr)
-                traceback.print_exc()
+    scope = sys.argv[1]
+    version = sys.argv[2]
+    for line in sys.stdin:
+        line = line.strip()
+        if len(line) == 0:
+            continue
+        tokens = line.split(' ', 1)
+        tokens = [token for token in tokens if token]
         try:
-            handle(scope, version, 'SHUTDOWN', None)
+            handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
         except EOFError:
             sys.exit(0)
+        except:
+            print('SDK Error: ' + line, file=sys.stderr)
+            traceback.print_exc()
+    try:
+        handle(scope, version, 'SHUTDOWN', None)
+    except EOFError:
+        sys.exit(0)
 
 def handle(scope, version, command, arguments):
     global auto_end
@@ -84,6 +106,7 @@ def handle(scope, version, command, arguments):
     elif command == 'INIT':
         final_resources = get_aggregated_resources([
                 AwsEC2ResourceDetector(),
+                OracleResourceDetector(),
                 KubernetesResourceDetector(),
                 DockerResourceDetector(),
                 OTELResourceDetector(),

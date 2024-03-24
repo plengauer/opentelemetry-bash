@@ -1,8 +1,0 @@
-Package: opentelemetry-dash
-Version: 1.0.0
-Architecture: all
-Depends: opentelemetry-shell
-Priority: extra
-Maintainer: Philipp Lengauer <p.lengauer@gmail.com>
-Homepage: https://github.com/plengauer/opentelemetry-bash
-Description: Generating open-telemetry traces from dash scripts (this is a legacy package deferring all implementation to opentelemetry-shell)

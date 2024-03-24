@@ -10,7 +10,7 @@ _otel_inject_shell_args_with_c_flag() {
   local injection=". /usr/bin/opentelemetry_shell.sh"
   # command
   if \[ "$1" = "_otel_observe" ]; then _otel_escape_arg "$1"; \echo -n " "; shift; fi
-  local dollar_zero="$1" # in case its not a script, $0 becomes the executable
+  local dollar_zero="${1#\\}" # in case its not a script, $0 becomes the executable
   _otel_escape_arg "$1"; \echo -n " "
   shift
   # options and script or command string
@@ -39,9 +39,16 @@ $1"; \echo -n " "; local found_inner=1; local dollar_zero=""; break
 }
 
 _otel_inject_shell_with_c_flag() {
-  local cmdline="$({ set -- "$@"; if \[ "$1" = "_otel_observe" ]; then shift; fi; \echo -n "$*"; })"
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$(\echo "$cmdline" | _otel_line_join)" \
-    \eval "$(_otel_inject_shell_args_with_c_flag "$@")" # should we do \eval _otel_call "$(.....)" here? is it safer concerning transport of the OTEL control variables?
+  local cmdline="$({ set -- "$@"; if \[ "$1" = "_otel_observe" ]; then shift; fi; \printf '%s' "$*"; })"
+  # be careful about setting the instrumentation hint, setting it is only possible if its a -c invocation, not a script invocation
+  # we could be safe and not set it. better have slow performance on -c injection that no spans at all from a script injection
+  # we use an ugly hack here to optimize for single most common case
+  if \[ "$1" = "_otel_observe" ] && \[ "$3" = "-c" ]; then export OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$(\echo "$cmdline" | _otel_line_join)"; fi
+  local exit_code=0
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE \
+    \eval "$(_otel_inject_shell_args_with_c_flag "$@")" || local exit_code=$? # should we do \eval _otel_call "$(.....)" here? is it safer concerning transport of the OTEL control variables?
+  unset OTEL_SHELL_AUTO_INSTRUMENTATION_HINT
+  return $exit_code
 }
 
 _otel_alias_prepend bash _otel_inject_shell_with_c_flag
