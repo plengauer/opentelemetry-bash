@@ -63,7 +63,7 @@ _otel_inject_parallel_gnu_arguments() {
     \echo -n ' '
     if \[ "$in_exec" -eq 0 ] && ! \[ "${arg%"${arg#?}"}" = "-" ] && \[ -x "$(\which "$arg")" ]; then
       local in_exec=1
-      \echo -n "-q $_otel_shell -c '. /usr/bin/opentelemetry_shell.sh
+      \echo -n "-q sh -c '. /usr/bin/opentelemetry_shell.sh
 "
       no_quote=1 _otel_escape_arg "$arg"
     elif \[ "$in_exec" -eq 0 ] && ! \[ "${arg%"${arg#?}"}" = "-" ] && \[ "$_otel_shell" = bash ] && \type "$arg" 2> /dev/null | \head -n1 | \grep -q ' function$'; then
