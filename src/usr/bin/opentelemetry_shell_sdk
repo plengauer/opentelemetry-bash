@@ -115,47 +115,48 @@ def handle(scope, version, command, arguments):
         traces_exporters = os.environ.get('OTEL_TRACES_EXPORTER', 'otlp')
         metrics_exporters = os.environ.get('OTEL_METRICS_EXPORTER', 'otlp')
         logs_exporters = os.environ.get('OTEL_LOGS_EXPORTER', 'otlp')
+        propagator = os.environ.get('OTEL_PROPAGATORS', 'tracecontext');
+
+        if propagator != 'tracecontext':
+          raise Error('Unsupported propagator: ' + propagator);
 
         if traces_exporters:
             tracer_provider = TracerProvider(sampler=sampling.DEFAULT_ON, resource=final_resources)
             for traces_exporter in traces_exporters.split(','):
-                match traces_exporter:
-                    case '':
-                        pass
-                    case 'console':
-                        tracer_provider.add_span_processor(SimpleSpanProcessor(ConsoleSpanExporter()))
-                    case 'otlp':
-                        tracer_provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
-                    case _:
-                        raise Error('Unknown exporter: ' + traces_exporter)
+                if traces_exporter = '':
+                    pass
+                elif traces_exporter = 'console':
+                    tracer_provider.add_span_processor(SimpleSpanProcessor(ConsoleSpanExporter()))
+                elif traces_exporter = 'otlp':
+                    tracer_provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
+                else:
+                    raise Error('Unknown exporter: ' + traces_exporter)
             opentelemetry.trace.set_tracer_provider(tracer_provider)
 
         if metrics_exporters:
             metric_readers = []
             for metrics_exporter in metrics_exporters.split(','):
-                match metrics_exporter:
-                    case '':
-                        pass
-                    case 'console':
-                        metric_readers.append(PeriodicExportingMetricReader(ConsoleMetricExporter()))
-                    case 'otlp':
-                        metric_readers.append(PeriodicExportingMetricReader(OTLPMetricExporter()))
-                    case _:
-                        raise Error('Unknown exporter: ' + metrics_exporter)
+                if metrics_exporter = '':
+                    pass
+                elif metrics_exporter = 'console':
+                    metric_readers.append(PeriodicExportingMetricReader(ConsoleMetricExporter()))
+                elif metrics_exporter = 'otlp':
+                    metric_readers.append(PeriodicExportingMetricReader(OTLPMetricExporter()))
+                else:
+                    raise Error('Unknown exporter: ' + metrics_exporter)
             opentelemetry.metrics.set_meter_provider(MeterProvider(metric_readers = metric_readers, resource=final_resources))
 
         if logs_exporters:
             logger_provider = LoggerProvider(resource=final_resources)
             for logger_exporter in logs_exporters.split(','):
-                match logger_exporter:
-                    case '':
-                        pass
-                    case 'console':
-                        logger_provider.add_log_record_processor(BatchLogRecordProcessor(ConsoleLogExporter()))
-                    case 'otlp':
-                        logger_provider.add_log_record_processor(BatchLogRecordProcessor(OTLPLogExporter()))
-                    case _:
-                        raise Error('Unknown exporter: ' + logger_exporter)
+                if logger_exporter = '':
+                    pass
+                elif logger_exporter = 'console':
+                    logger_provider.add_log_record_processor(BatchLogRecordProcessor(ConsoleLogExporter()))
+                elif logger_exporter = 'otlp':
+                    logger_provider.add_log_record_processor(BatchLogRecordProcessor(OTLPLogExporter()))
+                else:
+                    raise Error('Unknown exporter: ' + logger_exporter)
             opentelemetry._logs.set_logger_provider(logger_provider)
 
     elif command == 'SHUTDOWN':
