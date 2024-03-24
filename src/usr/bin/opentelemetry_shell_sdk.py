@@ -112,10 +112,13 @@ def handle(scope, version, command, arguments):
                 OTELResourceDetector(),
             ]).merge(Resource.create(resource))
 
-        if os.environ.get('OTEL_SHELL_TRACES_ENABLE') == 'TRUE':
-            tracer_provider = TracerProvider(sampler=sampling.DEFAULT_ON, resource=final_resources)
-            tracer_provider.add_span_processor(BatchSpanProcessor(ConsoleSpanExporter() if os.environ.get('OTEL_TRACES_CONSOLE_EXPORTER') == 'TRUE' else OTLPSpanExporter()))
-            opentelemetry.trace.set_tracer_provider(tracer_provider)
+        traces_exporters = os.environ.get('OTEL_TRACES_EXPORTER')
+        metrics_exporters = os.environ.get('OTEL_METRICS_EXPORTER')
+        logs_exporters = os.environ.get('OTEL_LOGS_EXPORTER')
+
+        tracer_provider = TracerProvider(sampler=sampling.DEFAULT_ON, resource=final_resources)
+        tracer_provider.add_span_processor(BatchSpanProcessor(ConsoleSpanExporter() if os.environ.get('OTEL_TRACES_CONSOLE_EXPORTER') == 'TRUE' else OTLPSpanExporter()))
+        opentelemetry.trace.set_tracer_provider(tracer_provider)
 
         if os.environ.get('OTEL_SHELL_METRICS_ENABLE') == 'TRUE':
             os.environ['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'] = 'delta'
