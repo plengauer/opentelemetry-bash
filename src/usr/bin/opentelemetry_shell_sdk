@@ -123,11 +123,11 @@ def handle(scope, version, command, arguments):
         if traces_exporters:
             tracer_provider = TracerProvider(sampler=sampling.DEFAULT_ON, resource=final_resources)
             for traces_exporter in traces_exporters.split(','):
-                if traces_exporter = '':
+                if traces_exporter == '':
                     pass
-                elif traces_exporter = 'console':
+                elif traces_exporter  == 'console':
                     tracer_provider.add_span_processor(SimpleSpanProcessor(ConsoleSpanExporter()))
-                elif traces_exporter = 'otlp':
+                elif traces_exporter  == 'otlp':
                     tracer_provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
                 else:
                     raise Error('Unknown exporter: ' + traces_exporter)
@@ -136,11 +136,11 @@ def handle(scope, version, command, arguments):
         if metrics_exporters:
             metric_readers = []
             for metrics_exporter in metrics_exporters.split(','):
-                if metrics_exporter = '':
+                if metrics_exporter  == '':
                     pass
-                elif metrics_exporter = 'console':
+                elif metrics_exporter  == 'console':
                     metric_readers.append(PeriodicExportingMetricReader(ConsoleMetricExporter()))
-                elif metrics_exporter = 'otlp':
+                elif metrics_exporter  == 'otlp':
                     metric_readers.append(PeriodicExportingMetricReader(OTLPMetricExporter()))
                 else:
                     raise Error('Unknown exporter: ' + metrics_exporter)
@@ -149,11 +149,11 @@ def handle(scope, version, command, arguments):
         if logs_exporters:
             logger_provider = LoggerProvider(resource=final_resources)
             for logger_exporter in logs_exporters.split(','):
-                if logger_exporter = '':
+                if logger_exporter  == '':
                     pass
-                elif logger_exporter = 'console':
+                elif logger_exporter  == 'console':
                     logger_provider.add_log_record_processor(BatchLogRecordProcessor(ConsoleLogExporter()))
-                elif logger_exporter = 'otlp':
+                elif logger_exporter  == 'otlp':
                     logger_provider.add_log_record_processor(BatchLogRecordProcessor(OTLPLogExporter()))
                 else:
                     raise Error('Unknown exporter: ' + logger_exporter)
