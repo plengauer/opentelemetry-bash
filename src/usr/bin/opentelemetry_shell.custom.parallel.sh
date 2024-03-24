@@ -68,16 +68,25 @@ _otel_inject_parallel_gnu_arguments() {
       no_quote=1 _otel_escape_arg "$arg"
     elif \[ "$in_exec" -eq 0 ] && ! \[ "${arg%"${arg#?}"}" = "-" ] && \[ "$_otel_shell" = bash ] && \type "$arg" 2> /dev/null | \head -n1 | \grep -q ' function$'; then
       local in_exec=1
-      local func_name=_otel_func_wrapper_"$arg"
+      local is_func=1
+      local func_name=_otel_gnu_parallel_func_wrapper_"$arg"
       \eval "$func_name"'() { \source /usr/bin/opentelemetry_shell.sh; '"$arg"' "$@"; }'
       \export -f "$func_name"
       no_quote=1 _otel_escape_arg "$func_name"
     elif \[ "$in_exec" -eq 1 ] && \[ "$arg" = ":::${arg#":::"}" ]; then
       local in_exec=0
-      \echo -n '"$@"'"' 'parallel' $arg"
+      if \[ "$is_func" = 1 ]; then
+        \echo -n "'parallel' $arg"
+      else
+        \echo -n '"$@"'"' 'parallel' $arg"
+      fi
     else
       if \[ "$in_exec" = 1 ]; then
-        no_quote=1 _otel_escape_arg "$(_otel_escape_arg "$arg")"
+        if \[ "$is_func" = 1]; then
+          _otel_escape_arg "$arg"
+        else
+          no_quote=1 _otel_escape_arg "$(_otel_escape_arg "$arg")"
+        fi
       else
         _otel_escape_arg "$arg"
       fi
