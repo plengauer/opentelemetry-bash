@@ -5,6 +5,15 @@
 # All variables are for internal use only and therefore subject to change without notice!        #
 ##################################################################################################
 
+# translate legacy config
+if \[ -n "$OTEL_SHELL_TRACES_ENABLE" ] || \[ -n "$OTEL_SHELL_METRICS_ENABLE" ] || \[ -n "$OTEL_SHELL_LOGS_ENABLE" ]; then
+  \[ "$OTEL_SHELL_TRACES_ENABLE" = TRUE ] && export OTEL_TRACES_EXPORTER=otlp || export OTEL_TRACES_EXPORTER=""
+  \[ "$OTEL_SHELL_METRICS_ENABLE" = TRUE ] && export OTEL_METRICS_EXPORTER=otlp || export OTEL_METRICS_EXPORTER=""
+  \[ "$OTEL_SHELL_LOGS_ENABLE" = TRUE ] && export OTEL_LOGS_EXPORTER=otlp || export OTEL_LOGS_EXPORTER=""
+  export OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=delta
+fi
+
+# basic setup
 _otel_remote_sdk_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
 _otel_shell="$(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)"
 if \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "$PPID" ] || \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "0" ]; then _otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"; fi
