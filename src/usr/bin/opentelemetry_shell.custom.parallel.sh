@@ -93,7 +93,7 @@ _otel_inject_parallel_gnu_arguments() {
     fi
   done
   if \[ "$in_exec" -eq 1 ] && ! \[ "$is_func" = 1 ]; then
-    \echo -n '"$@"'"' 'parallel'"
+    \echo -n ' "$@"'"' 'parallel'"
   fi
 }
 
