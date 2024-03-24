@@ -32,7 +32,7 @@ $arg"
         no_quote=1 _otel_escape_arg "$(_otel_escape_arg "$arg")"
       else
         if \[ "$inject_all_args" = 1 ]; then 
-          \echo -n "'sh -c '\''. /usr/bin/opentelemetry_shell.sh
+          \echo -n "'sh -c '\''. otel.sh
 $arg'\'' parallel'"
         else
           if \[ "$arg" = "-i" ]; then local explicit_pos=1; fi
@@ -68,7 +68,7 @@ _otel_inject_parallel_gnu_arguments() {
       no_quote=1 _otel_escape_arg "$arg"
     elif \[ "$in_exec" -eq 0 ] && ! \[ "${arg%"${arg#?}"}" = "-" ] && \[ "$_otel_shell" = bash ] && \type "$arg" 2> /dev/null | \head -n1 | \grep -q ' function$'; then
       local in_exec=1
-      \echo -n "-q $_otel_shell -c '. /usr/bin/opentelemetry_shell.sh
+      \echo -n "-q $_otel_shell -c '. otel.sh
 "
       no_quote=1 _otel_escape_arg "$arg"
     elif \[ "$in_exec" -eq 1 ] && \[ "$arg" = ":::${arg#":::"}" ]; then
