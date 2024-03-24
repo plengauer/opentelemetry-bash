@@ -4,17 +4,10 @@ Use it to manually create spans and metrics (see automatic below):
 ```bash
 #!/bin/bash
 
-#configure (https://opentelemetry.io/docs/languages/sdk-configuration/)
 export OTEL_SERVICE_NAME=Test
-export OTEL_SHELL_TRACES_ENABLE=TRUE
-export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=...
-export OTEL_EXPORTER_OTLP_TRACES_HEADERS=...
-export OTEL_SHELL_METRICS_ENABLE=TRUE
-export OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=...
-export OTEL_EXPORTER_OTLP_METRICS_HEADERS=...
-export OTEL_SHELL_LOGS_ENABLE=TRUE
-export OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=...
-export OTEL_EXPORTER_OTLP_LOGS_HEADERS=...
+# configure SDK according to https://opentelemetry.io/docs/languages/sdk-configuration/
+# currently, only 'otlp' and 'console' are supported as exporters
+# currently, only 'tracecontext' is supported as propagator
 
 # import API
 . otelapi.sh
@@ -22,8 +15,8 @@ export OTEL_EXPORTER_OTLP_LOGS_HEADERS=...
 # initialize the sdk
 otel_init
 
-# create a default span for the command and collect all output to stderr as logs
-# every line written to stderr will be collected as logs
+# create a default span for the command
+# all lines written to stderr will be collected as logs
 otel_observe echo "hello world"
 
 # create a manual span with a custom attribute
@@ -47,15 +40,7 @@ Use it to automatically instrument and inject into child scripts:
 
 #configure 
 export OTEL_SERVICE_NAME=Test
-export OTEL_SHELL_TRACES_ENABLE=TRUE
-export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=...
-export OTEL_EXPORTER_OTLP_TRACES_HEADERS=...
-export OTEL_SHELL_METRICS_ENABLE=TRUE
-export OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=...
-export OTEL_EXPORTER_OTLP_METRICS_HEADERS=...
-export OTEL_SHELL_LOGS_ENABLE=TRUE
-export OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=...
-export OTEL_EXPORTER_OTLP_LOGS_HEADERS=...
+# configure SDK according to https://opentelemetry.io/docs/languages/sdk-configuration/
 
 # init automatic instrumentation, automatic context propagation, and automatic log collection
 . otel.sh
