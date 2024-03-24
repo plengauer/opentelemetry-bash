@@ -18,7 +18,7 @@ _otel_inject_parallel_moreutils_arguments() {
     \echo -n ' '
     if \[ "$in_exec" -eq 0 ] && ! \[ "${arg%"${arg#?}"}" = "-" ] && \[ -x "$(\which "$arg")" ]; then
       local in_exec=1
-      \echo -n "sh -c '. /usr/bin/opentelemetry_shell.sh
+      \echo -n "sh -c '. otel.sh
 $arg"
     elif \[ "$in_exec" -eq 1 ] && \[ "$arg" = "--" ]; then
       local in_exec=0
@@ -63,7 +63,7 @@ _otel_inject_parallel_gnu_arguments() {
     \echo -n ' '
     if \[ "$in_exec" -eq 0 ] && ! \[ "${arg%"${arg#?}"}" = "-" ] && \[ -x "$(\which "$arg")" ]; then
       local in_exec=1
-      \echo -n "-q sh -c '. /usr/bin/opentelemetry_shell.sh
+      \echo -n "-q sh -c '. otel.sh
 "
       no_quote=1 _otel_escape_arg "$arg"
     elif \[ "$in_exec" -eq 1 ] && \[ "$arg" = ":::${arg#":::"}" ]; then
