@@ -4,8 +4,8 @@ Use it to manually create spans and metrics (see automatic below):
 ```bash
 #!/bin/bash
 
-export OTEL_SERVICE_NAME=Test
 # configure SDK according to https://opentelemetry.io/docs/languages/sdk-configuration/
+export OTEL_SERVICE_NAME=Test
 # currently, only 'otlp' and 'console' are supported as exporters
 # currently, only 'tracecontext' is supported as propagator
 
@@ -38,9 +38,8 @@ Use it to automatically instrument and inject into child scripts:
 ```bash
 #!/bin/bash
 
-#configure 
-export OTEL_SERVICE_NAME=Test
 # configure SDK according to https://opentelemetry.io/docs/languages/sdk-configuration/
+export OTEL_SERVICE_NAME=Test
 
 # init automatic instrumentation, automatic context propagation, and automatic log collection
 . otel.sh
