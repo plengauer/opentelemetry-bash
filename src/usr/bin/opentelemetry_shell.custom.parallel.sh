@@ -71,7 +71,7 @@ _otel_inject_parallel_gnu_arguments() {
       local is_func=1
       local func_name=_otel_gnu_parallel_func_wrapper_"$arg"
       \eval "$func_name"'() { \source /usr/bin/opentelemetry_shell.sh; '"$arg"' "$@"; }'
-      \export -f "$func_name"
+      \eval "export -f $func_name"
       no_quote=1 _otel_escape_arg "$func_name"
     elif \[ "$in_exec" -eq 1 ] && \[ "$arg" = ":::${arg#":::"}" ]; then
       local in_exec=0
