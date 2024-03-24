@@ -76,7 +76,7 @@ _otel_inject_parallel_gnu_arguments() {
     elif \[ "$in_exec" -eq 1 ] && \[ "$arg" = ":::${arg#":::"}" ]; then
       local in_exec=0
       if \[ "$is_func" = 1 ]; then
-        \echo -n "'parallel' $arg"
+        \echo -n " $arg"
       else
         \echo -n '"$@"'"' 'parallel' $arg"
       fi
@@ -93,7 +93,11 @@ _otel_inject_parallel_gnu_arguments() {
     fi
   done
   if \[ "$in_exec" -eq 1 ]; then
-    \echo -n ' "$@"'"' 'parallel'"
+    if \[ "$is_func" = 1 ]; then
+      \echo -n " $arg"
+    else
+      \echo -n '"$@"'"' 'parallel' $arg"
+    fi
   fi
 }
 
