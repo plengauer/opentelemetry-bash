@@ -16,7 +16,7 @@ _otel_inject_parallel_moreutils_arguments() {
   local inject_all_args=0
   for arg in "$@"; do
     \echo -n ' '
-    if \[ "$in_exec" -eq 0 ] && ! \[ "${arg%"${arg#?}"}" = "-" ] && (\[ -x "$(\which "$arg")" ] || \type "$arg" | \head -n1 | \grep -q ' function$'); then
+    if \[ "$in_exec" -eq 0 ] && ! \[ "${arg%"${arg#?}"}" = "-" ] && (\[ -x "$(\which "$arg")" ] || \type "$arg" 2> /dev/null | \head -n1 | \grep -q ' function$'); then
       local in_exec=1
       \echo -n "sh -c '. /usr/bin/opentelemetry_shell.sh
 $arg"
