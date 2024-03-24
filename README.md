@@ -4,7 +4,7 @@ Use it to manually create spans and metrics (see automatic below):
 ```bash
 #!/bin/bash
 
-#configure
+#configure (https://opentelemetry.io/docs/languages/sdk-configuration/)
 export OTEL_SERVICE_NAME=Test
 export OTEL_SHELL_TRACES_ENABLE=TRUE
 export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=...
