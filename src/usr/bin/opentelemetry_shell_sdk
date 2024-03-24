@@ -13,7 +13,7 @@ from opentelemetry_resourcedetector_kubernetes import KubernetesResourceDetector
 
 from opentelemetry.trace import SpanKind
 from opentelemetry.sdk.trace import Span, StatusCode, TracerProvider, sampling
-from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor, BatchSpanProcessor, ConsoleSpanExporter
 from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 
@@ -112,30 +112,60 @@ def handle(scope, version, command, arguments):
                 OTELResourceDetector(),
             ]).merge(Resource.create(resource))
 
-        if os.environ.get('OTEL_SHELL_TRACES_ENABLE') == 'TRUE':
+        traces_exporters = os.environ.get('OTEL_TRACES_EXPORTER', 'otlp')
+        metrics_exporters = os.environ.get('OTEL_METRICS_EXPORTER', 'otlp')
+        logs_exporters = os.environ.get('OTEL_LOGS_EXPORTER', 'otlp')
+        propagator = os.environ.get('OTEL_PROPAGATORS', 'tracecontext');
+
+        if propagator != 'tracecontext':
+          raise Error('Unsupported propagator: ' + propagator);
+
+        if traces_exporters:
             tracer_provider = TracerProvider(sampler=sampling.DEFAULT_ON, resource=final_resources)
-            tracer_provider.add_span_processor(BatchSpanProcessor(ConsoleSpanExporter() if os.environ.get('OTEL_TRACES_CONSOLE_EXPORTER') == 'TRUE' else OTLPSpanExporter()))
+            for traces_exporter in traces_exporters.split(','):
+                if traces_exporter == '':
+                    pass
+                elif traces_exporter == 'console':
+                    tracer_provider.add_span_processor(SimpleSpanProcessor(ConsoleSpanExporter()))
+                elif traces_exporter == 'otlp':
+                    tracer_provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
+                else:
+                    raise Error('Unknown exporter: ' + traces_exporter)
             opentelemetry.trace.set_tracer_provider(tracer_provider)
 
-        if os.environ.get('OTEL_SHELL_METRICS_ENABLE') == 'TRUE':
-            os.environ['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'] = 'delta'
-            meter_provider = MeterProvider(metric_readers = [ PeriodicExportingMetricReader(ConsoleMetricExporter() if os.environ.get('OTEL_METRICS_CONSOLE_EXPORTER') == 'TRUE' else OTLPMetricExporter()) ], resource=final_resources)
-            opentelemetry.metrics.set_meter_provider(meter_provider)
+        if metrics_exporters:
+            metric_readers = []
+            for metrics_exporter in metrics_exporters.split(','):
+                if metrics_exporter == '':
+                    pass
+                elif metrics_exporter == 'console':
+                    metric_readers.append(PeriodicExportingMetricReader(ConsoleMetricExporter()))
+                elif metrics_exporter == 'otlp':
+                    metric_readers.append(PeriodicExportingMetricReader(OTLPMetricExporter()))
+                else:
+                    raise Error('Unknown exporter: ' + metrics_exporter)
+            opentelemetry.metrics.set_meter_provider(MeterProvider(metric_readers = metric_readers, resource=final_resources))
 
-        if os.environ.get('OTEL_SHELL_LOGS_ENABLE') == 'TRUE':
+        if logs_exporters:
             logger_provider = LoggerProvider(resource=final_resources)
-            logger_provider.add_log_record_processor(BatchLogRecordProcessor(ConsoleLogExporter() if os.environ.get('OTEL_LOGS_CONSOLE_EXPORTER') == 'TRUE' else OTLPLogExporter()))
+            for logger_exporter in logs_exporters.split(','):
+                if logger_exporter == '':
+                    pass
+                elif logger_exporter == 'console':
+                    logger_provider.add_log_record_processor(BatchLogRecordProcessor(ConsoleLogExporter()))
+                elif logger_exporter == 'otlp':
+                    logger_provider.add_log_record_processor(BatchLogRecordProcessor(OTLPLogExporter()))
+                else:
+                    raise Error('Unknown exporter: ' + logger_exporter)
             opentelemetry._logs.set_logger_provider(logger_provider)
+
     elif command == 'SHUTDOWN':
         if auto_end:
             for span in spans.values():
                 span.end()
-        if os.environ.get('OTEL_SHELL_TRACES_ENABLE') == 'TRUE':
-            opentelemetry.trace.get_tracer_provider().shutdown()
-        if os.environ.get('OTEL_SHELL_METRICS_ENABLE') == 'TRUE':
-            opentelemetry.metrics.get_meter_provider().shutdown()
-        if os.environ.get('OTEL_SHELL_LOGS_ENABLE') == 'TRUE':
-            opentelemetry._logs.get_logger_provider().shutdown()
+        opentelemetry.trace.get_tracer_provider().shutdown()
+        opentelemetry.metrics.get_meter_provider().shutdown()
+        opentelemetry._logs.get_logger_provider().shutdown()
         raise EOFError
     elif command == 'SPAN_START':
         global next_span_id

@@ -121,7 +121,7 @@ _otel_list_builtin_commands() {
 _otel_filter_commands_by_hint() {
   local hint="$1"
   if \[ -n "$hint" ]; then
-    if \[ -f "$hint" ] && \[ "$(\readlink -f "/proc/$$/exe")" != "$(\readlink -f "$hint")" ] && \[ "$hint" != "/usr/bin/opentelemetry_shell.sh" ]; then local hint="$(\cat "$hint")"; fi
+    if \[ -f "$hint" ] && \[ "$(\readlink -f "/proc/$$/exe")" != "$(\readlink -f "$hint")" ] && \[ "$(\readlink -f "$hint")" != "/usr/bin/opentelemetry_shell.sh" ]; then local hint="$(\cat "$hint")"; fi
     \grep -xF "$(\echo "$hint" | \tr -s ' $=";(){}/\\!#~^'\' '\n' | _otel_filter_by_validity)"
   else
     \cat

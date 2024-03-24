@@ -1,29 +1,22 @@
-This project delivers [OpenTelemetry](https://opentelemetry.io/) traces, metrics and logs from shell scripts (sh, ash, dash, bash, zsh, and all POSIX compliant shells). Compared to similar projects, it delivers not just a command-line SDK to create spans manually, but also provides context propagation via HTTP (wget and curl), auto-instrumentation, auto-injection into child scripts and automatic log collection from stderr. Its installable via a debian package from the releases in this repository, or from the apt-repository below. This project is not officially affiliated with the CNCF project [OpenTelemetry](https://opentelemetry.io/).
+This project delivers [OpenTelemetry](https://opentelemetry.io/) traces, metrics and logs from shell scripts (sh, ash, dash, bash, and all POSIX compliant shells). Compared to similar projects, it delivers not just a command-line SDK to create spans manually, but also provides context propagation via HTTP (wget and curl), auto-instrumentation, auto-injection into child scripts and into commands using shebangs, as well as automatic log collection from stderr. Its installable via a debian package from the releases in this repository, or from the apt-repository below. This project is not officially affiliated with the CNCF project [OpenTelemetry](https://opentelemetry.io/).
 
-Use it to manually create spans and metrics:
+Use it to manually create spans and metrics (see automatic below):
 ```bash
 #!/bin/bash
 
-#configure
+# configure SDK according to https://opentelemetry.io/docs/languages/sdk-configuration/
 export OTEL_SERVICE_NAME=Test
-export OTEL_SHELL_TRACES_ENABLE=TRUE
-export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=...
-export OTEL_EXPORTER_OTLP_TRACES_HEADERS=...
-export OTEL_SHELL_METRICS_ENABLE=TRUE
-export OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=...
-export OTEL_EXPORTER_OTLP_METRICS_HEADERS=...
-export OTEL_SHELL_LOGS_ENABLE=TRUE
-export OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=...
-export OTEL_EXPORTER_OTLP_LOGS_HEADERS=...
+# currently, only 'otlp' and 'console' are supported as exporters
+# currently, only 'tracecontext' is supported as propagator
 
 # import API
-. /usr/bin/opentelemetry_shell_api.sh
+. otelapi.sh
 
 # initialize the sdk
 otel_init
 
-# create a default span for the command and collect all output to stderr as logs
-# every line written to stderr will be collected as logs
+# create a default span for the command
+# all lines written to stderr will be collected as logs
 otel_observe echo "hello world"
 
 # create a manual span with a custom attribute
@@ -45,29 +38,19 @@ Use it to automatically instrument and inject into child scripts:
 ```bash
 #!/bin/bash
 
-#configure 
+# configure SDK according to https://opentelemetry.io/docs/languages/sdk-configuration/
 export OTEL_SERVICE_NAME=Test
-export OTEL_SHELL_TRACES_ENABLE=TRUE
-export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=...
-export OTEL_EXPORTER_OTLP_TRACES_HEADERS=...
-export OTEL_SHELL_METRICS_ENABLE=TRUE
-export OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=...
-export OTEL_EXPORTER_OTLP_METRICS_HEADERS=...
-export OTEL_SHELL_LOGS_ENABLE=TRUE
-export OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=...
-export OTEL_EXPORTER_OTLP_LOGS_HEADERS=...
 
 # init automatic instrumentation, automatic context propagation, and automatic log collection
-. /usr/bin/opentelemetry_shell.sh
+. otel.sh
 
 echo "hello world" # this will create a span
 echo "hello world again" # this as well
 
 curl http://www.google.com # this will create a http client span and inject w3c tracecontext
 
-bash ./print_hello_world.sh # this will create a span for the script
-# it will also auto-instrument all commands just like in this script,
-# auto-inject into its children, even without the init code at the start
+# the following script (and all its direct and indirect children) will be auto-injected without the init code being necessary
+bash ./print_hello_world.sh
 ```
 
 Install either via
