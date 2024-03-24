@@ -17,7 +17,7 @@ export OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=...
 export OTEL_EXPORTER_OTLP_LOGS_HEADERS=...
 
 # import API
-. /usr/bin/opentelemetry_shell_api.sh
+. otelapi.sh
 
 # initialize the sdk
 otel_init
@@ -58,16 +58,15 @@ export OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=...
 export OTEL_EXPORTER_OTLP_LOGS_HEADERS=...
 
 # init automatic instrumentation, automatic context propagation, and automatic log collection
-. /usr/bin/opentelemetry_shell.sh
+. otel.sh
 
 echo "hello world" # this will create a span
 echo "hello world again" # this as well
 
 curl http://www.google.com # this will create a http client span and inject w3c tracecontext
 
-bash ./print_hello_world.sh # this will create a span for the script
-# it will also auto-instrument all commands just like in this script,
-# auto-inject into its children, even without the init code at the start
+# the following script (and all its direct and indirect children) will be auto-injected without the init code being necessary
+bash ./print_hello_world.sh
 ```
 
 Install either via
