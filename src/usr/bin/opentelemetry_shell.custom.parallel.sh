@@ -66,6 +66,11 @@ _otel_inject_parallel_gnu_arguments() {
       \echo -n "-q sh -c '. /usr/bin/opentelemetry_shell.sh
 "
       no_quote=1 _otel_escape_arg "$arg"
+    elif \[ "$in_exec" -eq 0 ] && ! \[ "${arg%"${arg#?}"}" = "-" ] && \[ "$_otel_shell" = bash ] && \type "$arg" 2> /dev/null | \head -n1 | \grep -q ' function$'; then
+      local in_exec=1
+      \echo -n "-q $_otel_shell -c '. /usr/bin/opentelemetry_shell.sh
+"
+      no_quote=1 _otel_escape_arg "$arg"
     elif \[ "$in_exec" -eq 1 ] && \[ "$arg" = ":::${arg#":::"}" ]; then
       local in_exec=0
       \echo -n '"$@"'"' 'parallel' $arg"
@@ -92,8 +97,8 @@ _otel_inject_parallel_arguments() {
 }
 
 _otel_inject_parallel() {
-    local cmdline="$({ set -- "$@"; if \[ "$1" = "_otel_observe" ]; then shift; fi; \printf '%s' "$*"; })"
-    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$*" \
+    local cmdline="$({ set -- "$@"; if \[ "$1" = "_otel_observe" ]; then shift; fi; _otel_dollar_star "$@"; })"
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$cmdline" \
       \eval "$(_otel_inject_parallel_arguments "$@")"
 }
 
