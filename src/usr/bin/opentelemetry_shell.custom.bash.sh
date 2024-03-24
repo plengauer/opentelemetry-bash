@@ -18,7 +18,7 @@ _otel_inject_shell_args_with_c_flag() {
   while \[ "$#" -gt 0 ]; do
     if \[ "$1" = "-c" ]; then
       # we need a linebreak here for the aliases to work.
-      shift; \echo -n "-c "; _otel_escape_arg ". /usr/bin/opentelemetry_shell.sh
+      shift; \echo -n "-c "; _otel_escape_arg ". otel.sh
 $1"; \echo -n " "; local found_inner=1; local dollar_zero=""; break
     else
       case "$1" in
