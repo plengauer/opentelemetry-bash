@@ -92,7 +92,7 @@ _otel_command_self() {
 }
 
 _otel_command_real_self() {
-  \ps -p "$$" -o args | \grep -v COMMAND || \cat "/proc/$$/cmdline" | \tr -d '\000'
+  \cat "/proc/$$/cmdline" | \tr -d '\000'
 }
 
 _otel_package_version() {
