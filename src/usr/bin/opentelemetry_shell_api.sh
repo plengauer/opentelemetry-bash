@@ -92,7 +92,7 @@ _otel_command_self() {
 }
 
 _otel_command_real_self() {
-  \cat "/proc/$$/cmdline" | \tr -d '\000'
+  \tr '\000' ' ' < "/proc/$$/cmdline"
 }
 
 _otel_package_version() {
