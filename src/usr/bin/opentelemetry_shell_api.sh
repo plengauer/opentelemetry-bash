@@ -276,12 +276,10 @@ _otel_escape_arg() {
       *) local do_escape=0 ;;
     esac
   fi
-  if \[ "$do_escape" = 1 ]; then
-    # need the extra X to preservice trailing linefeeds (yay)
-    # local escaped="$(\printf '%s' "$1X" | \sed "s/'/'\\\\''/g")"
-    local escaped="$(\printf '%s' "$1X" | \sed "s/'/'\\\\''/g")"
+  if \[ "$do_escape" = 1 ]; then    
+    # local escaped="$(\printf '%s' "$1X" | \sed "s/'/'\\\\''/g")" # need the extra X to preserve trailing linefeeds (yay)
     if \[ "$no_quote" = 1 ]; then local format_string='%s'; else local format_string="'%s'"; fi
-    \printf "$format_string" "${escaped%X}"
+    \printf "$format_string" "${1//\'/\'\\\'\'}" # "${escaped%X}"
   else
     \printf '%s' "$1"
   fi
