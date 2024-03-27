@@ -192,7 +192,7 @@ otel_observe() {
   else
     otel_span_attribute "$span_id" subprocess.command_args=
   fi
-  local executable_path="$(\which "${command##* }")"
+  local executable_path="$(\which "${command%% *}")"
   otel_span_attribute "$span_id" subprocess.executable.path="$executable_path"
   otel_span_attribute "$span_id" subprocess.executable.name="${executable_path##*/}" # "$(\printf '%s' "$command" | \cut -d' ' -f1 | \rev | \cut -d / -f 1 | \rev)"
   # run command
