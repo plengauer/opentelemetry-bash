@@ -103,7 +103,7 @@ _otel_package_version() {
   local package_name="$1"
   local varname="OTEL_SHELL_PACKAGE_VERSION_CACHE_$package_name"
   local varname="${varname//-/_}"
-  if \[ -n "${!varname}" ]; then \echo "${!varname}"; return 0; set +x; fi
+  if \[ -n "${!varname}" ]; then \echo "${!varname}"; set +x; return 0; fi
   \export "$varname=$(dpkg -s "$1" 2> /dev/null | \grep Version: | \cut -d ' ' -f 2)"
   _otel_package_version "$package_name"
 }
