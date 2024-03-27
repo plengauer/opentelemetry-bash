@@ -188,8 +188,8 @@ otel_observe() {
   local span_id="$(otel_span_start "$kind" "$name")"
   otel_span_attribute "$span_id" subprocess.command="$command"
   case "$command" in
-    * *) otel_span_attribute "$span_id" subprocess.command_args="${command#* }";; # "$(\printf '%s' "$command" | \cut -sd ' ' -f 2-)" # this returns the command if there are no args, its the cut -s that cant be done via expansion alone
-    *) otel_span_attribute "$span_id" subprocess.command_args=
+    *' '*) otel_span_attribute "$span_id" subprocess.command_args="${command#* }";; # "$(\printf '%s' "$command" | \cut -sd ' ' -f 2-)" # this returns the command if there are no args, its the cut -s that cant be done via expansion alone
+    *) otel_span_attribute "$span_id" subprocess.command_args=;;
   esac  
   local executable_path="$(\which "${command##* }")"
   otel_span_attribute "$span_id" subprocess.executable.path="$executable_path"
@@ -247,7 +247,7 @@ _otel_call() {
   local command="$1"; shift
   case "$command" in
     "\\"*) ;;
-    *) local command="$(_otel_escape_arg "$command")"
+    *) local command="$(_otel_escape_arg "$command")" ;;
   esac
   # old versions of dash dont set env vars properly
   # more specifically they do not make variables that are set in front of commands part of the child process env vars but only of the local execution environment
