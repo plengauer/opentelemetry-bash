@@ -99,13 +99,16 @@ _otel_command_real_self() {
 _otel_package_version() {
   # dpkg is very expensive, lets cache and be a bit less exact in case packages get updated why children are spawned!
   # dpkg -s "$1" 2> /dev/null | \grep Version: | \cut -d ' ' -f 2 || \apt-cache policy "$1" 2> /dev/null | \grep Installed | \awk '{ print $2 }' || \apt show "$1" 2> /dev/null | \grep Version: | \cut -d ' ' -f 2
-  set -x
-  local package_name="$1"
-  local varname="OTEL_SHELL_PACKAGE_VERSION_CACHE_$package_name"
-  local varname="${varname//-/_}"
-  if \[ -n "${!varname}" ]; then \echo "${!varname}"; set +x; return 0; fi
-  \export "$varname=$(dpkg -s "$1" 2> /dev/null | \grep Version: | \cut -d ' ' -f 2)"
-  _otel_package_version "$package_name"
+  if \[ "$_otel_shell" = bash ] || ! _otel_string_contains "$package_name" "-"; then
+    local package_name="$1"
+    local varname="OTEL_SHELL_PACKAGE_VERSION_CACHE_$package_name"
+    local varname="${varname//-/_}"
+    if \[ -n "${!varname}" ]; then \echo "${!varname}"; return 0; fi
+    \export "$varname=$(dpkg -s "$1" 2> /dev/null | \grep Version: | \cut -d ' ' -f 2)"
+    _otel_package_version "$package_name"
+  else
+    dpkg -s "$1" 2> /dev/null | \grep Version: | \cut -d ' ' -f 2
+  fi
 }
 
 otel_span_start() {
@@ -310,4 +313,13 @@ _otel_dollar_star() {
   # \echo "$@" # dont do this because it starts interpreting backslashes
   local IFS=' '
   \printf '%s' "$*"
+}
+
+_otel_string_contains() {
+  local haystack="$1"
+  local needle="$2"
+  case "$haystack" in
+    *"$needle"*) return 0;;
+    *) return 1;;
+  esac
 }
