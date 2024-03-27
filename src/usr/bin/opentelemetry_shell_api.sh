@@ -54,12 +54,12 @@ _otel_resource_attributes() {
 
   local process_command="$(_otel_command_self)"
   local process_executable_path="$(\readlink -f "/proc/$$/exe")"
-  local process_executable_name="$(\printf '%s' "$process_executable_path" | \rev | \cut -d / -f 1 | \rev)"
+  local process_executable_name="${process_executable_path##*/}" # "$(\printf '%s' "$process_executable_path" | \rev | \cut -d / -f 1 | \rev)"
   \echo process.pid="$$"
   \echo process.executable.name="$process_executable_name"
   \echo process.executable.path="$process_executable_path"
   \echo process.command="$process_command"
-  \echo process.command_args="$(\printf '%s' "$process_command" | \cut -d ' ' -f 2-)"
+  \echo process.command_args=${process_command#* } # "$(\printf '%s' "$process_command" | \cut -d ' ' -f 2-)"
   \echo process.owner="$USER"
   case "$_otel_shell" in
        sh) \echo process.runtime.name="Bourne Shell" ;;
