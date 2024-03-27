@@ -235,24 +235,21 @@ _otel_log_record() {
   _otel_sdk_communicate "LOG_RECORD" "$traceparent" "$line"
 }
 
-_otel_call() {
-  # the command is to be handled special when it starts with a \, because then it shouldnt be escaped to preserve behavior in eval
-  # \\cat would make the most sense is considered as the literal command with the name "\cat"
-  # '\cat' is interpreted as "do not alias" because of the quotes, and then the command \cat is not found
-  # \cat is cat without aliases => thats what we want
-  local command="$1"; shift
-  case "$command" in
-    "\\"*) ;;
-    *) local command="$(_otel_escape_arg "$command")"
-  esac
+if \[ "$_otel_dash" = dash ]; then # TODO its only old dashes
   # old versions of dash dont set env vars properly
   # more specifically they do not make variables that are set in front of commands part of the child process env vars but only of the local execution environment
-  if \[ "$_otel_shell" = "dash" ]; then
+  _otel_call() {
+    local command="$1"; shift
+    if ! _otel_string_starts_with "$command" "\\"; then local command="$(_otel_escape_arg "$command")"; fi
     \eval "$( { \printenv; \set; } | \grep '^OTEL_' | \cut -d = -f 1 | \sort -u | \awk '{ print $1 "=\"$" $1 "\"" }' | _otel_line_join)" "$command" "$(_otel_escape_args "$@")"
-  else
+  }
+else
+  _otel_call() {
+    local command="$1"; shift
+    if ! _otel_string_starts_with "$command" "\\"; then local command="$(_otel_escape_arg "$command")"; fi
     \eval "$command" "$(_otel_escape_args "$@")"
-  fi
-}
+  }
+fi
 
 _otel_escape_args() {
   # for arg in "$@"; do \echo "$arg"; done | _otel_escape_in # this may seem correct, but it doesnt handle linefeeds in arguments correctly
@@ -301,4 +298,11 @@ _otel_dollar_star() {
   # \echo "$@" # dont do this because it starts interpreting backslashes
   local IFS=' '
   \printf '%s' "$*"
+}
+
+_otel_string_starts_with() {
+  case "$1" in
+    "$2"*) return 0;;
+    *) return 1;;
+  esac
 }
