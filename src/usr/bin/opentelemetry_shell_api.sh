@@ -186,10 +186,11 @@ otel_observe() {
   unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
   # create span, set initial attributes
   local span_id="$(otel_span_start "$kind" "$name")"
-  otel_span_attribute "$span_id" subprocess.executable.name="$(\printf '%s' "$command" | \cut -d' ' -f1 | \rev | \cut -d / -f 1 | \rev)"
-  otel_span_attribute "$span_id" subprocess.executable.path="$(\which "$(\printf '%s' "$command" | \cut -d ' ' -f 1)")"
   otel_span_attribute "$span_id" subprocess.command="$command"
-  otel_span_attribute "$span_id" subprocess.command_args="$(\printf '%s' "$command" | \cut -sd ' ' -f 2-)"
+  otel_span_attribute "$span_id" subprocess.command_args="${command#* }" # "$(\printf '%s' "$command" | \cut -sd ' ' -f 2-)"
+  local executable_path="$(\which "${command##* }")"
+  otel_span_attribute "$span_id" subprocess.executable.path="$executable_path"
+  otel_span_attribute "$span_id" subprocess.executable.name=""${executable_path##*/}"" # "$(\printf '%s' "$command" | \cut -d' ' -f1 | \rev | \cut -d / -f 1 | \rev)"
   # run command
   otel_span_activate "$span_id"
   if \[ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0)"; fi
