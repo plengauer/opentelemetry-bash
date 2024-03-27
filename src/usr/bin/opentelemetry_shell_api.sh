@@ -187,10 +187,11 @@ otel_observe() {
   # create span, set initial attributes
   local span_id="$(otel_span_start "$kind" "$name")"
   otel_span_attribute "$span_id" subprocess.command="$command"
-  case "$command" in
-    *' '*) otel_span_attribute "$span_id" subprocess.command_args="${command#* }";; # "$(\printf '%s' "$command" | \cut -sd ' ' -f 2-)" # this returns the command if there are no args, its the cut -s that cant be done via expansion alone
-    *) otel_span_attribute "$span_id" subprocess.command_args=;;
-  esac  
+  if _otel_string_contains "$command" " "; then # "$(\printf '%s' "$command" | \cut -sd ' ' -f 2-)" # this returns the command if there are no args, its the cut -s that cant be done via expansion alone
+    otel_span_attribute "$span_id" subprocess.command_args="${command#* }"
+  else
+    otel_span_attribute "$span_id" subprocess.command_args=
+  fi
   local executable_path="$(\which "${command##* }")"
   otel_span_attribute "$span_id" subprocess.executable.path="$executable_path"
   otel_span_attribute "$span_id" subprocess.executable.name="${executable_path##*/}" # "$(\printf '%s' "$command" | \cut -d' ' -f1 | \rev | \cut -d / -f 1 | \rev)"
@@ -305,4 +306,13 @@ _otel_dollar_star() {
   # \echo "$@" # dont do this because it starts interpreting backslashes
   local IFS=' '
   \printf '%s' "$*"
+}
+
+_otel_string_contains() {
+  local haystack="$1"
+  local needle="$2"
+  case "$haystack" in
+    *"$needle"*) return 0;;
+    *) return 1;;
+  esac
 }
