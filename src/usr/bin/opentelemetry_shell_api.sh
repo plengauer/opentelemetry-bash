@@ -99,7 +99,7 @@ _otel_resolve_command_self() {
 _otel_package_version() {
   # dpkg is very expensive, lets cache and be a bit less exact in case packages get updated why children are spawned!
   # dpkg -s "$1" 2> /dev/null | \grep Version: | \cut -d ' ' -f 2 || \apt-cache policy "$1" 2> /dev/null | \grep Installed | \awk '{ print $2 }' || \apt show "$1" 2> /dev/null | \grep Version: | \cut -d ' ' -f 2
-  if \[ "$_otel_shell" = bash ] || ! _otel_string_contains "$package_name" "-"; then
+  if \[ "$_otel_shell" = bash ]; then
     local package_name="$1"
     local varname="OTEL_SHELL_PACKAGE_VERSION_CACHE_$package_name"
     local varname="${varname//-/_}"
