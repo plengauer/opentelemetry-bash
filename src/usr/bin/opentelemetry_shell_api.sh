@@ -248,7 +248,7 @@ _otel_call() {
   local command="$1"; shift
   case "$command" in
     "\\"*) ;;
-    *) local command="$(_otel_escape_arg "$command")" ;;
+    *) local command="$(_otel_escape_arg "$command")"
   esac
   # old versions of dash dont set env vars properly
   # more specifically they do not make variables that are set in front of commands part of the child process env vars but only of the local execution environment
