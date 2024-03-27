@@ -277,9 +277,13 @@ _otel_escape_arg() {
     esac
   fi
   if \[ "$do_escape" = 1 ]; then    
-    # local escaped="$(\printf '%s' "$1X" | \sed "s/'/'\\\\''/g")" # need the extra X to preserve trailing linefeeds (yay)
     if \[ "$no_quote" = 1 ]; then local format_string='%s'; else local format_string="'%s'"; fi
-    \printf "$format_string" "${1//\'/\'\\\'\'}" # "${escaped%X}"
+    if \[ "$_otel_shell" = bash ]; then
+      \printf "$format_string" "${1//\'/\'\\\'\'}"
+    else
+      local escaped="$(\printf '%s' "$1X" | \sed "s/'/'\\\\''/g")" # need the extra X to preserve trailing linefeeds (yay)
+      \printf "$format_string" "${escaped%X}"
+    fi
   else
     \printf '%s' "$1"
   fi
