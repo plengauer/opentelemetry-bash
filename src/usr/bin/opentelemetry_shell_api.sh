@@ -28,6 +28,7 @@ otel_init() {
   if \[ -e "/dev/stderr" ] && \[ -e "$(\readlink -f /dev/stderr)" ]; then local sdk_output=/dev/stderr; else local sdk_output=/dev/null; fi
   local sdk_output="${OTEL_SHELL_SDK_OUTPUT_REDIRECT:-$sdk_output}"
   \mkfifo "$_otel_remote_sdk_pipe"
+  _otel_package_version opentelemetry-shell > /dev/null # to build the cache outside a subshell
   # several weird things going on in the next line, (1) using '((' fucks up the syntax highlighting in github while '( (' does not, and (2) &> causes weird buffering / late flushing behavior
   if \env --help | \grep -q 'ignore-signal'; then local extra_env_flags='--ignore-signal=INT --ignore-signal=HUP'; fi
   ( (\env $extra_env_flags otelsdk "shell" "$(_otel_package_version opentelemetry-shell)" < "$_otel_remote_sdk_pipe" 1> "$sdk_output" 2> "$sdk_output") &)
@@ -49,7 +50,7 @@ _otel_sdk_communicate() {
 _otel_resource_attributes() {
   \echo telemetry.sdk.name=opentelemetry
   \echo telemetry.sdk.language=shell
-  \echo telemetry.sdk.version="$(_otel_package_version opentelemetry-shell)"
+  \echo -n telemetry.sdk.version=; _otel_package_version opentelemetry-shell
 
   local process_command="$(_otel_command_self)"
   local process_executable_path="$(\readlink -f "/proc/$$/exe")"
@@ -74,7 +75,7 @@ _otel_resource_attributes() {
      fish) \echo process.runtime.name="Friendly Interactive Shell" ;;
         *) \echo process.runtime.name="$process_executable_name" ;;
   esac
-  \echo process.runtime.version="$(_otel_package_version "$process_executable_name")"
+  \echo -n process.runtime.version=; _otel_package_version "$process_executable_name"
   \echo process.runtime.options="$-"
 
   \echo service.name="${OTEL_SERVICE_NAME:-unknown_service}"
@@ -96,7 +97,14 @@ _otel_command_real_self() {
 }
 
 _otel_package_version() {
-  \dpkg -s "$1" 2> /dev/null | \grep Version: | \cut -d ' ' -f 2 || \apt-cache policy "$1" 2> /dev/null | \grep Installed | \awk '{ print $2 }' || \apt show "$1" 2> /dev/null | \grep Version: | \cut -d ' ' -f 2
+  # dpkg is very expensive, lets cache and be a bit less exact in case packages get updated why children are spawned!
+  # dpkg -s "$1" 2> /dev/null | \grep Version: | \cut -d ' ' -f 2 || \apt-cache policy "$1" 2> /dev/null | \grep Installed | \awk '{ print $2 }' || \apt show "$1" 2> /dev/null | \grep Version: | \cut -d ' ' -f 2
+  local package_name="$1"
+  local varname="OTEL_SHELL_PACKAGE_VERSION_CACHE_$package_name"
+  local varname="${varname//-/_}"
+  if \[ -n "${!varname}" ]; then \echo "${!varname}"; return 0; fi
+  \export "$varname=$(dpkg -s "$1" 2> /dev/null | \grep Version: | \cut -d ' ' -f 2)"
+  _otel_package_version "$package_name"
 }
 
 otel_span_start() {
