@@ -88,11 +88,11 @@ _otel_command_self() {
   if \[ -n "$_otel_commandline_override" ]; then
     \echo "$_otel_commandline_override"
   else
-    _otel_command_real_self
+    _otel_resolve_command_self
   fi
 }
 
-_otel_command_real_self() {
+_otel_resolve_command_self() {
   \tr '\000' ' ' < "/proc/$$/cmdline"
 }
 
@@ -104,11 +104,15 @@ _otel_package_version() {
     local varname="OTEL_SHELL_PACKAGE_VERSION_CACHE_$package_name"
     local varname="${varname//-/_}"
     if \[ -n "${!varname}" ]; then \echo "${!varname}"; return 0; fi
-    \export "$varname=$(dpkg -s "$1" 2> /dev/null | \grep Version: | \cut -d ' ' -f 2)"
+    \export "$varname=$(_otel_resolve_package_version "$1")"
     _otel_package_version "$package_name"
   else
-    dpkg -s "$1" 2> /dev/null | \grep Version: | \cut -d ' ' -f 2
+    _otel_resolve_package_version "$1"
   fi
+}
+
+_otel_resolve_package_version() {
+  dpkg -s "$1" 2> /dev/null | \grep Version: | \cut -d ' ' -f 2
 }
 
 otel_span_start() {
