@@ -175,12 +175,12 @@ _otel_dealiasify() {
   # e.g., alias ls=ls --color=auto
   local cmd="$1" # e.g., "upgrade", "ai", "l"
   local full_alias="$(_otel_resolve_alias "$cmd")"
-  case "$full_alias" in
+  case "$full_alias" in # TODO use _otel_starts_with (not im master yet)
     "/"*) ;;
     "."*) ;;
     *) return 1;;
   esac
-  local cmd_alias="$(\printf '%s' "$full_alias" | _otel_line_split | \grep -v '^OTEL_' | \grep -v '^_otel_' | \head -n1 | \rev | \cut -d/ -f1 | \rev)" # e.g., upgrade => bash
+  local cmd_alias="$(\printf '%s' "$full_alias" | _otel_line_split | \grep -v '^OTEL_' | \grep -v '^_otel_' | \head -n1 | \rev | \cut -d / -f 1 | \rev)" # e.g., upgrade => bash
   if \[ -z "$cmd_alias" ]; then return 2; fi
   local cmd_aliased="$(_otel_resolve_alias $cmd_alias)" # e.g., bash => _otel_inject_shell bash
   if \[ -z "$cmd_aliased" ]; then return 3; fi
@@ -194,7 +194,7 @@ _otel_has_alias() {
 }
 
 _otel_resolve_alias() {
-  \alias "$1" 2> /dev/null | \cut -d= -f2- | _otel_unquote
+  \alias "$1" 2> /dev/null | \cut -d = -f 2- | _otel_unquote # TODO maybe use parameter expansion for the cut to save a process? limited benefit because unquote will stay an external process
 }
 
 otel_instrument() {
@@ -209,23 +209,20 @@ _otel_alias_prepend() {
   local original_command="$1"
   local prepend_command="$2"
 
-  if \[ -z "$(\alias "$original_command" 2> /dev/null)" ]; then # fastpath
+  if ! _otel_has_alias "$original_command"; then # fastpath
     local new_command="$(\printf '%s' "$prepend_command '\\$original_command'")" # need to use printf to handle backslashes consistently across shells
   else
-    local previous_command="$(\alias "$original_command" 2> /dev/null | \cut -d= -f2- | _otel_unquote)"
+    local previous_command="$(_otel_resolve_alias "$original_command")"
     if \[ -z "$previous_command" ]; then local previous_command="$original_command"; fi
-    if \[ "${previous_command#OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE=}" != "$previous_command" ]; then local previous_command="$(\printf '%s' "$previous_command" | \cut -d ' ' -f 2-)"; fi
-    case "$previous_command" in
-      *"$prepend_command"*) return 0;;
-      *) ;;
-    esac
+    if _otel_string_starts_with "$previous_command" "OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="; then local previous_command="${previous_command#* }"; fi
+    if _otel_string_contains "$previous_command" "$prepend_command"; then return 0; fi
     local previous_otel_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep '^_otel_' | _otel_line_join)"
     local previous_alias_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep -v '^_otel_' | _otel_line_join)"
     case "$previous_alias_command" in
       "$original_command") local previous_alias_command="$(\printf '%s' "'\\$original_command'")";;
-      "$original_command "*) local previous_alias_command="$(\printf '%s' "'\\$original_command' $(\printf '%s' "$previous_alias_command" | \cut -sd ' ' -f 2-)")";;
+      "$original_command "*) local previous_alias_command="$(\printf '%s' "'\\$original_command' $(_otel_string_contains "$previous_alias_command" " " && \printf '%s' "${previous_alias_command#* }" || \printf '%s' "$previous_alias_command")")";; 
       "\\$original_command") local previous_alias_command="$(\printf '%s' "'\\$original_command'")";;
-      "\\$original_command "*) local previous_alias_command="$(\printf '%s' "'\\$original_command' $(\printf '%s' "$previous_alias_command" | \cut -sd ' ' -f 2-)")";;
+      "\\$original_command "*) local previous_alias_command="$(\printf '%s' "'\\$original_command' $(_otel_string_contains "$previous_alias_command" " " && \printf '%s' "${previous_alias_command#* }" || \printf '%s' "$previous_alias_command")")";;
       *) ;;
     esac
     local new_command="$previous_otel_command $prepend_command $previous_alias_command"
