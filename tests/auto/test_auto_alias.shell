@@ -15,7 +15,9 @@ count_2=$(alias | wc -l)
 if [ "$count_0" -ne "$count_1" ] || [ "$count_1" -ne "$count_2" ]; then echo "1: $count_0 $count_1 $count_2"; exit 1; fi
 
 count_0=$(alias | wc -l)
+alias
 unalias -a
+alias
 count_1=$(alias | wc -l)
 if [ "$count_0" -ne "$count_1" ]; then echo "2: $count_0 $count_1"; exit 1; fi
 
