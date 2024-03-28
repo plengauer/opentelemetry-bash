@@ -300,6 +300,13 @@ _otel_dollar_star() {
   \printf '%s' "$*"
 }
 
+_otel_string_contains() {
+  case "$1" in
+    *"$2"*) return 0;;
+    *) return 1;;
+  esac
+}
+
 _otel_string_starts_with() {
   case "$1" in
     "$2"*) return 0;;
