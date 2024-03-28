@@ -47,7 +47,7 @@ $arg'\'' parallel'"
 # parallel rm -f {} ::: ./file1.txt ./file2.txt ./file3.txt => parallel sh -c '. ./otel.sh; rm -f {} "$@" parallel ::: ./file1.txt ./file2.txt ./file3.txt
 # parallel rm -f => parallel sh -c '. ./otel.sh; rm -f "$@"' parallel
 
-# TODO TODO TODO it looks like the command is not properly quotes when its put in a subbash. meaning, we need to do it manually
+# WARNING it looks like the command is not properly quotes when its put in a subbash. meaning, we need to do it manually
 # evidence this works: parallel -v sh -c 'echo\ \$0\ A\$1O' parallel ':::' c1 c2 c3
 # evidence this doesnt work: parallel -v sh -c 'echo $0 A$1O' parallel ':::' c1 c2 c3
 
