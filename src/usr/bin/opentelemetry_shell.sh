@@ -85,7 +85,7 @@ _otel_auto_instrument() {
   \alias exec='_otel_record_exec '$_otel_source_file_resolver' '$_otel_source_line_resolver'; exec'
 
   # cache
-  if \[ "$(\alias | \wc -l)" -gt 25 ]; then \alias | \sed 's/^alias //' | \grep "$(_otel_resolve_instrumentation_hint "$hint" | awk '$0="^"$0"="')" > "$cache_file"; else true; fi
+  \[ "$(\alias | \wc -l)" -gt 25 ] && \alias | \sed 's/^alias //' | \grep "$(_otel_resolve_instrumentation_hint "$hint" | awk '$0="^"$0"="')" > "$cache_file" || \true
 }
 
 _otel_list_all_commands() {
