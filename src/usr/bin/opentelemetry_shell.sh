@@ -86,6 +86,7 @@ _otel_auto_instrument() {
 
   # cache
   \[ "$(\alias | \wc -l)" -gt 25 ] && \alias | \sed 's/^alias //' | \grep "$(_otel_resolve_instrumentation_hint "$hint" | \sed 's/[]\.^*[]/\\&/g' | \awk '$0="^"$0"="')" > "$cache_file" || \true
+  if \[ "$hint" = "auto/exec.shell" ]; then \echo "DEBUG DEBUG DEBUG" >&2 && \alias >&2 && \alias | \sed 's/^alias //' | \grep "$(_otel_resolve_instrumentation_hint "$hint" | \sed 's/[]\.^*[]/\\&/g' | \awk '$0="^"$0"="')" >&2
 }
 
 _otel_list_all_commands() {
