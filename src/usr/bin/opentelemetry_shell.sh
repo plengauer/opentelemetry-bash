@@ -81,7 +81,7 @@ _otel_auto_instrument() {
 
   # super special instrumentations
   \alias .='_otel_instrument_and_source "$#" "$@" .'
-  if \[ "$_otel_shell" = bash ]; then \alias source='_otel_instrument_and_source "$#" "$@" source'; fi
+  if \[ "$_otel_shell" = "bash" ]; then \alias source='_otel_instrument_and_source "$#" "$@" source'; fi
   \alias exec='_otel_record_exec '$_otel_source_file_resolver' '$_otel_source_line_resolver'; exec'
 
   # cache
