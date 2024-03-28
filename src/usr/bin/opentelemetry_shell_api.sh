@@ -203,10 +203,15 @@ otel_observe() {
   unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
   # create span, set initial attributes
   local span_id="$(otel_span_start "$kind" "$name")"
-  otel_span_attribute "$span_id" subprocess.executable.name="$(\printf '%s' "$command" | \cut -d' ' -f1 | \rev | \cut -d / -f 1 | \rev)"
-  otel_span_attribute "$span_id" subprocess.executable.path="$(\which "$(\printf '%s' "$command" | \cut -d ' ' -f 1)")"
   otel_span_attribute "$span_id" subprocess.command="$command"
-  otel_span_attribute "$span_id" subprocess.command_args="$(\printf '%s' "$command" | \cut -sd ' ' -f 2-)"
+  if _otel_string_contains "$command" " "; then # "$(\printf '%s' "$command" | \cut -sd ' ' -f 2-)" # this returns the command if there are no args, its the cut -s that cant be done via expansion alone
+    otel_span_attribute "$span_id" subprocess.command_args="${command#* }"
+  else
+    otel_span_attribute "$span_id" subprocess.command_args=
+  fi
+  local executable_path="$(\which "${command%% *}")"
+  otel_span_attribute "$span_id" subprocess.executable.path="$executable_path"
+  otel_span_attribute "$span_id" subprocess.executable.name="${executable_path##*/}" # "$(\printf '%s' "$command" | \cut -d' ' -f1 | \rev | \cut -d / -f 1 | \rev)"
   # run command
   otel_span_activate "$span_id"
   if \[ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0)"; fi
@@ -315,6 +320,13 @@ _otel_dollar_star() {
   # \echo "$@" # dont do this because it starts interpreting backslashes
   local IFS=' '
   \printf '%s' "$*"
+}
+
+_otel_string_contains() {
+  case "$1" in
+    *"$2"*) return 0;;
+    *) return 1;;
+  esac
 }
 
 _otel_string_starts_with() {
