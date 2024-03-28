@@ -75,13 +75,13 @@ _otel_auto_instrument() {
   # deshebangify commands, propagate special instrumentations into aliases, instrument all commands
   ## (both otel_filter_commands_by_file and _otel_filter_commands_by_instrumentation are functionally optional, but helps optimizing time because the following loop AND otel_instrument itself is expensive!)
   ## avoid piping directly into the loops, then it will be considered a subshell and aliases won't take effect here
-  for cmd in $(_otel_list_path_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_hint "$hint" | \sort -u | _otel_line_join); do _otel_deshebangify $cmd || true; done
-  for cmd in $(_otel_list_alias_commands | _otel_filter_commands_by_special | _otel_line_join); do _otel_dealiasify $cmd || true; done
-  for cmd in $(_otel_list_all_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_instrumentation | _otel_filter_commands_by_hint "$hint" | \sort -u | _otel_line_join); do otel_instrument $cmd; done
+  for cmd in $(_otel_list_path_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_hint "$hint" | \sort -u); do _otel_deshebangify "$cmd" || true; done
+  for cmd in $(_otel_list_alias_commands | _otel_filter_commands_by_special | \sort -u); do _otel_dealiasify "$cmd" || true; done
+  for cmd in $(_otel_list_all_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_instrumentation | _otel_filter_commands_by_hint "$hint" | \sort -u); do otel_instrument "$cmd"; done
 
   # super special instrumentations
   \alias .='_otel_instrument_and_source "$#" "$@" .'
-  if \[ "$_otel_shell" = "bash" ]; then \alias source='_otel_instrument_and_source "$#" "$@" source'; fi
+  if \[ "$_otel_shell" = bash ]; then \alias source='_otel_instrument_and_source "$#" "$@" source'; fi
   \alias exec='_otel_record_exec '$_otel_source_file_resolver' '$_otel_source_line_resolver'; exec'
 
   # cache
