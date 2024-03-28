@@ -189,7 +189,7 @@ _otel_has_alias() {
 }
 
 _otel_resolve_alias() {
-  \alias "$1" 2> /dev/null | \cut -d = -f 2- | _otel_unquote
+  \alias "$1" 2> /dev/null | \cut -d = -f 2- | _otel_unquote # TODO maybe use parameter expansion for the cut? limited benefit because unquote will stay an external process
 }
 
 otel_instrument() {
