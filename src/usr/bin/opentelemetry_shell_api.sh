@@ -310,6 +310,7 @@ _otel_string_contains() {
     *"$2"*) return 0;;
     *) return 1;;
   esac
+}
 
 _otel_string_starts_with() {
   case "$1" in
