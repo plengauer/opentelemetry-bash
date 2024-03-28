@@ -71,6 +71,16 @@ if [ "$SHELL" = bash ]; then
   assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
   span="$(resolve_span '.name == "echo e3"')"
   assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+
+  my_wget() { wget -O - "$1"; }
+  export -f my_wget
+  parallel my_wget ::: http://www.google.at
+  span="$(resolve_span '.name == "parallel my_wget ::: http://www.google.at"')"
+  assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+  span="$(resolve_span '.name == "my_wget http://www.google.at"')"
+  assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
+  span="$(resolve_span '.name == "wget -O - http://www.google.at"')"
+  assert_equals "SpanKind.CLIENT" "$(\echo "$span" | jq -r '.kind')"
 else
   true
 fi
