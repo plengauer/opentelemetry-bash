@@ -85,7 +85,7 @@ _otel_auto_instrument() {
   \alias exec='_otel_record_exec '$_otel_source_file_resolver' '$_otel_source_line_resolver'; exec'
 
   # cache
-  if \[ "$(\alias | \wc -l)" -gt 25 ]; then \alias | \sed 's/^alias //' | \grep "$(_otel_resolve_instrumentation_hint "$hint" | awk '$0="^"$0"="') | " > "$cache_file"; else true; fi
+  if \[ "$(\alias | \wc -l)" -gt 25 ]; then \alias | \sed 's/^alias //' | \grep "$(_otel_resolve_instrumentation_hint "$hint" | awk '$0="^"$0"="')" > "$cache_file"; else true; fi
 }
 
 _otel_list_all_commands() {
@@ -130,7 +130,7 @@ _otel_filter_commands_by_hint() {
 _otel_resolve_instrumentation_hint() {
   local hint="$1"
   if \[ -z "$hint" ]; then return 0; fi
-  { if \[ -f "$hint" ] && \[  "$(\readlink -f "$hint")" != "$(\readlink -f "/proc/$$/exe")" ] && \[ "$(\readlink -f "$hint")" != "/usr/bin/opentelemetry_shell.sh" ]; then \cat "$hint"; else \echo "$hint"; fi } | \tr -s ' $=";(){}/\\!#~^'\' '\n' | _otel_filter_by_validity
+  { \[ -f "$hint" ] && \[  "$(\readlink -f "$hint")" != "$(\readlink -f "/proc/$$/exe")" ] && \[ "$(\readlink -f "$hint")" != "/usr/bin/opentelemetry_shell.sh" ] && \cat "$hint" || \echo "$hint" } | \tr -s ' $=";(){}/\\!#~^'\' '\n' | _otel_filter_by_validity
 }
 
 _otel_filter_commands_by_instrumentation() {
