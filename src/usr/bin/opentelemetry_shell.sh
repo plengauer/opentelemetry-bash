@@ -170,7 +170,7 @@ _otel_dealiasify() {
   # e.g., alias ls=ls --color=auto
   local cmd="$1" # e.g., "upgrade", "ai", "l"
   local full_alias="$(_otel_resolve_alias "$cmd")"
-  case "$full_alias" in
+  case "$full_alias" in # TODO use _otel_starts_with (not im master yet)
     "/"*) ;;
     "."*) ;;
     *) return 1;;
