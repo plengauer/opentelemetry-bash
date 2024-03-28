@@ -14,7 +14,7 @@ _otel_inject_find_arguments() {
     if \[ "$first" = 1 ]; then local first=0; else \echo -n ' '; fi
     if \[ "$in_exec" -eq 0 ] && (\[ "$arg" = "-exec" ] || \[ "$arg" = "-execdir" ]); then
       local in_exec=1
-      \echo -n "$arg sh -c '. otel.sh
+      \echo -n "$arg $_otel_shell -c '. otel.sh
 "
     elif \[ "$in_exec" -eq 1 ] && \[ "$arg" = "{}" ]; then
       \echo -n '"$@"'
