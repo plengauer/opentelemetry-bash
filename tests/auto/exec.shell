@@ -1,6 +1,6 @@
 set -e
+set -x
 . /usr/bin/opentelemetry_shell.sh
-alias
 exec 3>&2
 if [  "$1" = "source" ]; then
   echo 'exec echo hello world sourced' > source_exec.shell
