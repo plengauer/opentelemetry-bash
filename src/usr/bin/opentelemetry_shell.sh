@@ -189,7 +189,7 @@ _otel_has_alias() {
 }
 
 _otel_resolve_alias() {
-  \alias "$1" 2> /dev/null | \cut -d = -f 2- | _otel_unquote # TODO maybe use parameter expansion for the cut? limited benefit because unquote will stay an external process
+  \alias "$1" 2> /dev/null | \cut -d = -f 2- | _otel_unquote # TODO maybe use parameter expansion for the cut to save a process? limited benefit because unquote will stay an external process
 }
 
 otel_instrument() {
@@ -209,18 +209,15 @@ _otel_alias_prepend() {
   else
     local previous_command="$(_otel_resolve_alias "$original_command")"
     if \[ -z "$previous_command" ]; then local previous_command="$original_command"; fi
-    if \[ "${previous_command#OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE=}" != "$previous_command" ]; then local previous_command="$(\printf '%s' "$previous_command" | \cut -d ' ' -f 2-)"; fi # TODO parameter expansion
-    case "$previous_command" in # TODO use _otel_starts_with (not in master yet)
-      *"$prepend_command"*) return 0;;
-      *) ;;
-    esac
+    if _otel_string_starts_with "$previous_command" "OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="; then local previous_command="${previous_command#* }"; fi
+    if _otel_string_contains "$previous_command" "$prepend_command"; then return 0; fi
     local previous_otel_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep '^_otel_' | _otel_line_join)"
     local previous_alias_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep -v '^_otel_' | _otel_line_join)"
     case "$previous_alias_command" in
       "$original_command") local previous_alias_command="$(\printf '%s' "'\\$original_command'")";;
-      "$original_command "*) local previous_alias_command="$(\printf '%s' "'\\$original_command' $(\printf '%s' "$previous_alias_command" | \cut -sd ' ' -f 2-)")";; # TODO parameter expansion (mind the -s in cut)
+      "$original_command "*) local previous_alias_command="$(\printf '%s' "'\\$original_command' $(_otel_string_contains "$previous_alias_command" " " && \printf '%s' "${previous_alias_command#* }" || \printf '%s' "$previous_alias_command")")";; 
       "\\$original_command") local previous_alias_command="$(\printf '%s' "'\\$original_command'")";;
-      "\\$original_command "*) local previous_alias_command="$(\printf '%s' "'\\$original_command' $(\printf '%s' "$previous_alias_command" | \cut -sd ' ' -f 2-)")";; # TODO parameter expansion (mind the -s in cut)
+      "\\$original_command "*) local previous_alias_command="$(\printf '%s' "'\\$original_command' $(_otel_string_contains "$previous_alias_command" " " && \printf '%s' "${previous_alias_command#* }" || \printf '%s' "$previous_alias_command")")";;
       *) ;;
     esac
     local new_command="$previous_otel_command $prepend_command $previous_alias_command"
