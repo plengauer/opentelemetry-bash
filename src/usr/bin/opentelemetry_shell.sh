@@ -175,7 +175,7 @@ _otel_dealiasify() {
     "."*) ;;
     *) return 1;;
   esac
-  local cmd_alias="$(\printf '%s' "$full_alias" | _otel_line_split | \grep -v '^OTEL_' | \grep -v '^_otel_' | \head -n1 | \rev | \cut -d/ -f1 | \rev)" # e.g., upgrade => bash
+  local cmd_alias="$(\printf '%s' "$full_alias" | _otel_line_split | \grep -v '^OTEL_' | \grep -v '^_otel_' | \head -n1 | \rev | \cut -d / -f 1 | \rev)" # e.g., upgrade => bash
   if \[ -z "$cmd_alias" ]; then return 2; fi
   local cmd_aliased="$(_otel_resolve_alias $cmd_alias)" # e.g., bash => _otel_inject_shell bash
   if \[ -z "$cmd_aliased" ]; then return 3; fi
@@ -189,7 +189,7 @@ _otel_has_alias() {
 }
 
 _otel_resolve_alias() {
-  \alias "$1" 2> /dev/null | \cut -d= -f2- | _otel_unquote
+  \alias "$1" 2> /dev/null | \cut -d = -f 2- | _otel_unquote
 }
 
 otel_instrument() {
@@ -207,7 +207,7 @@ _otel_alias_prepend() {
   if \[ -z "$(\alias "$original_command" 2> /dev/null)" ]; then # fastpath
     local new_command="$(\printf '%s' "$prepend_command '\\$original_command'")" # need to use printf to handle backslashes consistently across shells
   else
-    local previous_command="$(\alias "$original_command" 2> /dev/null | \cut -d= -f2- | _otel_unquote)"
+    local previous_command="$(\alias "$original_command" 2> /dev/null | \cut -d = -f 2- | _otel_unquote)"
     if \[ -z "$previous_command" ]; then local previous_command="$original_command"; fi
     if \[ "${previous_command#OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE=}" != "$previous_command" ]; then local previous_command="$(\printf '%s' "$previous_command" | \cut -d ' ' -f 2-)"; fi
     case "$previous_command" in
