@@ -64,12 +64,12 @@ assert_equals "echo" "$(echo "$span" | jq -r '.attributes."subprocess.executable
 assert_equals "/bin/echo" "$(echo "$span" | jq -r '.attributes."subprocess.executable.path"')"
 assert_equals "0" $(echo "$span" | jq -r '.attributes."shell.command.exit_code"')
 
-span="$(resolve_span '.name == "cat file > /dev/null"')"
+span="$(resolve_span '.name == "cat file"')"
 assert_equals "SpanKind.INTERNAL" $(echo "$span" | jq -r '.kind')
 assert_equals "null" $(echo "$span" | jq -r '.parent_id')
 assert_equals "ERROR" $(echo "$span" | jq -r '.status.status_code')
 assert_equals "file" "$(echo "$span" | jq -r '.attributes."shell.command.type"')"
-assert_equals "cat file > /dev/null" "$(echo "$span" | jq -r '.attributes."shell.command"')"
+assert_equals "cat file" "$(echo "$span" | jq -r '.attributes."shell.command"')"
 assert_equals "cat" "$(echo "$span" | jq -r '.attributes."shell.command.name"')"
 assert_equals "cat" "$(echo "$span" | jq -r '.attributes."subprocess.executable.name"')"
 assert_equals "/bin/cat" "$(echo "$span" | jq -r '.attributes."subprocess.executable.path"')"
