@@ -203,15 +203,21 @@ otel_observe() {
   unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
   # create span, set initial attributes
   local span_id="$(otel_span_start "$kind" "$name")"
-  otel_span_attribute "$span_id" subprocess.command="$command"
+  otel_span_attribute "$span_id" shell.command="$command"
   if _otel_string_contains "$command" " "; then # "$(\printf '%s' "$command" | \cut -sd ' ' -f 2-)" # this returns the command if there are no args, its the cut -s that cant be done via expansion alone
-    otel_span_attribute "$span_id" subprocess.command_args="${command#* }"
+    local command_name="${command% *}"
+    otel_span_attribute "$span_id" shell.command_args="${command#* }"
   else
-    otel_span_attribute "$span_id" subprocess.command_args=
+    local command_name="$command"
   fi
-  local executable_path="$(\which "${command%% *}")"
-  otel_span_attribute "$span_id" subprocess.executable.path="$executable_path"
-  otel_span_attribute "$span_id" subprocess.executable.name="${executable_path##*/}" # "$(\printf '%s' "$command" | \cut -d' ' -f1 | \rev | \cut -d / -f 1 | \rev)"
+  local command_type="$(_otel_command_type "$command")"
+  otel_span_attribute "$span_id" shell.command.type="$command_type"
+  otel_span_attribute "$span_id" shell.command.name="$command_name"
+  if \[ "$command_type" = file ]; then
+    local executable_path="$(\which "$command_name")"
+    otel_span_attribute "$span_id" subprocess.executable.path="$executable_path"
+    otel_span_attribute "$span_id" subprocess.executable.name="${executable_path##*/}" # "$(\printf '%s' "$command" | \cut -d' ' -f1 | \rev | \cut -d / -f 1 | \rev)"
+  fi  
   # run command
   otel_span_activate "$span_id"
   if \[ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0)"; fi
@@ -249,6 +255,22 @@ otel_observe() {
   otel_span_end "$span_id"
   return "$exit_code"
 }
+
+if \[ "$_otel_shell" = bash ]; then
+  _otel_command_type() {
+    \type -t "$1" || \echo file
+  }
+else
+  _otel_command_type() {
+    case "$(\type "$1")" in
+      *keyword*) \echo keyword;;
+      *alias*) \echo alias;;
+      *function*) \echo 'function';;
+      *builtin*) \echo builtin
+      *) \echo file
+    esac
+  }
+fi
 
 _otel_log_record() {
   local traceparent="$1"
