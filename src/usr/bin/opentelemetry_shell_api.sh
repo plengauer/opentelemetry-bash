@@ -258,10 +258,11 @@ otel_observe() {
 
 if \[ "$_otel_shell" = bash ]; then
   _otel_command_type() {
-    \type -t "$1" || \echo file
+    \[ -n "$OTEL_SHELL_COMMAND_TYPE" ] && \echo "$OTEL_SHELL_COMMAND_TYPE" || \type -t "$1" || \echo file
   }
 else
   _otel_command_type() {
+    if \[ -n "$OTEL_SHELL_COMMAND_TYPE" ]; then \echo "$OTEL_SHELL_COMMAND_TYPE"; fi
     case "$(\type "$1")" in
       "$1 is a shell keyword") \echo keyword;;
       "$1 is a shell alias for "*) \echo alias;;
