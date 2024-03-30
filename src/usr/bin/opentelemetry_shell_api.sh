@@ -232,7 +232,7 @@ otel_observe() {
   fi
   otel_span_deactivate "$span_id"
   # set custom attributes, set final attributes, finish span
-  otel_span_attribute "$span_id" subprocess.exit_code="$exit_code"
+  otel_span_attribute "$span_id" command.exit_code="$exit_code"
   if \[ "$exit_code" -ne 0 ]; then
     otel_span_error "$span_id"
   fi
