@@ -214,7 +214,7 @@ otel_observe() {
   otel_span_attribute "$span_id" shell.command.type="$command_type"
   otel_span_attribute "$span_id" shell.command.name="$command_name"
   if \[ "$command_type" = file ]; then
-    local executable_path="$(\which "$command_name")"
+    local executable_path="$(_otel_string_contains "$command_name" / && \echo "$command_name" || \which "$command_name")"
     otel_span_attribute "$span_id" subprocess.executable.path="$executable_path"
     otel_span_attribute "$span_id" subprocess.executable.name="${executable_path##*/}" # "$(\printf '%s' "$command" | \cut -d' ' -f1 | \rev | \cut -d / -f 1 | \rev)"
   fi  
@@ -263,10 +263,11 @@ if \[ "$_otel_shell" = bash ]; then
 else
   _otel_command_type() {
     case "$(\type "$1")" in
-      *keyword*) \echo keyword;;
-      *alias*) \echo alias;;
-      *function*) \echo 'function';;
-      *builtin*) \echo builtin;;
+      "$1 is a shell keyword") \echo keyword;;
+      "$1 is a shell alias for "*) \echo alias;;
+      "$1 is a shell function") \echo 'function';;
+      "$1 is a shell builtin") \echo builtin;;
+      "$1 is $1";; \echo file;;
       *) \echo file;;
     esac
   }
