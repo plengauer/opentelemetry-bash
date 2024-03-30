@@ -26,7 +26,7 @@ assert_equals "null" $(echo "$span" | jq -r '.parent_id')
 assert_equals "UNSET" $(echo "$span" | jq -r '.status.status_code')
 assert_equals "alias" "$(echo "$span" | jq -r '.attributes."shell.command.type"')"
 assert_equals "my_echo hello world alias" "$(echo "$span" | jq -r '.attributes."shell.command"')"
-assert_equals "echo" "$(echo "$span" | jq -r '.attributes."shell.command.name"')"
+assert_equals "my_echo" "$(echo "$span" | jq -r '.attributes."shell.command.name"')"
 assert_equals "null" "$(echo "$span" | jq -r '.attributes."subprocess.executable.name"')"
 assert_equals "null" "$(echo "$span" | jq -r '.attributes."subprocess.executable.path"')"
 assert_equals "0" $(echo "$span" | jq -r '.attributes."shell.command.exit_code"')
