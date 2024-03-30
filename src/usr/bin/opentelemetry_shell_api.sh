@@ -205,7 +205,7 @@ otel_observe() {
   local span_id="$(otel_span_start "$kind" "$name")"
   otel_span_attribute "$span_id" shell.command="$command"
   if _otel_string_contains "$command" " "; then local command_name="${command%% *}"; else  local command_name="$command"; fi # "$(\printf '%s' "$command" | \cut -sd ' ' -f 2-)" # this returns the command if there are no args, its the cut -s that cant be done via expansion alone
-  local command_type="$(_otel_command_type "$command")"
+  local command_type="$(_otel_command_type "$command_name")"
   otel_span_attribute "$span_id" shell.command.type="$command_type"
   otel_span_attribute "$span_id" shell.command.name="$command_name"
   if \[ "$command_type" = file ]; then
@@ -253,11 +253,11 @@ otel_observe() {
 
 if \[ "$_otel_shell" = bash ]; then
   _otel_command_type() {
-    \[ -n "$OTEL_SHELL_COMMAND_TYPE" ] && \echo "$OTEL_SHELL_COMMAND_TYPE" || \type -t "$1" || \echo file
+    \[ -n "$OTEL_SHELL_COMMAND_TYPE" ] && \echo "$OTEL_SHELL_COMMAND_TYPE" && unset OTEL_SHELL_COMMAND_TYPE || \type -t "$1" || \echo file
   }
 else
   _otel_command_type() {
-    if \[ -n "$OTEL_SHELL_COMMAND_TYPE" ]; then \echo "$OTEL_SHELL_COMMAND_TYPE"; fi
+    if \[ -n "$OTEL_SHELL_COMMAND_TYPE" ]; then \echo "$OTEL_SHELL_COMMAND_TYPE"; unset OTEL_SHELL_COMMAND_TYPE; fi
     case "$(\type "$1")" in
       "$1 is a shell keyword") \echo keyword;;
       "$1 is a shell alias for "*) \echo alias;;
