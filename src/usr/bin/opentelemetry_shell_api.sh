@@ -268,7 +268,7 @@ else
       "$1 is a shell alias for "*) \echo alias;;
       "$1 is a shell function") \echo 'function';;
       "$1 is a shell builtin") \echo builtin;;
-      "$1 is $1";; \echo file;;
+      "$1 is $1") \echo file;;
       *) \echo file;;
     esac
   }
