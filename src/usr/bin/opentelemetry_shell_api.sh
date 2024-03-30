@@ -266,8 +266,8 @@ else
       *keyword*) \echo keyword;;
       *alias*) \echo alias;;
       *function*) \echo 'function';;
-      *builtin*) \echo builtin
-      *) \echo file
+      *builtin*) \echo builtin;;
+      *) \echo file;;
     esac
   }
 fi
