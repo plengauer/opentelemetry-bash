@@ -16,7 +16,7 @@ _otel_inject_inner_command_args() {
 #    "\\"*) \printf '%s' "$1";;
 #    *) _otel_escape_arg "$1";;
 #  esac
-  _otel_escape_arg "$1";;
+  _otel_escape_arg "$1"
   local command="$1"
   shift
   # options
