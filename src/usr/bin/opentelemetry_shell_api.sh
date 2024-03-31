@@ -162,8 +162,8 @@ otel_span_deactivate() {
     export OTEL_TRACEPARENT="${OTEL_TRACEPARENT_STACK%%/*}"
     export OTEL_TRACEPARENT_STACK="${OTEL_TRACEPARENT_STACK#*/}"
   else
-    unset OTEL_TRACEPARENT
-    unset OTEL_TRACEPARENT_STACK
+    export OTEL_TRACEPARENT="$OTEL_TRACEPARENT_STACK"
+    export OTEL_TRACEPARENT_STACK=""
   fi
 }
 
