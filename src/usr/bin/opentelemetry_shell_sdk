@@ -191,10 +191,12 @@ def handle(scope, version, command, arguments):
         response_path = tokens[0]
         trace_parent = tokens[1]
         context = TraceContextTextMapPropagator().extract({'traceparent': trace_parent})
+        print(str(context))
         for span_id, span in spans.items():
             if span.context.span_id == context.span_id:
                 with open(response_path, 'w') as response:
                     response.write(str(span_id))
+                    return
     elif command == 'SPAN_AUTO_END':
         auto_end = True
     elif command == 'SPAN_ERROR':
