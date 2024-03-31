@@ -8,11 +8,8 @@ else
   cat auto/fail_no_auto.shell | sudo tee -a /usr/bin/fail_no_auto.shell
   sudo chmod +x /usr/bin/fail_no_auto.shell
 fi
-set -x
 . /usr/bin/opentelemetry_shell.sh
-export OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE
 fail_no_auto.shell
-set +x
 assert_equals 0 $?
 span="$(resolve_span '.resource.attributes."process.command" == "/bin/sh /usr/bin/fail_no_auto.shell"')"
 assert_equals "myspan" "$(\echo "$span" | jq -r '.name')"
