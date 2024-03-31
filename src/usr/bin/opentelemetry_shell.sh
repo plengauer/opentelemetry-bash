@@ -174,7 +174,7 @@ _otel_dealiasify() {
   # e.g., alias l=ls --color=auto
   # e.g., alias ls=ls --color=auto
   local cmd="$1" # e.g., "upgrade", "ai", "l"
-  if _otel_has_alias "$cmd"; then return 1; fi
+  if ! _otel_has_alias "$cmd"; then return 1; fi
   local full_alias="$(_otel_resolve_alias "$cmd")"
   while _otel_string_starts_with "$full_alias" 'OTEL_'; do local full_alias="${full_alias%% *}"; done
   if ! _otel_string_starts_with "$full_alias" / && ! _otel_string_starts_with "$full_alias" .; then return 2; fi
