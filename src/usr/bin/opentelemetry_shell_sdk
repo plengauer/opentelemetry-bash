@@ -171,12 +171,12 @@ def handle(scope, version, command, arguments):
         global next_span_id
         tokens = arguments.split(' ', 3)
         response_path = tokens[0]
-        trace_parent = tokens[1]
+        traceparent = tokens[1]
         kind = tokens[2]
         name = tokens[3]
         span_id = next_span_id
         next_span_id = next_span_id + 1
-        span = opentelemetry.trace.get_tracer(scope, version).start_span(name, kind=SpanKind[kind.upper()], context=TraceContextTextMapPropagator().extract({'traceparent': trace_parent}))
+        span = opentelemetry.trace.get_tracer(scope, version).start_span(name, kind=SpanKind[kind.upper()], context=TraceContextTextMapPropagator().extract({'traceparent': traceparent}))
         spans[str(span_id)] = span
         with open(response_path, 'w') as response:
             response.write(str(span_id))
@@ -189,7 +189,7 @@ def handle(scope, version, command, arguments):
     elif command == 'SPAN_ID':
         tokens = arguments.split(' ', 1)
         response_path = tokens[0]
-        trace_parent = tokens[1]
+        traceparent = tokens[1]
         context = opentelemetry.trace.get_current_span(TraceContextTextMapPropagator().extract({'traceparent': traceparent})).get_span_context()
         print(str(context))
         for span_id, span in spans.items():
