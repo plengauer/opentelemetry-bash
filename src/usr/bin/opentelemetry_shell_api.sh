@@ -114,6 +114,14 @@ _otel_resolve_package_version() {
   dpkg -s "$1" 2> /dev/null | \grep Version: | \cut -d ' ' -f 2
 }
 
+otel_span_current() {
+  local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
+  \mkfifo "$response_pipe"
+  _otel_sdk_communicate "SPAN_CURRENT" "$response_pipe" "$OTEL_TRACEPARENT"
+  \cat "$response_pipe"
+  \rm "$response_pipe" &> /dev/null
+}
+
 otel_span_start() {
   local kind="$1"
   local name="$2"
