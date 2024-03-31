@@ -9,6 +9,7 @@ _otel_propagate_wget() {
   local target=$(\printf '%s' /${url#*//*/})
   local host=$(\printf '%s' ${url} | \awk -F/ '{print $3}')
   local method=GET
+  # TODO drop all the overrides, set attributes directly (span should be already active), set kind directly, and modify commandline directly (do the same in wget, and similar things in all others in terms of override)
   OTEL_SHELL_SPAN_NAME_OVERRIDE="$command" OTEL_SHELL_SPAN_KIND_OVERRIDE=CLIENT OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" \
     OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="http.url=$url,http.scheme=$scheme,http.host=$host,http.target=$target,http.method=$method,$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE" \
     OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0='--header=traceparent: $OTEL_TRACEPARENT' \
