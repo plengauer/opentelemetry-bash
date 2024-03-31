@@ -5,10 +5,7 @@
 # parallel -j 10 -- 'rm ./file1.txt' 'rm ./file2.txt' 'rm ./file3.txt' => parallel -j 10 -- 'sh -c \'. /otel.sh; rm -f ./file1.txt\' parallel' 'sh -c \'. /otel.sh; rm -f ./file2.txt\' parallel' 'sh -c \'. /otel.sh; rm -f ./file3.txt\' parallel'
 
 _otel_inject_parallel_moreutils_arguments() {
-  case "$1" in
-    "\\"*) \printf '%s' "$1";;
-    *) _otel_escape_arg "$1";;
-  esac
+  _otel_escape_arg "$1"
   shift
   local in_exec=0
   local explicit_pos=0
@@ -51,10 +48,7 @@ $arg'\'' parallel'"
 # evidence this doesnt work: parallel -v sh -c 'echo $0 A$1O' parallel ':::' c1 c2 c3
 
 _otel_inject_parallel_gnu_arguments() {
-  case "$1" in
-    "\\"*) \printf '%s' "$1";;
-    *) _otel_escape_arg "$1";;
-  esac
+  _otel_escape_arg "$1"
   shift
   local in_exec=0
   for arg in "$@"; do
@@ -97,7 +91,7 @@ _otel_inject_parallel_arguments() {
 
 _otel_inject_parallel() {
     local cmdline="$(_otel_dollar_star "$@")"
-    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$cmdline" \eval "$(_otel_inject_parallel_arguments "$@")"
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$cmdline" \eval _otel_call "$(_otel_inject_parallel_arguments "$@")"
 }
 
 _otel_alias_prepend parallel _otel_inject_parallel
