@@ -264,6 +264,7 @@ else
     case "$(\type "$1")" in
       "$1 is a shell keyword") \echo keyword;;
       "$1 is a shell alias for "*) \echo alias;;
+      "$1 is an alias for "*) \echo alias;;
       "$1 is a shell function") \echo 'function';;
       "$1 is a shell builtin") \echo builtin;;
       "$1 is $1") \echo file;;
