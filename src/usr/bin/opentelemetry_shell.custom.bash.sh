@@ -37,7 +37,7 @@ $1"; \echo -n " "; local found_inner=1; local dollar_zero=""; break
 }
 
 _otel_inject_shell_with_c_flag() {
-  local cmdline="$(_otel_dollar_zero "$@")"
+  local cmdline="$(_otel_dollar_star "$@")"
   # be careful about setting the instrumentation hint, setting it is only possible if its a -c invocation, not a script invocation
   # we could be safe and not set it. better have slow performance on -c injection that no spans at all from a script injection
   # we use an ugly hack here to optimize for single most common case
