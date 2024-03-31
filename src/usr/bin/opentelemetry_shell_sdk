@@ -191,6 +191,12 @@ def handle(scope, version, command, arguments):
     elif command == 'SPAN_ERROR':
         span : Span = spans[arguments]
         span.set_status(StatusCode.ERROR)
+    elif command == 'SPAN_KIND':
+        tokens = arguments.split(' ', 1)
+        span_id = tokens[0]
+        kind = tokens[1]
+        span : Span = spans[span_id]
+        span.set_kind(kind)
     elif command == 'SPAN_ATTRIBUTE':
         tokens = arguments.split(' ', 1)
         span_id = tokens[0]
