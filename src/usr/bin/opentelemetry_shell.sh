@@ -152,7 +152,7 @@ _otel_filter_by_validity() {
 
 _otel_deshebangify() {
   local cmd="$1" # e.g., "upgrade"
-  if _otel_has_alias "$cmd"; then return 1; fi
+  if \[ "$(_otel_command_type "$cmd")" != file ]; then return 1; fi
   local shebang="$(_otel_resolve_shebang "$1")" # e.g., "/bin/bash -x"
   if \[ -z "$shebang" ]; then return 2; fi
   \alias "$1=OTEL_SHELL_COMMAND_TYPE=file $shebang $(\which "$1")" # e.g., alias upgrade='/bin/bash -x /usr/bin/upgrade'
@@ -175,11 +175,7 @@ _otel_dealiasify() {
   # e.g., alias ls=ls --color=auto
   local cmd="$1" # e.g., "upgrade", "ai", "l"
   local full_alias="$(_otel_resolve_alias "$cmd")"
-  case "$full_alias" in # TODO use _otel_starts_with (not im master yet)
-    "/"*) ;;
-    "."*) ;;
-    *) return 1;;
-  esac
+  if ! _otel_string_starts_with "$full_alias" / && ! _otel_string_starts_with "$full_alias" .; then return 1; fi
   local cmd_alias="$(\printf '%s' "$full_alias" | _otel_line_split | \grep -v '^OTEL_' | \grep -v '^_otel_' | \head -n1 | \rev | \cut -d / -f 1 | \rev)" # e.g., upgrade => bash
   if \[ -z "$cmd_alias" ]; then return 2; fi
   local cmd_aliased="$(_otel_resolve_alias $cmd_alias)" # e.g., bash => _otel_inject_shell bash
