@@ -216,7 +216,7 @@ _otel_alias_prepend() {
     if _otel_string_contains "$previous_command" "OTEL_SHELL_SPAN_KIND_OVERRIDE="; then local span_kind="$(\printf '%s' "$previous_command" | _otel_line_split | \grep '^OTEL_SHELL_SPAN_KIND_OVERRIDE=' | \cut -d = -f 2)"; fi
     while _otel_string_starts_with "$previous_command" "OTEL_"; do local previous_command="${previous_command#* }"; done
     local overrides="OTEL_SHELL_COMMAND_TYPE_OVERRIDE=$command_type"
-    if \[ -z "$span_kind" ]; then local overrides="$overrides OTEL_SHELL_SPAN_KIND_OVERRIDE=$span_kind"
+    if \[ -n "$span_kind" ]; then local overrides="$overrides OTEL_SHELL_SPAN_KIND_OVERRIDE=$span_kind"; fi
     local previous_otel_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep '^_otel_' | _otel_line_join)"
     local previous_alias_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep -v '^_otel_' | _otel_line_join)"
     case "$previous_alias_command" in
