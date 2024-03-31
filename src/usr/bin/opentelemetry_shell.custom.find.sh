@@ -36,7 +36,7 @@ _otel_inject_find() {
     local cmdline="$(_otel_dollar_star "$@")"
     OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$cmdline" \eval _otel_call "$(_otel_inject_find_arguments "$@")"
   else
-    "$@"
+    _otel_call "$@"
   fi
 }
 
