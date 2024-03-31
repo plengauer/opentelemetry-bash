@@ -155,7 +155,7 @@ _otel_deshebangify() {
   if \[ "$(_otel_command_type "$cmd")" != file ]; then return 1; fi
   local shebang="$(_otel_resolve_shebang "$1")" # e.g., "/bin/bash -x"
   if \[ -z "$shebang" ]; then return 2; fi
-  \alias "$1=OTEL_SHELL_COMMAND_TYPE=file $shebang $(\which "$1")" # e.g., alias upgrade='/bin/bash -x /usr/bin/upgrade'
+  \alias "$1=OTEL_SHELL_COMMAND_TYPE_OVERRIDE=file $shebang $(\which "$1")" # e.g., alias upgrade='/bin/bash -x /usr/bin/upgrade'
 }
 
 _otel_resolve_shebang() {
@@ -206,7 +206,7 @@ _otel_alias_prepend() {
   local prepend_command="$2"
 
   if ! _otel_has_alias "$original_command"; then # fastpath
-    local new_command="$(\printf '%s' "OTEL_SHELL_COMMAND_TYPE=$(_otel_command_type "$original_command") $prepend_command '\\$original_command'")" # need to use printf to handle backslashes consistently across shells
+    local new_command="$(\printf '%s' "OTEL_SHELL_COMMAND_TYPE_OVERRIDE=$(_otel_command_type "$original_command") $prepend_command '\\$original_command'")" # need to use printf to handle backslashes consistently across shells
   else
     local previous_command="$(_otel_resolve_alias "$original_command")"
     if _otel_string_contains "$previous_command" "$prepend_command"; then return 0; fi
@@ -221,7 +221,7 @@ _otel_alias_prepend() {
       "\\$original_command "*) local previous_alias_command="$(\printf '%s' "'\\$original_command' $(_otel_string_contains "$previous_alias_command" " " && \printf '%s' "${previous_alias_command#* }" || \printf '%s' "$previous_alias_command")")";;
       *) ;;
     esac
-    local new_command="OTEL_SHELL_COMMAND_TYPE=$command_type $previous_otel_command $prepend_command $previous_alias_command"
+    local new_command="OTEL_SHELL_COMMAND_TYPE_OVERRIDE=$command_type $previous_otel_command $prepend_command $previous_alias_command"
   fi
 
   \alias "$original_command"='OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="code.filepath='$_otel_source_file_resolver',code.lineno='$_otel_source_line_resolver',code.function='$_otel_source_func_resolver'" '"$new_command"
