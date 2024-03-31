@@ -8,10 +8,11 @@
 # find . -execdir rm {} + -iname "*.txt" => find . -execdir sh -c '. /otel.sh; rm "$@"' find {} + -iname "*.txt"
 
 _otel_inject_find_arguments() {
+  _otel_escape_arg "$1"
+  shift
   local in_exec=0
-  local first=1
   for arg in "$@"; do
-    if \[ "$first" = 1 ]; then local first=0; else \echo -n ' '; fi
+    \echo -n ' '
     if \[ "$in_exec" -eq 0 ] && (\[ "$arg" = "-exec" ] || \[ "$arg" = "-execdir" ]); then
       local in_exec=1
       \echo -n "$arg $_otel_shell -c '. otel.sh
