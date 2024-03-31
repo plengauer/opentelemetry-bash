@@ -199,6 +199,7 @@ otel_observe() {
   local dollar_star="$(_otel_dollar_star "$@")"
   local command="$dollar_star"
   while _otel_string_starts_with "$command" "_otel_"; do local command="${command#* }"; done
+  local command="${command#\\}"
   local kind="${OTEL_SHELL_SPAN_KIND_OVERRIDE:-INTERNAL}"
   local attributes="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE"
   local command_type="$OTEL_SHELL_COMMAND_TYPE_OVERRIDE"
