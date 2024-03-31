@@ -225,10 +225,10 @@ otel_observe() {
     local stderr_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
     \mkfifo "$stderr_pipe"
     ( (while IFS= read -r line; do _otel_log_record "$traceparent" "$line"; \echo "$line" >&2; done < "$stderr_pipe") & )
-    _otel_call "$@" 2> "$stderr_pipe" || local exit_code="$?"
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$$" _otel_call "$@" 2> "$stderr_pipe" || local exit_code="$?"
     \rm "$stderr_pipe"
   else
-    _otel_call "$@" || local exit_code="$?"
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$$" _otel_call "$@" || local exit_code="$?"
   fi
   otel_span_deactivate "$span_id"
   # set custom attributes, set final attributes, finish span
