@@ -190,7 +190,7 @@ def handle(scope, version, command, arguments):
         tokens = arguments.split(' ', 1)
         response_path = tokens[0]
         trace_parent = tokens[1]
-        context = TraceContextTextMapPropagator().extract({'traceparent': trace_parent})
+        context = opentelemetry.trace.get_current_span(TraceContextTextMapPropagator().extract({'traceparent': traceparent})).get_span_context()
         print(str(context))
         for span_id, span in spans.items():
             if span.context.span_id == context.span_id:
