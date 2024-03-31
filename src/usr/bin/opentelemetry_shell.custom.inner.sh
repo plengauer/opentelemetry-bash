@@ -12,10 +12,11 @@ _otel_inject_inner_command_args() {
   local more_args="$OTEL_SHELL_INJECT_INNER_COMMAND_MORE_ARGS"
   unset OTEL_SHELL_INJECT_INNER_COMMAND_MORE_ARGS
   # command
-  case "$1" in
-    "\\"*) \printf '%s' "$1";;
-    *) _otel_escape_arg "$1";;
-  esac
+#  case "$1" in
+#    "\\"*) \printf '%s' "$1";;
+#    *) _otel_escape_arg "$1";;
+#  esac
+  _otel_escape_arg "$1";;
   local command="$1"
   shift
   # options
