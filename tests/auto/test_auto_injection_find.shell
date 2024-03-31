@@ -9,7 +9,10 @@ directory="$directory"". .dir"
 chmod +x "$directory"
 for i in $(seq 1 $n); do \touch "$directory/$i"; done
 expected="$(\find "$directory" -exec echo {} ';')"
+export OTEL_SHELL_SUPPRESS_LOG_COLLECTION=TRUE
+set -x
 actual="$(find "$directory" -exec echo {} ';')"
+set +x
 assert_equals "$expected" "$actual"
 for i in $(seq 1 $n); do
   span="$(resolve_span ".name == \"echo $directory/$i\"")"
