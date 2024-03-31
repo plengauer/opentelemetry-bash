@@ -22,6 +22,7 @@ unset OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE
 unset OTEL_SHELL_SPAN_NAME_OVERRIDE
 unset OTEL_SHELL_SPAN_KIND_OVERRIDE
 unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
+unset OTEL_SHELL_COMMAND_TYPE_OVERRIDE
 unset OTEL_SHELL_SUPPRESS_LOG_COLLECTION
 
 otel_init() {
@@ -200,23 +201,27 @@ otel_observe() {
   local command="${command#otel_observe }"
   local command="${command#_otel_observe }"
   local command="${command#\\}"
-  local command_signature="${OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE:-$$}"
+  local command_signature="${OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE:-$$}" # OTEL_SHELL_COMMAND_TYPE_OVERRIDE
   local attributes="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE"
+  local command_type="$OTEL_SHELL_COMMAND_TYPE_OVERRIDE"
   unset OTEL_SHELL_SPAN_NAME_OVERRIDE
   unset OTEL_SHELL_SPAN_KIND_OVERRIDE
-  unset OTEL_SHELL_COMMANDLINE_OVERRIDE
   unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
+  unset OTEL_SHELL_COMMANDLINE_OVERRIDE
+  unset OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE
+  unset OTEL_SHELL_COMMAND_TYPE_OVERRIDE
   # create span, set initial attributes
   local span_id="$(otel_span_start "$kind" "$name")"
-  otel_span_attribute "$span_id" subprocess.command="$command"
-  if _otel_string_contains "$command" " "; then # "$(\printf '%s' "$command" | \cut -sd ' ' -f 2-)" # this returns the command if there are no args, its the cut -s that cant be done via expansion alone
-    otel_span_attribute "$span_id" subprocess.command_args="${command#* }"
-  else
-    otel_span_attribute "$span_id" subprocess.command_args=
-  fi
-  local executable_path="$(\which "${command%% *}")"
-  otel_span_attribute "$span_id" subprocess.executable.path="$executable_path"
-  otel_span_attribute "$span_id" subprocess.executable.name="${executable_path##*/}" # "$(\printf '%s' "$command" | \cut -d' ' -f1 | \rev | \cut -d / -f 1 | \rev)"
+  otel_span_attribute "$span_id" shell.command="$command"
+  if _otel_string_contains "$command" " "; then local command_name="${command%% *}"; else  local command_name="$command"; fi # "$(\printf '%s' "$command" | \cut -sd ' ' -f 2-)" # this returns the command if there are no args, its the cut -s that cant be done via expansion alone
+  if \[ -z "$command_type" ]; then local command_type="$(_otel_command_type "$command_name")"; fi
+  otel_span_attribute "$span_id" shell.command.type="$command_type"
+  otel_span_attribute "$span_id" shell.command.name="$command_name"
+  if \[ "$command_type" = file ]; then
+    local executable_path="$(_otel_string_contains "$command_name" / && \echo "$command_name" || \which "$command_name")"
+    otel_span_attribute "$span_id" subprocess.executable.path="$executable_path"
+    otel_span_attribute "$span_id" subprocess.executable.name="${executable_path##*/}" # "$(\printf '%s' "$command" | \cut -d' ' -f1 | \rev | \cut -d / -f 1 | \rev)"
+  fi  
   # run command
   otel_span_activate "$span_id"
   if \[ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0)"; fi
@@ -236,7 +241,7 @@ otel_observe() {
   fi
   otel_span_deactivate "$span_id"
   # set custom attributes, set final attributes, finish span
-  otel_span_attribute "$span_id" subprocess.exit_code="$exit_code"
+  otel_span_attribute "$span_id" shell.command.exit_code="$exit_code"
   if \[ "$exit_code" -ne 0 ]; then
     otel_span_error "$span_id"
   fi
@@ -254,6 +259,24 @@ otel_observe() {
   otel_span_end "$span_id"
   return "$exit_code"
 }
+
+if \[ "$_otel_shell" = bash ]; then
+  _otel_command_type() {
+    \type -t "$1" || \echo file
+  }
+else
+  _otel_command_type() {
+    case "$(\type "$1")" in
+      "$1 is a shell keyword") \echo keyword;;
+      "$1 is a shell alias for "*) \echo alias;;
+      "$1 is an alias for "*) \echo alias;;
+      "$1 is a shell function") \echo 'function';;
+      "$1 is a shell builtin") \echo builtin;;
+      "$1 is $1") \echo file;;
+      *) \echo file;;
+    esac
+  }
+fi
 
 _otel_log_record() {
   local traceparent="$1"

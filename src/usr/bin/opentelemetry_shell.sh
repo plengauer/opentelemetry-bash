@@ -152,10 +152,10 @@ _otel_filter_by_validity() {
 
 _otel_deshebangify() {
   local cmd="$1" # e.g., "upgrade"
-  if _otel_has_alias "$cmd"; then return 1; fi
+  if \[ "$(_otel_command_type "$cmd")" != file ]; then return 1; fi
   local shebang="$(_otel_resolve_shebang "$1")" # e.g., "/bin/bash -x"
   if \[ -z "$shebang" ]; then return 2; fi
-  \alias "$1=$shebang $(\which "$1")" # e.g., alias upgrade='/bin/bash -x /usr/bin/upgrade'
+  \alias "$1=OTEL_SHELL_COMMAND_TYPE_OVERRIDE=file $shebang $(\which "$1")" # e.g., alias upgrade='/bin/bash -x /usr/bin/upgrade'
 }
 
 _otel_resolve_shebang() {
@@ -174,18 +174,16 @@ _otel_dealiasify() {
   # e.g., alias l=ls --color=auto
   # e.g., alias ls=ls --color=auto
   local cmd="$1" # e.g., "upgrade", "ai", "l"
+  if ! _otel_has_alias "$cmd"; then return 1; fi
   local full_alias="$(_otel_resolve_alias "$cmd")"
-  case "$full_alias" in # TODO use _otel_starts_with (not im master yet)
-    "/"*) ;;
-    "."*) ;;
-    *) return 1;;
-  esac
+  while _otel_string_starts_with "$full_alias" 'OTEL_'; do local full_alias="${full_alias#* }"; done
+  if ! _otel_string_starts_with "$full_alias" / && ! _otel_string_starts_with "$full_alias" .; then return 2; fi
   local cmd_alias="$(\printf '%s' "$full_alias" | _otel_line_split | \grep -v '^OTEL_' | \grep -v '^_otel_' | \head -n1 | \rev | \cut -d / -f 1 | \rev)" # e.g., upgrade => bash
-  if \[ -z "$cmd_alias" ]; then return 2; fi
+  if \[ -z "$cmd_alias" ]; then return 3; fi
   local cmd_aliased="$(_otel_resolve_alias $cmd_alias)" # e.g., bash => _otel_inject_shell bash
-  if \[ -z "$cmd_aliased" ]; then return 3; fi
+  if \[ -z "$cmd_aliased" ]; then return 4; fi
   local otel_cmds="$(\printf '%s' "$cmd_aliased" | _otel_line_split | \grep '^_otel_' | \grep -v '^_otel_observe' | _otel_line_join)" # e.g., _otel_inject_shell bash => _otel_inject_shell
-  if \[ -z "$otel_cmds" ]; then return 4; fi
+  if \[ -z "$otel_cmds" ]; then return 5; fi
   _otel_alias_prepend "$cmd" "$otel_cmds" # e.g., alias upgrade='_otel_inject_shell /bin/bash -x /usr/bin/upgrade'
 }
 
@@ -210,12 +208,12 @@ _otel_alias_prepend() {
   local prepend_command="$2"
 
   if ! _otel_has_alias "$original_command"; then # fastpath
-    local new_command="$(\printf '%s' "$prepend_command '\\$original_command'")" # need to use printf to handle backslashes consistently across shells
+    local new_command="$(\printf '%s' "OTEL_SHELL_COMMAND_TYPE_OVERRIDE=$(_otel_command_type "$original_command") $prepend_command '\\$original_command'")" # need to use printf to handle backslashes consistently across shells
   else
     local previous_command="$(_otel_resolve_alias "$original_command")"
-    if \[ -z "$previous_command" ]; then local previous_command="$original_command"; fi
-    if _otel_string_starts_with "$previous_command" "OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="; then local previous_command="${previous_command#* }"; fi
     if _otel_string_contains "$previous_command" "$prepend_command"; then return 0; fi
+    if _otel_string_contains "$previous_command" "OTEL_SHELL_COMMAND_TYPE="; then local command_type="$(\printf '%s' "$previous_command" | _otel_line_split | \grep '^OTEL_SHELL_COMMAND_TYPE=' | \cut -d = -f 2)"; else local command_type="alias"; fi
+    while _otel_string_starts_with "$previous_command" "OTEL_"; do local previous_command="${previous_command#* }"; done
     local previous_otel_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep '^_otel_' | _otel_line_join)"
     local previous_alias_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep -v '^_otel_' | _otel_line_join)"
     case "$previous_alias_command" in
@@ -225,7 +223,7 @@ _otel_alias_prepend() {
       "\\$original_command "*) local previous_alias_command="$(\printf '%s' "'\\$original_command' $(_otel_string_contains "$previous_alias_command" " " && \printf '%s' "${previous_alias_command#* }" || \printf '%s' "$previous_alias_command")")";;
       *) ;;
     esac
-    local new_command="$previous_otel_command $prepend_command $previous_alias_command"
+    local new_command="OTEL_SHELL_COMMAND_TYPE_OVERRIDE=$command_type $previous_otel_command $prepend_command $previous_alias_command"
   fi
 
   \alias "$original_command"='OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="code.filepath='$_otel_source_file_resolver',code.lineno='$_otel_source_line_resolver',code.function='$_otel_source_func_resolver'" '"$new_command"
