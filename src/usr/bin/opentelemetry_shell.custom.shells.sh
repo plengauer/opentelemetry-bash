@@ -11,7 +11,6 @@ _otel_inject_shell_args_with_copy() {
   shift
   local is_script=0
   # command
-  if \[ "$1" = "_otel_observe" ]; then _otel_escape_arg "$1"; \echo -n " "; shift; fi
   local shell="${1#\\}"
   _otel_escape_arg "$1"; \echo -n " "
   shift
@@ -49,11 +48,9 @@ _otel_inject_shell_args_with_copy() {
 }
 
 _otel_inject_shell_with_copy() {
-  local cmdline="$({ set -- "$@"; if \[ "$1" = "_otel_observe" ]; then shift; fi; \printf '%s' "$*"; })"
   local temporary_script="$(\mktemp -u)"
   local exit_code=0
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_SPAN_NAME_OVERRIDE="$cmdline" OTEL_SHELL_AUTO_INJECTED=TRUE \
-    \eval "$(_otel_inject_shell_args_with_copy "$temporary_script" "$@")" || local exit_code=$? # should we do \eval _otel_call "$(.....)" here? is it safer concerning transport of the OTEL control variables?
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$(_otel_dollar_zero "$@")" OTEL_SHELL_AUTO_INJECTED=TRUE \eval "$(_otel_inject_shell_args_with_copy "$temporary_script" "$@")" || local exit_code=$?
   \rm "$temporary_script" 2> /dev/null || true
   return $exit_code
 }
