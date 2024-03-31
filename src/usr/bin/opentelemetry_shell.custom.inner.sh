@@ -34,7 +34,7 @@ _otel_inject_inner_command_args() {
 }
 
 _otel_inject_inner_command() {
-  local cmdline="$(_otel_dollar_zero "$@")"
+  local cmdline="$(_otel_dollar_star "$@")"
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$cmdline" \eval "$(_otel_inject_inner_command_args "$@")"
 }
 
