@@ -176,7 +176,7 @@ _otel_dealiasify() {
   local cmd="$1" # e.g., "upgrade", "ai", "l"
   if ! _otel_has_alias "$cmd"; then return 1; fi
   local full_alias="$(_otel_resolve_alias "$cmd")"
-  # while _otel_string_starts_with "$full_alias" 'OTEL_'; do local full_alias="${full_alias%% *}"; done
+  while _otel_string_starts_with "$full_alias" 'OTEL_'; do local full_alias="${full_alias##* }"; done
   if ! _otel_string_starts_with "$full_alias" / && ! _otel_string_starts_with "$full_alias" .; then return 2; fi
   local cmd_alias="$(\printf '%s' "$full_alias" | _otel_line_split | \grep -v '^OTEL_' | \grep -v '^_otel_' | \head -n1 | \rev | \cut -d / -f 1 | \rev)" # e.g., upgrade => bash
   if \[ -z "$cmd_alias" ]; then return 3; fi
