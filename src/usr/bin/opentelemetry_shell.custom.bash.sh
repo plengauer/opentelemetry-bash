@@ -7,6 +7,8 @@
 # bash -x -c 'echo $0 $1 $2' bash foo bar => bash -x -c '. /otel.sh; echo $0 $1 $2' bash foo bar
 
 _otel_inject_shell_args_with_c_flag() {
+  local IFS=' 
+'
   # command
   local dollar_zero="${1#\\}" # in case its not a script, $0 becomes the executable
   _otel_escape_arg "$1"; \echo -n " "
