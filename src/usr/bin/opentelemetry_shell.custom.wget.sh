@@ -16,4 +16,4 @@ _otel_propagate_wget() {
   _otel_call "$@" --header="traceparent: $OTEL_TRACEPARENT"
 }
 
-_otel_alias_prepend wget 'OTEL_SHELL_SPAN_KIND_OVERRIDE=CLIENT' _otel_propagate_wget
+_otel_alias_prepend wget 'OTEL_SHELL_SPAN_KIND_OVERRIDE=CLIENT _otel_propagate_wget'
