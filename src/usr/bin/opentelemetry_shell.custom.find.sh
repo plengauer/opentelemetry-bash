@@ -8,6 +8,8 @@
 # find . -execdir rm {} + -iname "*.txt" => find . -execdir sh -c '. /otel.sh; rm "$@"' find {} + -iname "*.txt"
 
 _otel_inject_find_arguments() {
+  local IFS=' 
+'
   _otel_escape_arg "$1"
   shift
   local in_exec=0
