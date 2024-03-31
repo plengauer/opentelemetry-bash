@@ -223,7 +223,7 @@ _otel_alias_prepend() {
       "\\$original_command "*) local previous_alias_command="$(\printf '%s' "'\\$original_command' $(_otel_string_contains "$previous_alias_command" " " && \printf '%s' "${previous_alias_command#* }" || \printf '%s' "$previous_alias_command")")";;
       *) ;;
     esac
-    local new_command="OTEL_SHELL_COMMAND_TYPE_OVERRIDE=$command_type $previous_otel_command $prepend_command $previous_alias_command"
+    local new_command="OTEL_SHELL_COMMAND_TYPE_OVERRIDE=$command_type $prepend_command $previous_otel_command $previous_alias_command"
   fi
 
   \alias "$original_command"='OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="code.filepath='$_otel_source_file_resolver',code.lineno='$_otel_source_line_resolver',code.function='$_otel_source_func_resolver'" '"$new_command"
