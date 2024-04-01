@@ -76,7 +76,7 @@ _otel_parse_curl_output() {
   fi
   if _otel_string_starts_with "$line" "> " && _otel_string_contains "$line" ": " && ! _otel_string_contains "$(\printf '%s' "$line" | \tr '[:upper:]' '[:lower:]')" "authorization: " && ! _otel_string_contains "$(\printf '%s' "$line" | \tr '[:upper:]' '[:lower:]')" "token: " && ! _otel_string_contains "$(\printf '%s' "$line" | \tr '[:upper:]' '[:lower:]')" "key: "; then
     otel_span_attribute "$span_id" http.request.header."$(\printf '%s' "$line" | \cut -d ':' -f 1 | \tr '[:upper:]' '[:lower:]')"="$(\printf '%s' "$line" | \cut -d ' ' -f 2-)"
-  elif _otel_string_starts-with "$line" "< " && _otel_string_line_contains "$line" ": "; then
+  elif _otel_string_starts_with "$line" "< " && _otel_string_contains "$line" ": "; then
     otel_span_attribute "$span_id" http.request.header."$(\printf '%s' "$line" | \cut -d ':' -f 1 | \tr '[:upper:]' '[:lower:]')"="$(\printf '%s' "$line" | \cut -d ' ' -f 2-)"
   fi
 }
