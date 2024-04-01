@@ -59,8 +59,8 @@ _otel_propagate_curl() {
 # * Connection #0 to host www.google.at left intact
 
 _otel_parse_curl_output() {
-  local span_id="$span_id"
-  local line="$line"
+  local span_id="$1"
+  local line="$2"
   if _otel_string_starts_with "* Connected to "; then
     otel_span_attribute "$span_id" network.peer.address="$(\printf '%s' "$line" | \cut -d '|' -f 5 | \tr -d '()')"
     otel_span_attribute "$span_id" network.peer.port="$(\printf '%s' "$line" | \cut -d '|' -f 7)"    
