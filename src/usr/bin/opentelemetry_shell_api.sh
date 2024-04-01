@@ -222,7 +222,8 @@ otel_observe() {
   # run command
   otel_span_activate "$span_id"
   local exit_code=0
-  if ! \[ -t 0 ] && ! \[ -t 1 ] && ! \[ -t 2 ] && \false; then # this is highly experimental and therefore by default off for now
+  if ! \[ -t 0 ] && ! \[ -t 1 ] && ! \[ -t 2 ]; then
+  # if ! \[ -t 0 ] && ! \[ -t 1 ] && ! \[ -t 2 ] && \[ "$OTEL_SHELL_EXPERIMENTAL_OBSERVE_PIPES" = TRUE ]; then
     call_command='_otel_call_and_record_pipes "$span_id" _otel_call_and_record_logs _otel_call'
   elif ! \[ -t 2 ]; then
     call_command='_otel_call_and_record_logs _otel_call'
@@ -324,9 +325,11 @@ _otel_call_and_record_pipes() {
   \wc -l < "$stderr_lines" > "$stderr_lines_result" &
   local stderr_lines_pid="$!"
   \tee "$stdout_bytes" < "$stdout" | \tee "$stdout_lines" &
+  local stdout_pid="$!"
   \tee "$stderr_bytes" < "$stderr" | \tee "$stderr_lines" >&2 &
+  local stderr_pid="$!"
   \tee "$stdin_bytes" | \tee "$stdin_lines" | $call_command "$@" 1> "$stdout" 2> "$stderr" || local exit_code="$?"
-  \wait "$stdin_bytes_pid" "$stdin_lines_pid" "$stdout_bytes_pid" "$stdout_lines_pid" "$stderr_bytes_pid" "$stderr_lines_pid"
+  \wait "$stdin_bytes_pid" "$stdin_lines_pid" "$stdout_bytes_pid" "$stdout_lines_pid" "$stderr_bytes_pid" "$stderr_lines_pid" "$stdout_pid" "$stderr_pid"
   \rm "$stdout" "$stderr" "$stdin_bytes" "$stdin_lines" "$stdout_bytes" "$stdout_lines" "$stderr_bytes" "$stderr_lines" 2> /dev/null
   otel_span_attribute "$span_id" pipe.stdin.bytes="$(\cat "$stdin_bytes_result")"
   otel_span_attribute "$span_id" pipe.stdin.lines="$(\cat "$stdin_lines_result")"
