@@ -270,18 +270,29 @@ else
 fi
 
 _otel_call_and_record_logs() {
+  case "$-" in
+    *m*) local job_control=1; \set +m;;
+    *) local job_control=0;;
+  esac
   local call_command="$1"; shift
   local traceparent="$OTEL_TRACEPARENT"
   local stderr_pipe="$(\mktemp -u)_opentelemetry_shell_$$.stderr.logs.pipe"
   \mkfifo "$stderr_logs"
-  ( (while IFS= read -r line; do _otel_log_record "$traceparent" "$line"; \echo "$line" >&2; done < "$stderr_logs") & )
+  while IFS= read -r line; do _otel_log_record "$traceparent" "$line"; \echo "$line" >&2; done < "$stderr_logs" &
+  local stderr_pid="$!"
   local exit_code=0
   $call_command "$@" 2> "$stderr_logs" || local exit_code="$?"
+  \wait "$stderr_pid"
   \rm "$stderr_logs" 2> /dev/null
+  if \[ "$job_control" = 1 ]; then \set -m; fi
   return "$exit_code"
 }
 
 _otel_call_and_record_pipes() {
+  case "$-" in
+    *m*) local job_control=1; \set +m;;
+    *) local job_control=0;;
+  esac
   local span_id="$1"; shift
   local call_command="$1"; shift
   local stdin_bytes_result="$(\mktemp -u)_opentelemetry_shell_$$.stdin.bytes.result"
@@ -300,15 +311,22 @@ _otel_call_and_record_pipes() {
   local stderr_lines="$(\mktemp -u)_opentelemetry_shell_$$.stderr.lines.pipe"
   local exit_code=0
   \mkfifo "$stdout" "$stderr" "$stdin_bytes" "$stdin_lines" "$stdout_bytes" "$stdout_lines" "$stderr_bytes" "$stderr_lines"
-  ( \wc -c < "$stdin_bytes" > "$stdin_bytes_result" & )
-  ( \wc -l < "$stdin_lines" > "$stdin_lines_result" & )
-  ( \wc -c < "$stdout_bytes" > "$stdout_bytes_result" & )
-  ( \wc -l < "$stdout_lines" > "$stdout_lines_result" & )
-  ( \wc -c < "$stderr_bytes" > "$stderr_bytes_result" & )
-  ( \wc -l < "$stderr_lines" > "$stderr_lines_result" & )
-  ( \tee "$stdout_bytes" < "$stdout" | \tee "$stdout_lines" & )
-  ( \tee "$stderr_bytes" < "$stderr" | \tee "$stderr_lines" >&2 & )
+  \wc -c < "$stdin_bytes" > "$stdin_bytes_result" &
+  local stdin_bytes_pid="$!"
+  \wc -l < "$stdin_lines" > "$stdin_lines_result" &
+  local stdin_lines_pid="$!"
+  \wc -c < "$stdout_bytes" > "$stdout_bytes_result" &
+  local stdout_bytes_pid="$!"
+  \wc -l < "$stdout_lines" > "$stdout_lines_result" &
+  local stdout_lines_pid="$!"
+  \wc -c < "$stderr_bytes" > "$stderr_bytes_result" &
+  local stderr_bytes_pid="$!"
+  \wc -l < "$stderr_lines" > "$stderr_lines_result" &
+  local stderr_lines_pid="$!"
+  \tee "$stdout_bytes" < "$stdout" | \tee "$stdout_lines" &
+  \tee "$stderr_bytes" < "$stderr" | \tee "$stderr_lines" >&2 &
   \tee "$stdin_bytes" | \tee "$stdin_lines" | $call_command "$@" 1> "$stdout" 2> "$stderr" || local exit_code="$?"
+  \wait "$stdin_bytes_pid" "$stdin_lines_pid" "$stdout_bytes_pid" "$stdout_lines_pid" "$stderr_bytes_pid" "$stderr_lines_pid"
   \rm "$stdout" "$stderr" "$stdin_bytes" "$stdin_lines" "$stdout_bytes" "$stdout_lines" "$stderr_bytes" "$stderr_lines" 2> /dev/null
   otel_span_attribute "$span_id" pipe.stdin.bytes="$(\cat "$stdin_bytes_result")"
   otel_span_attribute "$span_id" pipe.stdin.lines="$(\cat "$stdin_lines_result")"
@@ -317,6 +335,7 @@ _otel_call_and_record_pipes() {
   otel_span_attribute "$span_id" pipe.stderr.bytes="$(\cat "$stderr_bytes_result")"
   otel_span_attribute "$span_id" pipe.stderr.lines="$(\cat "$stderr_lines_result")"
   \rm "$stdin_bytes_result" "$stdin_lines_result" "$stdout_bytes_result" "$stdout_lines_result" "$stderr_bytes_result" "$stderr_lines_result" 2> /dev/null
+  if \[ "$job_control" = 1 ]; then \set -m; fi
   return "$exit_code"
 }
 
