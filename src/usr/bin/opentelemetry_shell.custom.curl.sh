@@ -18,8 +18,8 @@ _otel_propagate_curl() {
   else
     otel_span_attribute "$span_id" http.request.method=GET
   fi
-  otel_span_attribute "$span_id" "server.address=/$(\printf '%s' "$url" | \cut -d / -f 3 | \cut -d : -f 1)"
-  otel_span_attribute "$span_id" "server.port=/$(\printf '%s' "$url" | \cut -d / -f 3 | \cut -sd : -f 2)"
+  otel_span_attribute "$span_id" "server.address=$(\printf '%s' "$url" | \cut -d / -f 3 | \cut -d : -f 1)"
+  otel_span_attribute "$span_id" "server.port=$(\printf '%s' "$url" | \cut -d / -f 3 | \cut -sd : -f 2)"
   otel_span_attribute "$span_id" "url.full=$url"
   otel_span_attribute "$span_id" "url.path=/$(\printf '%s' "$url" | \cut -d / -f 4- | \cut -d ? -f 1)"
   otel_span_attribute "$span_id" "url.query=$(\printf '%s' "$url" | \cut -sd ? -f 2-)"
