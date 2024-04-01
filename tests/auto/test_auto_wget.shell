@@ -8,7 +8,16 @@ assert_equals "wget -O - http://www.google.com/" "$(\echo "$span" | jq -r '.name
 assert_equals "SpanKind.CLIENT" $(\echo "$span" | jq -r '.kind')
 assert_not_equals "null" $(\echo "$span" | jq -r '.parent_id')
 assert_equals "UNSET" $(\echo "$span" | jq -r '.status.status_code')
-assert_equals "http://www.google.com/" "$(\echo "$span" | jq -r '.attributes."http.url"')"
-assert_equals "www.google.com" "$(\echo "$span" | jq -r '.attributes."http.host"')"
-assert_equals "/" "$(\echo "$span" | jq -r '.attributes."http.target"')"
 assert_equals "0" $(\echo "$span" | jq -r '.attributes."shell.command.exit_code"')
+
+assert_equals "/" "$(\echo "$span" | jq -r '.attributes."http.target"')"
+assert_equals "GET" "$(\echo "$span" | jq -r '.attributes."http.request.method"')"
+assert_equals "200" "$(\echo "$span" | jq -r '.attributes."http.response.status_code"')"
+assert_equals "1.0" "$(\echo "$span" | jq -r '.attributes."network.protocol.name"')"
+assert_equals "http://www.google.com/" "$(\echo "$span" | jq -r '.attributes."url.full"')"
+assert_equals "http" "$(\echo "$span" | jq -r '.attributes."url.scheme"')"
+assert_equals "/" "$(\echo "$span" | jq -r '.attributes."url.path"')"
+assert_equals "/" "$(\echo "$span" | jq -r '.attributes."url.query"')"
+assert_not_equals null "$(\echo "$span" | jq -r '.attributes."user_agent.original"')"
+# TODO optionally record http.request.resend_count
+# TODO optionally record http.request.body.size and http.response.body.size
