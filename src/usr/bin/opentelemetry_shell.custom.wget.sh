@@ -22,8 +22,6 @@ _otel_propagate_wget() {
   return "$exit_code"
 }
 
-
-
 _otel_parse_wget_output() {
   local span_id="$span_id"
   local line="$line"
