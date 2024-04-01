@@ -24,8 +24,8 @@ _otel_propagate_wget() {
 }
 
 _otel_parse_wget_output() {
-  local span_id="$span_id"
-  local line="$line"
+  local span_id="$1"
+  local line="$2"
   if _otel_string_starts_with "$line" "HTTP request sent, awaiting response... "; then
     # HTTP request sent, awaiting response... 301 Moved Permanently
     # HTTP request sent, awaiting response... 200 OK
