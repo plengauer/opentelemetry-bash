@@ -61,10 +61,10 @@ _otel_propagate_curl() {
 _otel_parse_curl_output() {
   local span_id="$1"
   local line="$2"
-  if _otel_string_starts_with "* Connected to "; then
+  if _otel_string_starts_with "$line" "* Connected to "; then
     otel_span_attribute "$span_id" network.peer.address="$(\printf '%s' "$line" | \cut -d '|' -f 5 | \tr -d '()')"
     otel_span_attribute "$span_id" network.peer.port="$(\printf '%s' "$line" | \cut -d '|' -f 7)"    
-  elif _otel_string_starts_with "> HTTP/"; then
+  elif _otel_string_starts_with "$line" "> HTTP/"; then
     otel_span_attribute "$span_id" http.response.status_code="$(\printf '%s' "$line" | \cut -d ' ' -f 3)"
   elif _otel_string_starts_with "$line" "{ [" && _otel_string_contains "bytes data]"; then
     otel_span_attribute "$span_id" http.response.body.size="$(\printf '%s' "$line" | \cut -d ' ' -f 2 | \tr -d '[')"
