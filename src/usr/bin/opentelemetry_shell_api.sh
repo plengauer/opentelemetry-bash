@@ -19,9 +19,6 @@ _otel_shell="$(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)"
 if \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "$PPID" ] || \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "0" ]; then _otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"; fi
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE
-unset OTEL_SHELL_SPAN_NAME_OVERRIDE
-unset OTEL_SHELL_SPAN_KIND_OVERRIDE
-unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
 unset OTEL_SHELL_COMMAND_TYPE_OVERRIDE
 unset OTEL_SHELL_SUPPRESS_LOG_COLLECTION
 
@@ -117,6 +114,14 @@ _otel_resolve_package_version() {
   dpkg -s "$1" 2> /dev/null | \grep Version: | \cut -d ' ' -f 2
 }
 
+otel_span_current() {
+  local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
+  \mkfifo "$response_pipe"
+  _otel_sdk_communicate "SPAN_ID" "$response_pipe" "$OTEL_TRACEPARENT"
+  \cat "$response_pipe"
+  \rm "$response_pipe" &> /dev/null
+}
+
 otel_span_start() {
   local kind="$1"
   local name="$2"
@@ -192,26 +197,16 @@ otel_metric_add() {
 otel_observe() {
   # validate and clean arguments
   local dollar_star="$(_otel_dollar_star "$@")"
-  local name="${OTEL_SHELL_SPAN_NAME_OVERRIDE:-$dollar_star}"
-  local name="${name#otel_observe }"
-  local name="${name#_otel_observe }"
-  local name="${name#\\}"
-  local kind="${OTEL_SHELL_SPAN_KIND_OVERRIDE:-INTERNAL}"
-  local command="${OTEL_SHELL_COMMANDLINE_OVERRIDE:-$dollar_star}"
-  local command="${command#otel_observe }"
-  local command="${command#_otel_observe }"
+  local command="$dollar_star"
+  while _otel_string_starts_with "$command" "_otel_"; do local command="${command#* }"; done
   local command="${command#\\}"
-  local command_signature="${OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE:-$$}" # OTEL_SHELL_COMMAND_TYPE_OVERRIDE
+  local kind="${OTEL_SHELL_SPAN_KIND_OVERRIDE:-INTERNAL}"
   local attributes="$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE"
   local command_type="$OTEL_SHELL_COMMAND_TYPE_OVERRIDE"
-  unset OTEL_SHELL_SPAN_NAME_OVERRIDE
-  unset OTEL_SHELL_SPAN_KIND_OVERRIDE
   unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
-  unset OTEL_SHELL_COMMANDLINE_OVERRIDE
-  unset OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE
   unset OTEL_SHELL_COMMAND_TYPE_OVERRIDE
   # create span, set initial attributes
-  local span_id="$(otel_span_start "$kind" "$name")"
+  local span_id="$(otel_span_start "$kind" "$command")"
   otel_span_attribute "$span_id" shell.command="$command"
   if _otel_string_contains "$command" " "; then local command_name="${command%% *}"; else  local command_name="$command"; fi # "$(\printf '%s' "$command" | \cut -sd ' ' -f 2-)" # this returns the command if there are no args, its the cut -s that cant be done via expansion alone
   if \[ -z "$command_type" ]; then local command_type="$(_otel_command_type "$command_name")"; fi
@@ -224,20 +219,16 @@ otel_observe() {
   fi  
   # run command
   otel_span_activate "$span_id"
-  if \[ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0)"; fi
-  if \[ -n "$OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1" ]; then set -- "$@" "$(eval \\echo $OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1)"; fi
-  unset OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_0
-  unset OTEL_SHELL_ADDITIONAL_ARGUMENTS_POST_1
   local exit_code=0
   if ! \[ -t 2 ] && \[ "$OTEL_SHELL_SUPPRESS_LOG_COLLECTION" != TRUE ]; then
     local traceparent="$OTEL_TRACEPARENT"
     local stderr_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
     \mkfifo "$stderr_pipe"
     ( (while IFS= read -r line; do _otel_log_record "$traceparent" "$line"; \echo "$line" >&2; done < "$stderr_pipe") & )
-    OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$command_signature" _otel_call "$@" 2> "$stderr_pipe" || local exit_code="$?"
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$$" _otel_call "$@" 2> "$stderr_pipe" || local exit_code="$?"
     \rm "$stderr_pipe"
   else
-    OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$command_signature" _otel_call "$@" || local exit_code="$?"
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$$" _otel_call "$@" || local exit_code="$?"
   fi
   otel_span_deactivate "$span_id"
   # set custom attributes, set final attributes, finish span
