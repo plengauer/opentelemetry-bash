@@ -3,6 +3,10 @@
 # wget -O - https://www.google.at => wget -O - https://www.google.at '--header=traceparent: 00-XXXXXX-01'
 
 _otel_propagate_wget() {
+  case "$-" in
+    *m*) local job_control=1; \set +m;;
+    *) local job_control=0;;
+  esac
   local url=$(_otel_dollar_star "$@" | \awk '{for(i=1;i<=NF;i++) if ($i ~ /^http/) print $i}')
   local span_id="$(otel_span_current)"
   otel_span_attribute "$span_id" network.protocol.name=http
@@ -17,12 +21,13 @@ _otel_propagate_wget() {
   otel_span_attribute "$span_id" user_agent.original=wget
   local stderr_pipe="$(\mktemp -u)_opentelemetry_shell_$$.stderr.wget.pipe"
   \mkfifo "$stderr_pipe"
-  ( \cat "$stderr_pipe" | while read -r line; do _otel_parse_wget_output "$span_id" "$line"; \echo "$line" >&2; done & )
+  while read -r line; do _otel_parse_wget_output "$span_id" "$line"; \echo "$line" >&2; done < "$stderr_pipe" &
+  local stderr_pid="$!"
   local exit_code=0
   _otel_call "$@" --header="traceparent: $OTEL_TRACEPARENT" 2> "$stderr_pipe" || exit_code="$?"
-  # TODO how to wait?
-  \sleep 10
+  \wait "$stderr_pid"
   \rm "$stderr_pipe"
+  if \[ "$job_control" = 1 ]; then \set -m; then
   return "$exit_code"
 }
 
