@@ -28,7 +28,7 @@ _otel_propagate_curl() {
   ( (while read -r line; do _otel_parse_curl_output "$span_id" "$line"; if \[ "$is_verbose" = 1 ]; then \echo "$line" >&2; fi; done < "$stderr_pipe") & )
   local exit_code=0
   _otel_call "$@" -H "traceparent: $OTEL_TRACEPARENT" -v 2> "$stderr_pipe" || exit_code="$?"
-  # wait for the background job above to end
+  # TODO wait for the background job above to end, otherwise we use a span id that has alreaddy been flushed
   \rm "$stderr_pipe"
   return "$exit_code"
 }
