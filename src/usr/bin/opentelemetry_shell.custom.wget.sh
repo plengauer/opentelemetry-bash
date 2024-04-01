@@ -18,6 +18,7 @@ _otel_propagate_wget() {
   ( (while read -r line; do _otel_parse_wget_output "$span_id" "$line"; \echo "$line" >&2; done < "$stderr_pipe") & )
   local exit_code=0
   _otel_call "$@" --header="traceparent: $OTEL_TRACEPARENT" 2> "$stderr_pipe" || exit_code="$?"
+  # TODO we actually have to wait for the background job above to be done, otherwise we may use a span id for span that is already terminated
   \rm "$stderr_pipe"
   return "$exit_code"
 }
