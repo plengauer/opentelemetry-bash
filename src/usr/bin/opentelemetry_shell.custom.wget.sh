@@ -17,7 +17,7 @@ _otel_propagate_wget() {
   otel_span_attribute "$span_id" user_agent.original=wget
   local stderr_pipe="$(\mktemp -u)_opentelemetry_shell_$$.stderr.wget.pipe"
   \mkfifo "$stderr_pipe"
-  ( (\cat "$stderr_pipe" | while read -r line; do _otel_parse_wget_output "$span_id" "$line"; \echo "$line" >&2; done) & )
+  ( \cat "$stderr_pipe" | while read -r line; do _otel_parse_wget_output "$span_id" "$line"; \echo "$line" >&2; done & )
   local stderr_pid="$!"
   local exit_code=0
   _otel_call "$@" --header="traceparent: $OTEL_TRACEPARENT" 2> "$stderr_pipe" || exit_code="$?"
