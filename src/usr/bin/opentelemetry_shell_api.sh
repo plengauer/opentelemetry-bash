@@ -224,7 +224,7 @@ otel_observe() {
   local exit_code=0
   if ! \[ -t 0 ] && ! \[ -t 1 ] && ! \[ -t 2 ]; then
   # if ! \[ -t 0 ] && ! \[ -t 1 ] && ! \[ -t 2 ] && \[ "$OTEL_SHELL_EXPERIMENTAL_OBSERVE_PIPES" = TRUE ]; then
-    call_command='_otel_call_and_record_pipes "$span_id" _otel_call_and_record_logs _otel_call'
+    call_command="_otel_call_and_record_pipes $span_id _otel_call_and_record_logs _otel_call"
   elif ! \[ -t 2 ]; then
     call_command='_otel_call_and_record_logs _otel_call'
   else
