@@ -223,11 +223,11 @@ otel_observe() {
   otel_span_activate "$span_id"
   local exit_code=0
   if ! \[ -t 0 ] && ! \[ -t 1 ] && ! \[ -t 2 ] && \false; then # this is highly experimental and therefore by default off for now
-    call_command=_otel_call_and_record_pipes "$span_id" _otel_call_and_record_logs _otel_call
+    call_command='_otel_call_and_record_pipes "$span_id" _otel_call_and_record_logs _otel_call'
   elif ! \[ -t 2 ]; then
-    call_command=_otel_call_and_record_logs _otel_call
+    call_command='_otel_call_and_record_logs _otel_call'
   else
-    call_command=_otel_call
+    call_command='_otel_call'
   fi
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$$" $call_command "$@" || local exit_code="$?"
   otel_span_deactivate "$span_id"
