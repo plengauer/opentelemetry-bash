@@ -272,11 +272,12 @@ fi
 _otel_call_and_record_logs() {
   local call_command="$1"; shift
   local traceparent="$OTEL_TRACEPARENT"
-  \mkfifo "$stderr_pipe"
-  ( (while IFS= read -r line; do _otel_log_record "$traceparent" "$line"; \echo "$line" >&2; done < "$stderr_pipe") & )
+  local stderr_pipe="$(\mktemp -u)_opentelemetry_shell_$$.stderr.logs.pipe"
+  \mkfifo "$stderr_logs"
+  ( (while IFS= read -r line; do _otel_log_record "$traceparent" "$line"; \echo "$line" >&2; done < "$stderr_logs") & )
   local exit_code=0
-  $call_command "$@" 2> "$stderr_pipe" || local exit_code="$?"
-  \rm "$stderr_pipe" 2> /dev/null
+  $call_command "$@" 2> "$stderr_logs" || local exit_code="$?"
+  \rm "$stderr_logs" 2> /dev/null
   return "$exit_code"
 }
 
