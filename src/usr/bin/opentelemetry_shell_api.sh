@@ -276,7 +276,7 @@ _otel_call_and_record_logs() {
   esac
   local call_command="$1"; shift
   local traceparent="$OTEL_TRACEPARENT"
-  local stderr_pipe="$(\mktemp -u)_opentelemetry_shell_$$.stderr.logs.pipe"
+  local stderr_logs="$(\mktemp -u)_opentelemetry_shell_$$.stderr.logs.pipe"
   \mkfifo "$stderr_logs"
   while IFS= read -r line; do _otel_log_record "$traceparent" "$line"; \echo "$line" >&2; done < "$stderr_logs" &
   local stderr_pid="$!"
