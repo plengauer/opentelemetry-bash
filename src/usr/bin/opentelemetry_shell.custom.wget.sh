@@ -21,6 +21,7 @@ _otel_propagate_wget() {
   local exit_code=0
   _otel_call "$@" --header="traceparent: $OTEL_TRACEPARENT" 2> "$stderr_pipe" || exit_code="$?"
   # TODO how to wait?
+  \sleep 10
   \rm "$stderr_pipe"
   return "$exit_code"
 }
