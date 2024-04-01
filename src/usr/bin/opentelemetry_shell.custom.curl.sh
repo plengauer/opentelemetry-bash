@@ -72,7 +72,7 @@ _otel_parse_curl_output() {
   if _otel_string_starts_with "$line" "* Connected to "; then
     otel_span_attribute "$span_id" network.peer.address="$(\printf '%s' "$line" | \cut -d ' ' -f 5 | \tr -d '()')"
     otel_span_attribute "$span_id" network.peer.port="$(\printf '%s' "$line" | \cut -d ' ' -f 7)"    
-  elif _otel_string_starts_with "$line" "> HTTP/"; then
+  elif _otel_string_starts_with "$line" "< HTTP/"; then
     otel_span_attribute "$span_id" http.response.status_code="$(\printf '%s' "$line" | \cut -d ' ' -f 3)"
   elif _otel_string_starts_with "$line" "{ [" && _otel_string_contains "bytes data]"; then
     otel_span_attribute "$span_id" http.response.body.size="$(\printf '%s' "$line" | \cut -d ' ' -f 2 | \tr -d '[')"
@@ -86,7 +86,7 @@ _otel_parse_curl_output() {
   if _otel_string_starts_with "$line" "> " && _otel_string_contains "$line" ": " && ! _otel_string_contains "$(\printf '%s' "$line" | \tr '[:upper:]' '[:lower:]')" "authorization: " && ! _otel_string_contains "$(\printf '%s' "$line" | \tr '[:upper:]' '[:lower:]')" "token: " && ! _otel_string_contains "$(\printf '%s' "$line" | \tr '[:upper:]' '[:lower:]')" "key: "; then
     otel_span_attribute "$span_id" http.request.header."$(\printf '%s' "$line" | \cut -d ' ' -f 2 | \tr -d ':' | \tr '[:upper:]' '[:lower:]')"="$(\printf '%s' "$line" | \cut -d ' ' -f 3-)"
   elif _otel_string_starts_with "$line" "< " && _otel_string_contains "$line" ": "; then
-    otel_span_attribute "$span_id" http.request.header."$(\printf '%s' "$line" | \cut -d ' ' -f 2 | \tr -d ':' | \tr '[:upper:]' '[:lower:]')"="$(\printf '%s' "$line" | \cut -d ' ' -f 3-)"
+    otel_span_attribute "$span_id" http.response.header."$(\printf '%s' "$line" | \cut -d ' ' -f 2 | \tr -d ':' | \tr '[:upper:]' '[:lower:]')"="$(\printf '%s' "$line" | \cut -d ' ' -f 3-)"
   fi
 }
 
