@@ -10,9 +10,7 @@ else
 fi
 . /usr/bin/opentelemetry_shell.sh
 export OTEL_SHELL_EXPERIMENTAL_OBSERVE_PIPES=TRUE
-set -x
 fail_no_auto.shell
-set +x
 assert_equals 0 $?
 span="$(resolve_span '.resource.attributes."process.command" == "/bin/sh /usr/bin/fail_no_auto.shell"')"
 assert_equals "myspan" "$(\echo "$span" | jq -r '.name')"
