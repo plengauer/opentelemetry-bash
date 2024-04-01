@@ -8,6 +8,8 @@ _otel_propagate_wget() {
   otel_span_attribute "$span_id" network.protocol.name=http
   otel_span_attribute "$span_id" network.transport=tcp
   otel_span_attribute "$span_id" "http.request.method=GET"
+  otel_span_attribute "$span_id" "server.address=/$(\printf '%s' "$url" | \cut -d / -f 3)"
+  otel_span_attribute "$span_id" "server.port=/$(\printf '%s' "$url" | \cut -d / -f 3)"
   otel_span_attribute "$span_id" "url.full=$url"
   otel_span_attribute "$span_id" "url.path=/$(\printf '%s' "$url" | \cut -d / -f 4- | \cut -d ? -f 1)"
   otel_span_attribute "$span_id" "url.query=$(\printf '%s' "$url" | \cut -sd ? -f 2-)"
