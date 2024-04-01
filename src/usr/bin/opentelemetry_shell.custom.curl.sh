@@ -3,6 +3,10 @@
 # curl -v https://www.google.at => curl -v https://www.google.at -H 'traceparent: 00-XXXXXX-01'
 
 _otel_propagate_curl() {
+  case "$-" in
+    *m*) local job_control=1; \set +m;;
+    *) local job_control=0;;
+  esac
   local command="$(_otel_dollar_star "$@")"
   if _otel_string_contains "$command" " -v "; then local is_verbose=0; fi
   local url=$(printf '%s' "$command" | \awk '{for(i=1;i<=NF;i++) if ($i ~ /^http/) print $i}')
@@ -27,11 +31,13 @@ _otel_propagate_curl() {
   otel_span_attribute "$span_id" user_agent.original=curl
   local stderr_pipe="$(\mktemp -u)_opentelemetry_shell_$$.stderr.curl.pipe"
   \mkfifo "$stderr_pipe"
-  ( (while read -r line; do _otel_parse_curl_output "$span_id" "$line"; if \[ "$is_verbose" = 1 ]; then \echo "$line" >&2; fi; done < "$stderr_pipe") & )
+  while read -r line; do _otel_parse_curl_output "$span_id" "$line"; if \[ "$is_verbose" = 1 ]; then \echo "$line" >&2; fi; done < "$stderr_pipe" &
+  local stderr_pid="$!"
   local exit_code=0
   _otel_call "$@" -H "traceparent: $OTEL_TRACEPARENT" -v 2> "$stderr_pipe" || exit_code="$?"
-  # TODO wait for the background job above to end, otherwise we use a span id that has alreaddy been flushed
+  \wait "$stderr_pid"
   \rm "$stderr_pipe"
+  if \[ "$job_control" = 1 ]; then \set -m; fi
   return "$exit_code"
 }
 
