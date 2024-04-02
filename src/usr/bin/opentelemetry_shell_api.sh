@@ -13,16 +13,17 @@ if \[ -n "$OTEL_SHELL_TRACES_ENABLE" ] || \[ -n "$OTEL_SHELL_METRICS_ENABLE" ] |
   export OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=delta
 fi
 
-if \[ "$OTEL_SHELL_DEBUG" = 1 ]; then
-  \echo "DEBUG $OTEL_SHELL_COMMANDLINE_OVERRIDE" >&2
-  \echo "DEBUG signature $OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE $(\cat /proc/$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE/cmdline | \tr '\000' ' ')" >&2
-  \echo "DEBUG ppid $PPID $(\cat /proc/$PPID/cmdline | \tr '\000' ' ')" >&2
-fi
+#if \[ "$OTEL_SHELL_DEBUG" = 1 ]; then
+#  \echo "DEBUG $OTEL_SHELL_COMMANDLINE_OVERRIDE" >&2
+#  \echo "DEBUG signature $OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE $(\cat /proc/$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE/cmdline | \tr '\000' ' ')" >&2
+#  \echo "DEBUG ppid $PPID $(\cat /proc/$PPID/cmdline | \tr '\000' ' ')" >&2
+# fi
 
 # basic setup
 _otel_remote_sdk_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
 _otel_shell="$(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)"
-if \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = 0 ] || \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "$PPID" ] || \[ "$(\tr '\000' ' ' < /proc/$PPID/cmdline)" = "$(\tr '\000' ' ' < /proc/$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE/cmdline)" ]; then _otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"; fi
+# if \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = 0 ] || \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "$PPID" ] || \[ "$(\tr '\000' ' ' < /proc/$PPID/cmdline)" = "$(\tr '\000' ' ' < /proc/$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE/cmdline)" ]; then _otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"; fi
+if \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = 0 ] || \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "$PPID" ]; then _otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"; fi
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE
 unset OTEL_SHELL_COMMAND_TYPE_OVERRIDE
