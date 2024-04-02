@@ -31,7 +31,7 @@ _otel_propagate_curl() {
   otel_span_attribute "$span_id" user_agent.original=curl
   local stderr_pipe="$(\mktemp -u)_opentelemetry_shell_$$.stderr.curl.pipe"
   \mkfifo "$stderr_pipe"
-  while read -r line; do _otel_pipe_curl_stderr_line "$is_verbose" "$span_id" "$line" >&2; fi; done < "$stderr_pipe" &
+  while read -r line; do _otel_pipe_curl_stderr_line "$is_verbose" "$span_id" "$line" >&2; done < "$stderr_pipe" &
   local stderr_pid="$!"
   local exit_code=0
   _otel_call "$@" -H "traceparent: $OTEL_TRACEPARENT" -v 2> "$stderr_pipe" || exit_code="$?"
@@ -89,7 +89,7 @@ _otel_pipe_curl_stderr_line() {
   elif _otel_string_starts_with "$line" "< " && _otel_string_contains "$line" ": "; then
     otel_span_attribute "$span_id" http.response.header."$(\printf '%s' "$line" | \cut -d ' ' -f 2 | \tr -d ':' | \tr '[:upper:]' '[:lower:]')"="$(\printf '%s' "$line" | \cut -d ' ' -f 3-)"
   fi
-  if \[ "$is_verbose" = 1 ] || ! (_otel_string_starts_with "$line" "* " || _otel_string_starts_with "$line" "> " || _otel_string_starts_with "$line" "< " || _otel_string_starts_with "$line" "{ "); then
+  if \[ "$is_verbose" = 1 ] || ! ( _otel_string_starts_with "$line" "* " || _otel_string_starts_with "$line" "> " || _otel_string_starts_with "$line" "< " || _otel_string_starts_with "$line" "{ " ); then
     \echo "$line"
   fi
 }
