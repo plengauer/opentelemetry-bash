@@ -17,7 +17,7 @@ if \[ "$OTEL_SHELL_DEBUG" = 1 ]; then
   \echo "DEBUG $OTEL_SHELL_COMMANDLINE_OVERRIDE" >&2
   \echo "DEBUG signature $OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE $(\cat /proc/$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE/cmdline | \tr '\000' ' ')" >&2
   \echo "DEBUG ppid $PPID $(\cat /proc/$PPID/cmdline | \tr '\000' ' ')" >&2
-esac
+fi
 
 # basic setup
 _otel_remote_sdk_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
