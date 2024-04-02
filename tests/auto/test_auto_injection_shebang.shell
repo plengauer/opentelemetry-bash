@@ -1,10 +1,10 @@
 . ./assert.sh
 if [ "$(whoami)" = "root" ]; then
-  echo "#!/bin/$SHELL" > /usr/bin/fail_no_auto.shell
+  echo "#!/bin/sh" > /usr/bin/fail_no_auto.shell
   cat auto/fail_no_auto.shell >> /usr/bin/fail_no_auto.shell
   chmod +x /usr/bin/fail_no_auto.shell
 else
-  echo "#!/bin/$SHELL" | sudo tee /usr/bin/fail_no_auto.shell
+  echo "#!/bin/sh" | sudo tee /usr/bin/fail_no_auto.shell
   cat auto/fail_no_auto.shell | sudo tee -a /usr/bin/fail_no_auto.shell
   sudo chmod +x /usr/bin/fail_no_auto.shell
 fi
