@@ -396,7 +396,7 @@ _otel_call_and_record_pipes() {
   local stderr_bytes_pid="$!"
   \wc -l < "$stderr_lines" > "$stderr_lines_result" &
   local stderr_lines_pid="$!"
-  \tee "$stdin_bytes" < /dev/stdin | \tee "$stdin_lines" > "$stdin"
+  \tee "$stdin_bytes" < /dev/stdin | \tee "$stdin_lines" > "$stdin" &
   local stdin_pid="$!"
   \tee "$stdout_bytes" < "$stdout" | \tee "$stdout_lines" &
   local stdout_pid="$!"
