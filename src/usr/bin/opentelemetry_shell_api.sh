@@ -290,6 +290,11 @@ _otel_call_and_record_logs() {
 }
 
 _otel_call_and_record_pipes() {
+  # some notes about this function
+  # (*) we have to wait for the background processes because otherwise the span_id may not be valid anymore
+  # (*) waiting for the processes only works when its not a subshell so we can access the last process id
+  # (*) not using a subshell means we have to disable job control, otherwise we get unwanted output
+  # (*) we can only directly tee stdin, otherwise the exit code cannot be captured propely if we pipe stdout directly
   case "$-" in
     *m*) local job_control=1; \set +m;;
     *) local job_control=0;;
@@ -329,10 +334,8 @@ _otel_call_and_record_pipes() {
   \tee "$stderr_bytes" < "$stderr" | \tee "$stderr_lines" >&2 &
   local stderr_pid="$!"
 \echo "DEBUG $OTEL_SHELL_COMMANDLINE_OVERRIDE" >&2
-\echo "DEBUG $OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" >&2
-\echo "DEBUG $(\cat /proc/$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE/cmdline)" >&2
-\echo "DEBUG $PPID" >&2
-\echo "DEBUG $(\cat /proc/$PPID/cmdline)" >&2
+\echo "DEBUG signature $OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE $(\cat /proc/$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE/cmdline | \tr '\000' ' ')" >&2
+\echo "DEBUG ppid $PPID $(\cat /proc/$PPID/cmdline | \tr '\000' ' ')" >&2
   \tee "$stdin_bytes" | \tee "$stdin_lines" | $call_command "$@" 1> "$stdout" 2> "$stderr" || local exit_code="$?"
   \wait "$stdin_bytes_pid" "$stdin_lines_pid" "$stdout_bytes_pid" "$stdout_lines_pid" "$stderr_bytes_pid" "$stderr_lines_pid" "$stdout_pid" "$stderr_pid"
   \rm "$stdout" "$stderr" "$stdin_bytes" "$stdin_lines" "$stdout_bytes" "$stdout_lines" "$stderr_bytes" "$stderr_lines" 2> /dev/null
