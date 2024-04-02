@@ -13,6 +13,12 @@ if \[ -n "$OTEL_SHELL_TRACES_ENABLE" ] || \[ -n "$OTEL_SHELL_METRICS_ENABLE" ] |
   export OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=delta
 fi
 
+if \[ "$OTEL_SHELL_DEBUG" = 1 ]; then
+  \echo "DEBUG $OTEL_SHELL_COMMANDLINE_OVERRIDE" >&2
+  \echo "DEBUG signature $OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE $(\cat /proc/$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE/cmdline | \tr '\000' ' ')" >&2
+  \echo "DEBUG ppid $PPID $(\cat /proc/$PPID/cmdline | \tr '\000' ' ')" >&2
+esac
+
 # basic setup
 _otel_remote_sdk_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
 _otel_shell="$(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)"
@@ -333,9 +339,6 @@ _otel_call_and_record_pipes() {
   local stdout_pid="$!"
   \tee "$stderr_bytes" < "$stderr" | \tee "$stderr_lines" >&2 &
   local stderr_pid="$!"
-\echo "DEBUG $OTEL_SHELL_COMMANDLINE_OVERRIDE" >&2
-\echo "DEBUG signature $OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE $(\cat /proc/$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE/cmdline | \tr '\000' ' ')" >&2
-\echo "DEBUG ppid $PPID $(\cat /proc/$PPID/cmdline | \tr '\000' ' ')" >&2
   \tee "$stdin_bytes" | \tee "$stdin_lines" | $call_command "$@" 1> "$stdout" 2> "$stderr" || local exit_code="$?"
   \wait "$stdin_bytes_pid" "$stdin_lines_pid" "$stdout_bytes_pid" "$stdout_lines_pid" "$stderr_bytes_pid" "$stderr_lines_pid" "$stdout_pid" "$stderr_pid"
   \rm "$stdout" "$stderr" "$stdin_bytes" "$stdin_lines" "$stdout_bytes" "$stdout_lines" "$stderr_bytes" "$stderr_lines" 2> /dev/null
