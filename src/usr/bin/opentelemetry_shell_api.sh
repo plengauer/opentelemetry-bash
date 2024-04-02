@@ -60,19 +60,19 @@ _otel_resource_attributes() {
   \echo process.command_line="$process_command"
   \echo process.command="${process_command%% *}" # "$(\printf '%s' "$process_command" | \cut -d ' ' -f 1)"
   \echo process.owner="$USER"
+  \echo process.runtime.name="$_otel_shell"
   case "$_otel_shell" in
-       sh) \echo process.runtime.name="Bourne Shell" ;;
-      ash) \echo process.runtime.name="Almquist Shell" ;;
-     dash) \echo process.runtime.name="Debian Almquist Shell" ;;
-     bash) \echo process.runtime.name="Bourne Again Shell" ;;
-      zsh) \echo process.runtime.name="Z Shell" ;;
-      ksh) \echo process.runtime.name="Korn Shell" ;;
-    pdksh) \echo process.runtime.name="Public Domain Korn Shell" ;;
-     posh) \echo process.runtime.name="Policy-compliant Ordinary Shell" ;;
-     yash) \echo process.runtime.name="Yet Another Shell" ;;
-     bosh) \echo process.runtime.name="Bourne Shell" ;;
-     fish) \echo process.runtime.name="Friendly Interactive Shell" ;;
-        *) \echo process.runtime.name="$process_executable_name" ;;
+       sh) \echo process.runtime.description="Bourne Shell" ;;
+      ash) \echo process.runtime.description="Almquist Shell" ;;
+     dash) \echo process.runtime.description="Debian Almquist Shell" ;;
+     bash) \echo process.runtime.description="Bourne Again Shell" ;;
+      zsh) \echo process.runtime.description="Z Shell" ;;
+      ksh) \echo process.runtime.description="Korn Shell" ;;
+    pdksh) \echo process.runtime.description="Public Domain Korn Shell" ;;
+     posh) \echo process.runtime.description="Policy-compliant Ordinary Shell" ;;
+     yash) \echo process.runtime.description="Yet Another Shell" ;;
+     bosh) \echo process.runtime.description="Bourne Shell" ;;
+     fish) \echo process.runtime.description="Friendly Interactive Shell" ;;
   esac
   \echo -n process.runtime.version=; _otel_package_version "$process_executable_name"
   \echo process.runtime.options="$-"
