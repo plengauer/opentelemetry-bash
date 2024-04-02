@@ -3,7 +3,7 @@
 
 bash auto/fail_no_auto.shell
 assert_equals 0 $?
-span="$(resolve_span '.resource.attributes."process.command" == "bash auto/fail_no_auto.shell"')"
+span="$(resolve_span '.resource.attributes."process.command_line" == "bash auto/fail_no_auto.shell"')"
 assert_equals "myspan" "$(\echo "$span" | jq -r '.name')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
 
@@ -12,6 +12,6 @@ assert_equals 42 $?
 
 bash auto/echo.shell
 assert_equals 0 $?
-span="$(resolve_span '.resource.attributes."process.command" == "bash auto/echo.shell"')"
+span="$(resolve_span '.resource.attributes."process.command_line" == "bash auto/echo.shell"')"
 assert_equals "echo hello world" "$(\echo "$span" | jq -r '.name')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
