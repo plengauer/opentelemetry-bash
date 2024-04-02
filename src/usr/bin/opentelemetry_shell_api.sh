@@ -208,11 +208,11 @@ otel_observe() {
   unset OTEL_SHELL_COMMAND_TYPE_OVERRIDE
   # create span, set initial attributes
   local span_id="$(otel_span_start "$kind" "$command")"
-  otel_span_attribute "$span_id" shell.command="$command"
+  otel_span_attribute "$span_id" shell.command_line="$command"
   if _otel_string_contains "$command" " "; then local command_name="${command%% *}"; else  local command_name="$command"; fi # "$(\printf '%s' "$command" | \cut -sd ' ' -f 2-)" # this returns the command if there are no args, its the cut -s that cant be done via expansion alone
   if \[ -z "$command_type" ]; then local command_type="$(_otel_command_type "$command_name")"; fi
-  otel_span_attribute "$span_id" shell.command.type="$command_type"
-  otel_span_attribute "$span_id" shell.command.name="$command_name"
+  otel_span_attribute "$span_id" shell.command_type="$command_type"
+  otel_span_attribute "$span_id" shell.command="$command_name"
   if \[ "$command_type" = file ]; then
     local executable_path="$(_otel_string_contains "$command_name" / && \echo "$command_name" || \which "$command_name")"
     otel_span_attribute "$span_id" subprocess.executable.path="$executable_path"
