@@ -347,68 +347,6 @@ _otel_call_and_record_pipes() {
   return "$exit_code"
 }
 
-_otel_call_and_record_pipes() {
-  # some notes about this function
-  # (*) we have to wait for the background processes because otherwise the span_id may not be valid anymore
-  # (*) waiting for the processes only works when its not a subshell so we can access the last process id
-  # (*) not using a subshell means we have to disable job control, otherwise we get unwanted output
-  # (*) we could only directly tee stdin, otherwise the exit code cannot be captured propely if we pipe stdout directly
-  # (*) we cannot directly tee stdin because pipes create a subprocess sometimes and then we have problems with the commandline override signature
-  case "$-" in
-    *m*) local job_control=1; \set +m;;
-    *) local job_control=0;;
-  esac
-  local span_id="$1"; shift
-  local call_command="$1"; shift
-  local stdin_bytes_result="$(\mktemp -u)_opentelemetry_shell_$$.stdin.bytes.result"
-  local stdin_lines_result="$(\mktemp -u)_opentelemetry_shell_$$.stdin.lines.result"
-  local stdout_bytes_result="$(\mktemp -u)_opentelemetry_shell_$$.stdout.bytes.result"
-  local stdout_lines_result="$(\mktemp -u)_opentelemetry_shell_$$.stdout.lines.result"
-  local stderr_bytes_result="$(\mktemp -u)_opentelemetry_shell_$$.stderr.bytes.result"
-  local stderr_lines_result="$(\mktemp -u)_opentelemetry_shell_$$.stderr.lines.result"
-  local stdin="$(\mktemp -u)_opentelemetry_shell_$$.stdin.pipe"
-  local stdout="$(\mktemp -u)_opentelemetry_shell_$$.stdout.pipe"
-  local stderr="$(\mktemp -u)_opentelemetry_shell_$$.stderr.pipe"
-  local stdin_bytes="$(\mktemp -u)_opentelemetry_shell_$$.stdin.bytes.pipe"
-  local stdin_lines="$(\mktemp -u)_opentelemetry_shell_$$.stdin.lines.pipe"
-  local stdout_bytes="$(\mktemp -u)_opentelemetry_shell_$$.stdout.bytes.pipe"
-  local stdout_lines="$(\mktemp -u)_opentelemetry_shell_$$.stdout.lines.pipe"
-  local stderr_bytes="$(\mktemp -u)_opentelemetry_shell_$$.stderr.bytes.pipe"
-  local stderr_lines="$(\mktemp -u)_opentelemetry_shell_$$.stderr.lines.pipe"
-  local exit_code=0
-  \mkfifo "$stdin" "$stdout" "$stderr" "$stdin_bytes" "$stdin_lines" "$stdout_bytes" "$stdout_lines" "$stderr_bytes" "$stderr_lines"
-  \wc -c < "$stdin_bytes" > "$stdin_bytes_result" &
-  local stdin_bytes_pid="$!"
-  \wc -l < "$stdin_lines" > "$stdin_lines_result" &
-  local stdin_lines_pid="$!"
-  \wc -c < "$stdout_bytes" > "$stdout_bytes_result" &
-  local stdout_bytes_pid="$!"
-  \wc -l < "$stdout_lines" > "$stdout_lines_result" &
-  local stdout_lines_pid="$!"
-  \wc -c < "$stderr_bytes" > "$stderr_bytes_result" &
-  local stderr_bytes_pid="$!"
-  \wc -l < "$stderr_lines" > "$stderr_lines_result" &
-  local stderr_lines_pid="$!"
-  \tee "$stdin_bytes" < /dev/stdin | \tee "$stdin_lines" > "$stdin" &
-  local stdin_pid="$!"
-  \tee "$stdout_bytes" < "$stdout" | \tee "$stdout_lines" &
-  local stdout_pid="$!"
-  \tee "$stderr_bytes" < "$stderr" | \tee "$stderr_lines" >&2 &
-  local stderr_pid="$!"
-  $call_command "$@" < "$stdin" 1> "$stdout" 2> "$stderr" || local exit_code="$?"
-  \wait "$stdin_bytes_pid" "$stdin_lines_pid" "$stdout_bytes_pid" "$stdout_lines_pid" "$stderr_bytes_pid" "$stderr_lines_pid" "$stdin_pid" "$stdout_pid" "$stderr_pid"
-  \rm "$stdin" "$stdout" "$stderr" "$stdin_bytes" "$stdin_lines" "$stdout_bytes" "$stdout_lines" "$stderr_bytes" "$stderr_lines" 2> /dev/null
-  otel_span_attribute "$span_id" pipe.stdin.bytes="$(\cat "$stdin_bytes_result")"
-  otel_span_attribute "$span_id" pipe.stdin.lines="$(\cat "$stdin_lines_result")"
-  otel_span_attribute "$span_id" pipe.stdout.bytes="$(\cat "$stdout_bytes_result")"
-  otel_span_attribute "$span_id" pipe.stdout.lines="$(\cat "$stdout_lines_result")"
-  otel_span_attribute "$span_id" pipe.stderr.bytes="$(\cat "$stderr_bytes_result")"
-  otel_span_attribute "$span_id" pipe.stderr.lines="$(\cat "$stderr_lines_result")"
-  \rm "$stdin_bytes_result" "$stdin_lines_result" "$stdout_bytes_result" "$stdout_lines_result" "$stderr_bytes_result" "$stderr_lines_result" 2> /dev/null
-  if \[ "$job_control" = 1 ]; then \set -m; fi
-  return "$exit_code"
-}
-
 if \[ "$_otel_shell" = bash ]; then
   _otel_command_type() {
     \type -t "$1" || \echo file
