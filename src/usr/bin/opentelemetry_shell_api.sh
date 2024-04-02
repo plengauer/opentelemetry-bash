@@ -328,6 +328,8 @@ _otel_call_and_record_pipes() {
   local stdout_pid="$!"
   \tee "$stderr_bytes" < "$stderr" | \tee "$stderr_lines" >&2 &
   local stderr_pid="$!"
+\echo "DEBUG $OTEL_SHELL_COMMANDLINE_OVERRIDE" >&2
+\echo "DEBUG $OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" >&2
   \tee "$stdin_bytes" | \tee "$stdin_lines" | $call_command "$@" 1> "$stdout" 2> "$stderr" || local exit_code="$?"
   \wait "$stdin_bytes_pid" "$stdin_lines_pid" "$stdout_bytes_pid" "$stdout_lines_pid" "$stderr_bytes_pid" "$stderr_lines_pid" "$stdout_pid" "$stderr_pid"
   \rm "$stdout" "$stderr" "$stdin_bytes" "$stdin_lines" "$stdout_bytes" "$stdout_lines" "$stderr_bytes" "$stderr_lines" 2> /dev/null
