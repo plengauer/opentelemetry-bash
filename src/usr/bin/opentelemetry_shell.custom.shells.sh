@@ -41,9 +41,7 @@ _otel_inject_shell_args_with_copy() {
   # setup temporary script
   \touch "$temporary_script"
   \chmod +x "$temporary_script"
-  \echo "OTEL_SHELL_AUTO_INSTRUMENTATION_HINT=\"$temporary_script\"" >> "$temporary_script"
-  \echo ". otel.sh" >> "$temporary_script"
-  \echo "\set -- $(_otel_escape_args "$@")" >> "$temporary_script"
+  \echo -n "OTEL_SHELL_AUTO_INSTRUMENTATION_HINT=\"$temporary_script\"; . otel.sh; \set -- \"$(_otel_escape_args "$@")\"; " > "$temporary_script"
   (if \[ "$is_script" -eq 1 ]; then \cat "$command"; else \echo "$command"; fi) >> "$temporary_script"
 }
 
