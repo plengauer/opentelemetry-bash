@@ -8,7 +8,7 @@ _otel_propagate_curl() {
     *) local job_control=0;;
   esac
   local command="$(_otel_dollar_star "$@")"
-  if _otel_string_contains "$command" " -v "; then local is_verbose=0; fi
+  if _otel_string_contains "$command" " -v "; then local is_verbose=1; fi
   local url=$(printf '%s' "$command" | \awk '{for(i=1;i<=NF;i++) if ($i ~ /^http/) print $i}')
   local span_id="$(otel_span_current)"
   otel_span_attribute "$span_id" network.protocol.name=http
@@ -31,7 +31,7 @@ _otel_propagate_curl() {
   otel_span_attribute "$span_id" user_agent.original=curl
   local stderr_pipe="$(\mktemp -u)_opentelemetry_shell_$$.stderr.curl.pipe"
   \mkfifo "$stderr_pipe"
-  while read -r line; do _otel_parse_curl_output "$span_id" "$line"; if \[ "$is_verbose" = 1 ]; then \echo "$line" >&2; fi; done < "$stderr_pipe" &
+  while read -r line; do _otel_parse_curl_output "$is_verbose" "$span_id" "$line" >&2; fi; done < "$stderr_pipe" &
   local stderr_pid="$!"
   local exit_code=0
   _otel_call "$@" -H "traceparent: $OTEL_TRACEPARENT" -v 2> "$stderr_pipe" || exit_code="$?"
@@ -67,8 +67,9 @@ _otel_propagate_curl() {
 # * Connection #0 to host www.google.at left intact
 
 _otel_parse_curl_output() {
-  local span_id="$1"
-  local line="$2"
+  local is_verbose="$1"
+  local span_id="$2"
+  local line="$3"  
   if _otel_string_starts_with "$line" "* Connected to "; then
     otel_span_attribute "$span_id" network.peer.address="$(\printf '%s' "$line" | \cut -d ' ' -f 5 | \tr -d '()')"
     otel_span_attribute "$span_id" network.peer.port="$(\printf '%s' "$line" | \cut -d ' ' -f 7)"    
@@ -87,6 +88,9 @@ _otel_parse_curl_output() {
     otel_span_attribute "$span_id" http.request.header."$(\printf '%s' "$line" | \cut -d ' ' -f 2 | \tr -d ':' | \tr '[:upper:]' '[:lower:]')"="$(\printf '%s' "$line" | \cut -d ' ' -f 3-)"
   elif _otel_string_starts_with "$line" "< " && _otel_string_contains "$line" ": "; then
     otel_span_attribute "$span_id" http.response.header."$(\printf '%s' "$line" | \cut -d ' ' -f 2 | \tr -d ':' | \tr '[:upper:]' '[:lower:]')"="$(\printf '%s' "$line" | \cut -d ' ' -f 3-)"
+  fi
+  if \[ "$is_verbose" = 1 ] || ! (_otel_string_starts_with "$line" "* " || _otel_string_starts_with "$line" "> " || _otel_string_starts_with "$line" "< " || _otel_string_starts_with "$line" "{ "); then
+    \echo "$line"
   fi
 }
 
