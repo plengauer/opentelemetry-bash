@@ -3,6 +3,7 @@
 . /usr/bin/opentelemetry_shell.sh
 
 \echo "DEBUG 0"
+set -x
 result1="$(debconf-show --listowners)"
 \echo "DEBUG 1"
 result2="$(\printf '%s' "$result1" | head -n1)"
