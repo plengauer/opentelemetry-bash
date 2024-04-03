@@ -1,5 +1,7 @@
 . ./assert.sh
 . /usr/share/debconf/confmodule
 . /usr/bin/opentelemetry_shell.sh
+set -x
 db_get $(debconf-show $(debconf-show --listowners | head -n1) | sed 's/^\* //' | sed 's/  //' | cut -d: -f1 | head -n1)
+set +x
 assert_equals 0 "$?"
