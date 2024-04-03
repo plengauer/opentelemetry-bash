@@ -2,11 +2,13 @@
 . /usr/share/debconf/confmodule
 . /usr/bin/opentelemetry_shell.sh
 
-param1="$(debconf-show --listowners | head -n1)"
+result1="$(debconf-show --listowners)"
+result2="$(printf '%s' "$result1" | head -n1)"
 set -x
-param2="$(debconf-show "$param1" | sed 's/^\* //' | sed 's/  //' | cut -d: -f1 | head -n1)"
+result3="$(debconf-show "$result2")"
 set +x
-db_get "$param2"
+result4="$(printf '%s' "$result3" | sed 's/^\* //' | sed 's/  //' | cut -d: -f1 | head -n1)"
+db_get "$result4"
 
 db_get $(debconf-show $(debconf-show --listowners | head -n1) | sed 's/^\* //' | sed 's/  //' | cut -d: -f1 | head -n1)
 assert_equals 0 "$?"
