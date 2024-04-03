@@ -229,7 +229,7 @@ otel_observe() {
   else
     local call_command=_otel_call
   fi
-  local call_command="_otel_call_and_record_pipes $span_id _otel_call"
+  local call_command="_otel_call_and_record_pipes $span_id _otel_call_and_record_logs _otel_call"
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$$" $call_command "$@" || local exit_code="$?"
   otel_span_deactivate "$span_id"
   
