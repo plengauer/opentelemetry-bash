@@ -2,12 +2,12 @@
 . /usr/share/debconf/confmodule
 . /usr/bin/opentelemetry_shell.sh
 
-result1="$(debconf-show --listowners)"
-result2="$(printf '%s' "$result1" | head -n1)"
 set -x
-result3="$(debconf-show "$result2")"
+result1="$(debconf-show --listowners)"
 set +x
-result4="$(printf '%s' "$result3" | sed 's/^\* //' | sed 's/  //' | cut -d: -f1 | head -n1)"
+result2="$(\printf '%s' "$result1" | head -n1)"
+result3="$(debconf-show "$result2")"
+result4="$(\printf '%s' "$result3" | sed 's/^\* //' | sed 's/  //' | cut -d: -f1 | head -n1)"
 db_get "$result4"
 
 db_get $(debconf-show $(debconf-show --listowners | head -n1) | sed 's/^\* //' | sed 's/  //' | cut -d: -f1 | head -n1)
