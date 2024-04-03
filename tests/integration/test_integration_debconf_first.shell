@@ -1,8 +1,12 @@
 . ./assert.sh
 . /usr/share/debconf/confmodule
 . /usr/bin/opentelemetry_shell.sh
+
+param1="$(debconf-show --listowners | head -n1)"
 set -x
-debconf-show --listowners | head -n1
+param2="$(debconf-show "$param1" | sed 's/^\* //' | sed 's/  //' | cut -d: -f1 | head -n1)"
 set +x
+db_get "$param2"
+
 db_get $(debconf-show $(debconf-show --listowners | head -n1) | sed 's/^\* //' | sed 's/  //' | cut -d: -f1 | head -n1)
 assert_equals 0 "$?"
