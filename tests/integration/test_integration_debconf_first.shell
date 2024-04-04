@@ -2,18 +2,5 @@
 . /usr/share/debconf/confmodule
 . /usr/bin/opentelemetry_shell.sh
 
-\echo "DEBUG 0"
-set -x
-result1="$(debconf-show --listowners)"
-\echo "DEBUG 1"
-result2="$(\printf '%s' "$result1" | head -n1)"
-\echo "DEBUG 2"
-result3="$(debconf-show "$result2")"
-\echo "DEBUG 3"
-result4="$(\printf '%s' "$result3" | sed 's/^\* //' | sed 's/  //' | cut -d: -f1 | head -n1)"
-\echo "DEBUG 4"
-db_get "$result4"
-\echo "DEBUG 5"
-
 db_get $(debconf-show $(debconf-show --listowners | head -n1) | sed 's/^\* //' | sed 's/  //' | cut -d: -f1 | head -n1)
 assert_equals 0 "$?"
