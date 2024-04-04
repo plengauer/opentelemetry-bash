@@ -319,17 +319,17 @@ _otel_call_and_record_pipes() {
   local stderr_lines="$(\mktemp -u)_opentelemetry_shell_$$.stderr.lines.pipe"
   local exit_code=0
   \mkfifo "$stdout" "$stderr" "$stdin_bytes" "$stdin_lines" "$stdout_bytes" "$stdout_lines" "$stderr_bytes" "$stderr_lines"
-  \wc -c "$stdin_bytes" > "$stdin_bytes_result" &
+  \wc -c < "$stdin_bytes" > "$stdin_bytes_result" &
   local stdin_bytes_pid="$!"
-  \wc -l "$stdin_lines" > "$stdin_lines_result" &
+  \wc -l < "$stdin_lines" > "$stdin_lines_result" &
   local stdin_lines_pid="$!"
-  \wc -c "$stdout_bytes" > "$stdout_bytes_result" &
+  \wc -c < "$stdout_bytes" > "$stdout_bytes_result" &
   local stdout_bytes_pid="$!"
-  \wc -l "$stdout_lines" > "$stdout_lines_result" &
+  \wc -l < "$stdout_lines" > "$stdout_lines_result" &
   local stdout_lines_pid="$!"
-  \wc -c "$stderr_bytes" > "$stderr_bytes_result" &
+  \wc -c < "$stderr_bytes" > "$stderr_bytes_result" &
   local stderr_bytes_pid="$!"
-  \wc -l "$stderr_lines" > "$stderr_lines_result" &
+  \wc -l < "$stderr_lines" > "$stderr_lines_result" &
   local stderr_lines_pid="$!"
   \tee "$stdout_bytes" "$stdout_lines" < "$stdout" &
   local stdout_pid="$!"
