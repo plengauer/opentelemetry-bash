@@ -340,8 +340,9 @@ _otel_call_and_record_pipes() {
     \echo -n '' > "$stdin_lines"
     $call_command "$@" 1> "$stdout" 2> "$stderr" || local exit_code="$?"
   else
+\echo "DEBUG 0 $$ $*" >&2
     \tee "$stdin_bytes" "$stdin_lines" | $call_command "$@" 1> "$stdout" 2> "$stderr" || local exit_code="$?"
-\echo "DEBUG $$ $*" >&2
+\echo "DEBUG 1 $$ $*" >&2
     local stdin_jid="$(\jobs | \grep -F "\\tee $stdin_bytes $stdin_lines" | \cut -d ' ' -f 1 | \tr -d '[]+-')"
     if \[ -n "$stdin_jid" ]; then \kill -9 "%$std_jid" 2> /dev/null || true; fi
     local stdin_pid="$(\ps -o '%p,%a' | \grep -F "tee $stdin_bytes $stdin_lines" | \cut -d , -f1 | \tr -d ' ')"
