@@ -229,7 +229,6 @@ otel_observe() {
   else
     local call_command=_otel_call
   fi
-  local call_command="_otel_call_and_record_pipes $span_id _otel_call_and_record_logs _otel_call"
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$$" $call_command "$@" || local exit_code="$?"
   otel_span_deactivate "$span_id"
   
@@ -337,8 +336,9 @@ _otel_call_and_record_pipes() {
   \tee "$stderr_bytes" "$stderr_lines" < "$stderr" >&2 &
   local stderr_pid="$!"
   \tee "$stdin_bytes" "$stdin_lines" | $call_command "$@" 1> "$stdout" 2> "$stderr" || local exit_code="$?"
-  local stdin_jid="$(\jobs | \grep "\\tee $stdin_bytes $stdin_lines" | \cut -d ' ' -f1 | \tr -d '[]+-')"
-  if \[ -n "$stdin_jid" ]; then \kill -9 "%$std_jid" || true; fi
+  local stdin_jid="$(\jobs | \grep "\\tee $stdin_bytes $stdin_lines" | \cut -d ' ' -f 1 | \tr -d '[]+-')"
+\jobs
+  if \[ -n "$stdin_jid" ]; then \kill -9 "%$std_jid" 2> /dev/null || true; fi
   \wait "$stdin_bytes_pid" "$stdin_lines_pid" "$stdout_bytes_pid" "$stdout_lines_pid" "$stderr_bytes_pid" "$stderr_lines_pid" "$stdout_pid" "$stderr_pid"
   \rm "$stdout" "$stderr" "$stdin_bytes" "$stdin_lines" "$stdout_bytes" "$stdout_lines" "$stderr_bytes" "$stderr_lines" 2> /dev/null
   otel_span_attribute "$span_id" pipe.stdin.bytes="$(\cat "$stdin_bytes_result")"
