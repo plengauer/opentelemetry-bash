@@ -344,7 +344,7 @@ _otel_call_and_record_pipes() {
       $call_command "$@"
       local inner_exit_code="$?"
       local stdin_pid="$(\ps -o '%p,%a' | \grep -F "tee $stdin_bytes $stdin_lines" | \cut -d , -f1 | \tr -d ' ')"
-      if \[ -n "$stdin_pid" ]; then \kill -9 "$stdin_pid" || true; fi
+      if \[ -n "$stdin_pid" ]; then \kill -9 "$stdin_pid" 2> /dev/null || true; fi
       return "$inner_exit_code"
     } 1> "$stdout" 2> "$stderr" || local exit_code="$?"
     # local stdin_jid="$(\jobs | \grep -F "tee $stdin_bytes $stdin_lines" | \cut -d ' ' -f 1 | \tr -d '[]+-')"
