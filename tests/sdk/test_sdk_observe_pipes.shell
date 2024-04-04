@@ -6,6 +6,9 @@ otel_init
 assert_equals "hello
 world 0" "$(echo "hello
 world 0" | otel_observe cat)"
+assert_equals "hello
+world 1" "$(echo "hello
+world 1" | otel_observe sh -c 'cat >&2' 2>&1)"
 otel_shutdown
 
 span="$(resolve_span '.name == "cat"')"
@@ -16,4 +19,10 @@ assert_equals "2" $(echo "$span" | jq -r '.attributes."pipe.stdout.lines"')
 assert_equals "0" $(echo "$span" | jq -r '.attributes."pipe.stderr.bytes"')
 assert_equals "0" $(echo "$span" | jq -r '.attributes."pipe.stderr.lines"')
 
-
+span="$(resolve_span '.name == "sh -c cat >&2"')"
+assert_equals "14" $(echo "$span" | jq -r '.attributes."pipe.stdin.bytes"')
+assert_equals "2" $(echo "$span" | jq -r '.attributes."pipe.stdin.lines"')
+assert_equals "0" $(echo "$span" | jq -r '.attributes."pipe.stdout.bytes"')
+assert_equals "0" $(echo "$span" | jq -r '.attributes."pipe.stdout.lines"')
+assert_equals "14" $(echo "$span" | jq -r '.attributes."pipe.stderr.bytes"')
+assert_equals "2" $(echo "$span" | jq -r '.attributes."pipe.stderr.lines"')
