@@ -319,17 +319,17 @@ _otel_call_and_record_pipes() {
   local stderr_lines="$(\mktemp -u)_opentelemetry_shell_$$.stderr.lines.pipe"
   local exit_code=0
   \mkfifo "$stdout" "$stderr" "$stdin_bytes" "$stdin_lines" "$stdout_bytes" "$stdout_lines" "$stderr_bytes" "$stderr_lines"
-  \wc -c < "$stdin_bytes" > "$stdin_bytes_result" &
+  \wc -c "$stdin_bytes" > "$stdin_bytes_result" &
   local stdin_bytes_pid="$!"
-  \wc -l < "$stdin_lines" > "$stdin_lines_result" &
+  \wc -l "$stdin_lines" > "$stdin_lines_result" &
   local stdin_lines_pid="$!"
-  \wc -c < "$stdout_bytes" > "$stdout_bytes_result" &
+  \wc -c "$stdout_bytes" > "$stdout_bytes_result" &
   local stdout_bytes_pid="$!"
-  \wc -l < "$stdout_lines" > "$stdout_lines_result" &
+  \wc -l "$stdout_lines" > "$stdout_lines_result" &
   local stdout_lines_pid="$!"
-  \wc -c < "$stderr_bytes" > "$stderr_bytes_result" &
+  \wc -c "$stderr_bytes" > "$stderr_bytes_result" &
   local stderr_bytes_pid="$!"
-  \wc -l < "$stderr_lines" > "$stderr_lines_result" &
+  \wc -l "$stderr_lines" > "$stderr_lines_result" &
   local stderr_lines_pid="$!"
   \tee "$stdout_bytes" "$stdout_lines" < "$stdout" &
   local stdout_pid="$!"
@@ -340,14 +340,11 @@ _otel_call_and_record_pipes() {
     \echo -n '' > "$stdin_lines"
     $call_command "$@" 1> "$stdout" 2> "$stderr" || local exit_code="$?"
   else
-\echo "DEBUG 0 $$ $*" >&2
     \tee "$stdin_bytes" "$stdin_lines" | $call_command "$@" 1> "$stdout" 2> "$stderr" || local exit_code="$?"
-\echo "DEBUG 1 $$ $*" >&2
     local stdin_jid="$(\jobs | \grep -F "\\tee $stdin_bytes $stdin_lines" | \cut -d ' ' -f 1 | \tr -d '[]+-')"
     if \[ -n "$stdin_jid" ]; then \kill -9 "%$std_jid" 2> /dev/null || true; fi
     local stdin_pid="$(\ps -o '%p,%a' | \grep -F "tee $stdin_bytes $stdin_lines" | \cut -d , -f1 | \tr -d ' ')"
     if \[ -n "$stdin_pid" ]; then \kill -9 "$std_pid" 2> /dev/null || true; fi
-\echo "GUBED $$ $*" >&2
   fi
   \wait "$stdin_bytes_pid" "$stdin_lines_pid" "$stdout_bytes_pid" "$stdout_lines_pid" "$stderr_bytes_pid" "$stderr_lines_pid" "$stdout_pid" "$stderr_pid"
   \rm "$stdout" "$stderr" "$stdin_bytes" "$stdin_lines" "$stdout_bytes" "$stdout_lines" "$stderr_bytes" "$stderr_lines" 2> /dev/null
