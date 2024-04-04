@@ -340,7 +340,7 @@ _otel_call_and_record_pipes() {
   if \[ -n "$stdin_jid" ]; then \kill -9 "%$std_jid" 2> /dev/null || true; fi
   local stdin_pid="$(\ps -o '%p,%a' | \grep -F "tee $stdin_bytes $stdin_lines" | \cut -d , -f1 | \tr -d ' ')"
   if \[ -n "$stdin_pid" ]; then \kill -9 "$std_pid" 2> /dev/null || true; fi
-\ps -o '%p,%a'
+\ps -o '%p,%a' >&2
   \wait "$stdin_bytes_pid" "$stdin_lines_pid" "$stdout_bytes_pid" "$stdout_lines_pid" "$stderr_bytes_pid" "$stderr_lines_pid" "$stdout_pid" "$stderr_pid"
   \rm "$stdout" "$stderr" "$stdin_bytes" "$stdin_lines" "$stdout_bytes" "$stdout_lines" "$stderr_bytes" "$stderr_lines" 2> /dev/null
   otel_span_attribute "$span_id" pipe.stdin.bytes="$(\cat "$stdin_bytes_result")"
