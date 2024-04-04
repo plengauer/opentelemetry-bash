@@ -295,6 +295,9 @@ _otel_call_and_record_pipes() {
   # (*) waiting for the processes only works when its not a subshell so we can access the last process id
   # (*) not using a subshell means we have to disable job control, otherwise we get unwanted output
   # (*) we can only directly tee stdin, otherwise the exit code cannot be captured propely if we pipe stdout directly
+  # (*) tee for stdin does ONLY terminate when it writes something and realizes the process has terminated
+  # (**) so in cases where stdin is open but nobody every writes to it and the process doesnt expect input, tee hangs forever
+  # (**) this is different to output streams, because they get properly terminated with SIGPIPE on read
   case "$-" in
     *m*) local job_control=1; \set +m;;
     *) local job_control=0;;
@@ -329,11 +332,13 @@ _otel_call_and_record_pipes() {
   local stderr_bytes_pid="$!"
   \wc -l < "$stderr_lines" > "$stderr_lines_result" &
   local stderr_lines_pid="$!"
-  \tee "$stdout_bytes" < "$stdout" | \tee "$stdout_lines" &
+  \tee "$stdout_bytes" "$stdout_lines" < "$stdout" &
   local stdout_pid="$!"
-  \tee "$stderr_bytes" < "$stderr" | \tee "$stderr_lines" >&2 &
+  \tee "$stderr_bytes" "$stderr_lines" < "$stderr" >&2 &
   local stderr_pid="$!"
-  \tee "$stdin_bytes" | \tee "$stdin_lines" | $call_command "$@" 1> "$stdout" 2> "$stderr" || local exit_code="$?"
+  \tee "$stdin_bytes" "$stdin_lines" | $call_command "$@" 1> "$stdout" 2> "$stderr" || local exit_code="$?"
+  local stdin_jid="$(\jobs | \grep "\\tee $stdin_bytes $stdin_lines" | \cut -d ' ' -f1 | \tr -d '[]+-')"
+  if \[ -n "$stdin_jid" ]; then \kill -9 "%$std_jid" 2> /dev/null || true; fi
   \wait "$stdin_bytes_pid" "$stdin_lines_pid" "$stdout_bytes_pid" "$stdout_lines_pid" "$stderr_bytes_pid" "$stderr_lines_pid" "$stdout_pid" "$stderr_pid"
   \rm "$stdout" "$stderr" "$stdin_bytes" "$stdin_lines" "$stdout_bytes" "$stdout_lines" "$stderr_bytes" "$stderr_lines" 2> /dev/null
   otel_span_attribute "$span_id" pipe.stdin.bytes="$(\cat "$stdin_bytes_result")"
