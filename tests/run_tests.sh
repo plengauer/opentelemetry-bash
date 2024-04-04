@@ -6,7 +6,7 @@ if [ "$SHELL" = "" ]; then
   exit 1
 fi
 
-(while sleep 15; do pstree -a -c -p; done) &
+(while sleep 60; do pstree -a -c -p; done) &
 for dir in unit sdk auto integration; do
   for file in $(find $dir -iname 'test_*.shell') $(find $dir -iname 'test_*.'$SHELL); do
     rm /tmp/opentelemetry_shell_*_instrumentation_cache_*.aliases 2> /dev/null || true
