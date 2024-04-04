@@ -335,6 +335,7 @@ _otel_call_and_record_pipes() {
   local stdout_pid="$!"
   \tee "$stderr_bytes" "$stderr_lines" < "$stderr" >&2 &
   local stderr_pid="$!"
+\readlink -f /proc/self/fd/0 >&2
   if \[ "$(\readlink -f /proc/self/fd/0)" = /dev/null ] || \[ "$(\readlink -f /proc/self/fd/0)" = "/proc/$$/fd/0" ]; then
     \echo -n '' > "$stdin_bytes"
     \echo -n '' > "$stdin_lines"
