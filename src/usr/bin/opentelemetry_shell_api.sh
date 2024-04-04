@@ -343,7 +343,6 @@ _otel_call_and_record_pipes() {
     \tee "$stdin_bytes" "$stdin_lines" | {
       $call_command "$@"
       local inner_exit_code="$?"
-\ps -o '%p,%a' | \grep -F "tee $stdin_bytes $stdin_lines" >&2
       local stdin_pid="$(\ps -o '%p,%a' | \grep -F "tee $stdin_bytes $stdin_lines" | \cut -d , -f1 | \tr -d ' ')"
       if \[ -n "$stdin_pid" ]; then \kill -9 "$stdin_pid" || true; fi
       return "$inner_exit_code"
