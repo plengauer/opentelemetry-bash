@@ -335,7 +335,7 @@ _otel_call_and_record_pipes() {
   local stdout_pid="$!"
   \tee "$stderr_bytes" "$stderr_lines" < "$stderr" >&2 &
   local stderr_pid="$!"
-  if command <&0; then
+  if read -n 0; then
     \tee "$stdin_bytes" "$stdin_lines" | $call_command "$@" 1> "$stdout" 2> "$stderr" || local exit_code="$?"
     local stdin_jid="$(\jobs | \grep -F "\\tee $stdin_bytes $stdin_lines" | \cut -d ' ' -f 1 | \tr -d '[]+-')"
     if \[ -n "$stdin_jid" ]; then \kill -9 "%$std_jid" 2> /dev/null || true; fi
