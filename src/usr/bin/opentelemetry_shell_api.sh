@@ -340,7 +340,7 @@ _otel_call_and_record_pipes() {
     \echo -n '' > "$stdin_lines"
     $call_command "$@" 1> "$stdout" 2> "$stderr" || local exit_code="$?"
   else
-    \tee "$stdin_bytes" "$stdin_lines" | {
+    \tee "$stdin_bytes" "$stdin_lines" 2> /dev/null | {
       $call_command "$@"
       local inner_exit_code="$?"
       # local stdin_pid="$(\ps -o 'pid,command' | \grep -F "tee $stdin_bytes $stdin_lines" | \grep -vF grep | \cut -d , -f1 | \tr -d ' ')"
@@ -349,7 +349,7 @@ _otel_call_and_record_pipes() {
       return "$inner_exit_code"
     } 1> "$stdout" 2> "$stderr" || local exit_code="$?"
   fi
-  \wait "$stdin_bytes_pid" "$stdin_lines_pid" "$stdout_bytes_pid" "$stdout_lines_pid" "$stderr_bytes_pid" "$stderr_lines_pid" "$stdout_pid" "$stderr_pid" 2> /dev/null
+  \wait "$stdin_bytes_pid" "$stdin_lines_pid" "$stdout_bytes_pid" "$stdout_lines_pid" "$stderr_bytes_pid" "$stderr_lines_pid" "$stdout_pid" "$stderr_pid"
   \rm "$stdout" "$stderr" "$stdin_bytes" "$stdin_lines" "$stdout_bytes" "$stdout_lines" "$stderr_bytes" "$stderr_lines" 2> /dev/null
   otel_span_attribute "$span_handle" pipe.stdin.bytes="$(\cat "$stdin_bytes_result")"
   otel_span_attribute "$span_handle" pipe.stdin.lines="$(\cat "$stdin_lines_result")"
