@@ -18,7 +18,7 @@ for dir in unit sdk auto integration; do
     mkfifo $OTEL_SHELL_SDK_OUTPUT_REDIRECT
     ( while true; do cat $OTEL_SHELL_SDK_OUTPUT_REDIRECT >> $OTEL_EXPORT_LOCATION; done ) &
     echo "running $file"
-    # export OTEL_SHELL_EXPERIMENTAL_OBSERVE_PIPES=TRUE
+    export OTEL_SHELL_EXPERIMENTAL_OBSERVE_PIPES=TRUE
     timeout $((60 * 5)) $SHELL $file && echo "SUCCEEDED" || (echo "FAILED" && cat $OTEL_EXPORT_LOCATION && exit 1)
   done
 done
