@@ -233,9 +233,9 @@ otel_observe() {
   otel_span_deactivate "$span_handle"
   
   # set custom attributes, set final attributes, finish span
-  otel_span_attribute "$span_id" shell.command.exit_code="$exit_code"
+  otel_span_attribute "$span_handle" shell.command.exit_code="$exit_code"
   if \[ "$exit_code" -ne 0 ]; then
-    otel_span_error "$span_id"
+    otel_span_error "$span_handle"
   fi
   if \[ -n "$attributes" ]; then
     local OLD_IFS="$IFS"
