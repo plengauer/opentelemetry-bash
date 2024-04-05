@@ -341,11 +341,11 @@ _otel_call_and_record_pipes() {
     $call_command "$@" 1> "$stdout" 2> "$stderr" || local exit_code="$?"
   else
     \tee "$stdin_bytes" "$stdin_lines" 2> /dev/null | {
-      $call_command "$@"
-      local inner_exit_code="$?"
+      local inner_exit_code=0
+      $call_command "$@" || local inner_exit_code="$?"
       # local stdin_pid="$(\ps -o 'pid,command' | \grep -F "tee $stdin_bytes $stdin_lines" | \grep -vF grep | \cut -d , -f1 | \tr -d ' ')"
       local stdin_pid="$(\ps -o 'pid,command' | \grep -F "tee $stdin_bytes $stdin_lines" | \grep -vF grep | \awk '{ print $1 }')"
-      if \[ -n "$stdin_pid" ]; then \kill -13 "$stdin_pid" 2> /dev/null || true; fi
+      if \[ -n "$stdin_pid" ]; then \kill -2 "$stdin_pid" 2> /dev/null || true; fi
       return "$inner_exit_code"
     } 1> "$stdout" 2> "$stderr" || local exit_code="$?"
   fi
