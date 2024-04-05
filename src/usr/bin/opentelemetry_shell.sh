@@ -304,16 +304,18 @@ _otel_start_script() {
     otel_span_attribute $otel_root_span_handle net.peer.port="$(\echo $SSH_CLIENT | \cut -d ' ' -f 2)"
   elif \[ -n "$SERVER_SOFTWARE"  ] && \[ -n "$SCRIPT_NAME" ] && \[ -n "$SERVER_NAME" ] && \[ -n "$SERVER_PROTOCOL" ] && ! \[ "$OTEL_SHELL_AUTO_INJECTED" = "TRUE" ] && \[ "$(\cat "/proc/$PPID/cmdline" | \tr -d '\000' | \cut -d ' ' -f 1 | \rev | \cut -d / -f 1 | \rev)" = "python3" ]; then
     otel_root_span_handle="$(otel_span_start SERVER GET)"
-    otel_span_attribute $otel_root_span_handle http.flavor="$(\echo $SERVER_PROTOCOL | \cut -d / -f 2)"
-    otel_span_attribute $otel_root_span_handle http.host="$SERVER_NAME:$SERVER_PORT"
+    otel_span_attribute $otel_root_span_handle network.protocol.name=http
+    otel_span_attribute $otel_root_span_handle network.transport=tcp
+    otel_span_attribute $otel_root_span_handle network.peer.address="$REMOTE_ADDR"
+    otel_span_attribute $otel_root_span_handle http.request.method=GET
     otel_span_attribute $otel_root_span_handle http.route="$SCRIPT_NAME"
-    otel_span_attribute $otel_root_span_handle http.scheme="$(\echo $SERVER_PROTOCOL | \cut -d / -f 1 | \tr '[:upper:]' '[:lower:]')"
-    otel_span_attribute $otel_root_span_handle http.method=GET
-    otel_span_attribute $otel_root_span_handle http.status_code=200
-    otel_span_attribute $otel_root_span_handle http.status_text=OK
-    otel_span_attribute $otel_root_span_handle http.target="$SCRIPT_NAME"
-    otel_span_attribute $otel_root_span_handle http.url="$(\echo "$SERVER_PROTOCOL" | \cut -d / -f 1 | \tr '[:upper:]' '[:lower:]')://$SERVER_NAME:$SERVER_PORT$SCRIPT_NAME"
-    otel_span_attribute $otel_root_span_handle net.peer.ip="$REMOTE_ADDR"
+    otel_span_attribute $otel_root_span_handle server.address="$SERVER_NAME"
+    otel_span_attribute $otel_root_span_handle server.port="$SERVER_PORT"
+    otel_span_attribute $otel_root_span_handle url.full="$(\echo "$SERVER_PROTOCOL" | \cut -d / -f 1 | \tr '[:upper:]' '[:lower:]')://$SERVER_NAME:$SERVER_PORT$SCRIPT_NAME"
+    otel_span_attribute $otel_root_span_handle url.path="$SCRIPT_NAME"
+    otel_span_attribute $otel_root_span_handle url.query=""
+    otel_span_attribute $otel_root_span_handle url.scheme="$(\echo "$SERVER_PROTOCOL" | \cut -d / -f 1 | \tr '[:upper:]' '[:lower:]')"
+    otel_span_attribute $otel_root_span_handle http.response.status_code=200
   elif _otel_command_self | \grep -q '/var/lib/dpkg/' > /dev/null; then
     local cmdline="$(_otel_command_self | \sed 's/^.* \(\/var\/lib\/dpkg\/.*\)$/\1/')"
     otel_root_span_handle="$(otel_span_start SERVER "$(\echo "$cmdline" | \cut -d . -f 2- | \cut -d ' ' -f 1)")"
