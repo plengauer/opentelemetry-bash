@@ -16,7 +16,7 @@ fi
 # basic setup
 _otel_remote_sdk_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
 _otel_shell="$(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)"
-if \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "$PPID" ] || \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "0" ]; then _otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"; fi
+if \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = 0 ] || \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "$PPID" ] || \[ "$(\tr '\000' ' ' < /proc/$PPID/cmdline)" = "$(\tr '\000' ' ' < /proc/$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE/cmdline)" ]; then _otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"; fi
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE
 unset OTEL_SHELL_COMMAND_TYPE_OVERRIDE
@@ -205,36 +205,37 @@ otel_observe() {
   local command_type="$OTEL_SHELL_COMMAND_TYPE_OVERRIDE"
   unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
   unset OTEL_SHELL_COMMAND_TYPE_OVERRIDE
+  
   # create span, set initial attributes
-  local span_id="$(otel_span_start "$kind" "$command")"
-  otel_span_attribute "$span_id" shell.command="$command"
+  local span_handle="$(otel_span_start "$kind" "$command")"
+  otel_span_attribute "$span_handle" shell.command="$command"
   if _otel_string_contains "$command" " "; then local command_name="${command%% *}"; else  local command_name="$command"; fi # "$(\printf '%s' "$command" | \cut -sd ' ' -f 2-)" # this returns the command if there are no args, its the cut -s that cant be done via expansion alone
   if \[ -z "$command_type" ]; then local command_type="$(_otel_command_type "$command_name")"; fi
-  otel_span_attribute "$span_id" shell.command.type="$command_type"
-  otel_span_attribute "$span_id" shell.command.name="$command_name"
+  otel_span_attribute "$span_handle" shell.command.type="$command_type"
+  otel_span_attribute "$span_handle" shell.command.name="$command_name"
   if \[ "$command_type" = file ]; then
     local executable_path="$(_otel_string_contains "$command_name" / && \echo "$command_name" || \which "$command_name")"
-    otel_span_attribute "$span_id" subprocess.executable.path="$executable_path"
-    otel_span_attribute "$span_id" subprocess.executable.name="${executable_path##*/}" # "$(\printf '%s' "$command" | \cut -d' ' -f1 | \rev | \cut -d / -f 1 | \rev)"
-  fi  
-  # run command
-  otel_span_activate "$span_id"
-  local exit_code=0
-  if ! \[ -t 2 ] && \[ "$OTEL_SHELL_SUPPRESS_LOG_COLLECTION" != TRUE ]; then
-    local traceparent="$OTEL_TRACEPARENT"
-    local stderr_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
-    \mkfifo "$stderr_pipe"
-    ( (while IFS= read -r line; do _otel_log_record "$traceparent" "$line"; \echo "$line" >&2; done < "$stderr_pipe") & )
-    OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$$" _otel_call "$@" 2> "$stderr_pipe" || local exit_code="$?"
-    \rm "$stderr_pipe"
-  else
-    OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$$" _otel_call "$@" || local exit_code="$?"
+    otel_span_attribute "$span_handle" subprocess.executable.path="$executable_path"
+    otel_span_attribute "$span_handle" subprocess.executable.name="${executable_path##*/}" # "$(\printf '%s' "$command" | \cut -d' ' -f1 | \rev | \cut -d / -f 1 | \rev)"
   fi
-  otel_span_deactivate "$span_id"
+  
+  # run command
+  otel_span_activate "$span_handle"
+  local exit_code=0
+  if ! \[ -t 0 ] && ! \[ -t 1 ] && ! \[ -t 2 ] && \[ "$OTEL_SHELL_EXPERIMENTAL_OBSERVE_PIPES" = TRUE ]; then
+    local call_command="_otel_call_and_record_pipes $span_handle _otel_call_and_record_logs _otel_call"
+  elif ! \[ -t 2 ]; then
+    local call_command="_otel_call_and_record_logs _otel_call"
+  else
+    local call_command=_otel_call
+  fi
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$$" $call_command "$@" || local exit_code="$?"
+  otel_span_deactivate "$span_handle"
+  
   # set custom attributes, set final attributes, finish span
-  otel_span_attribute "$span_id" shell.command.exit_code="$exit_code"
+  otel_span_attribute "$span_handle" shell.command.exit_code="$exit_code"
   if \[ "$exit_code" -ne 0 ]; then
-    otel_span_error "$span_id"
+    otel_span_error "$span_handle"
   fi
   if \[ -n "$attributes" ]; then
     local OLD_IFS="$IFS"
@@ -243,11 +244,121 @@ otel_observe() {
     IFS="$OLD_IFS"
     for attribute in "$@"; do
       if \[ -n "$attribute" ]; then
-        otel_span_attribute "$span_id" "$attribute"
+        otel_span_attribute "$span_handle" "$attribute"
       fi
     done
   fi
-  otel_span_end "$span_id"
+  otel_span_end "$span_handle"
+  
+  return "$exit_code"
+}
+
+if \[ "$_otel_shell" = dash ]; then # TODO its only old dashes
+  # old versions of dash dont set env vars properly
+  # more specifically they do not make variables that are set in front of commands part of the child process env vars but only of the local execution environment
+  _otel_call() {
+    local command="$1"; shift
+    if ! _otel_string_starts_with "$command" "\\"; then local command="$(_otel_escape_arg "$command")"; fi
+    \eval "$( { \printenv; \set; } | \grep '^OTEL_' | \cut -d = -f 1 | \sort -u | \awk '{ print $1 "=\"$" $1 "\"" }' | _otel_line_join)" "$command" "$(_otel_escape_args "$@")"
+  }
+else
+  _otel_call() {
+    local command="$1"; shift
+    if ! _otel_string_starts_with "$command" "\\"; then local command="$(_otel_escape_arg "$command")"; fi
+    \eval "$command" "$(_otel_escape_args "$@")"
+  }
+fi
+
+_otel_call_and_record_logs() {
+  case "$-" in
+    *m*) local job_control=1; \set +m;;
+    *) local job_control=0;;
+  esac
+  local call_command="$1"; shift
+  local traceparent="$OTEL_TRACEPARENT"
+  local stderr_logs="$(\mktemp -u)_opentelemetry_shell_$$.stderr.logs.pipe"
+  \mkfifo "$stderr_logs"
+  while IFS= read -r line; do _otel_log_record "$traceparent" "$line"; \echo "$line" >&2; done < "$stderr_logs" &
+  local stderr_pid="$!"
+  local exit_code=0
+  $call_command "$@" 2> "$stderr_logs" || local exit_code="$?"
+  \wait "$stderr_pid"
+  \rm "$stderr_logs" 2> /dev/null
+  if \[ "$job_control" = 1 ]; then \set -m; fi
+  return "$exit_code"
+}
+
+_otel_call_and_record_pipes() {
+  # some notes about this function
+  # (*) we have to wait for the background processes because otherwise the span_id may not be valid anymore
+  # (*) waiting for the processes only works when its not a subshell so we can access the last process id
+  # (*) not using a subshell means we have to disable job control, otherwise we get unwanted output
+  # (*) we can only directly tee stdin, otherwise the exit code cannot be captured propely if we pipe stdout directly
+  # (*) tee for stdin does ONLY terminate when it writes something and realizes the process has terminated
+  # (**) so in cases where stdin is open but nobody every writes to it and the process doesnt expect input, tee hangs forever
+  # (**) this is different to output streams, because they get properly terminated with SIGPIPE on read
+  case "$-" in
+    *m*) local job_control=1; \set +m;;
+    *) local job_control=0;;
+  esac
+  local span_handle="$1"; shift
+  local call_command="$1"; shift
+  local stdin_bytes_result="$(\mktemp -u)_opentelemetry_shell_$$.stdin.bytes.result"
+  local stdin_lines_result="$(\mktemp -u)_opentelemetry_shell_$$.stdin.lines.result"
+  local stdout_bytes_result="$(\mktemp -u)_opentelemetry_shell_$$.stdout.bytes.result"
+  local stdout_lines_result="$(\mktemp -u)_opentelemetry_shell_$$.stdout.lines.result"
+  local stderr_bytes_result="$(\mktemp -u)_opentelemetry_shell_$$.stderr.bytes.result"
+  local stderr_lines_result="$(\mktemp -u)_opentelemetry_shell_$$.stderr.lines.result"
+  local stdout="$(\mktemp -u)_opentelemetry_shell_$$.stdout.pipe"
+  local stderr="$(\mktemp -u)_opentelemetry_shell_$$.stderr.pipe"
+  local stdin_bytes="$(\mktemp -u)_opentelemetry_shell_$$.stdin.bytes.pipe"
+  local stdin_lines="$(\mktemp -u)_opentelemetry_shell_$$.stdin.lines.pipe"
+  local stdout_bytes="$(\mktemp -u)_opentelemetry_shell_$$.stdout.bytes.pipe"
+  local stdout_lines="$(\mktemp -u)_opentelemetry_shell_$$.stdout.lines.pipe"
+  local stderr_bytes="$(\mktemp -u)_opentelemetry_shell_$$.stderr.bytes.pipe"
+  local stderr_lines="$(\mktemp -u)_opentelemetry_shell_$$.stderr.lines.pipe"
+  local exit_code=0
+  \mkfifo "$stdout" "$stderr" "$stdin_bytes" "$stdin_lines" "$stdout_bytes" "$stdout_lines" "$stderr_bytes" "$stderr_lines"
+  \wc -c < "$stdin_bytes" > "$stdin_bytes_result" &
+  local stdin_bytes_pid="$!"
+  \wc -l < "$stdin_lines" > "$stdin_lines_result" &
+  local stdin_lines_pid="$!"
+  \wc -c < "$stdout_bytes" > "$stdout_bytes_result" &
+  local stdout_bytes_pid="$!"
+  \wc -l < "$stdout_lines" > "$stdout_lines_result" &
+  local stdout_lines_pid="$!"
+  \wc -c < "$stderr_bytes" > "$stderr_bytes_result" &
+  local stderr_bytes_pid="$!"
+  \wc -l < "$stderr_lines" > "$stderr_lines_result" &
+  local stderr_lines_pid="$!"
+  \tee "$stdout_bytes" "$stdout_lines" < "$stdout" 2> /dev/null &
+  local stdout_pid="$!"
+  \tee "$stderr_bytes" "$stderr_lines" < "$stderr" >&2 2> /dev/null &
+  local stderr_pid="$!"
+  if \[ "$(\readlink -f /proc/self/fd/0)" = /dev/null ] || \[ "$(\readlink -f /proc/self/fd/0)" = "/proc/$$/fd/0" ]; then
+    \echo -n '' > "$stdin_bytes"
+    \echo -n '' > "$stdin_lines"
+    $call_command "$@" 1> "$stdout" 2> "$stderr" || local exit_code="$?"
+  else
+    \tee "$stdin_bytes" "$stdin_lines" 2> /dev/null | {
+      local inner_exit_code=0
+      $call_command "$@" || local inner_exit_code="$?"
+      # local stdin_pid="$(\ps -o 'pid,command' | \grep -F "tee $stdin_bytes $stdin_lines" | \grep -vF grep | \cut -d , -f1 | \tr -d ' ')"
+      local stdin_pid="$(\ps -o 'pid,command' | \grep -F "tee $stdin_bytes $stdin_lines" | \grep -vF grep | \awk '{ print $1 }')"
+      if \[ -n "$stdin_pid" ]; then \kill -2 "$stdin_pid" 2> /dev/null || true; fi
+      return "$inner_exit_code"
+    } 1> "$stdout" 2> "$stderr" || local exit_code="$?"
+  fi
+  \wait "$stdin_bytes_pid" "$stdin_lines_pid" "$stdout_bytes_pid" "$stdout_lines_pid" "$stderr_bytes_pid" "$stderr_lines_pid" "$stdout_pid" "$stderr_pid"
+  \rm "$stdout" "$stderr" "$stdin_bytes" "$stdin_lines" "$stdout_bytes" "$stdout_lines" "$stderr_bytes" "$stderr_lines" 2> /dev/null
+  otel_span_attribute "$span_handle" pipe.stdin.bytes="$(\cat "$stdin_bytes_result")"
+  otel_span_attribute "$span_handle" pipe.stdin.lines="$(\cat "$stdin_lines_result")"
+  otel_span_attribute "$span_handle" pipe.stdout.bytes="$(\cat "$stdout_bytes_result")"
+  otel_span_attribute "$span_handle" pipe.stdout.lines="$(\cat "$stdout_lines_result")"
+  otel_span_attribute "$span_handle" pipe.stderr.bytes="$(\cat "$stderr_bytes_result")"
+  otel_span_attribute "$span_handle" pipe.stderr.lines="$(\cat "$stderr_lines_result")"
+  \rm "$stdin_bytes_result" "$stdin_lines_result" "$stdout_bytes_result" "$stdout_lines_result" "$stderr_bytes_result" "$stderr_lines_result" 2> /dev/null
+  if \[ "$job_control" = 1 ]; then \set -m; fi
   return "$exit_code"
 }
 
@@ -275,22 +386,6 @@ _otel_log_record() {
   local line="$(_otel_dollar_star "$@")"
   _otel_sdk_communicate "LOG_RECORD" "$traceparent" "$line"
 }
-
-if \[ "$_otel_shell" = dash ]; then # TODO its only old dashes
-  # old versions of dash dont set env vars properly
-  # more specifically they do not make variables that are set in front of commands part of the child process env vars but only of the local execution environment
-  _otel_call() {
-    local command="$1"; shift
-    if ! _otel_string_starts_with "$command" "\\"; then local command="$(_otel_escape_arg "$command")"; fi
-    \eval "$( { \printenv; \set; } | \grep '^OTEL_' | \cut -d = -f 1 | \sort -u | \awk '{ print $1 "=\"$" $1 "\"" }' | _otel_line_join)" "$command" "$(_otel_escape_args "$@")"
-  }
-else
-  _otel_call() {
-    local command="$1"; shift
-    if ! _otel_string_starts_with "$command" "\\"; then local command="$(_otel_escape_arg "$command")"; fi
-    \eval "$command" "$(_otel_escape_args "$@")"
-  }
-fi
 
 _otel_escape_args() {
   # for arg in "$@"; do \echo "$arg"; done | _otel_escape_in # this may seem correct, but it doesnt handle linefeeds in arguments correctly
