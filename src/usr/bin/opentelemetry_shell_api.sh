@@ -207,30 +207,30 @@ otel_observe() {
   unset OTEL_SHELL_COMMAND_TYPE_OVERRIDE
   
   # create span, set initial attributes
-  local span_id="$(otel_span_start "$kind" "$command")"
-  otel_span_attribute "$span_id" shell.command="$command"
+  local span_handle="$(otel_span_start "$kind" "$command")"
+  otel_span_attribute "$span_handle" shell.command="$command"
   if _otel_string_contains "$command" " "; then local command_name="${command%% *}"; else  local command_name="$command"; fi # "$(\printf '%s' "$command" | \cut -sd ' ' -f 2-)" # this returns the command if there are no args, its the cut -s that cant be done via expansion alone
   if \[ -z "$command_type" ]; then local command_type="$(_otel_command_type "$command_name")"; fi
-  otel_span_attribute "$span_id" shell.command.type="$command_type"
-  otel_span_attribute "$span_id" shell.command.name="$command_name"
+  otel_span_attribute "$span_handle" shell.command.type="$command_type"
+  otel_span_attribute "$span_handle" shell.command.name="$command_name"
   if \[ "$command_type" = file ]; then
     local executable_path="$(_otel_string_contains "$command_name" / && \echo "$command_name" || \which "$command_name")"
-    otel_span_attribute "$span_id" subprocess.executable.path="$executable_path"
-    otel_span_attribute "$span_id" subprocess.executable.name="${executable_path##*/}" # "$(\printf '%s' "$command" | \cut -d' ' -f1 | \rev | \cut -d / -f 1 | \rev)"
+    otel_span_attribute "$span_handle" subprocess.executable.path="$executable_path"
+    otel_span_attribute "$span_handle" subprocess.executable.name="${executable_path##*/}" # "$(\printf '%s' "$command" | \cut -d' ' -f1 | \rev | \cut -d / -f 1 | \rev)"
   fi
   
   # run command
-  otel_span_activate "$span_id"
+  otel_span_activate "$span_handle"
   local exit_code=0
   if ! \[ -t 0 ] && ! \[ -t 1 ] && ! \[ -t 2 ] && \[ "$OTEL_SHELL_EXPERIMENTAL_OBSERVE_PIPES" = TRUE ]; then
-    local call_command="_otel_call_and_record_pipes $span_id _otel_call_and_record_logs _otel_call"
+    local call_command="_otel_call_and_record_pipes $span_handle _otel_call_and_record_logs _otel_call"
   elif ! \[ -t 2 ]; then
     local call_command="_otel_call_and_record_logs _otel_call"
   else
     local call_command=_otel_call
   fi
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$$" $call_command "$@" || local exit_code="$?"
-  otel_span_deactivate "$span_id"
+  otel_span_deactivate "$span_handle"
   
   # set custom attributes, set final attributes, finish span
   otel_span_attribute "$span_id" shell.command.exit_code="$exit_code"
@@ -244,11 +244,11 @@ otel_observe() {
     IFS="$OLD_IFS"
     for attribute in "$@"; do
       if \[ -n "$attribute" ]; then
-        otel_span_attribute "$span_id" "$attribute"
+        otel_span_attribute "$span_handle" "$attribute"
       fi
     done
   fi
-  otel_span_end "$span_id"
+  otel_span_end "$span_handle"
   
   return "$exit_code"
 }
