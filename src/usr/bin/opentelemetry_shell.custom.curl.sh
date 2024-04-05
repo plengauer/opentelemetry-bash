@@ -75,6 +75,8 @@ _otel_pipe_curl_stderr_line() {
     otel_span_attribute "$span_handle" network.peer.port="$(\printf '%s' "$line" | \cut -d ' ' -f 7)"    
   elif _otel_string_starts_with "$line" "< HTTP/"; then
     otel_span_attribute "$span_handle" http.response.status_code="$(\printf '%s' "$line" | \cut -d ' ' -f 3)"
+  elif _otel_string_starts_with "$line" "} [" && _otel_string_contains "bytes data]"; then
+    otel_span_attribute "$span_handle" http.request.body.size="$(\printf '%s' "$line" | \cut -d ' ' -f 2 | \tr -d '[')"
   elif _otel_string_starts_with "$line" "{ [" && _otel_string_contains "bytes data]"; then
     otel_span_attribute "$span_handle" http.response.body.size="$(\printf '%s' "$line" | \cut -d ' ' -f 2 | \tr -d '[')"
   elif _otel_string_starts_with "$(\printf '%s' "$line" | \tr '[:upper:]' '[:lower:]')" "> user-agent: "; then
@@ -89,7 +91,7 @@ _otel_pipe_curl_stderr_line() {
   elif _otel_string_starts_with "$line" "< " && _otel_string_contains "$line" ": "; then
     otel_span_attribute "$span_handle" http.response.header."$(\printf '%s' "$line" | \cut -d ' ' -f 2 | \tr -d ':' | \tr '[:upper:]' '[:lower:]')"="$(\printf '%s' "$line" | \cut -d ' ' -f 3-)"
   fi
-  if \[ "$is_verbose" = 1 ] || ! ( _otel_string_starts_with "$line" "* " || _otel_string_starts_with "$line" "> " || _otel_string_starts_with "$line" "< " || _otel_string_starts_with "$line" "{ " ); then
+  if \[ "$is_verbose" = 1 ] || ! ( _otel_string_starts_with "$line" "* " || _otel_string_starts_with "$line" "> " || _otel_string_starts_with "$line" "< " || _otel_string_starts_with "$line" "{ " || _otel_string_starts_with "$line" "} " ); then
     \echo "$line"
   fi
 }
