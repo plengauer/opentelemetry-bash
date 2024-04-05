@@ -1,3 +1,4 @@
+# disabled for non bash be ause dash has very weird (buggy) behavior for commands that follow closing stdout
 . ./assert.sh
 . /usr/bin/opentelemetry_shell_api.sh
 
