@@ -49,6 +49,8 @@ _otel_parse_wget_stderr_line() {
     # Connecting to www.google.at (www.google.at)|142.250.185.131|:80... connected.
     otel_span_attribute "$span_handle" network.peer.address="$(\printf '%s' "$line" | \cut -d '|' -f 2)"
     otel_span_attribute "$span_handle" network.peer.port="$(\printf '%s' "$line" | \cut -d '|' -f 3 | \tr -d ':.' | \cut -d ' ' -f 1)"
+  elif _otel_string_starts_with "$line" "HTTP/"; then # only available in debug mode, but splits up the usual response code line
+    otel_span_attribute "$span_handle" http.response.status_code="$(\printf '%s' "$line" | \cut -d ' ' -f 2)"
   elif _otel_string_starts_with "$line" "User-Agent: "; then # only available in debug mode
     otel_span_attribute "$span_handle" user_agent.original="$(\printf '%s' "$line" | \cut -d ' ' -f 2)"
   elif _otel_string_starts_with "$line" "Content-Length: "; then # only available in debug mode
