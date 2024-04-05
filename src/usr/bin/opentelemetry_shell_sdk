@@ -186,7 +186,7 @@ def handle(scope, version, command, arguments):
         span : Span = spans[span_id]
         span.end()
         del spans[span_id]
-    elif command == 'SPAN_ID':
+    elif command == 'SPAN_HANDLE':
         tokens = arguments.split(' ', 1)
         response_path = tokens[0]
         traceparent = tokens[1]

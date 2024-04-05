@@ -20,15 +20,15 @@ otel_init
 otel_observe echo "hello world"
 
 # create a manual span with a custom attribute
-span_id=$(otel_span_start INTERNAL myspan)
-otel_span_attribute $span_id key=value
+span_handle=$(otel_span_start INTERNAL myspan)
+otel_span_attribute $span_handle key=value
 echo "hello world again"
-otel_span_end $span_id
+otel_span_end $span_handle
 
 # write a metric data point with custom attributes
-metric_id=$(otel_metric_create my.metric)
-otel_metric_attribute $metric_id foo=bar
-otel_metric_add $metric_id 42
+metric_handle=$(otel_metric_create my.metric)
+otel_metric_attribute $metric_handle foo=bar
+otel_metric_add $metric_handle 42
 
 # flush and shutdown the sdk
 otel_shutdown
