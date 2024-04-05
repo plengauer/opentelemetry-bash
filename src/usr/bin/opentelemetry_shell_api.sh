@@ -117,7 +117,7 @@ _otel_resolve_package_version() {
 otel_span_current() {
   local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
   \mkfifo "$response_pipe"
-  _otel_sdk_communicate "SPAN_ID" "$response_pipe" "$OTEL_TRACEPARENT"
+  _otel_sdk_communicate "SPAN_HANDLE" "$response_pipe" "$OTEL_TRACEPARENT"
   \cat "$response_pipe"
   \rm "$response_pipe" &> /dev/null
 }
