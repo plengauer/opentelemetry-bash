@@ -133,34 +133,34 @@ otel_span_start() {
 }
 
 otel_span_end() {
-  local span_id="$1"
-  _otel_sdk_communicate "SPAN_END" "$span_id"
+  local span_handle="$1"
+  _otel_sdk_communicate "SPAN_END" "$span_handle"
 }
 
 otel_span_error() {
-  local span_id="$1"
-  _otel_sdk_communicate "SPAN_ERROR" "$span_id"
+  local span_handle="$1"
+  _otel_sdk_communicate "SPAN_ERROR" "$span_handle"
 }
 
 otel_span_attribute() {
-  local span_id="$1"
+  local span_handle="$1"
   local kvp="$2"
-  _otel_sdk_communicate "SPAN_ATTRIBUTE" "$span_id" "$kvp"
+  _otel_sdk_communicate "SPAN_ATTRIBUTE" "$span_handle" "$kvp"
 }
 
 otel_span_traceparent() {
-  local span_id="$1"
+  local span_handle="$1"
   local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
   \mkfifo "$response_pipe"
-  _otel_sdk_communicate "SPAN_TRACEPARENT" "$response_pipe" "$span_id"
+  _otel_sdk_communicate "SPAN_TRACEPARENT" "$response_pipe" "$span_handle"
   \cat "$response_pipe"
   \rm "$response_pipe" &> /dev/null
 }
 
 otel_span_activate() {
-  local span_id="$1"
+  local span_handle="$1"
   export OTEL_TRACEPARENT_STACK="$OTEL_TRACEPARENT/$OTEL_TRACEPARENT_STACK"
-  export OTEL_TRACEPARENT="$(otel_span_traceparent "$span_id")"
+  export OTEL_TRACEPARENT="$(otel_span_traceparent "$span_handle")"
 }
 
 otel_span_deactivate() {
@@ -183,15 +183,15 @@ otel_metric_create() {
 }
 
 otel_metric_attribute() {
-  local metric_id="$1"
+  local metric_handle="$1"
   local kvp="$2"
-  _otel_sdk_communicate "METRIC_ATTRIBUTE" "$metric_id" "$kvp"
+  _otel_sdk_communicate "METRIC_ATTRIBUTE" "$metric_handle" "$kvp"
 }
 
 otel_metric_add() {
-  local metric_id="$1"
+  local metric_handle="$1"
   local value="$2"
-  _otel_sdk_communicate "METRIC_ADD" "$metric_id" "$value"
+  _otel_sdk_communicate "METRIC_ADD" "$metric_handle" "$value"
 }
 
 otel_observe() {
