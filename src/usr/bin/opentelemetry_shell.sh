@@ -297,36 +297,36 @@ _otel_record_exec() {
 _otel_start_script() {
   otel_init || return $?
   if \[ -n "$SSH_CLIENT"  ] && \[ -n "$SSH_CONNECTION" ] && \[ "$(\cat /proc/$PPID/cmdline | \tr -d '\000' | \cut -d' ' -f1)" = "sshd:" ]; then
-    otel_root_span_handle="$(otel_span_start SERVER ssh)"
-    otel_span_attribute $otel_root_span_handle ssh.ip="$(\echo $SSH_CONNECTION | \cut -d ' ' -f 3)"
-    otel_span_attribute $otel_root_span_handle ssh.port="$(\echo $SSH_CONNECTION | \cut -d ' ' -f 4)"
-    otel_span_attribute $otel_root_span_handle net.peer.ip="$(\echo $SSH_CLIENT | \cut -d ' ' -f 1)"
-    otel_span_attribute $otel_root_span_handle net.peer.port="$(\echo $SSH_CLIENT | \cut -d ' ' -f 2)"
+    _root_span_handle="$(otel_span_start SERVER ssh)"
+    otel_span_attribute $_root_span_handle ssh.ip="$(\echo $SSH_CONNECTION | \cut -d ' ' -f 3)"
+    otel_span_attribute $_root_span_handle ssh.port="$(\echo $SSH_CONNECTION | \cut -d ' ' -f 4)"
+    otel_span_attribute $_root_span_handle net.peer.ip="$(\echo $SSH_CLIENT | \cut -d ' ' -f 1)"
+    otel_span_attribute $_root_span_handle net.peer.port="$(\echo $SSH_CLIENT | \cut -d ' ' -f 2)"
   elif \[ -n "$SERVER_SOFTWARE"  ] && \[ -n "$SCRIPT_NAME" ] && \[ -n "$SERVER_NAME" ] && \[ -n "$SERVER_PROTOCOL" ] && ! \[ "$OTEL_SHELL_AUTO_INJECTED" = "TRUE" ] && \[ "$(\cat "/proc/$PPID/cmdline" | \tr -d '\000' | \cut -d ' ' -f 1 | \rev | \cut -d / -f 1 | \rev)" = "python3" ]; then
-    otel_root_span_handle="$(otel_span_start SERVER GET)"
-    otel_span_attribute $otel_root_span_handle network.protocol.name=http
-    otel_span_attribute $otel_root_span_handle network.transport=tcp
-    otel_span_attribute $otel_root_span_handle network.peer.address="$REMOTE_ADDR"
-    otel_span_attribute $otel_root_span_handle http.request.method=GET
-    otel_span_attribute $otel_root_span_handle http.route="$SCRIPT_NAME"
-    otel_span_attribute $otel_root_span_handle server.address="$SERVER_NAME"
-    otel_span_attribute $otel_root_span_handle server.port="$SERVER_PORT"
-    otel_span_attribute $otel_root_span_handle url.full="$(\echo "$SERVER_PROTOCOL" | \cut -d / -f 1 | \tr '[:upper:]' '[:lower:]')://$SERVER_NAME:$SERVER_PORT$SCRIPT_NAME"
-    otel_span_attribute $otel_root_span_handle url.path="$SCRIPT_NAME"
-    otel_span_attribute $otel_root_span_handle url.query=""
-    otel_span_attribute $otel_root_span_handle url.scheme="$(\echo "$SERVER_PROTOCOL" | \cut -d / -f 1 | \tr '[:upper:]' '[:lower:]')"
-    otel_span_attribute $otel_root_span_handle http.response.status_code=200
+    _root_span_handle="$(otel_span_start SERVER GET)"
+    otel_span_attribute $_root_span_handle network.protocol.name=http
+    otel_span_attribute $_root_span_handle network.transport=tcp
+    otel_span_attribute $_root_span_handle network.peer.address="$REMOTE_ADDR"
+    otel_span_attribute $_root_span_handle http.request.method=GET
+    otel_span_attribute $_root_span_handle http.route="$SCRIPT_NAME"
+    otel_span_attribute $_root_span_handle server.address="$SERVER_NAME"
+    otel_span_attribute $_root_span_handle server.port="$SERVER_PORT"
+    otel_span_attribute $_root_span_handle url.full="$(\echo "$SERVER_PROTOCOL" | \cut -d / -f 1 | \tr '[:upper:]' '[:lower:]')://$SERVER_NAME:$SERVER_PORT$SCRIPT_NAME"
+    otel_span_attribute $_root_span_handle url.path="$SCRIPT_NAME"
+    otel_span_attribute $_root_span_handle url.query=""
+    otel_span_attribute $_root_span_handle url.scheme="$(\echo "$SERVER_PROTOCOL" | \cut -d / -f 1 | \tr '[:upper:]' '[:lower:]')"
+    otel_span_attribute $_root_span_handle http.response.status_code=200
   elif _otel_command_self | \grep -q '/var/lib/dpkg/' > /dev/null; then
     local cmdline="$(_otel_command_self | \sed 's/^.* \(\/var\/lib\/dpkg\/.*\)$/\1/')"
-    otel_root_span_handle="$(otel_span_start SERVER "$(\echo "$cmdline" | \cut -d . -f 2- | \cut -d ' ' -f 1)")"
-    otel_span_attribute $otel_root_span_handle debian.package.name="$(\echo "$cmdline" | \rev | \cut -d / -f 1 | \rev | \cut -d . -f 1)"
-    otel_span_attribute $otel_root_span_handle debian.package.operation="$(\echo "$cmdline" | \cut -d . -f 2-)"
+    _root_span_handle="$(otel_span_start SERVER "$(\echo "$cmdline" | \cut -d . -f 2- | \cut -d ' ' -f 1)")"
+    otel_span_attribute $_root_span_handle debian.package.name="$(\echo "$cmdline" | \rev | \cut -d / -f 1 | \rev | \cut -d . -f 1)"
+    otel_span_attribute $_root_span_handle debian.package.operation="$(\echo "$cmdline" | \cut -d . -f 2-)"
   elif ! \[ "$OTEL_SHELL_AUTO_INJECTED" = TRUE ] && \[ -z "$OTEL_TRACEPARENT" ]; then
-    otel_root_span_handle="$(otel_span_start SERVER "$(_otel_command_self)")"
+    _root_span_handle="$(otel_span_start SERVER "$(_otel_command_self)")"
   elif ! \[ "$OTEL_SHELL_AUTO_INJECTED" = TRUE ] && \[ -n "$OTEL_TRACEPARENT" ]; then
-    otel_root_span_handle="$(otel_span_start INTERNAL "$(_otel_command_self)")"
+    _root_span_handle="$(otel_span_start INTERNAL "$(_otel_command_self)")"
   fi
-  if \[ -n "$otel_root_span_handle" ]; then otel_span_activate "$otel_root_span_handle"; fi
+  if \[ -n "$_root_span_handle" ]; then otel_span_activate "$_root_span_handle"; fi
   unset OTEL_SHELL_AUTO_INJECTED
 }
 
