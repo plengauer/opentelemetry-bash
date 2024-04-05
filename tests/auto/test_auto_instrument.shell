@@ -8,8 +8,8 @@ assert_equals "echo hello world" "$(\echo "$span" | jq -r '.name')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
 assert_not_equals "null" $(\echo "$span" | jq -r '.parent_id')
 assert_equals "UNSET" $(\echo "$span" | jq -r '.status.status_code')
-assert_equals "echo hello world" "$(\echo "$span" | jq -r '.attributes."shell.command"')"
-assert_equals "echo" "$(\echo "$span" | jq -r '.attributes."shell.command.name"')"
+assert_equals "echo hello world" "$(\echo "$span" | jq -r '.attributes."shell.command_line"')"
+assert_equals "echo" "$(\echo "$span" | jq -r '.attributes."shell.command"')"
 assert_equals "0" $(\echo "$span" | jq -r '.attributes."shell.command.exit_code"')
 
 (echo hello world in a subshell)
@@ -19,8 +19,8 @@ assert_equals "echo hello world in a subshell" "$(\echo "$span" | jq -r '.name')
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
 assert_not_equals "null" $(\echo "$span" | jq -r '.parent_id')
 assert_equals "UNSET" $(\echo "$span" | jq -r '.status.status_code')
-assert_equals "echo hello world in a subshell" "$(\echo "$span" | jq -r '.attributes."shell.command"')"
-assert_equals "echo" "$(\echo "$span" | jq -r '.attributes."shell.command.name"')"
+assert_equals "echo hello world in a subshell" "$(\echo "$span" | jq -r '.attributes."shell.command_line"')"
+assert_equals "echo" "$(\echo "$span" | jq -r '.attributes."shell.command"')"
 assert_equals "0" $(\echo "$span" | jq -r '.attributes."shell.command.exit_code"')
 
 echo hello world in a pipe | grep world | cat
@@ -30,8 +30,8 @@ assert_equals "grep world" "$(\echo "$span" | jq -r '.name')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
 assert_not_equals "null" $(\echo "$span" | jq -r '.parent_id')
 assert_equals "UNSET" $(\echo "$span" | jq -r '.status.status_code')
-assert_equals "grep world" "$(\echo "$span" | jq -r '.attributes."shell.command"')"
-assert_equals "grep" "$(\echo "$span" | jq -r '.attributes."shell.command.name"')"
+assert_equals "grep world" "$(\echo "$span" | jq -r '.attributes."shell.command_line"')"
+assert_equals "grep" "$(\echo "$span" | jq -r '.attributes."shell.command"')"
 assert_equals "0" $(\echo "$span" | jq -r '.attributes."shell.command.exit_code"')
 
 echo first; echo hello world in a command list; echo second
@@ -41,8 +41,8 @@ assert_equals "echo hello world in a command list" "$(\echo "$span" | jq -r '.na
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
 assert_not_equals "null" $(\echo "$span" | jq -r '.parent_id')
 assert_equals "UNSET" $(\echo "$span" | jq -r '.status.status_code')
-assert_equals "echo hello world in a command list" "$(\echo "$span" | jq -r '.attributes."shell.command"')"
-assert_equals "echo" "$(\echo "$span" | jq -r '.attributes."shell.command.name"')"
+assert_equals "echo hello world in a command list" "$(\echo "$span" | jq -r '.attributes."shell.command_line"')"
+assert_equals "echo" "$(\echo "$span" | jq -r '.attributes."shell.command"')"
 assert_equals "0" $(\echo "$span" | jq -r '.attributes."shell.command.exit_code"')
 
 echo first && echo hello world in a chain && echo second
@@ -52,8 +52,8 @@ assert_equals "echo hello world in a chain" "$(\echo "$span" | jq -r '.name')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
 assert_not_equals "null" $(\echo "$span" | jq -r '.parent_id')
 assert_equals "UNSET" $(\echo "$span" | jq -r '.status.status_code')
-assert_equals "echo hello world in a chain" "$(\echo "$span" | jq -r '.attributes."shell.command"')"
-assert_equals "echo" "$(\echo "$span" | jq -r '.attributes."shell.command.name"')"
+assert_equals "echo hello world in a chain" "$(\echo "$span" | jq -r '.attributes."shell.command_line"')"
+assert_equals "echo" "$(\echo "$span" | jq -r '.attributes."shell.command"')"
 assert_equals "0" $(\echo "$span" | jq -r '.attributes."shell.command.exit_code"')
 
 if [ ! -f 'FILE_THAT_DOES_NOT_EXIST' ]; then echo hello world in an if; fi
@@ -63,6 +63,6 @@ assert_equals "echo hello world in an if" "$(\echo "$span" | jq -r '.name')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
 assert_not_equals "null" $(\echo "$span" | jq -r '.parent_id')
 assert_equals "UNSET" $(\echo "$span" | jq -r '.status.status_code')
-assert_equals "echo hello world in an if" "$(\echo "$span" | jq -r '.attributes."shell.command"')"
-assert_equals "echo" "$(\echo "$span" | jq -r '.attributes."shell.command.name"')"
+assert_equals "echo hello world in an if" "$(\echo "$span" | jq -r '.attributes."shell.command_line"')"
+assert_equals "echo" "$(\echo "$span" | jq -r '.attributes."shell.command"')"
 assert_equals "0" $(\echo "$span" | jq -r '.attributes."shell.command.exit_code"')

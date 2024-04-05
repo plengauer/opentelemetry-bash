@@ -54,24 +54,25 @@ _otel_resource_attributes() {
   local process_executable_path="$(\readlink -f "/proc/$$/exe")"
   local process_executable_name="${process_executable_path##*/}" # "$(\printf '%s' "$process_executable_path" | \rev | \cut -d / -f 1 | \rev)"
   \echo process.pid="$$"
+  \echo process.parent_pid="$PPID"
   \echo process.executable.name="$process_executable_name"
   \echo process.executable.path="$process_executable_path"
-  \echo process.command="$process_command"
-  \echo process.command_args=${process_command#* } # "$(\printf '%s' "$process_command" | \cut -d ' ' -f 2-)"
+  \echo process.command_line="$process_command"
+  \echo process.command="${process_command%% *}" # "$(\printf '%s' "$process_command" | \cut -d ' ' -f 1)"
   \echo process.owner="$USER"
+  \echo process.runtime.name="$_otel_shell"
   case "$_otel_shell" in
-       sh) \echo process.runtime.name="Bourne Shell" ;;
-      ash) \echo process.runtime.name="Almquist Shell" ;;
-     dash) \echo process.runtime.name="Debian Almquist Shell" ;;
-     bash) \echo process.runtime.name="Bourne Again Shell" ;;
-      zsh) \echo process.runtime.name="Z Shell" ;;
-      ksh) \echo process.runtime.name="Korn Shell" ;;
-    pdksh) \echo process.runtime.name="Public Domain Korn Shell" ;;
-     posh) \echo process.runtime.name="Policy-compliant Ordinary Shell" ;;
-     yash) \echo process.runtime.name="Yet Another Shell" ;;
-     bosh) \echo process.runtime.name="Bourne Shell" ;;
-     fish) \echo process.runtime.name="Friendly Interactive Shell" ;;
-        *) \echo process.runtime.name="$process_executable_name" ;;
+       sh) \echo process.runtime.description="Bourne Shell" ;;
+      ash) \echo process.runtime.description="Almquist Shell" ;;
+     dash) \echo process.runtime.description="Debian Almquist Shell" ;;
+     bash) \echo process.runtime.description="Bourne Again Shell" ;;
+      zsh) \echo process.runtime.description="Z Shell" ;;
+      ksh) \echo process.runtime.description="Korn Shell" ;;
+    pdksh) \echo process.runtime.description="Public Domain Korn Shell" ;;
+     posh) \echo process.runtime.description="Policy-compliant Ordinary Shell" ;;
+     yash) \echo process.runtime.description="Yet Another Shell" ;;
+     bosh) \echo process.runtime.description="Bourne Shell" ;;
+     fish) \echo process.runtime.description="Friendly Interactive Shell" ;;
   esac
   \echo -n process.runtime.version=; _otel_package_version "$process_executable_name"
   \echo process.runtime.options="$-"
@@ -208,11 +209,11 @@ otel_observe() {
   
   # create span, set initial attributes
   local span_handle="$(otel_span_start "$kind" "$command")"
-  otel_span_attribute "$span_handle" shell.command="$command"
+  otel_span_attribute "$span_handle" shell.command_line="$command"
   if _otel_string_contains "$command" " "; then local command_name="${command%% *}"; else  local command_name="$command"; fi # "$(\printf '%s' "$command" | \cut -sd ' ' -f 2-)" # this returns the command if there are no args, its the cut -s that cant be done via expansion alone
   if \[ -z "$command_type" ]; then local command_type="$(_otel_command_type "$command_name")"; fi
   otel_span_attribute "$span_handle" shell.command.type="$command_type"
-  otel_span_attribute "$span_handle" shell.command.name="$command_name"
+  otel_span_attribute "$span_handle" shell.command="$command_name"
   if \[ "$command_type" = file ]; then
     local executable_path="$(_otel_string_contains "$command_name" / && \echo "$command_name" || \which "$command_name")"
     otel_span_attribute "$span_handle" subprocess.executable.path="$executable_path"
