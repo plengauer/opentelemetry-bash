@@ -1,5 +1,5 @@
 Package: opentelemetry-shell
-Version: 4.0.0
+Version: 4.1.0
 Architecture: all
 Depends: ash | dash | bash, coreutils, util-linux, grep, sed, awk, dpkg | apt, python3, python3-pip, python3-venv
 Enhances: ash, dash, bash
