@@ -118,7 +118,7 @@ def handle(scope, version, command, arguments):
         propagator = os.environ.get('OTEL_PROPAGATORS', 'tracecontext');
 
         if propagator != 'tracecontext':
-          raise Error('Unsupported propagator: ' + propagator);
+          raise Exception('Unsupported propagator: ' + propagator);
 
         if traces_exporters:
             tracer_provider = TracerProvider(sampler=sampling.DEFAULT_ON, resource=final_resources)
@@ -130,7 +130,7 @@ def handle(scope, version, command, arguments):
                 elif traces_exporter == 'otlp':
                     tracer_provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
                 else:
-                    raise Error('Unknown exporter: ' + traces_exporter)
+                    raise Exception('Unknown exporter: ' + traces_exporter)
             opentelemetry.trace.set_tracer_provider(tracer_provider)
 
         if metrics_exporters:
@@ -143,7 +143,7 @@ def handle(scope, version, command, arguments):
                 elif metrics_exporter == 'otlp':
                     metric_readers.append(PeriodicExportingMetricReader(OTLPMetricExporter()))
                 else:
-                    raise Error('Unknown exporter: ' + metrics_exporter)
+                    raise Exception('Unknown exporter: ' + metrics_exporter)
             opentelemetry.metrics.set_meter_provider(MeterProvider(metric_readers = metric_readers, resource=final_resources))
 
         if logs_exporters:
@@ -156,7 +156,7 @@ def handle(scope, version, command, arguments):
                 elif logger_exporter == 'otlp':
                     logger_provider.add_log_record_processor(BatchLogRecordProcessor(OTLPLogExporter()))
                 else:
-                    raise Error('Unknown exporter: ' + logger_exporter)
+                    raise Exception('Unknown exporter: ' + logger_exporter)
             opentelemetry._logs.set_logger_provider(logger_provider)
 
     elif command == 'SHUTDOWN':
