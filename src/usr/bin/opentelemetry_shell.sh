@@ -302,7 +302,7 @@ _otel_start_script() {
     otel_span_attribute $_root_span_handle ssh.port="$(\echo $SSH_CONNECTION | \cut -d ' ' -f 4)"
     otel_span_attribute $_root_span_handle net.peer.ip="$(\echo $SSH_CLIENT | \cut -d ' ' -f 1)"
     otel_span_attribute $_root_span_handle net.peer.port="$(\echo $SSH_CLIENT | \cut -d ' ' -f 2)"
-  elif \[ -n "$SERVER_SOFTWARE"  ] && \[ -n "$SCRIPT_NAME" ] && \[ -n "$SERVER_NAME" ] && \[ -n "$SERVER_PROTOCOL" ] && ! \[ "$OTEL_SHELL_AUTO_INJECTED" = "TRUE" ] && \[ "$(\cat "/proc/$PPID/cmdline" | \tr -d '\000' | \cut -d ' ' -f 1 | \rev | \cut -d / -f 1 | \rev)" = "python3" ]; then
+  elif \[ -n "$SERVER_SOFTWARE"  ] && \[ -n "$SCRIPT_NAME" ] && \[ -n "$SERVER_NAME" ] && \[ -n "$SERVER_PROTOCOL" ] && ! \[ "$OTEL_SHELL_AUTO_INJECTED" = "TRUE" ] && \[ "$(\cat "/proc/$PPID/cmdline" | \tr '\000' ' ' | \cut -d ' ' -f 1 | \rev | \cut -d / -f 1 | \rev)" = "python3" ]; then
     _root_span_handle="$(otel_span_start SERVER GET)"
     otel_span_attribute $_root_span_handle network.protocol.name=http
     otel_span_attribute $_root_span_handle network.transport=tcp
@@ -332,12 +332,12 @@ _otel_start_script() {
 
 _otel_end_script() {
   local exit_code="$?"
-  if \[ -n "$otel_root_span_handle" ]; then
+  if \[ -n "$_root_span_handle" ]; then
     if \[ "$exit_code" -ne 0 ]; then
-      otel_span_error "$otel_root_span_handle"
+      otel_span_error "$_root_span_handle"
     fi
     otel_span_deactivate
-    otel_span_end "$otel_root_span_handle"
+    otel_span_end "$_root_span_handle"
   fi
   otel_shutdown
 }
