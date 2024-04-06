@@ -31,7 +31,7 @@ _otel_propagate_curl() {
   otel_span_attribute "$span_handle" user_agent.original=curl
   local stderr_pipe="$(\mktemp -u)_opentelemetry_shell_$$.stderr.curl.pipe"
   \mkfifo "$stderr_pipe"
-  while read -r line; do _otel_pipe_curl_stderr_line "$is_verbose" "$span_handle" "$line" >&2; done < "$stderr_pipe" &
+  ( while read -r line; do _otel_pipe_curl_stderr_line "$is_verbose" "$span_handle" "$line" >&2; done < "$stderr_pipe" & )
   local stderr_pid="$!"
   local exit_code=0
   _otel_call "$@" -H "traceparent: $OTEL_TRACEPARENT" -v 2> "$stderr_pipe" || exit_code="$?"
