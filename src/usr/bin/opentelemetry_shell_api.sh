@@ -214,7 +214,7 @@ otel_observe() {
   if \[ -z "$command_type" ]; then local command_type="$(_otel_command_type "$command_name")"; fi
   otel_span_attribute "$span_handle" shell.command="$command_name"
   otel_span_attribute "$span_handle" shell.command.type="$command_type"
-  if _otel_string_contains "$command_name" / then
+  if _otel_string_contains "$command_name" /; then
     otel_span_attribute "$span_handle" shell.command.name=""${command_name##*/}""
   else
     otel_span_attribute "$span_handle" shell.command.name="$command_name"
