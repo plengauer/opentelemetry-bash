@@ -3,4 +3,9 @@
   "extends": [
     "config:recommended"
   ]
+  "prHourlyLimit": 0,
+  "prConcurrentLimit": 0,
+  "grouping": "auto"
+  "automerge": true,
+  "automergeType": "branch",
 }
