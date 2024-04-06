@@ -1,7 +1,5 @@
-if ! type sudo; then
-  sudo() {
-    "$@"
-  }
+if ! type sudo || ! type systemctl; then
+  exit 0
 fi
 
 curl https://api.github.com/repos/plengauer/gitaptly/releases/latest | jq -r '.assets[].browser_download_url' | grep '.deb$' | xargs wget \
