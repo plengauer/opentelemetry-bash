@@ -4,8 +4,7 @@ if ! type sudo; then
   }
 fi
 
-. otel.sh
-curl https://api.github.com/repos/plengauer/gitaptly/releases/latest | jq -r '.assets[].browser_download_url' | grep '.deb$' | xargs wget && sudo apt-get install ./*.deb \
-  && curl dists/stable/main/binary-all/Packages\
-  && wget http://127.0.0.1:8000/cgi-bin/main/plengauer/Utilities/auto-management_1.3.3.deb \
+curl https://api.github.com/repos/plengauer/gitaptly/releases/latest | jq -r '.assets[].browser_download_url' | grep '.deb$' | xargs wget \
+  && sudo apt-get install ./*.deb && sleep 5 \
+  && curl http://127.0.0.1:8000/dists/stable/main/binary-all/Packages | grep '^Filename: ' | cut -d ' ' -f 2- | head -n1 | xargs -I {} wget http://127.0.0.1:8000/{} \
   || exit 1
