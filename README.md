@@ -1,5 +1,6 @@
 This project delivers [OpenTelemetry](https://opentelemetry.io/) traces, metrics and logs from shell scripts (sh, ash, dash, bash, and all POSIX compliant shells). Compared to similar projects, it delivers not just a command-line SDK to create spans manually, but also provides context propagation via HTTP (wget and curl), auto-instrumentation of all available commands, auto-injection into child scripts and into executables using shebangs, as well as automatic log collection from stderr. Its installable via a debian package from the releases in this repository, or from the apt-repository below. This project is not officially affiliated with the CNCF project [OpenTelemetry](https://opentelemetry.io/).
 
+# Overview
 Use it to manually create spans and metrics (see automatic below):
 ```bash
 #!/bin/bash
@@ -34,7 +35,7 @@ otel_metric_add $metric_handle 42
 otel_shutdown
 ```
 
-Use it to automatically instrument and inject into child scripts:
+Use it to fully automatically instrument, propagate and inject:
 ```bash
 #!/bin/bash
 
@@ -154,6 +155,7 @@ A simple command like `curl http://www.google.at` on an AWS EC2 will produce a s
 }
 ```
 
+# Installation
 Install either via
 ```bash
 wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh -E
@@ -165,3 +167,93 @@ sudo apt-get update
 sudo apt-get install opentelemetry-shell
 ```
 
+# Configuration
+
+
+# API Documentation
+Use the API manually, you can create and customize spans and metrics manually to your liking, either fully manually or in combination with the automatic approach. The following section is a full list of API functions.
+
+## Import
+```bash
+. otelapi.sh
+```
+TODO talk about otel.sh here also
+
+## Automatic Initialization
+Import the open telemetry auto instrumentation as well as the api by sourcing the `otel.sh` file. This will both import the API described below (in case you need or want to extend manually) as well as initialize the sdk and the auto instrumentation. No explicit calls to `otel_init` at the start or to `otel_shutdown` at the end of the script are necessary. You can configure the sSDK as described <a href="https://opentelemetry.io/docs/languages/sdk-configuration/">here</a>. We recommend not just setting the environment variables, but also exporting them so that automatically injected children inherit the same configuration.
+
+All commands are automatically instrumented to create spans. This includes commands on the `PATH`, as well as all aliases and built-ins. Current limitations are shell functions as well as commands that are called via an absolute or relative path (`/bin/cat` rather than `cat`). For these cases, you can use `otel_observe` described below.
+For all commands attributes for the of the `shell.*` (describing the command being run), `pipe.*` (describing behavior of stdin, stdout, and stderr), `subprocess.executable.*` (describe the executable being run if any, `code.*` (describing the location in the script) families are recorded. Additionally, all lines written to stderr are recorded as logs.
+
+If the command is a shell or an executable with a shebang (meaning it itself is script rather than a binary), open telemetry will be automatically injected into it to continue observation. No setup code (like below) or configuration is necessary. 
+If the command is just a wrapper for another command (e.g., sudo, xargs, parallel, ...), open telemetry will automatically be injected into the inner command to continue observation as well.
+If the command represents communication to a third party service (like a HTTP request via `curl` or `wget`), relevant attributes from the `http.*`, `server.*`, `url.*`, and `network.*` families are added. Additionally, a W3C traceparent header is injected.
+```bash
+export OTEL_SERVICE_NAME=Test
+export OTEL_RESOURCE_ATTRIBUTES=foo=bar,baz=foo
+# TODO more config
+. otel.sh
+# ...
+```
+
+## Manual Initialization
+Import the api by referencing the `otelapi.sh` file. This is only necessary if you do not choose a fully automatic approach. In case you use automatic instrumentation, the API will be imported automatically for you.
+Initialize and shutdown the SDK at the start and at the end of your script respectively. All config must be set before the call to `otel_init`. You can configure the underlying SDK with the same environment variables as any other OpenTelemetry SDK as described <a href="https://opentelemetry.io/docs/languages/sdk-configuration/">here</a>. We recommend not just setting the environment variables, but also exporting them so that automatically injected children inherit the same configuration.
+```bash
+export OTEL_SERVICE_NAME=Test
+export OTEL_RESOURCE_ATTRIBUTES=foo=bar,baz=foo
+# TODO more config
+. otelapi.sh
+
+otel_init
+# ... 
+otel_shutdown
+```
+
+## Traces
+The API described below is for manually creating and customizing spans. We recommend to do this only if the automatic instrumentation is not sufficient.
+
+### Spans
+Create spans with a span kind (SERVER, CONSUMER, CLIENT, PRODUCER, INTERNAL) and an arbitrary name. The returned span handle is used to end the span and to customize it (see below). The span handle is not a span ID, it is more similar to a file descriptor. It is only valid within this process and used for subsequent calls to customize the spans. Creating a span alone will not make new spans its children (see span activation below). Start and end time of the span as well as its parent (if another span is currently active) is automatically recorded.
+```bash
+span_handle="$(otel_span_start INTERNAL my span)"
+# ... 
+otel_span_end "$span_handle"
+```
+
+### Span Attributes
+Customize your spans by manually setting span attributes with the span handle. This is only possible between the `otel_span_start` and `otel_span_end` for the respective handle.
+```bash
+otel_span_attribute "$span_handle" foo=bar
+```
+
+### Span Error
+Customize your spans by marking them as failed. This is only possible between the `otel_span_start` and `otel_span_end` for the respective span handle.
+```bash
+otel_span_error "$span_handle"
+```
+
+### Span Activation
+Customize your spans by marking them as failed. This is only possible between the `otel_span_start` and `otel_span_end` for the respective span handle. Please note, that `span_start` does not automatically activate a span, nor does `span_end` automatically deactivate it.
+```bash
+otel_span_activate "$span_handle"
+# ... all spans created here will be children of the activated span
+otel_span_deactivate
+```
+
+### Semi-automatic Spans 
+The easiest way to create a span manually and fill it with some simple default attributes is to use the function `otel_observe`. This function acts as a wrapper for the given command. It first starts an INTERNAL span with the command as name, records some default attributes, activates the span (in case the command in turn creates spans), and then runs the command. After the command terminates, it deactivates the span and ends it. Among the automatically recorded attribtues are attribtues of the `shell.*`, `pipe.*`, and `subprocess.executable.*` families. All lines, written to stderr will be recorded as logs. The function is fully transparent in its behavior, i.e., stdin, stdout, and stderr of the wrapped command are piped to the caller accordingly, and the function returns with the same exit code as the wrapped command does.
+```bash
+otel_observe cat file.txt
+```
+
+## Metrics
+To record metrics, first create a new metric with a key to get a metric handle. The returned metric handle is used to customize the metric data point and record its value.
+```bash
+metric_handle=$(otel_metric_create my.metric)
+otel_metric_attribute $metric_handle foo=bar
+otel_metric_add $metric_handle 42
+```
+
+## Logs
+As of today, there is no way to manually record logs. Logs, i.e., lines that are written to stderr, are recorded automatically when using auto-instrumentation and when using `otel_observe` as described above.
