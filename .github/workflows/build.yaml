@@ -1,0 +1,20 @@
+name: Build
+
+on:
+  workflow_call:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./src
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install devscripts debhelper
+      - run: sed -i "s/__VERSION__/$(cat ../VERSION)/g" DEBIAN/control
+      - run: dpkg-deb --root-owner-group -Zgzip --build . ../package.deb
+      - uses: actions/upload-artifact@v4
+        with:
+          name: package.deb
+          path: package.deb
