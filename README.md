@@ -53,6 +53,107 @@ curl http://www.google.com # this will create a http client span and inject w3c 
 bash ./print_hello_world.sh
 ```
 
+A simple command like `curl http://www.google.at` on an AWS EC2 will produce a span like this:
+```json
+{
+    "name": "curl http://www.google.at",
+    "context": {
+        "trace_id": "0xfecf2bf60c1433a33fc3b3715100f44a",
+        "span_id": "0x0441d068e0d7d83a",
+        "trace_state": "[]"
+    },
+    "kind": "SpanKind.CLIENT",
+    "parent_id": "0x31877863ebe897a6",
+    "start_time": "2024-04-07T15:27:35.230551Z",
+    "end_time": "2024-04-07T15:27:35.790162Z",
+    "status": {
+        "status_code": "UNSET"
+    },
+    "attributes": {
+        "shell.command_line": "curl http://www.google.at",
+        "shell.command": "curl",
+        "shell.command.type": "file",
+        "shell.command.name": "curl",
+        "subprocess.executable.path": "/usr/bin/curl",
+        "subprocess.executable.name": "curl",
+        "network.protocol.name": "http",
+        "network.transport": "tcp",
+        "http.request.method": "GET",
+        "server.address": "www.google.at",
+        "server.port": "",
+        "url.full": "http://www.google.at",
+        "url.path": "/",
+        "url.query": "",
+        "url.scheme": "http",
+        "network.peer.address": "172.217.18.3",
+        "network.peer.port": "80",
+        "http.request.header.host": "www.google.at",
+        "user_agent.original": "curl/8.2.1",
+        "http.request.header.user-agent": "curl/8.2.1",
+        "http.request.header.accept": "*/*",
+        "http.request.header.traceparent": "00-fecf2bf60c1433a33fc3b3715100f44a-0441d068e0d7d83a-01",
+        "http.response.status_code": "200",
+        "http.response.header.date": "Sun, 07 Apr 2024 15:27:35 GMT",
+        "http.response.header.expires": "-1",
+        "http.response.header.cache-control": "private, max-age=0",
+        "http.response.header.content-type": "text/html; charset=ISO-8859-1",
+        "http.response.header.content-security-policy-report-only": "object-src 'none';base-uri 'self';script-src 'nonce-Z06PcaKXtGYEozZ8RwkRlA' 'strict-dynamic' 'report-sample' 'unsafe-eval' 'unsafe-inline' https: http:;report-uri https://csp.withgoogle.com/csp/gws/other-hp",
+        "http.response.header.server": "gws",
+        "http.response.header.x-xss-protection": "0",
+        "http.response.header.x-frame-options": "SAMEORIGIN",
+        "http.response.header.set-cookie": "AEC=AQTF6HxUMJNiGOP4fGxONroFJ61uidlU9uiGQsHcvRug4cz-d5iOLWCN7Q; expires=Fri, 04-Oct-2024 15:27:35 GMT; path=/; domain=.google.at; Secure; HttpOnly; SameSite=lax",
+        "http.response.header.accept-ranges": "none",
+        "http.response.header.vary": "Accept-Encoding",
+        "http.response.header.transfer-encoding": "chunked",
+        "http.response.body.size": "11984",
+        "pipe.stdin.bytes": "0",
+        "pipe.stdin.lines": "0",
+        "pipe.stdout.bytes": "18750",
+        "pipe.stdout.lines": "16",
+        "pipe.stderr.bytes": "391",
+        "pipe.stderr.lines": "4",
+        "shell.command.exit_code": "0",
+        "code.filepath": "./otel_demo_curl.sh",
+        "code.lineno": "2",
+        "code.function": ""
+    },
+    "events": [],
+    "links": [],
+    "resource": {
+        "attributes": {
+            "telemetry.sdk.language": "shell",
+            "telemetry.sdk.name": "opentelemetry",
+            "telemetry.sdk.version": "4.2.1",
+            "deployment.environment": "development",
+            "service.name": "DemoService",
+            "cloud.provider": "aws",
+            "cloud.platform": "aws_ec2",
+            "cloud.account.id": "785162395342",
+            "cloud.region": "eu-central-1",
+            "cloud.availability_zone": "eu-central-1b",
+            "host.id": "i-099942b18fe209756",
+            "host.type": "t3.small",
+            "host.name": "ip-172-31-41-64.eu-central-1.compute.internal",
+            "process.pid": "798293",
+            "process.parent_pid": "786902",
+            "process.executable.name": "bash",
+            "process.executable.path": "/usr/bin/bash",
+            "process.command_line": "bash ./otel_demo_curl.sh",
+            "process.command": "bash",
+            "process.owner": "ubuntu",
+            "process.runtime.name": "bash",
+            "process.runtime.description": "Bourne Again Shell",
+            "process.runtime.version": "5.2.15-2ubuntu1",
+            "process.runtime.options": "hB",
+            "service.version": "1.0",
+            "service.namespace": "Demo",
+            "service.instance.id": ""
+        },
+        "schema_url": ""
+    }
+}
+```
+
 Install either via
 ```bash
 wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh -E
