@@ -187,6 +187,8 @@ The easiest way to create a span manually and fill it with some simple default a
 otel_observe cat file.txt
 ```
 
+Please note, that this command will not perform injection or context propagation. This can only be done via the fully automatic approach described above.
+
 ## Metrics
 To record metrics, first create a new metric with a key to get a metric handle. The returned metric handle is used to customize the metric data point and record its value.
 ```bash
