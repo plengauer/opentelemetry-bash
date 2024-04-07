@@ -162,19 +162,19 @@ otel_span_end "$span_handle"
 Creating a span alone will not make new spans its children (see span activation below). Start and end time of the span as well as its parent (if another span is currently active) is automatically recorded.
 
 ### Span Attributes
-Customize your spans by manually setting span attributes with the span handle. This is only possible between the `otel_span_start` and `otel_span_end` for the respective handle.
+Customize your spans by manually setting span attributes with the span handle. This is only possible between `otel_span_start` and `otel_span_end` for the respective span handle.
 ```bash
 otel_span_attribute "$span_handle" foo=bar
 ```
 
 ### Span Error
-Customize your spans by marking them as failed. This is only possible between the `otel_span_start` and `otel_span_end` for the respective span handle.
+Customize your spans by marking them as failed. This is only possible between `otel_span_start` and `otel_span_end` for the respective span handle.
 ```bash
 otel_span_error "$span_handle"
 ```
 
 ### Span Activation
-Customize your spans by marking them as failed. This is only possible between the `otel_span_start` and `otel_span_end` for the respective span handle. Please note, that `span_start` does not automatically activate a span, nor does `span_end` automatically deactivate it.
+Customize your spans by marking them as failed. This is only possible between `otel_span_start` and `otel_span_end` for the respective span handle. Please note, that `span_start` does not automatically activate a span, nor does `span_end` automatically deactivate it.
 ```bash
 otel_span_activate "$span_handle"
 # ... all spans created here will be children of the activated span
@@ -182,7 +182,7 @@ otel_span_deactivate
 ```
 
 ### Semi-automatic Spans 
-The easiest way to create a span manually and fill it with some simple default attributes is to use the function `otel_observe`. This function acts as a wrapper for the given command. It first starts an INTERNAL span with the command as name, records some default attributes, activates the span (in case the command in turn creates spans), and then runs the command. After the command terminates, it deactivates the span and ends it. Among the automatically recorded attribtues are attribtues of the `shell.*`, `pipe.*`, and `subprocess.executable.*` families. All lines, written to stderr will be recorded as logs. The function is fully transparent in its behavior, i.e., stdin, stdout, and stderr of the wrapped command are piped to the caller accordingly, and the function returns with the same exit code as the wrapped command does.
+The easiest way to create a span manually and fill it with some simple default attributes is to use the command `otel_observe`. This command acts as a wrapper for the given command. It first starts an `INTERNAL` span with the command as name, records some default attributes, activates the span (in case the command in turn creates spans), and then runs the command. After the command terminates, it deactivates the span and ends it. Among the automatically recorded attribtues are attribtues of the `shell.*`, `pipe.*`, and `subprocess.executable.*` families. All lines, written to stderr will be recorded as logs. The function is fully transparent in its behavior, i.e., stdin, stdout, and stderr of the wrapped command are piped to the caller accordingly, and the function returns with the same exit code as the wrapped command does.
 ```bash
 otel_observe cat file.txt
 ```
