@@ -182,7 +182,7 @@ otel_span_deactivate
 ```
 
 ### Semi-automatic Spans 
-The easiest way to create a span manually and fill it with some simple default attributes is to use the command `otel_observe`. This command acts as a wrapper for the given command. It first starts an `INTERNAL` span with the command as name, records some default attributes, activates the span (in case the command in turn creates spans), and then runs the command. After the command terminates, it deactivates the span and ends it. Among the automatically recorded attribtues are attribtues of the `shell.*`, `pipe.*`, and `subprocess.executable.*` families. All lines, written to stderr will be recorded as logs. The function is fully transparent in its behavior, i.e., stdin, stdout, and stderr of the wrapped command are piped to the caller accordingly, and the function returns with the same exit code as the wrapped command does.
+The easiest way to create a span manually and fill it with some simple default attributes is to use the command `otel_observe`. This command acts as a wrapper for the given command. It first starts an `INTERNAL` span with the command as name, records some default attributes, activates the span (in case the command in turn creates spans), and then runs the command. After the command terminates, it deactivates the span and ends it. The automatically recorded attributes are of the `shell.*`, `pipe.*`, and `subprocess.executable.*` families. All lines, written to stderr will be recorded as logs. The command is fully transparent in its behavior, i.e., stdin, stdout, and stderr of the wrapped command are piped to the caller accordingly, and the command exits with the same exit code as the wrapped command does.
 ```bash
 otel_observe cat file.txt
 ```
