@@ -1,59 +1,6 @@
 This project delivers [OpenTelemetry](https://opentelemetry.io/) traces, metrics and logs from shell scripts (sh, ash, dash, bash, and all POSIX compliant shells). Compared to similar projects, it delivers not just a command-line SDK to create spans manually, but also provides context propagation via HTTP (wget and curl), auto-instrumentation of all available commands, auto-injection into child scripts and into executables using shebangs, as well as automatic log collection from stderr. Its installable via a debian package from the releases in this repository, or from the apt-repository below. This project is not officially affiliated with the CNCF project [OpenTelemetry](https://opentelemetry.io/).
 
 # Overview
-Use it to manually create spans and metrics (see automatic below):
-```bash
-#!/bin/bash
-
-# configure SDK according to https://opentelemetry.io/docs/languages/sdk-configuration/
-export OTEL_SERVICE_NAME=Test
-# currently, only 'otlp' and 'console' are supported as exporters
-# currently, only 'tracecontext' is supported as propagator
-
-# import API
-. otelapi.sh
-
-# initialize the sdk
-otel_init
-
-# create a default span for the command
-# all lines written to stderr will be collected as logs
-otel_observe echo "hello world"
-
-# create a manual span with a custom attribute
-span_handle=$(otel_span_start INTERNAL myspan)
-otel_span_attribute $span_handle key=value
-echo "hello world again"
-otel_span_end $span_handle
-
-# write a metric data point with custom attributes
-metric_handle=$(otel_metric_create my.metric)
-otel_metric_attribute $metric_handle foo=bar
-otel_metric_add $metric_handle 42
-
-# flush and shutdown the sdk
-otel_shutdown
-```
-
-Use it to fully automatically instrument, propagate and inject:
-```bash
-#!/bin/bash
-
-# configure SDK according to https://opentelemetry.io/docs/languages/sdk-configuration/
-export OTEL_SERVICE_NAME=Test
-
-# init automatic instrumentation, automatic context propagation, and automatic log collection
-. otel.sh
-
-echo "hello world" # this will create a span
-echo "hello world again" # this as well
-
-curl http://www.google.com # this will create a http client span and inject w3c tracecontext
-
-# the following script (and all its direct and indirect children) will be auto-injected without the init code being necessary
-bash ./print_hello_world.sh
-```
-
 A simple command like `curl http://www.google.at` on an AWS EC2 will produce a span like this:
 ```json
 {
@@ -167,20 +114,11 @@ sudo apt-get update
 sudo apt-get install opentelemetry-shell
 ```
 
-# Configuration
+# Documentation
+You can either use the fully automatic instrumentation (recommended) or just import the API to do everything manually. In both cases, you can use the API to manually create customized spans and metrics. However, the automatic approach creates rich spans and logs fully automatically. We recommend to use the manual approach only to augment the automatic approach where necessary.
 
-
-# API Documentation
-Use the API manually, you can create and customize spans and metrics manually to your liking, either fully manually or in combination with the automatic approach. The following section is a full list of API functions.
-
-## Import
-```bash
-. otelapi.sh
-```
-TODO talk about otel.sh here also
-
-## Automatic Initialization
-Import the open telemetry auto instrumentation as well as the api by sourcing the `otel.sh` file. This will both import the API described below (in case you need or want to extend manually) as well as initialize the sdk and the auto instrumentation. No explicit calls to `otel_init` at the start or to `otel_shutdown` at the end of the script are necessary. You can configure the sSDK as described <a href="https://opentelemetry.io/docs/languages/sdk-configuration/">here</a>. We recommend not just setting the environment variables, but also exporting them so that automatically injected children inherit the same configuration.
+## Automatic
+Import the open telemetry auto instrumentation as well as the api by sourcing the `otel.sh` file. This will both import the API described below (in case you need or want to extend manually) as well as initialize the sdk and the auto instrumentation. No explicit calls to `otel_init` at the start or to `otel_shutdown` at the end of the script are necessary. You can configure the SDK as described <a href="https://opentelemetry.io/docs/languages/sdk-configuration/">here</a>. We recommend not just setting the environment variables, but also exporting them so that automatically injected children inherit the same configuration.
 
 All commands are automatically instrumented to create spans. This includes commands on the `PATH`, as well as all aliases and built-ins. Current limitations are shell functions as well as commands that are called via an absolute or relative path (`/bin/cat` rather than `cat`). For these cases, you can use `otel_observe` described below.
 For all commands attributes for the of the `shell.*` (describing the command being run), `pipe.*` (describing behavior of stdin, stdout, and stderr), `subprocess.executable.*` (describe the executable being run if any, `code.*` (describing the location in the script) families are recorded. Additionally, all lines written to stderr are recorded as logs.
@@ -196,8 +134,8 @@ export OTEL_RESOURCE_ATTRIBUTES=foo=bar,baz=foo
 # ...
 ```
 
-## Manual Initialization
-Import the api by referencing the `otelapi.sh` file. This is only necessary if you do not choose a fully automatic approach. In case you use automatic instrumentation, the API will be imported automatically for you.
+## Manual
+Import the api by referencing the `otelapi.sh` file. This is only necessary if you do not choose a fully automatic approach described above. In case you use automatic instrumentation, the API will be imported automatically for you.
 Initialize and shutdown the SDK at the start and at the end of your script respectively. All config must be set before the call to `otel_init`. You can configure the underlying SDK with the same environment variables as any other OpenTelemetry SDK as described <a href="https://opentelemetry.io/docs/languages/sdk-configuration/">here</a>. We recommend not just setting the environment variables, but also exporting them so that automatically injected children inherit the same configuration.
 ```bash
 export OTEL_SERVICE_NAME=Test
