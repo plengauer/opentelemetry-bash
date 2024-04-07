@@ -152,12 +152,14 @@ otel_shutdown
 The API described below is for manually creating and customizing spans. We recommend to do this only if the automatic instrumentation is not sufficient.
 
 ### Spans
-Create spans with a span kind (SERVER, CONSUMER, CLIENT, PRODUCER, INTERNAL) and an arbitrary name. The returned span handle is used to end the span and to customize it (see below). The span handle is not a span ID, it is more similar to a file descriptor. It is only valid within this process and used for subsequent calls to customize the spans. Creating a span alone will not make new spans its children (see span activation below). Start and end time of the span as well as its parent (if another span is currently active) is automatically recorded.
+Create spans with a span kind (`SERVER`, `CONSUMER`, `CLIENT`, `PRODUCER`, `INTERNAL`) and an arbitrary name. The returned span handle is used to end the span and to customize it (see below). The span handle is not a span ID, it is more similar to a file descriptor. It is only valid within this process and used for subsequent calls for customization.
 ```bash
 span_handle="$(otel_span_start INTERNAL my span)"
 # ... 
 otel_span_end "$span_handle"
 ```
+
+Creating a span alone will not make new spans its children (see span activation below). Start and end time of the span as well as its parent (if another span is currently active) is automatically recorded.
 
 ### Span Attributes
 Customize your spans by manually setting span attributes with the span handle. This is only possible between the `otel_span_start` and `otel_span_end` for the respective handle.
