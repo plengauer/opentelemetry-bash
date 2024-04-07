@@ -511,54 +511,73 @@ jobs:
 
   debian:
     needs: [debian-stable-oldest-sh, debian-stable-oldest-ash, debian-stable-oldest-dash, debian-stable-oldest-bash, debian-stable-latest-sh, debian-stable-latest-ash, debian-stable-latest-dash, debian-stable-latest-bash, debian-testing-sh, debian-testing-ash, debian-testing-dash, debian-testing-bash]
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
-      - run: echo debian
+      - run: exit 1
+        if: ${{ failure() }}
 
   ubuntu:
     needs: [ubuntu-stable-oldest-sh, ubuntu-stable-oldest-ash, ubuntu-stable-oldest-dash, ubuntu-stable-oldest-bash, ubuntu-stable-latest-sh, ubuntu-stable-latest-ash, ubuntu-stable-latest-dash, ubuntu-stable-latest-bash, ubuntu-testing-sh, ubuntu-testing-ash, ubuntu-testing-dash, ubuntu-testing-bash]
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
-      - run: echo ubuntu
+      - run: exit 1
+        if: ${{ failure() }}
 
   sh:
     needs: [debian-stable-oldest-sh, debian-stable-latest-sh, debian-testing-sh, ubuntu-stable-oldest-sh, ubuntu-stable-latest-sh, ubuntu-testing-sh]
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
-      - run: echo sh
+      - run: exit 1
+        if: ${{ failure() }}
 
   ash:
     needs: [debian-stable-oldest-ash, debian-stable-latest-ash, debian-testing-ash, ubuntu-stable-oldest-ash, ubuntu-stable-latest-ash, ubuntu-testing-ash]
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
-      - run: echo ash
+      - run: exit 1
+        if: ${{ failure() }}
 
   dash:
     needs: [debian-stable-oldest-dash, debian-stable-latest-dash, debian-testing-dash, ubuntu-stable-oldest-dash, ubuntu-stable-latest-dash, ubuntu-testing-dash]
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
-      - run: echo dash
+      - run: exit 1
+        if: ${{ failure() }}
 
   bash:
     needs: [debian-stable-oldest-bash, debian-stable-latest-bash, debian-testing-bash, ubuntu-stable-oldest-bash, ubuntu-stable-latest-bash, ubuntu-testing-bash]
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
-      - run: echo bash
+      - run: exit 1
+        if: ${{ failure() }}
 
   shell:
     needs: [sh, ash, dash, bash]
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
-      - run: echo shell
+      - run: exit 1
+        if: ${{ failure() }}
 
   os:
     needs: [debian, ubuntu]
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
-      - run: echo os
+      - run: exit 1
+        if: ${{ failure() }}
 
   all:
     needs: [package, shell, os]
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
-      - run: echo all
+      - run: exit 1
+        if: ${{ failure() }}
+
