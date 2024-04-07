@@ -134,6 +134,8 @@ If the command is a shell or an executable with a shebang (meaning it itself is 
 If the command is just a wrapper for another command (e.g., `sudo`, `find`, `xargs`, `parallel`, ...), OpenTelemetry will automatically be injected into the inner command to continue observation as well.
 If the command represents communication to a third party service (like a HTTP request via `curl` or `wget`), relevant attributes from the `http.*`, `server.*`, `url.*`, and `network.*` families are added. Additionally, a W3C traceparent header is injected.
 
+Finally, a single root span will be created and activated that represents the script. This span will automatically be deactivated and ended when the script ends.
+
 ## Manual
 Import the API by referencing the `otelapi.sh` file. This is only necessary if you do not choose a fully automatic approach described above. In case you use automatic instrumentation, the API will be imported automatically for you.
 Initialize and shutdown the SDK at the start and at the end of your script respectively. All config must be set before the call to `otel_init`. You can configure the underlying SDK with the same environment variables as any other OpenTelemetry SDK as described <a href="https://opentelemetry.io/docs/languages/sdk-configuration/">here</a>. We recommend not just setting the environment variables, but also exporting them so that automatically injected children inherit the same configuration.
