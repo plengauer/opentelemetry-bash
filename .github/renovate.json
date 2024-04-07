@@ -5,7 +5,7 @@
   ],
   "prHourlyLimit": 0,
   "prConcurrentLimit": 0,
-  "grouping": "auto"
+  "grouping": "auto",
   "automerge": true,
   "automergeType": "branch",
 }
