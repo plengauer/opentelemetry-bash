@@ -194,7 +194,7 @@ Please note, that this command will not perform injection or context propagation
 ## Metrics
 To record metrics, first create a new metric with a key to get a metric handle. The returned metric handle is used to customize the metric data point and record its value.
 ```bash
-metric_handle=$(otel_metric_create my.metric)
+metric_handle="$(otel_metric_create my.metric)"
 otel_metric_attribute "$metric_handle" foo=bar
 otel_metric_add "$metric_handle" 42
 ```
