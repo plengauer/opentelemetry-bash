@@ -9,7 +9,7 @@ _otel_propagate_curl() {
   esac
   local command="$(_otel_dollar_star "$@")"
   if _otel_string_contains "$command" " -v "; then local is_verbose=1; fi
-  local url=$(printf '%s' "$command" | \awk '{for(i=1;i<=NF;i++) if ($i ~ /^http/) print $i}')
+  local url=$(\printf '%s' "$command" | \awk '{for(i=1;i<=NF;i++) if ($i ~ /^http/) print $i}')
   local span_handle="$(otel_span_current)"
   otel_span_attribute "$span_handle" network.protocol.name=http
   otel_span_attribute "$span_handle" network.transport=tcp

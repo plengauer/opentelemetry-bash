@@ -102,6 +102,16 @@ A simple command like `curl http://www.google.at` on an AWS EC2 will produce a s
 }
 ```
 
+## Try For Yourself
+Install as described below. Put the following code on the start of an arbitrary script:
+```bash
+export OTEL_METRICS_EXPORTER=console
+export OTEL_LOGS_EXPORTER=console
+export OTEL_TRACES_EXPORTER=console
+. otel.sh
+```
+Finally, run your script and see traces, metrics, and logs printed to stderr.
+
 # Installation
 Install either via
 ```bash
