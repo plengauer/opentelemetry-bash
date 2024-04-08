@@ -205,13 +205,13 @@ As of today, there is no way to manually record logs. Logs, i.e., lines that are
 # Extension to Semantic Conventions
 This projects adheres to the <a href="https://opentelemetry.io/docs/specs/semconv">OpenTelemetry Semantic Conventions</a>, but it also defines a number of shell-specifc extensions.
 
-| Attribute               | Type   | Description | Examples |
-| ----------------------- | ------ | ----------- | -------- |
-| shell.command_line      | string |             |          |
-| shell.command           | string |             |          |
-| shell.command.name      | string |             |          |
-| shell.command.type      | string |             |          |
-| shell.command.exit_code | int    |             |          |
+| Attribute               | Type   | Description | Examples                                          |
+| ----------------------- | ------ | ----------- | ------------------------------------------------- |
+| shell.command_line      | string |             | `echo hello world`, `/bin/cat file.txt`           |
+| shell.command           | string |             | `echo`, `/bin/cat`                                |
+| shell.command.name      | string |             | `echo`, `cat`                                     |
+| shell.command.type      | string |             | `file`, `builtin`, `function`, `alias`, `keyword` |
+| shell.command.exit_code | int    |             | `0`, `1`, `127`                                   |
 
 
 
