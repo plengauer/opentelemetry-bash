@@ -201,3 +201,24 @@ otel_metric_add "$metric_handle" 42
 
 ## Logs
 As of today, there is no way to manually record logs. Logs, i.e., lines that are written to stderr, are recorded automatically when using auto-instrumentation and when using `otel_observe` as described above.
+
+# Extension to Semantic Conventions
+This projects adheres to the <a href="https://opentelemetry.io/docs/specs/semconv">OpenTelemetry Semantic Conventions</a>, but it also defines a number of shell-specifc extensions.
+
+| Attribute               | Type   | Description | Examples |
+| ----------------------- | ------ | ----------- | -------- |
+| shell.command_line      | string |             |          |
+| shell.command           | string |             |          |
+| shell.command.name      | string |             |          |
+| shell.command.type      | string |             |          |
+| shell.command.exit_code | int    |             |          |
+
+
+
+
+
+
+
+
+
+
