@@ -102,6 +102,16 @@ A simple command like `curl http://www.google.at` on an AWS EC2 will produce a s
 }
 ```
 
+## Try For Yourself
+Install as described below. Put the following code on the start of an arbitrary script:
+```bash
+export OTEL_METRICS_EXPORTER=console
+export OTEL_LOGS_EXPORTER=console
+export OTEL_TRACES_EXPORTER=console
+. otel.sh
+```
+Finally, run your script and see traces, metrics, and logs printed to stderr.
+
 # Installation
 Install either via
 ```bash
@@ -113,16 +123,6 @@ echo "deb [arch=all] https://3.73.14.87:8000/ stable main" | sudo tee /etc/apt/s
 sudo apt-get update
 sudo apt-get install opentelemetry-shell
 ```
-
-# Try For Yourself
-Install as described above. Put the following code on the start of an arbitrary script:
-```bash
-export OTEL_METRICS_EXPORTER=console
-export OTEL_LOGS_EXPORTER=console
-export OTEL_TRACES_EXPORTER=console
-. otel.sh
-```
-Finally, run your script and see traces, metrics, and logs printed to stderr.
 
 # Documentation
 You can either use the fully automatic instrumentation (recommended) or just import the API to do everything manually. In both cases, you can use the API to manually create customized spans and metrics. However, the automatic approach creates rich spans and logs fully automatically. We recommend to use the manual approach only to augment the automatic approach where necessary.
