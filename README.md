@@ -117,7 +117,7 @@ sudo apt-get install opentelemetry-shell
 # Documentation
 You can either use the fully automatic instrumentation (recommended) or just import the API to do everything manually. In both cases, you can use the API to manually create customized spans and metrics. However, the automatic approach creates rich spans and logs fully automatically. We recommend to use the manual approach only to augment the automatic approach where necessary.
 
-## Automatic
+## Automatic Instrumentation
 Import the OpenTelemetry auto instrumentation as well as the API by sourcing the `otel.sh` file. This will both import the API described below (in case you need or want to extend manually) as well as initialize the SDK and the auto instrumentation. No explicit calls to `otel_init` at the start or to `otel_shutdown` at the end of the script are necessary. You can configure the SDK as described <a href="https://opentelemetry.io/docs/languages/sdk-configuration/">here</a>. We recommend not just setting the environment variables, but also exporting them so that automatically injected children inherit the same configuration.
 ```bash
 export OTEL_SERVICE_NAME=Test
@@ -136,7 +136,7 @@ If the command represents communication to a third party service (like a HTTP re
 
 Finally, a single root span will be created and activated that represents the script. This span will automatically be deactivated and ended when the script ends.
 
-## Manual
+## Manual Instrumentation
 Import the API by referencing the `otelapi.sh` file. This is only necessary if you do not choose a fully automatic approach described above. In case you use automatic instrumentation, the API will be imported automatically for you.
 Initialize and shutdown the SDK at the start and at the end of your script respectively. All config must be set before the call to `otel_init`. You can configure the underlying SDK with the same environment variables as any other OpenTelemetry SDK as described <a href="https://opentelemetry.io/docs/languages/sdk-configuration/">here</a>. We recommend not just setting the environment variables, but also exporting them so that automatically injected children inherit the same configuration.
 ```bash
