@@ -3,8 +3,8 @@ set -e
 
 $SHELL auto/curl.shell
 
-span="$(resolve_span '.name == "curl http://www.google.com/"')"
-assert_equals "curl http://www.google.com/" "$(\echo "$span" | jq -r '.name')"
+span="$(resolve_span '.name == "curl --no-progress-meter http://www.google.com/"')"
+assert_equals "curl --no-progress-meter http://www.google.com/" "$(\echo "$span" | jq -r '.name')"
 assert_equals "SpanKind.CLIENT" $(\echo "$span" | jq -r '.kind')
 assert_not_equals "null" $(\echo "$span" | jq -r '.parent_id')
 assert_equals "UNSET" $(\echo "$span" | jq -r '.status.status_code')
