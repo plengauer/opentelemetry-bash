@@ -205,6 +205,7 @@ As of today, there is no way to manually record logs. Logs, i.e., lines that are
 # Extension to Semantic Conventions
 This projects adheres to the <a href="https://opentelemetry.io/docs/specs/semconv">OpenTelemetry Semantic Conventions</a>, but it also defines a number of shell-specifc extensions.
 
+## Shell Commands
 | Attribute               | Type   | Description                                                                                     | Examples                                          |
 | ----------------------- | ------ | ----------------------------------------------------------------------------------------------- | ------------------------------------------------- |
 | shell.command_line      | string | The full command line as it appears in the script, with all variables resolved to their values. | `echo hello world`, `/bin/cat file.txt`           |
@@ -213,12 +214,12 @@ This projects adheres to the <a href="https://opentelemetry.io/docs/specs/semcon
 | shell.command.type      | string | The type of the command.                                                                        | `file`, `builtin`, `function`, `alias`, `keyword` |
 | shell.command.exit_code | int    | The exit code of the command.                                                                   | `0`, `1`, `127`                                   |
 
-
-
-
-
-
-
-
-
-
+## Pipes
+| Attribute         | Type | Description                                  | Examples |
+| ----------------- | ---- | -------------------------------------------- | -------- |
+| pipe.stdin.bytes  | int  | The number of bytes read from stdin (fd 0)   | `0`      |
+| pipe.stdin.lines  | int  | The number of lines read from stdin (fd 0)   | `0`      |
+| pipe.stdout.bytes | int  | The number of bytes written to stdout (fd 1) | `0`      |
+| pipe.stdout.lines | int  | The number of lines written to stdout (fd 1) | `0`      |
+| pipe.stderr.bytes | int  | The number of bytes written to stderr (fd 2) | `0`      |
+| pipe.stderr.lines | int  | The number of lines written to stderr (fd 2) | `0`      |
