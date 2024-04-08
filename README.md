@@ -130,7 +130,7 @@ export OTEL_RESOURCE_ATTRIBUTES=foo=bar,baz=foo
 All commands are automatically instrumented to create spans. This includes commands on the `PATH`, as well as all aliases and built-ins. Current limitations are shell functions as well as commands that are called via an absolute or relative path (`/bin/cat` rather than `cat`). For these cases, you can use `otel_observe` described below.
 For all commands, attributes for the of the `shell.*` (describing the command being run), `pipe.*` (describing behavior of stdin, stdout, and stderr), `subprocess.executable.*` (describing the executable being run if any), and `code.*` (describing the location in the script) families are recorded. Additionally, all lines written to stderr are recorded as logs.
 
-If the command is a shell or an executable with a shebang (meaning it itself is script rather than a binary), OpenTelemetry will be automatically injected into it to continue observation. No setup code (like below) or configuration is necessary. 
+If the command is a shell or an executable with a shebang (meaning it itself is script rather a than a binary), OpenTelemetry will be automatically injected into it to continue observation. No setup code (like below) or configuration is necessary. 
 If the command is just a wrapper for another command (e.g., `sudo`, `find`, `xargs`, `parallel`, ...), OpenTelemetry will automatically be injected into the inner command to continue observation as well.
 If the command represents communication to a third party service (like a HTTP request via `curl` or `wget`), relevant attributes from the `http.*`, `server.*`, `url.*`, and `network.*` families are added. Additionally, a W3C traceparent header is injected.
 
