@@ -274,7 +274,7 @@ def convert_type(type, value):
         return int(value)
     elif type == 'float':
         return float(value)
-    elif type == 'auto'
+    elif type == 'auto':
         try:
             return int(value)
         except:
