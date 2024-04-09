@@ -231,13 +231,14 @@ def handle(scope, version, command, arguments):
         with open(response_path, 'w') as response:
             response.write(metric_id)
     elif command == 'METRIC_ATTRIBUTE':
-        tokens = arguments.split(' ', 1)
+        tokens = arguments.split(' ', 2)
         metric_id = tokens[0]
-        keyvaluepair = tokens[1]
+        type = tokens[1]
+        keyvaluepair = tokens[2]
         tokens = keyvaluepair.split('=', 1)
         key = tokens[0]
         value = tokens[1]
-        metrics[metric_id]['attributes'][key] = value
+        metrics[metric_id]['attributes'][key] = convert_type(type, value)
     elif command == 'METRIC_ADD':
         tokens = arguments.split(' ', 1)
         metric_id = tokens[0]
