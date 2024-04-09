@@ -9,16 +9,16 @@ _otel_propagate_wget() {
   esac
   local url=$(_otel_dollar_star "$@" | \awk '{for(i=1;i<=NF;i++) if ($i ~ /^http/) print $i}')
   local span_handle="$(otel_span_current)"
-  otel_span_attribute "$span_handle" network.protocol.name=http
-  otel_span_attribute "$span_handle" network.transport=tcp
-  otel_span_attribute "$span_handle" "http.request.method=GET"
-  otel_span_attribute "$span_handle" "server.address=$(\printf '%s' "$url" | \cut -d / -f 3 | \cut -d : -f 1)"
-  otel_span_attribute "$span_handle" "server.port=$(\printf '%s' "$url" | \cut -d / -f 3 | \cut -sd : -f 2)"
-  otel_span_attribute "$span_handle" "url.full=$url"
-  otel_span_attribute "$span_handle" "url.path=/$(\printf '%s' "$url" | \cut -d / -f 4- | \cut -d ? -f 1)"
-  otel_span_attribute "$span_handle" "url.query=$(\printf '%s' "$url" | \cut -sd ? -f 2-)"
-  otel_span_attribute "$span_handle" "url.scheme=$(\printf '%s' "$url" | \cut -sd : -f 1)"
-  otel_span_attribute "$span_handle" user_agent.original=wget
+  otel_span_attribute_typed "$span_handle" string network.protocol.name=http
+  otel_span_attribute_typed "$span_handle" string network.transport=tcp
+  otel_span_attribute_typed "$span_handle" string http.request.method=GET
+  otel_span_attribute_typed "$span_handle" string "server.address=$(\printf '%s' "$url" | \cut -d / -f 3 | \cut -d : -f 1)"
+  otel_span_attribute_typed "$span_handle" int "server.port=$(\printf '%s' "$url" | \cut -d / -f 3 | \cut -sd : -f 2)"
+  otel_span_attribute_typed "$span_handle" string "url.full=$url"
+  otel_span_attribute_typed "$span_handle" string "url.path=/$(\printf '%s' "$url" | \cut -d / -f 4- | \cut -d ? -f 1)"
+  otel_span_attribute_typed "$span_handle" string "url.query=$(\printf '%s' "$url" | \cut -sd ? -f 2-)"
+  otel_span_attribute_typed "$span_handle" string "url.scheme=$(\printf '%s' "$url" | \cut -sd : -f 1)"
+  otel_span_attribute_typed "$span_handle" string user_agent.original=wget
   local stderr_pipe="$(\mktemp -u)_opentelemetry_shell_$$.stderr.wget.pipe"
   \mkfifo "$stderr_pipe"
   while read -r line; do _otel_parse_wget_stderr_line "$span_handle" "$line"; \echo "$line" >&2; done < "$stderr_pipe" &
@@ -37,27 +37,27 @@ _otel_parse_wget_stderr_line() {
   if _otel_string_starts_with "$line" "HTTP request sent, awaiting response... "; then
     # HTTP request sent, awaiting response... 301 Moved Permanently
     # HTTP request sent, awaiting response... 200 OK
-    otel_span_attribute "$span_handle" http.response.status_code="$(\printf '%s' "$line" | \cut -d ' ' -f 6)"
+    otel_span_attribute_typed "$span_handle" int http.response.status_code="$(\printf '%s' "$line" | \cut -d ' ' -f 6)"
   elif _otel_string_starts_with "$line" "Length: "; then
     # Length: unspecified [text/html]
     # Length: 17826 (17K) [application/octet-stream]
-    otel_span_attribute "$span_handle" http.response.header.content-type="$(\printf '%s' "$line" | \cut -d '[' -f 2 | \tr -d '[]')"
-    otel_span_attribute "$span_handle" http.response.header.content-length="$(\printf '%s' "$line" | \cut -d ' ' -f 2)"
+    otel_span_attribute_typed "$span_handle" string http.response.header.content-type="$(\printf '%s' "$line" | \cut -d '[' -f 2 | \tr -d '[]')"
+    otel_span_attribute_typed "$span_handle" string http.response.header.content-length="$(\printf '%s' "$line" | \cut -d ' ' -f 2)"
   elif _otel_string_contains "$line" " written to " || _otel_string_contains "$line" " saved "; then
     # 2024-04-01 11:32:28 (12.3 MB/s) - written to stdout [128]
     # 2024-04-01 11:23:16 (18.4 MB/s) - ‘index.html’ saved [18739]
     # 2024-04-06 17:37:30 (102 MB/s) - written to stdout [17826/17826]
-    otel_span_attribute "$span_handle" http.response.header.content-length="$(\printf '%s' "$line" | \cut -d '[' -f 1 | \tr -d '[]' | \cut -d / -f 1)"
+    otel_span_attribute_typed "$span_handle" string http.response.header.content-length="$(\printf '%s' "$line" | \cut -d '[' -f 1 | \tr -d '[]' | \cut -d / -f 1)"
   elif _otel_string_starts_with "$line" "Connecting to "; then
     # Connecting to www.google.at (www.google.at)|142.250.185.131|:80... connected.
-    otel_span_attribute "$span_handle" network.peer.address="$(\printf '%s' "$line" | \cut -d '|' -f 2)"
-    otel_span_attribute "$span_handle" network.peer.port="$(\printf '%s' "$line" | \cut -d '|' -f 3 | \tr -d ':.' | \cut -d ' ' -f 1)"
+    otel_span_attribute_typed "$span_handle" string network.peer.address="$(\printf '%s' "$line" | \cut -d '|' -f 2)"
+    otel_span_attribute_typed "$span_handle" int network.peer.port="$(\printf '%s' "$line" | \cut -d '|' -f 3 | \tr -d ':.' | \cut -d ' ' -f 1)"
   elif _otel_string_starts_with "$line" "HTTP/"; then # only available in debug mode, but splits up the usual response code line
-    otel_span_attribute "$span_handle" http.response.status_code="$(\printf '%s' "$line" | \cut -d ' ' -f 2)"
+    otel_span_attribute_typed "$span_handle" int http.response.status_code="$(\printf '%s' "$line" | \cut -d ' ' -f 2)"
   elif _otel_string_starts_with "$line" "User-Agent: "; then # only available in debug mode
-    otel_span_attribute "$span_handle" user_agent.original="$(\printf '%s' "$line" | \cut -d ' ' -f 2)"
+    otel_span_attribute_typed "$span_handle" string user_agent.original="$(\printf '%s' "$line" | \cut -d ' ' -f 2)"
   elif _otel_string_starts_with "$line" "Content-Length: "; then # only available in debug mode
-    otel_span_attribute "$span_handle" http.response.body.size="$(\printf '%s' "$line" | \cut -d ' ' -f 2)"
+    otel_span_attribute_typed "$span_handle" int http.response.body.size="$(\printf '%s' "$line" | \cut -d ' ' -f 2)"
   fi
 }
 
