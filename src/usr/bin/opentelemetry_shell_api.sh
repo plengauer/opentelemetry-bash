@@ -146,7 +146,14 @@ otel_span_error() {
 otel_span_attribute() {
   local span_handle="$1"
   local kvp="$2"
-  _otel_sdk_communicate "SPAN_ATTRIBUTE" "$span_handle" "$kvp"
+  otel_span_attribute "$span_handle" auto "$kvp"
+}
+
+otel_span_attribute_typed() {
+  local span_handle="$1"
+  local type="$2"
+  local kvp="$3"
+  _otel_sdk_communicate "SPAN_ATTRIBUTE" "$span_handle" "$type" "$kvp"
 }
 
 otel_span_traceparent() {
@@ -187,6 +194,19 @@ otel_metric_attribute() {
   local metric_handle="$1"
   local kvp="$2"
   _otel_sdk_communicate "METRIC_ATTRIBUTE" "$metric_handle" "$kvp"
+}
+
+otel_metric_attribute() {
+  local metric_handle="$1"
+  local kvp="$2"
+  otel_metric_attribute_typed "$metric_handle" auto "$kvp"
+}
+
+otel_metric_attribute_typed() {
+  local metric_handle="$1"
+  local type="$2"
+  local kvp="$3"
+  _otel_sdk_communicate "METRIC_ATTRIBUTE" "$metric_handle" "$type" "$kvp"
 }
 
 otel_metric_add() {
