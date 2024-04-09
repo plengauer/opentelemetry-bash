@@ -279,6 +279,8 @@ def convert_type(type, value):
         return int(value)
     elif type == 'float':
         return float(value)
+    elif type == 'string[1]':
+        return [ value ];
     elif type == 'auto':
         try:
             return int(value)
