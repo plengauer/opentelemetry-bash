@@ -209,6 +209,8 @@ def handle(scope, version, command, arguments):
         tokens = keyvaluepair.split('=', 1)
         key = tokens[0]
         value = tokens[1]
+        if value == '':
+            return
         span : Span = spans[span_id]
         span.set_attribute(key, convert_type(type, value))
     elif command == 'SPAN_TRACEPARENT':
@@ -238,6 +240,8 @@ def handle(scope, version, command, arguments):
         tokens = keyvaluepair.split('=', 1)
         key = tokens[0]
         value = tokens[1]
+        if value == '':
+            return
         metrics[metric_id]['attributes'][key] = convert_type(type, value)
     elif command == 'METRIC_ADD':
         tokens = arguments.split(' ', 1)
