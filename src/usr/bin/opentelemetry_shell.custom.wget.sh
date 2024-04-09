@@ -41,13 +41,13 @@ _otel_parse_wget_stderr_line() {
   elif _otel_string_starts_with "$line" "Length: "; then
     # Length: unspecified [text/html]
     # Length: 17826 (17K) [application/octet-stream]
-    otel_span_attribute_typed "$span_handle" string http.response.header.content-type="$(\printf '%s' "$line" | \cut -d '[' -f 2 | \tr -d '[]')"
-    otel_span_attribute_typed "$span_handle" string http.response.header.content-length="$(\printf '%s' "$line" | \cut -d ' ' -f 2)"
+    otel_span_attribute_typed "$span_handle" string[1] http.response.header.content-type="$(\printf '%s' "$line" | \cut -d '[' -f 2 | \tr -d '[]')"
+    otel_span_attribute_typed "$span_handle" string[1] http.response.header.content-length="$(\printf '%s' "$line" | \cut -d ' ' -f 2)"
   elif _otel_string_contains "$line" " written to " || _otel_string_contains "$line" " saved "; then
     # 2024-04-01 11:32:28 (12.3 MB/s) - written to stdout [128]
     # 2024-04-01 11:23:16 (18.4 MB/s) - ‘index.html’ saved [18739]
     # 2024-04-06 17:37:30 (102 MB/s) - written to stdout [17826/17826]
-    otel_span_attribute_typed "$span_handle" string http.response.header.content-length="$(\printf '%s' "$line" | \cut -d '[' -f 1 | \tr -d '[]' | \cut -d / -f 1)"
+    otel_span_attribute_typed "$span_handle" string[1] http.response.header.content-length="$(\printf '%s' "$line" | \cut -d '[' -f 1 | \tr -d '[]' | \cut -d / -f 1)"
   elif _otel_string_starts_with "$line" "Connecting to "; then
     # Connecting to www.google.at (www.google.at)|142.250.185.131|:80... connected.
     otel_span_attribute_typed "$span_handle" string network.peer.address="$(\printf '%s' "$line" | \cut -d '|' -f 2)"
