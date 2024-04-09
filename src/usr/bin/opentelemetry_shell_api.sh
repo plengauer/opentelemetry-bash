@@ -146,7 +146,7 @@ otel_span_error() {
 otel_span_attribute() {
   local span_handle="$1"
   local kvp="$2"
-  otel_span_attribute "$span_handle" auto "$kvp"
+  otel_span_attribute_typed "$span_handle" auto "$kvp"
 }
 
 otel_span_attribute_typed() {
