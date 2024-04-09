@@ -174,9 +174,11 @@ otel_span_end "$span_handle"
 Creating a span alone will not make new spans its children (see span activation below). Start and end time of the span as well as its parent (if another span is currently active) is automatically recorded.
 
 ### Span Attributes
-Customize your spans by manually setting span attributes with the span handle. This is only possible between `otel_span_start` and `otel_span_end` for the respective span handle.
+Customize your spans by manually setting span attributes with the span handle. This is only possible between `otel_span_start` and `otel_span_end` for the respective span handle. Valid types are `string`, `int`, `float`, and `auto`. The `auto` type will try to guess the type based on the value.
 ```bash
-otel_span_attribute "$span_handle" foo=bar
+otel_span_attribute "$span_handle" key=value
+otel_span_attribute_typed "$span_handle" string foo=bar
+otel_span_attribute_typed "$span_handle" int numberkey=0
 ```
 
 ### Span Error
@@ -202,10 +204,11 @@ otel_observe cat file.txt
 Please note, that this command will not perform injection or context propagation. This can only be done via the fully automatic approach described above.
 
 ## Metrics
-To record metrics, first create a new metric with a key to get a metric handle. The returned metric handle is used to customize the metric data point and record its value.
+To record metrics, first create a new metric with a key to get a metric handle. The returned metric handle is used to customize the metric data point and record its value. Valid types are `string`, `int`, `float`, and `auto`. The `auto` type will try to guess the type based on the value.
 ```bash
 metric_handle="$(otel_metric_create my.metric)"
-otel_metric_attribute "$metric_handle" foo=bar
+otel_metric_attribute "$metric_handle" key=value
+otel_metric_attribute_typed "$metric_handle" string foo=bar
 otel_metric_add "$metric_handle" 42
 ```
 

@@ -202,14 +202,17 @@ def handle(scope, version, command, arguments):
         span : Span = spans[arguments]
         span.set_status(StatusCode.ERROR)
     elif command == 'SPAN_ATTRIBUTE':
-        tokens = arguments.split(' ', 1)
+        tokens = arguments.split(' ', 2)
         span_id = tokens[0]
-        keyvaluepair = tokens[1]
+        type = tokens[1]
+        keyvaluepair = tokens[2]
         tokens = keyvaluepair.split('=', 1)
         key = tokens[0]
         value = tokens[1]
+        if value == '':
+            return
         span : Span = spans[span_id]
-        span.set_attribute(key, value)
+        span.set_attribute(key, convert_type(type, value))
     elif command == 'SPAN_TRACEPARENT':
         tokens = arguments.split(' ', 1)
         response_path = tokens[0]
@@ -230,13 +233,16 @@ def handle(scope, version, command, arguments):
         with open(response_path, 'w') as response:
             response.write(metric_id)
     elif command == 'METRIC_ATTRIBUTE':
-        tokens = arguments.split(' ', 1)
+        tokens = arguments.split(' ', 2)
         metric_id = tokens[0]
-        keyvaluepair = tokens[1]
+        type = tokens[1]
+        keyvaluepair = tokens[2]
         tokens = keyvaluepair.split('=', 1)
         key = tokens[0]
         value = tokens[1]
-        metrics[metric_id]['attributes'][key] = value
+        if value == '':
+            return
+        metrics[metric_id]['attributes'][key] = convert_type(type, value)
     elif command == 'METRIC_ADD':
         tokens = arguments.split(' ', 1)
         metric_id = tokens[0]
@@ -265,6 +271,28 @@ def handle(scope, version, command, arguments):
         logger.emit(record)
     else:
         return
+
+def convert_type(type, value):
+    if type == 'string':
+        return value
+    elif type == 'int':
+        return int(value)
+    elif type == 'float':
+        return float(value)
+    elif type == 'string[1]':
+        return [ value ];
+    elif type == 'auto':
+        try:
+            return int(value)
+        except:
+            pass
+        try:
+            return float(value)
+        except:
+            pass
+        return value
+    else:
+        raise Exception('Unknown type: ' + type)
 
 if __name__ == "__main__":
     main()

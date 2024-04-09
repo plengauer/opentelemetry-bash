@@ -146,7 +146,14 @@ otel_span_error() {
 otel_span_attribute() {
   local span_handle="$1"
   local kvp="$2"
-  _otel_sdk_communicate "SPAN_ATTRIBUTE" "$span_handle" "$kvp"
+  otel_span_attribute_typed "$span_handle" auto "$kvp"
+}
+
+otel_span_attribute_typed() {
+  local span_handle="$1"
+  local type="$2"
+  local kvp="$3"
+  _otel_sdk_communicate "SPAN_ATTRIBUTE" "$span_handle" "$type" "$kvp"
 }
 
 otel_span_traceparent() {
@@ -189,6 +196,19 @@ otel_metric_attribute() {
   _otel_sdk_communicate "METRIC_ATTRIBUTE" "$metric_handle" "$kvp"
 }
 
+otel_metric_attribute() {
+  local metric_handle="$1"
+  local kvp="$2"
+  otel_metric_attribute_typed "$metric_handle" auto "$kvp"
+}
+
+otel_metric_attribute_typed() {
+  local metric_handle="$1"
+  local type="$2"
+  local kvp="$3"
+  _otel_sdk_communicate "METRIC_ATTRIBUTE" "$metric_handle" "$type" "$kvp"
+}
+
 otel_metric_add() {
   local metric_handle="$1"
   local value="$2"
@@ -209,20 +229,20 @@ otel_observe() {
   
   # create span, set initial attributes
   local span_handle="$(otel_span_start "$kind" "$command")"
-  otel_span_attribute "$span_handle" shell.command_line="$command"
+  otel_span_attribute_typed "$span_handle" string shell.command_line="$command"
   if _otel_string_contains "$command" " "; then local command_name="${command%% *}"; else  local command_name="$command"; fi # "$(\printf '%s' "$command" | \cut -sd ' ' -f 2-)" # this returns the command if there are no args, its the cut -s that cant be done via expansion alone
   if \[ -z "$command_type" ]; then local command_type="$(_otel_command_type "$command_name")"; fi
-  otel_span_attribute "$span_handle" shell.command="$command_name"
-  otel_span_attribute "$span_handle" shell.command.type="$command_type"
+  otel_span_attribute_typed "$span_handle" string shell.command="$command_name"
+  otel_span_attribute_typed "$span_handle" string shell.command.type="$command_type"
   if _otel_string_contains "$command_name" /; then
-    otel_span_attribute "$span_handle" shell.command.name=""${command_name##*/}""
+    otel_span_attribute_typed "$span_handle" string shell.command.name=""${command_name##*/}""
   else
-    otel_span_attribute "$span_handle" shell.command.name="$command_name"
+    otel_span_attribute_typed "$span_handle" string shell.command.name="$command_name"
   fi
   if \[ "$command_type" = file ]; then
     local executable_path="$(_otel_string_contains "$command_name" / && \echo "$command_name" || \which "$command_name")"
-    otel_span_attribute "$span_handle" subprocess.executable.path="$executable_path"
-    otel_span_attribute "$span_handle" subprocess.executable.name="${executable_path##*/}" # "$(\printf '%s' "$command" | \cut -d' ' -f1 | \rev | \cut -d / -f 1 | \rev)"
+    otel_span_attribute_typed "$span_handle" string subprocess.executable.path="$executable_path"
+    otel_span_attribute_typed "$span_handle" string subprocess.executable.name="${executable_path##*/}" # "$(\printf '%s' "$command" | \cut -d' ' -f1 | \rev | \cut -d / -f 1 | \rev)"
   fi
   
   # run command
@@ -239,7 +259,7 @@ otel_observe() {
   otel_span_deactivate "$span_handle"
   
   # set custom attributes, set final attributes, finish span
-  otel_span_attribute "$span_handle" shell.command.exit_code="$exit_code"
+  otel_span_attribute_typed "$span_handle" int shell.command.exit_code="$exit_code"
   if \[ "$exit_code" -ne 0 ]; then
     otel_span_error "$span_handle"
   fi
@@ -357,12 +377,12 @@ _otel_call_and_record_pipes() {
   fi
   \wait "$stdin_bytes_pid" "$stdin_lines_pid" "$stdout_bytes_pid" "$stdout_lines_pid" "$stderr_bytes_pid" "$stderr_lines_pid" "$stdout_pid" "$stderr_pid"
   \rm "$stdout" "$stderr" "$stdin_bytes" "$stdin_lines" "$stdout_bytes" "$stdout_lines" "$stderr_bytes" "$stderr_lines" 2> /dev/null
-  otel_span_attribute "$span_handle" pipe.stdin.bytes="$(\cat "$stdin_bytes_result")"
-  otel_span_attribute "$span_handle" pipe.stdin.lines="$(\cat "$stdin_lines_result")"
-  otel_span_attribute "$span_handle" pipe.stdout.bytes="$(\cat "$stdout_bytes_result")"
-  otel_span_attribute "$span_handle" pipe.stdout.lines="$(\cat "$stdout_lines_result")"
-  otel_span_attribute "$span_handle" pipe.stderr.bytes="$(\cat "$stderr_bytes_result")"
-  otel_span_attribute "$span_handle" pipe.stderr.lines="$(\cat "$stderr_lines_result")"
+  otel_span_attribute_typed "$span_handle" int pipe.stdin.bytes="$(\cat "$stdin_bytes_result")"
+  otel_span_attribute_typed "$span_handle" int pipe.stdin.lines="$(\cat "$stdin_lines_result")"
+  otel_span_attribute_typed "$span_handle" int pipe.stdout.bytes="$(\cat "$stdout_bytes_result")"
+  otel_span_attribute_typed "$span_handle" int pipe.stdout.lines="$(\cat "$stdout_lines_result")"
+  otel_span_attribute_typed "$span_handle" int pipe.stderr.bytes="$(\cat "$stderr_bytes_result")"
+  otel_span_attribute_typed "$span_handle" int pipe.stderr.lines="$(\cat "$stderr_lines_result")"
   \rm "$stdin_bytes_result" "$stdin_lines_result" "$stdout_bytes_result" "$stdout_lines_result" "$stderr_bytes_result" "$stderr_lines_result" 2> /dev/null
   if \[ "$job_control" = 1 ]; then \set -m; fi
   return "$exit_code"
