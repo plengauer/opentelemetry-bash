@@ -229,20 +229,20 @@ otel_observe() {
   
   # create span, set initial attributes
   local span_handle="$(otel_span_start "$kind" "$command")"
-  otel_span_attribute "$span_handle" shell.command_line="$command"
+  otel_span_attribute_typed "$span_handle" string shell.command_line="$command"
   if _otel_string_contains "$command" " "; then local command_name="${command%% *}"; else  local command_name="$command"; fi # "$(\printf '%s' "$command" | \cut -sd ' ' -f 2-)" # this returns the command if there are no args, its the cut -s that cant be done via expansion alone
   if \[ -z "$command_type" ]; then local command_type="$(_otel_command_type "$command_name")"; fi
-  otel_span_attribute "$span_handle" shell.command="$command_name"
-  otel_span_attribute "$span_handle" shell.command.type="$command_type"
+  otel_span_attribute_typed "$span_handle" string shell.command="$command_name"
+  otel_span_attribute_typed "$span_handle" string shell.command.type="$command_type"
   if _otel_string_contains "$command_name" /; then
-    otel_span_attribute "$span_handle" shell.command.name=""${command_name##*/}""
+    otel_span_attribute_typed "$span_handle" string shell.command.name=""${command_name##*/}""
   else
-    otel_span_attribute "$span_handle" shell.command.name="$command_name"
+    otel_span_attribute_typed "$span_handle" string shell.command.name="$command_name"
   fi
   if \[ "$command_type" = file ]; then
     local executable_path="$(_otel_string_contains "$command_name" / && \echo "$command_name" || \which "$command_name")"
-    otel_span_attribute "$span_handle" subprocess.executable.path="$executable_path"
-    otel_span_attribute "$span_handle" subprocess.executable.name="${executable_path##*/}" # "$(\printf '%s' "$command" | \cut -d' ' -f1 | \rev | \cut -d / -f 1 | \rev)"
+    otel_span_attribute_typed "$span_handle" string subprocess.executable.path="$executable_path"
+    otel_span_attribute_typed "$span_handle" string subprocess.executable.name="${executable_path##*/}" # "$(\printf '%s' "$command" | \cut -d' ' -f1 | \rev | \cut -d / -f 1 | \rev)"
   fi
   
   # run command
@@ -259,7 +259,7 @@ otel_observe() {
   otel_span_deactivate "$span_handle"
   
   # set custom attributes, set final attributes, finish span
-  otel_span_attribute "$span_handle" shell.command.exit_code="$exit_code"
+  otel_span_attribute_typed "$span_handle" int shell.command.exit_code="$exit_code"
   if \[ "$exit_code" -ne 0 ]; then
     otel_span_error "$span_handle"
   fi
