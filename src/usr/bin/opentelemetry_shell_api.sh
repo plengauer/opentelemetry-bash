@@ -377,12 +377,12 @@ _otel_call_and_record_pipes() {
   fi
   \wait "$stdin_bytes_pid" "$stdin_lines_pid" "$stdout_bytes_pid" "$stdout_lines_pid" "$stderr_bytes_pid" "$stderr_lines_pid" "$stdout_pid" "$stderr_pid"
   \rm "$stdout" "$stderr" "$stdin_bytes" "$stdin_lines" "$stdout_bytes" "$stdout_lines" "$stderr_bytes" "$stderr_lines" 2> /dev/null
-  otel_span_attribute "$span_handle" pipe.stdin.bytes="$(\cat "$stdin_bytes_result")"
-  otel_span_attribute "$span_handle" pipe.stdin.lines="$(\cat "$stdin_lines_result")"
-  otel_span_attribute "$span_handle" pipe.stdout.bytes="$(\cat "$stdout_bytes_result")"
-  otel_span_attribute "$span_handle" pipe.stdout.lines="$(\cat "$stdout_lines_result")"
-  otel_span_attribute "$span_handle" pipe.stderr.bytes="$(\cat "$stderr_bytes_result")"
-  otel_span_attribute "$span_handle" pipe.stderr.lines="$(\cat "$stderr_lines_result")"
+  otel_span_attribute_typed "$span_handle" int pipe.stdin.bytes="$(\cat "$stdin_bytes_result")"
+  otel_span_attribute_typed "$span_handle" int pipe.stdin.lines="$(\cat "$stdin_lines_result")"
+  otel_span_attribute_typed "$span_handle" int pipe.stdout.bytes="$(\cat "$stdout_bytes_result")"
+  otel_span_attribute_typed "$span_handle" int pipe.stdout.lines="$(\cat "$stdout_lines_result")"
+  otel_span_attribute_typed "$span_handle" int pipe.stderr.bytes="$(\cat "$stderr_bytes_result")"
+  otel_span_attribute_typed "$span_handle" int pipe.stderr.lines="$(\cat "$stderr_lines_result")"
   \rm "$stdin_bytes_result" "$stdin_lines_result" "$stdout_bytes_result" "$stdout_lines_result" "$stderr_bytes_result" "$stderr_lines_result" 2> /dev/null
   if \[ "$job_control" = 1 ]; then \set -m; fi
   return "$exit_code"
