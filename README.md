@@ -228,11 +228,26 @@ This projects adheres to the <a href="https://opentelemetry.io/docs/specs/semcon
 | shell.command.exit_code | int    | The exit code of the command.                                                                   | `0`, `1`, `127`                                   |
 
 ## Pipes
-| Attribute         | Type | Description                                  | Examples |
-| ----------------- | ---- | -------------------------------------------- | -------- |
-| pipe.stdin.bytes  | int  | The number of bytes read from stdin (fd 0)   | `0`      |
-| pipe.stdin.lines  | int  | The number of lines read from stdin (fd 0)   | `0`      |
-| pipe.stdout.bytes | int  | The number of bytes written to stdout (fd 1) | `0`      |
-| pipe.stdout.lines | int  | The number of lines written to stdout (fd 1) | `0`      |
-| pipe.stderr.bytes | int  | The number of bytes written to stderr (fd 2) | `0`      |
-| pipe.stderr.lines | int  | The number of lines written to stderr (fd 2) | `0`      |
+| Attribute         | Type | Description                                   | Examples |
+| ----------------- | ---- | --------------------------------------------- | -------- |
+| pipe.stdin.bytes  | int  | The number of bytes read from stdin (fd 0).   | `0`      |
+| pipe.stdin.lines  | int  | The number of lines read from stdin (fd 0).   | `0`      |
+| pipe.stdout.bytes | int  | The number of bytes written to stdout (fd 1). | `0`      |
+| pipe.stdout.lines | int  | The number of lines written to stdout (fd 1). | `0`      |
+| pipe.stderr.bytes | int  | The number of bytes written to stderr (fd 2). | `0`      |
+| pipe.stderr.lines | int  | The number of lines written to stderr (fd 2). | `0`      |
+
+
+## SSH
+These attributes are set when the script is called via an SSH connection.
+| Attribute | Type   | Description                                           | Examples  |
+| --------- | ------ | ----------------------------------------------------- | --------- |
+| ssh.ip    | string | The IP address of the ssh deamon used for connecting. | `1.1.1.1` |
+| ssh.port  | int    | The port of the ssh deamon used for connecting.       | `1.1.1.1` |
+
+## Debian
+These attributes are set when the script is a debian package maintainer script (`preinst`, `postinst`, `prerm`, `postinst`)
+| Attribute              | Type   | Description                 | Examples              |
+| ---------------------- | ------ | --------------------------- | --------------------- |
+| debian.package.name    | string | The name of the package.    | `opentelemetry-shell` |
+| debian.package.version | string | The version of the package. | `1.2.3`               |
