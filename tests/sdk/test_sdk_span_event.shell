@@ -12,4 +12,5 @@ otel_shutdown
 
 span="$(resolve_span)"
 assert_equals "myspan" $(echo "$span" | jq -r '.name')
-echo "$span"
+assert_equals "myevent" "$(echo "$span" | jq -r '.events[0].name')"
+assert_equals "bar" "$(echo "$span" | jq -r '.events[0].attributes.foo')"
