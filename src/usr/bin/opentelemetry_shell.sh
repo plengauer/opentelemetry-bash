@@ -112,16 +112,13 @@ _otel_list_aliased_commands() {
 }
 
 _otel_list_builtin_commands() {
+  # DO NOT instrument built-ins that change the shell, like "set", "cd", "pushd", "ulimit"
+  # depending on the configuration, it may force the command into a subshell and not have the desired effect
   \echo type
   \echo printenv
-  \echo cd
   \echo pwd
   \echo wait
-  \echo ulimit
-  \echo umask
   if \[ "$_otel_shell" = "bash" ]; then
-    \echo pushd
-    \echo popd
     \echo hash
     \echo history
   fi
