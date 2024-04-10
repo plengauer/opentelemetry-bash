@@ -71,6 +71,8 @@ class OracleResourceDetector(ResourceDetector):
 resource = {}
 spans = {}
 next_span_id = 0
+events = {}
+next_event_id = 0
 metrics = {}
 next_metric_id = 0
 
@@ -222,6 +224,34 @@ def handle(scope, version, command, arguments):
         TraceContextTextMapPropagator().inject(carrier, opentelemetry.trace.set_span_in_context(span, None))
         with open(response_path, 'w') as response:
             response.write(carrier.get('traceparent', ''))
+    elif command == 'EVENT_CREATE':
+        global next_event_id
+        tokens = arguments.split(' ', 1)
+        response_path = tokens[0]
+        event_name = tokens[1]
+        event_id = str(next_event_id)
+        next_event_id = next_event_id + 1
+        events[event_id] = { 'name': event_name, 'attributes': {} }
+        with open(response_path, 'w') as response:
+            response.write(event_id)
+    elif command == 'EVENT_ATTRIBUTE':
+        tokens = arguments.split(' ', 2)
+        event_id = tokens[0]
+        type = tokens[1]
+        keyvaluepair = tokens[2]
+        tokens = keyvaluepair.split('=', 1)
+        key = tokens[0]
+        value = tokens[1]
+        if value == '':
+            return
+        events[event_id]['attributes'][key] = convert_type(type, value)
+    elif command == 'EVENT_ADD':
+        tokens = arguments.split(' ', 2)
+        event_id = tokens[0]
+        span_id = tokens[1]
+        event = events[event_id]
+        spans[span_id].add_event(event['name'], event['attributes'])
+        del events[event_id]
     elif command == 'METRIC_CREATE':
         global next_metric_id
         tokens = arguments.split(' ', 1)
