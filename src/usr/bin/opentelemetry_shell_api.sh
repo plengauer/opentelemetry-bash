@@ -249,7 +249,7 @@ otel_observe() {
   otel_span_activate "$span_handle"
   local exit_code=0
   if ! \[ -t 0 ] && ! \[ -t 1 ] && ! \[ -t 2 ] && \[ "$OTEL_SHELL_EXPERIMENTAL_OBSERVE_PIPES" = TRUE ]; then
-    local call_command="_otel_call_and_record_pipes $span_handle _otel_call_and_record_logs _otel_call"
+    local call_command="_otel_call_and_record_pipes $span_handle $command_type _otel_call_and_record_logs _otel_call"
   elif ! \[ -t 2 ]; then
     local call_command="_otel_call_and_record_logs _otel_call"
   else
@@ -328,6 +328,7 @@ _otel_call_and_record_pipes() {
     *) local job_control=0;;
   esac
   local span_handle="$1"; shift
+  local command_type="$1"; shift
   local call_command="$1"; shift
   local stdin_bytes_result="$(\mktemp -u)_opentelemetry_shell_$$.stdin.bytes.result"
   local stdin_lines_result="$(\mktemp -u)_opentelemetry_shell_$$.stdin.lines.result"
@@ -361,7 +362,7 @@ _otel_call_and_record_pipes() {
   local stdout_pid="$!"
   \tee "$stderr_bytes" "$stderr_lines" < "$stderr" >&2 2> /dev/null &
   local stderr_pid="$!"
-  if \[ "$(\readlink -f /proc/self/fd/0)" = /dev/null ] || \[ "$(\readlink -f /proc/self/fd/0)" = "/proc/$$/fd/0" ]; then
+  if \[ "$(\readlink -f /proc/self/fd/0)" = /dev/null ] || \[ "$(\readlink -f /proc/self/fd/0)" = "/proc/$$/fd/0" ] || \[ "$command_type" = builtin ] || \[ "$command_type" = 'function' ]; then
     \echo -n '' > "$stdin_bytes"
     \echo -n '' > "$stdin_lines"
     $call_command "$@" 1> "$stdout" 2> "$stderr" || local exit_code="$?"
