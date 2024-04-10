@@ -179,7 +179,7 @@ otel_span_attribute_typed "$span_handle" int numberkey=0
 ```
 
 ### Span Events
-Customize your spans by manually adding a span event with the span handle. This is only possible between `otel_span_start` and `otel_span_end` for the respective span handle. Valid types for event attributes `string`, `int`, `float`, and `auto`. The `auto` type will try to guess the type based on the value.
+Customize your spans by manually adding span events with the span handle. This is only possible between `otel_span_start` and `otel_span_end` for the respective span handle. Valid types for event attributes `string`, `int`, `float`, and `auto`. The `auto` type will try to guess the type based on the value.
 ```bash
 event_handle="$(otel_event_create "my event")"
 otel_event_attribute "$event_handle" key=value
