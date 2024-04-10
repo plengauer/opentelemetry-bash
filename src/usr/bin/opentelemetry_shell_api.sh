@@ -181,6 +181,34 @@ otel_span_deactivate() {
   fi
 }
 
+otel_event_create() {
+  local event_name="$1"
+  local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
+  \mkfifo "$response_pipe"
+  _otel_sdk_communicate "EVENT_CREATE" "$response_pipe" "$event_name"
+  \cat "$response_pipe"
+  \rm "$response_pipe" &> /dev/null
+}
+
+otel_event_attribute() {
+  local event_handle="$1"
+  local kvp="$2"
+  otel_event_attribute_typed "$event_handle" auto "$kvp"
+}
+
+otel_event_attribute_typed() {
+  local event_handle="$1"
+  local type="$2"
+  local kvp="$3"
+  _otel_sdk_communicate "EVENT_ATTRIBUTE" "$event_handle" "$type" "$kvp"
+}
+
+otel_event_add() {
+  local event_handle="$1"
+  local span_handle="$2"
+  _otel_sdk_communicate "EVENT_ADD" "$event_handle" "$span_handle"
+}
+
 otel_metric_create() {
   local metric_name="$1"
   local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
@@ -188,12 +216,6 @@ otel_metric_create() {
   _otel_sdk_communicate "METRIC_CREATE" "$response_pipe" "$metric_name"
   \cat "$response_pipe"
   \rm "$response_pipe" &> /dev/null
-}
-
-otel_metric_attribute() {
-  local metric_handle="$1"
-  local kvp="$2"
-  _otel_sdk_communicate "METRIC_ATTRIBUTE" "$metric_handle" "$kvp"
 }
 
 otel_metric_attribute() {
