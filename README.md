@@ -243,7 +243,7 @@ These attributes are set when the script is called via an SSH connection.
 | ssh.port  | int    | The port of the ssh deamon used for connecting.       | `1.1.1.1` |
 
 ## Debian
-These attributes are set when the script is a debian package maintainer script (`preinst`, `postinst`, `prerm`, `postinst`)
+These attributes are set when the script is a debian package maintainer script (`preinst`, `postinst`, `prerm`, `postrm`)
 | Attribute              | Type   | Description                 | Examples              |
 | ---------------------- | ------ | --------------------------- | --------------------- |
 | debian.package.name    | string | The name of the package.    | `opentelemetry-shell` |
