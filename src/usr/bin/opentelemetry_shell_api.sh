@@ -20,7 +20,7 @@ if \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = 0 ] || \[ "$OTEL_SHELL_COMM
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE
 unset OTEL_SHELL_COMMAND_TYPE_OVERRIDE
-unset OTEL_SHELL_SUPPRESS_LOG_COLLECTION
+unset OTEL_SHELL_SPAN_KIND_OVERRIDE
 
 otel_init() {
   if \[ -e "/dev/stderr" ] && \[ -e "$(\readlink -f /dev/stderr)" ]; then local sdk_output=/dev/stderr; else local sdk_output=/dev/null; fi
