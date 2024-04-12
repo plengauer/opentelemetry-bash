@@ -77,7 +77,7 @@ _otel_auto_instrument() {
   ## avoid piping directly into the loops, then it will be considered a subshell and aliases won't take effect here
   for cmd in $(_otel_list_path_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_hint "$hint" | \sort -u); do _otel_deshebangify "$cmd" || \true; done
   for cmd in $(_otel_list_alias_commands | _otel_filter_commands_by_special | \sort -u); do _otel_dealiasify "$cmd" || \true; done
-  for cmd in $(_otel_list_all_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_instrumentation | _otel_filter_commands_by_hint "$hint" | \sort -u); do otel_instrument "$cmd"; done
+  for cmd in $(_otel_list_all_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_instrumentation | _otel_filter_commands_by_mode | _otel_filter_commands_by_hint "$hint" | \sort -u); do otel_instrument "$cmd"; done
 
   # super special instrumentations
   \alias .='_otel_instrument_and_source "$#" "$@" .'
@@ -146,6 +146,14 @@ _otel_filter_commands_by_instrumentation() {
   local pre_instrumented_executables="$(\alias | \grep -F '_otel_observe' | \sed 's/^alias //' | \cut -d = -f 1)"
   if \[ -n "$pre_instrumented_executables" ]; then
     \grep -xFv "$pre_instrumented_executables" 
+  else
+    \cat
+  fi
+}
+
+_otel_filter_commands_by_mode() {
+  if \[ "$OTEL_SHELL_EXPERIMENTAL_INSTRUMENT_MINIMALLY" = TRUE ]; then
+    \grep -F "$(\alias | \grep OTEL_SHELL_SPAN_KIND_OVERRIDE | \grep -v OTEL_SHELL_SPAN_KIND_OVERRIDE=INTERNAL | \sed 's/^alias //g' | \cut -d = -f 1)"
   else
     \cat
   fi
