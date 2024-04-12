@@ -4,6 +4,7 @@ on:
   push:
     branches: main
     paths: 'VERSION'
+  workflow_dispatch:
 
 jobs:
   _test:
