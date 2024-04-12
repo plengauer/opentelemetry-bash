@@ -62,7 +62,11 @@ _otel_inject_parallel_gnu_arguments() {
       local in_exec=1
       \echo -n "-q $_otel_shell -c '. otel.sh
 "
-      no_quote=1 _otel_escape_arg "otel_observe $arg"
+      if \[ "$OTEL_SHELL_EXPERIMENTAL_INSTRUMENT_MINIMALLY" = TRUE ]; then
+        no_quote=1 _otel_escape_arg "$arg"
+      else
+        no_quote=1 _otel_escape_arg "otel_observe $arg"
+      fi
       # even if the command is an exported bash function, the instrumentation works properly because the function is exported with expanded aliases
       # so really the instrumentation hint is irrelevant as long as the necessary otel functions are declared
     elif \[ "$in_exec" -eq 1 ] && \[ "$arg" = ":::${arg#":::"}" ]; then
