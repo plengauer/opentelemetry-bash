@@ -228,7 +228,9 @@ _otel_alias_prepend() {
     local new_command="$(\printf '%s' "OTEL_SHELL_COMMAND_TYPE_OVERRIDE=$(_otel_command_type "$original_command") $prepend_command '\\$original_command'")" # need to use printf to handle backslashes consistently across shells
   else
     local previous_command="$(_otel_resolve_alias "$original_command")"
-    if _otel_string_contains "$previous_command" "$prepend_command"; then return 0; fi
+    for prepend_command_part in $prepend_command; do
+      if _otel_string_contains "$previous_command" "$prepend_command_part"; then return 0; fi      
+    done
     if _otel_string_contains "$previous_command" "OTEL_SHELL_COMMAND_TYPE_OVERRIDE="; then local command_type="$(\printf '%s' "$previous_command" | _otel_line_split | \grep '^OTEL_SHELL_COMMAND_TYPE_OVERRIDE=' | \cut -d = -f 2)"; else local command_type="alias"; fi
     if _otel_string_contains "$previous_command" "OTEL_SHELL_SPAN_KIND_OVERRIDE="; then local span_kind="$(\printf '%s' "$previous_command" | _otel_line_split | \grep '^OTEL_SHELL_SPAN_KIND_OVERRIDE=' | \cut -d = -f 2)"; fi
     while _otel_string_starts_with "$previous_command" "OTEL_"; do local previous_command="${previous_command#* }"; done
