@@ -277,7 +277,7 @@ otel_observe() {
   else
     local call_command=_otel_call
   fi
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="$command" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$$" $call_command "$@" || local exit_code="$?"
+  $call_command "$@" || local exit_code="$?"
   otel_span_deactivate "$span_handle"
   
   # set custom attributes, set final attributes, finish span
