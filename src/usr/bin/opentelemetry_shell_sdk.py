@@ -102,10 +102,12 @@ def main():
 def handle(scope, version, command, arguments):
     global auto_end
     if command == 'RESOURCE_ATTRIBUTE':
-        tokens = arguments.split('=', 2);
+        tokens = arguments.split(' ', 1)
+        type = tokens[0]
+        arguments = tokens[1]
+        tokens = arguments.split('=', 1)
         key = tokens[0]
-        type = tokens[1]
-        value = tokens[2]
+        value = tokens[1]
         resource[key] = convert_type(type, value)
     elif command == 'INIT':
         final_resources = get_aggregated_resources([
