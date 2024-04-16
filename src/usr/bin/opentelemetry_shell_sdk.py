@@ -102,9 +102,13 @@ def main():
 def handle(scope, version, command, arguments):
     global auto_end
     if command == 'RESOURCE_ATTRIBUTE':
-        key = arguments.split('=', 1)[0]
-        value = arguments.split('=', 1)[1]
-        resource[key] = value
+        tokens = arguments.split(' ', 1)
+        type = tokens[0]
+        arguments = tokens[1]
+        tokens = arguments.split('=', 1)
+        key = tokens[0]
+        value = tokens[1]
+        resource[key] = convert_type(type, value)
     elif command == 'INIT':
         final_resources = get_aggregated_resources([
                 AwsEC2ResourceDetector(),
