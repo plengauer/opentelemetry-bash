@@ -42,7 +42,12 @@ otel_shutdown() {
 }
 
 _otel_sdk_communicate() {
-  \echo "$@" >&7 # tr -d '\000-\037'
+  if _otel_string_contains "$*" "
+"; then
+    _otel_sdk_communicate "$(\echo "$@" | \tr '\n' ' ')"
+  else
+    \echo "$@" >&7
+  fi
 }
 
 _otel_resource_attributes() {
