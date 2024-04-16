@@ -116,7 +116,7 @@ wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/IN
 ```
 or via
 ```bash
-echo "deb [arch=all] https://3.73.14.87:8000/ stable main" | sudo tee /etc/apt/sources.list.d/example.list
+echo "deb [arch=all] https://3.73.14.87:8000/ stable main" | sudo tee /etc/apt/sources.list.d/otel.list
 sudo apt-get update
 sudo apt-get install opentelemetry-shell
 ```
