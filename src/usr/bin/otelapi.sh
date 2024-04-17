@@ -1,1 +1,1 @@
-opentelemetry_shell_api.sh
+../share/opentelemetry_shell/opentelemetry_shell_api.sh

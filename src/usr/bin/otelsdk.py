@@ -1,1 +1,1 @@
-opentelemetry_shell_sdk.py
+../share/opentelemetry_shell/opentelemetry_shell_sdk.py
