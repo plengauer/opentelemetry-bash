@@ -25,4 +25,4 @@ jobs:
           patch="$(echo "$version" | cut -d . -f 3)"
           minor=$((minor + 1))
           patch=0
-          echo -n "$major.$minor.$patch" > version.txt
+          echo -n "$major.$minor.$patch" > VERSION
