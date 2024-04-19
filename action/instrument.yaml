@@ -1,10 +1,5 @@
 name: 'OpenTelemetry'
 description: 'Observe Github Actions with OpenTelemetry'
-inputs:
-  service-name:
-    description: 'OpenTelemetry Service Name'
-    required: true
-    default: 'unknown_service'
 runs:
   using: 'node20'
   pre: 'inject_and_init.js'
