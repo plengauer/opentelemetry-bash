@@ -31,7 +31,7 @@ jobs:
 
   test-os-shell:
     needs: smoke
-    runs-on: ubuntu:latest
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         os: ['debian:oldstable', 'debian:stable', 'debian:testing', 'debian:unstable', 'ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling', 'ubuntu:devel']
