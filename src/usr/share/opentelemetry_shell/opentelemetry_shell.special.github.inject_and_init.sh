@@ -5,7 +5,10 @@ root4job() {
   traceparent_file="$1"
   . otelapi.sh
   otel_init
-  span_handle="$(otel_span_start CONSUMER "$GITHUB_WORKFLOW / $GITHUB_JOB")"
+  span_kind=CONSUMER
+  span_name="$GITHUB_JOB"
+  if [ -n "$OTEL_TRACEPARENT" ]; then span_kind=INTERNAL; span_name="$GITHUB_WORKFLOW / $span_name"; fi
+  span_handle="$(otel_span_start "$span_kind" "$span_name")"
   otel_span_activate "$span_handle"
   echo "$OTEL_TRACEPARENT" > "$traceparent_file"
   otel_span_deactivate
@@ -31,9 +34,7 @@ traceparent_file="$(mktemp)"
 bash -c root4job bash "$traceparent_file" &
 echo "$!" > "$root_pid_file"
 
-while ! [ -f "$traceparent_file" ]; do
-  sleep 1
-done
+while ! [ -f "$traceparent_file" ]; do sleep 1; done
 export OTEL_TRACEPARENT="$(cat "$traceparent_file")"
 
 printenv | grep '^OTEL_' >> "$GITHUB_ENV"
