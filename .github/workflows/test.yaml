@@ -45,9 +45,6 @@ jobs:
       - run: sudo apt-get update
       - run: sudo apt-get remove -y containerd.io
       - run: sudo apt-get install -y docker.io runc
-      - run: sudo apt-get install -y $SHELL || true
-        env:
-          SHELL: ${{ matrix.shell }}
       - run: bash -c "cd tests && bash run_tests_containerized.sh $OS $SHELL"
         env:
           OS: ${{ matrix.os }}
