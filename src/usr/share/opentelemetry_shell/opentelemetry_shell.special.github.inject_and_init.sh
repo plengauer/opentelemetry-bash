@@ -1,9 +1,34 @@
-#!/bin/sh -e
+#!/bin/bash -e
 if [ -z "$GITHUB_ENV" ]; then exit 1; fi
+
+root4job() {
+  traceparent_file="$1"
+  . otelapi.sh
+  otel_init
+  span_handle="$(otel_span_start CONSUMER "$GITHUB_WORKFLOW / $GITHUB_JOB")"
+  otel_span_activate "$span_handle"
+  echo "$OTEL_TRACEPARENT" > "$traceparent_file"
+  otel_span_deactivate
+  otel_span_attribute "$span_handle" github.repository="$GITHUB_REPOSITORY"
+  otel_span_attribute "$span_handle" github.ref="$GITHUB_REF"
+  otel_span_attribute "$span_handle" github.actor.id="$GITHUB_ACTOR_ID"
+  otel_span_attribute "$span_handle" github.actor.name="$GITHUB_ACTOR"
+  otel_span_attribute "$span_handle" github.event.name="$GITHUB_EVENT_NAME"  
+  otel_span_attribute "$span_handle" github.workflow.run_id="$GITHUB_RUN_ID"
+  otel_span_attribute "$span_handle" github.workflow.ref="$GITHUB_WORKFLOW_REF"
+  otel_span_attribute "$span_handle" github.workflow.name="$GITHUB_WORKFLOW"
+  otel_span_attribute "$span_handle" github.workflow.job.name="$GITHUB_JOB"
+  dummy() { ; }
+  trap dummy SIGINT
+  wait
+  otel_span_end "$span_handle"
+  otel_shutdown
+}
+export -f root4job
 
 root_pid_file="$(mktemp -u | rev | cut -d / -f 2- | rev)/opentelemetry_shell_$GITHUB_RUN_ID.pid"
 traceparent_file="$(mktemp)"
-sh root.sh "$traceparent_file" &
+bash -c root4job bash "$traceparent_file" &
 echo "$!" > "$root_pid_file"
 
 while ! [ -f "$traceparent_file" ]; do
