@@ -19,7 +19,7 @@ root4job() {
   otel_span_attribute "$span_handle" github.workflow.run_id="$GITHUB_RUN_ID"
   otel_span_attribute "$span_handle" github.workflow.ref="$GITHUB_WORKFLOW_REF"
   otel_span_attribute "$span_handle" github.workflow.name="$GITHUB_WORKFLOW"
-  otel_span_attribute "$span_handle" github.workflow.job.name="$GITHUB_JOB"
+  otel_span_attribute "$span_handle" github.job.name="$GITHUB_JOB"
   # TODO how many of the above should be resource attributes?
   dummy() { ; }
   trap dummy SIGINT
