@@ -12,7 +12,7 @@ function run(executable, args = []) {
 }
 
 try {
-  await run('/usr/share/opentelemetry_shell/opentelemetry_shell.special.github.shutdown');
+  await run('/bin/sh', [ '-e', '/usr/share/opentelemetry_shell/opentelemetry_shell.special.github.shutdown.sh' ]);
 } catch (error) {
   core.setFailed(error.message);
 }
