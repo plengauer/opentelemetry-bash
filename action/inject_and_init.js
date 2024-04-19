@@ -13,7 +13,7 @@ function run(executable, args = []) {
 
 try {
   await run('/bin/sh', [ '-c', 'wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh -E' ]);
-  await run('/bin/bash', [ '-e', '/usr/share/opentelemetry_shell/opentelemetry_shell.special.github.inject_and_init.sh' ]);
+  await run('/bin/bash', [ '-e', './inject_and_init.bash' ]);
 } catch (error) {
   core.setFailed(error.message);
 }
