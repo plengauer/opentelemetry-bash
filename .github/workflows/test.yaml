@@ -30,12 +30,12 @@ jobs:
       - run: bash -c "cd tests && sudo bash run_tests.sh bash"
 
   test-os-shell:
+    needs: smoke
+    runs-on: ubuntu:latest
     strategy:
       matrix:
         os: ['debian:oldstable', 'debian:stable', 'debian:testing', 'debian:unstable', 'ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling', 'ubuntu:devel']
         shell: [sh, ash, dash, bash]
-    needs: smoke
-    runs-on: ubuntu:latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
