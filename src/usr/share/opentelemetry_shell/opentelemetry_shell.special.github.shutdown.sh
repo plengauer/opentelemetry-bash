@@ -1,3 +1,5 @@
 #/bin/sh -e
 root_pid_file="$(mktemp -u | rev | cut -d / -f 2- | rev)/opentelemetry_shell_$GITHUB_RUN_ID.pid"
-kill -11 "$(cat $root_pid_file)"
+root_pid="$(cat $root_pid_file)"
+kill -SIGINT "$root_pid"
+while kill -0 $root_pid 2>/dev/null; do sleep 1; done
