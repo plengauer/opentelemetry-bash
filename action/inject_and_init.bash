@@ -1,5 +1,4 @@
-#!/bin/bash -e
-if [ -z "$GITHUB_ENV" ]; then exit 1; fi
+set -e
 
 root4job() {
   traceparent_file="$1"
