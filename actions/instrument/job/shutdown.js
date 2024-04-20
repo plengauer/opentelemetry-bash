@@ -10,4 +10,4 @@ function run(executable, args = []) {
   });
 }
 
-run('/bin/sh', [ '-e', './shutdown.sh' ])
+run('/bin/sh', [ '-e', __dirname + '/shutdown.sh' ])
