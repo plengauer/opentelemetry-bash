@@ -66,6 +66,9 @@ jobs:
           cat "$0"
           printenv
           alias
+      - run: |
+          . otel.sh
+          echo i am manually instrumented
 
   all:
     needs: [package, os-shell, action]
