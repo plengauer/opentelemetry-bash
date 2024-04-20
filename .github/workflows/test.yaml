@@ -55,7 +55,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ./action/instrument.yaml
+      - uses: ./actions/instrument/job
       - run: echo hello world
       - run: |
           echo hello world again
