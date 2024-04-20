@@ -30,12 +30,13 @@ root4job() {
 export -f root4job
 
 root_pid_file="$(mktemp -u | rev | cut -d / -f 2- | rev)/opentelemetry_shell_$GITHUB_RUN_ID.pid"
-traceparent_file="$(mktemp)"
+traceparent_file="$(mktemp -u)"
 bash -c root4job bash "$traceparent_file" &
 echo "$!" > "$root_pid_file"
 
 while ! [ -f "$traceparent_file" ]; do sleep 1; done
 export OTEL_TRACEPARENT="$(cat "$traceparent_file")"
+rm "$traceparent_file"
 
 printenv | grep '^OTEL_' >> "$GITHUB_ENV"
 echo "$GITHUB_ENV" | rev | cut -d / -f 3- | rev | xargs find | grep '.sh$' | while read -r file; do
