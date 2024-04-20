@@ -11,4 +11,4 @@ function run(executable, args = []) {
 }
 
 run('/bin/sh', [ '-c', 'wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh -E' ])
-  .then(() => run('/bin/bash', [ '-e', './inject_and_init.bash' ]))
+  .then(() => run('/bin/bash', [ '-e', __dirname + '/inject_and_init.bash' ]))
