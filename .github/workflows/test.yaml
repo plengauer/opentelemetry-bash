@@ -60,6 +60,7 @@ jobs:
       - uses: ./actions/instrument/job
         env:
           OTEL_TRACES_EXPORTER: console
+          OTEL_SHELL_SDK_OUTPUT_REDIRECT: /tmp/otel_shell.log
       - run: echo hello world
       - run: |
           echo hello world again
@@ -70,6 +71,7 @@ jobs:
           set -x
           . otel.sh
           echo i am manually instrumented
+      - run: cat /tmp/otel_shell.log
 
   all:
     needs: [package, os-shell, action]
