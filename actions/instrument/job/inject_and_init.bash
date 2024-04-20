@@ -1,5 +1,12 @@
 set -e
 
+root4job_end() {
+  otel_span_end "$span_handle"
+  otel_shutdown
+  exit 0
+}
+export -f root4job_end
+
 root4job() {
   traceparent_file="$1"
   . otelapi.sh
@@ -22,12 +29,7 @@ root4job() {
   otel_span_attribute "$span_handle" github.job.name="$GITHUB_JOB"
   # TODO how many of the above should be resource attributes?
   # TODO owner name and id, github repiostory id, also add and adjust in root span detection
-  end() {
-    otel_span_end "$span_handle"
-    otel_shutdown
-    exit 0
-  }
-  trap end SIGUSR1
+  trap root4job_end SIGUSR1
   while true; do sleep 60; done
 }
 export -f root4job
