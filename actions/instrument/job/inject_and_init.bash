@@ -35,7 +35,7 @@ echo "Configured OpenTelemetry for subsequent steps" >&2
 echo "$GITHUB_ENV" >&2
 echo "$GITHUB_ENV" | rev | cut -d / -f 3- | rev >&2
 echo "$GITHUB_ENV" | rev | cut -d / -f 3- | rev | xargs find >&2
-echo "$GITHUB_ENV" | rev | cut -d / -f 3- | rev | xargs find | grep '.sh$' >&2
+echo "$GITHUB_ENV" | rev | cut -d / -f 3- | rev | xargs find | grep '.sh$' || true >&2
 
 echo "$GITHUB_ENV" | rev | cut -d / -f 3- | rev | xargs find | grep '.sh$' | while read -r file; do
   script="$(cat "$file")"
