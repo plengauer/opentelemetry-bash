@@ -1,9 +1,9 @@
 name: Test Branch
 
 on:
-#  push:
-#    branches:
-#      - '**'
+  push:
+    branches:
+      - '**'
   workflow_dispatch:
 
 jobs:
