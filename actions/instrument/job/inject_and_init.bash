@@ -1,4 +1,4 @@
-set -e
+set -ex
 
 root4job() {
   traceparent_file="$1"
