@@ -1,5 +1,4 @@
 const { spawn } = require('child_process');
-const core = require('@actions/core');
 
 function run(executable, args = []) {
   return new Promise((resolve, reject) => {
@@ -12,4 +11,3 @@ function run(executable, args = []) {
 }
 
 run('/bin/sh', [ '-e', './shutdown.sh' ])
-  .catch(error => core.setFailed(error.message));
