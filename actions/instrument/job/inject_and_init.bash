@@ -42,9 +42,10 @@ done
 
 my_dir="$(echo "$0" | rev | cut -d / -f 2- | rev)"
 new_path_dir="$(mktemp -d)"
-chmod +x "$my_dir"/otelshell # fix this in repo
-ln --symbolic "$my_dir"/otelshell "$new_path_dir"/sh
-ln --symbolic "$my_dir"/otelshell "$new_path_dir"/dash
-ln --symbolic "$my_dir"/otelshell "$new_path_dir"/bash
+gcc -o "$new_path_dir"/sh_w_otel "$my_dir"/sh_w_otel.c
+chmod +x "$new_path_dir"/sh_w_otel
+ln --symbolic "$new_path_dir"/sh_w_otel "$new_path_dir"/sh
+ln --symbolic "$new_path_dir"/sh_w_otel "$new_path_dir"/dash
+ln --symbolic "$new_path_dir"/sh_w_otel "$new_path_dir"/bash
 echo "$new_path_dir" > "$GITHUB_PATH"
 echo "Redirected shells to auto-injected executables" >&2
