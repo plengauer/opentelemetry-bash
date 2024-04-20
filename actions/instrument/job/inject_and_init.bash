@@ -32,11 +32,6 @@ rm "$traceparent_file"
 printenv | grep '^OTEL_' >> "$GITHUB_ENV"
 echo "Configured OpenTelemetry for subsequent steps" >&2
 
-echo "$GITHUB_ENV" >&2
-echo "$GITHUB_ENV" | rev | cut -d / -f 3- | rev >&2
-echo "$GITHUB_ENV" | rev | cut -d / -f 3- | rev | xargs find >&2
-echo "$GITHUB_ENV" | rev | cut -d / -f 3- | rev | xargs find | grep '.sh$' || true >&2
-
 echo "$GITHUB_ENV" | rev | cut -d / -f 3- | rev | xargs find | grep '.sh$' | while read -r file; do
   script="$(cat "$file")"
   script=". otel.sh
@@ -44,3 +39,10 @@ $script"
   echo "$script" > "$file"
   echo "Injected OpenTelemetry into $file" >&2
 done
+
+new_path_dir="$(mktemp -d)"
+ln --symbolic /bin/false "$new_path_dir"/sh
+ln --symbolic /bin/false "$new_path_dir"/dash
+ln --symbolic /bin/false "$new_path_dir"/bash
+echo "$new_path_dir" > "$GITHUB_PATH"
+echo "Redirected shells to auto-injected executables" >&2
