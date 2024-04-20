@@ -56,7 +56,7 @@ jobs:
     needs: _build
     runs-on: ubuntu-latest
     steps:
-      - run: find "$GITHUB_ENV/.."
+      - run: echo "$GITHUB_ENV" | rev | cut -d / -f 3- | rev | xargs find
       - uses: actions/checkout@v4
       - uses: ./actions/instrument/job
         env:
