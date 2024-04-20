@@ -51,7 +51,7 @@ jobs:
           SHELL: ${{ matrix.shell }}
 
   test-action:
-    needs: smoke
+    needs: _build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -61,7 +61,7 @@ jobs:
           echo hello world again
 
   all:
-    needs: [package, test-os-shell]
+    needs: [package, test-os-shell, test-action]
     runs-on: ubuntu-latest
     steps:
       - run: exit 0
