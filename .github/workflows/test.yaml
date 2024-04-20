@@ -61,6 +61,8 @@ jobs:
       - run: echo hello world
       - run: |
           echo hello world again
+          printenv
+          alias
 
   all:
     needs: [package, os-shell, action]
