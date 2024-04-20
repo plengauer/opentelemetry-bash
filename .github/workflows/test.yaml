@@ -67,6 +67,7 @@ jobs:
           printenv
           alias
       - run: |
+          set -x
           . otel.sh
           echo i am manually instrumented
 
