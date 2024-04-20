@@ -31,7 +31,7 @@ export -f root4job
 
 root_pid_file="$(mktemp -u | rev | cut -d / -f 2- | rev)/opentelemetry_shell_$GITHUB_RUN_ID.pid"
 traceparent_file="$(mktemp -u)"
-bash -x -c root4job bash "$traceparent_file" &
+bash -x -c 'root4job "$@"' bash "$traceparent_file" &
 echo "$!" > "$root_pid_file"
 
 while ! [ -f "$traceparent_file" ]; do sleep 1; done
