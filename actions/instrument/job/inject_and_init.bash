@@ -10,7 +10,7 @@ root4job() {
   span_handle="$(otel_span_start "$span_kind" "$span_name")"
   otel_span_activate "$span_handle"
   echo "$OTEL_TRACEPARENT" > "$traceparent_file"
-  otel_span_deactivate
+  otel_span_deactivate "$span_handle"
   otel_span_attribute "$span_handle" github.repository="$GITHUB_REPOSITORY"
   otel_span_attribute "$span_handle" github.ref="$GITHUB_REF"
   otel_span_attribute "$span_handle" github.actor.id="$GITHUB_ACTOR_ID"
@@ -21,11 +21,14 @@ root4job() {
   otel_span_attribute "$span_handle" github.workflow.name="$GITHUB_WORKFLOW"
   otel_span_attribute "$span_handle" github.job.name="$GITHUB_JOB"
   # TODO how many of the above should be resource attributes?
-  dummy() { echo 'received SIGINT' >&2; }
-  trap dummy SIGINT
-  wait
-  otel_span_end "$span_handle"
-  otel_shutdown
+  # TODO owner name and id, github repiostory id, also add and adjust in root span detection
+  end() {
+    otel_span_end "$span_handle"
+    otel_shutdown
+    exit 0
+  }
+  trap end SIGINT
+  while true; do sleep 60; done
 }
 export -f root4job
 
