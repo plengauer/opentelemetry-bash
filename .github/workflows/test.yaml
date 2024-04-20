@@ -50,6 +50,16 @@ jobs:
           OS: ${{ matrix.os }}
           SHELL: ${{ matrix.shell }}
 
+  test-action:
+    needs: smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./action/instrument.yaml
+      - run: echo hello world
+      - run: |
+          echo hello world again
+
   all:
     needs: [package, test-os-shell]
     runs-on: ubuntu-latest
