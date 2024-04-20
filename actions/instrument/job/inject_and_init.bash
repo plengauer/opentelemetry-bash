@@ -21,7 +21,7 @@ root4job() {
   otel_span_attribute "$span_handle" github.workflow.name="$GITHUB_WORKFLOW"
   otel_span_attribute "$span_handle" github.job.name="$GITHUB_JOB"
   # TODO how many of the above should be resource attributes?
-  dummy() { ; }
+  dummy() { echo 'received SIGINT' >&2; }
   trap dummy SIGINT
   wait
   otel_span_end "$span_handle"
