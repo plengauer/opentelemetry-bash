@@ -65,9 +65,12 @@ jobs:
       - run: echo hello world
       - run: |
           echo hello world again
+      - run: alias
+      - run: |
+          alias
       - run: |
           . otel.sh
-          echo echo world manual
+          echo echo world manually injected
 
   all:
     needs: [package, os-shell, action]
