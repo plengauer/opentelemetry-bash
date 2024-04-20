@@ -31,6 +31,7 @@ rm "$traceparent_file"
 
 printenv | grep '^OTEL_' >> "$GITHUB_ENV"
 echo "Configured OpenTelemetry for subsequent steps" >&2
+
 echo "$GITHUB_ENV" | rev | cut -d / -f 3- | rev | xargs find | grep '.sh$' | while read -r file; do
   script="$(cat "$file")"
   script=". otel.sh
