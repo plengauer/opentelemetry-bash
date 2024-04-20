@@ -38,7 +38,7 @@ while ! [ -f "$traceparent_file" ]; do sleep 1; done
 export OTEL_TRACEPARENT="$(cat "$traceparent_file")"
 
 printenv | grep '^OTEL_' >> "$GITHUB_ENV"
-echo "$GITHUB_ENV" | rev | cut -d / -f 3- | rev | xargs find | grep '.sh$' | while read -r file; do
+for file in $(find "$GITHUB_ENV/.." -iname '*.sh'); do
   script="$(cat "$file")"
   script=". otel.sh
 $script"
