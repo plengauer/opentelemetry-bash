@@ -29,7 +29,7 @@ jobs:
       - run: sudo apt-get -y install ./package.deb
       - run: bash -c "cd tests && sudo bash run_tests.sh bash"
 
-  test-os-shell:
+  os-shell:
     needs: smoke
     runs-on: ubuntu-latest
     strategy:
@@ -52,7 +52,7 @@ jobs:
           OS: ${{ matrix.os }}
           SHELL: ${{ matrix.shell }}
 
-  test-action:
+  action:
     needs: _build
     runs-on: ubuntu-latest
     steps:
@@ -63,7 +63,7 @@ jobs:
           echo hello world again
 
   all:
-    needs: [package, test-os-shell, test-action]
+    needs: [package, os-shell, action]
     runs-on: ubuntu-latest
     steps:
       - run: exit 0
