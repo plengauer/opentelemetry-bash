@@ -16,7 +16,7 @@ root4job() {
   echo "$OTEL_TRACEPARENT" > "$traceparent_file"
   otel_span_deactivate "$span_handle"
   trap root4job_end SIGUSR1
-  while true; do sleep 60; done
+  while true; do sleep 1; done
 }
 export -f root4job
 
