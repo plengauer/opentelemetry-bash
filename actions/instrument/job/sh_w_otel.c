@@ -106,7 +106,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    char *bash_path = find_command_in_path("bash");
+    char *bash_path = find_command_in_path("bash"); // TODO find all kind of shells (also sh, ash dash)
     if (!bash_path) {
         fprintf(stderr, "Bash executable not found in PATH.\n");
         return 1;
