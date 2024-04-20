@@ -27,7 +27,7 @@ root4job() {
     otel_shutdown
     exit 0
   }
-  trap end SIGINT
+  trap end SIGUSR1
   while true; do sleep 60; done
 }
 export -f root4job
