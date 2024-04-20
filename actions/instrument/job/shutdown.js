@@ -11,8 +11,5 @@ function run(executable, args = []) {
   });
 }
 
-try {
-  await run('/bin/sh', [ '-e', './shutdown.sh' ]);
-} catch (error) {
-  core.setFailed(error.message);
-}
+run('/bin/sh', [ '-e', './shutdown.sh' ])
+  .catch(error => core.setFailed(error.message));
