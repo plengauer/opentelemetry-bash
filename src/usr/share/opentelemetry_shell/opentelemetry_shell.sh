@@ -338,16 +338,6 @@ _otel_start_script() {
     local kind=CONSUMER
     if \[ -n "$OTEL_TRACEPARENT" ]; then local kind=INTERNAL; fi
     _root_span_handle="$(otel_span_start "$kind" "$name")"
-    otel_span_attribute "$_root_span_handle" github.repository="$GITHUB_REPOSITORY"
-    otel_span_attribute "$_root_span_handle" github.ref="$GITHUB_REF"
-    otel_span_attribute "$_root_span_handle" github.actor.id="$GITHUB_ACTOR_ID"
-    otel_span_attribute "$_root_span_handle" github.actor.name="$GITHUB_ACTOR"
-    otel_span_attribute "$_root_span_handle" github.event.name="$GITHUB_EVENT_NAME"  
-    otel_span_attribute "$_root_span_handle" github.workflow.run_id="$GITHUB_RUN_ID"
-    otel_span_attribute "$_root_span_handle" github.workflow.ref="$GITHUB_WORKFLOW_REF"
-    otel_span_attribute "$_root_span_handle" github.workflow.name="$GITHUB_WORKFLOW"
-    otel_span_attribute "$_root_span_handle" github.job.name="$GITHUB_JOB"
-    otel_span_attribute "$_root_span_handle" github.action.name="$GITHUB_ACTION"
   elif ! \[ "$OTEL_SHELL_AUTO_INJECTED" = TRUE ] && \[ -z "$OTEL_TRACEPARENT" ]; then
     _root_span_handle="$(otel_span_start SERVER "$(_otel_command_self)")"
   elif ! \[ "$OTEL_SHELL_AUTO_INJECTED" = TRUE ] && \[ -n "$OTEL_TRACEPARENT" ]; then
