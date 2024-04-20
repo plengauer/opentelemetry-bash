@@ -42,6 +42,7 @@ done
 
 my_dir="$(echo "$0" | rev | cut -d / -f 2- | rev)"
 new_path_dir="$(mktemp -d)"
+chmod +x "$my_dir"/otelshell # fix this in repo
 ln --symbolic "$my_dir"/otelshell "$new_path_dir"/sh
 ln --symbolic "$my_dir"/otelshell "$new_path_dir"/dash
 ln --symbolic "$my_dir"/otelshell "$new_path_dir"/bash
