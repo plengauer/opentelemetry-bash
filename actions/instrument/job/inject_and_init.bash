@@ -37,8 +37,12 @@ echo "$!" > "$root_pid_file"
 while ! [ -f "$traceparent_file" ]; do sleep 1; done
 export OTEL_TRACEPARENT="$(cat "$traceparent_file")"
 
+printenv | grep '^OTEL_' >&2
+echo "$GITHUB_ENV" | rev | cut -d / -f 3- | rev >&2
+echo "$GITHUB_ENV" | rev | cut -d / -f 3- | rev | xargs find >&2
+
 printenv | grep '^OTEL_' >> "$GITHUB_ENV"
-echo "$GITHUB_ENV" | rev | cut -d / -f 3- | rev | xargs find | grep '*.sh$' | while read -r file; do
+echo "$GITHUB_ENV" | rev | cut -d / -f 3- | rev | xargs find | grep '.sh$' | while read -r file; do
   script="$(cat "$file")"
   script=". otel.sh
 $script"
