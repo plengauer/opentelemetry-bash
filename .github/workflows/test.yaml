@@ -58,6 +58,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./actions/instrument/job
+        env:
+          OTEL_TRACES_EXPORTER: console
       - run: echo hello world
       - run: |
           echo hello world again
