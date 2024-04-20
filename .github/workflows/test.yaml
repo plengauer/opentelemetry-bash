@@ -59,19 +59,15 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./actions/instrument/job
         env:
+          OTEL_METRICS_EXPORTER: console
+          OTEL_LOGS_EXPORTER: console
           OTEL_TRACES_EXPORTER: console
-          OTEL_SHELL_SDK_OUTPUT_REDIRECT: /tmp/otel_shell.log
       - run: echo hello world
       - run: |
           echo hello world again
-          cat "$0"
-          printenv
-          alias
       - run: |
-          set -x
           . otel.sh
-          echo i am manually instrumented
-      - run: cat /tmp/otel_shell.log
+          echo echo world manual
 
   all:
     needs: [package, os-shell, action]
