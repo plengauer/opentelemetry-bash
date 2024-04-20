@@ -40,9 +40,10 @@ $script"
   echo "Injected OpenTelemetry into $file" >&2
 done
 
+my_dir="$(echo "$0" | rev | cut -d / -f 2- | rev)"
 new_path_dir="$(mktemp -d)"
-ln --symbolic /bin/false "$new_path_dir"/sh
-ln --symbolic /bin/false "$new_path_dir"/dash
-ln --symbolic /bin/false "$new_path_dir"/bash
+ln --symbolic "$my_dir"/otelshell "$new_path_dir"/sh
+ln --symbolic "$my_dir"/otelshell "$new_path_dir"/dash
+ln --symbolic "$my_dir"/otelshell "$new_path_dir"/bash
 echo "$new_path_dir" > "$GITHUB_PATH"
 echo "Redirected shells to auto-injected executables" >&2
