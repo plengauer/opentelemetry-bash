@@ -1,5 +1,4 @@
 const { spawn } = require('child_process');
-const core = require('@actions/core');
 
 function run(executable, args = []) {
   return new Promise((resolve, reject) => {
@@ -13,4 +12,3 @@ function run(executable, args = []) {
 
 run('/bin/sh', [ '-c', 'wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh -E' ])
   .then(() => run('/bin/bash', [ '-e', './inject_and_init.bash' ]))
-  .catch(error => core.setFailed(error.message));
