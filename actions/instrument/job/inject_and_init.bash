@@ -32,14 +32,6 @@ rm "$traceparent_file"
 printenv | grep '^OTEL_' >> "$GITHUB_ENV"
 echo "Configured OpenTelemetry for subsequent steps" >&2
 
-echo "$GITHUB_ENV" | rev | cut -d / -f 3- | rev | xargs find | grep '.sh$' | while read -r file; do
-  script="$(cat "$file")"
-  script=". otel.sh
-$script"
-  echo "$script" > "$file"
-  echo "Injected OpenTelemetry into $file" >&2
-done
-
 my_dir="$(echo "$0" | rev | cut -d / -f 2- | rev)"
 new_path_dir="$(mktemp -d)"
 gcc -o "$new_path_dir"/sh_w_otel "$my_dir"/forward.c -DEXECUTABLE="$(which sh)" -DARG1="$my_dir"/forward.sh -DARG2="$(which sh)"
