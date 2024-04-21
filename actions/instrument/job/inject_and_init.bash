@@ -42,9 +42,9 @@ done
 
 my_dir="$(echo "$0" | rev | cut -d / -f 2- | rev)"
 new_path_dir="$(mktemp -d)"
-gcc -o "$new_path_dir"/sh_w_otel "$my_dir"/forward.c -DEXECUTABLE="$(which sh)" -DARG1="$my_dir"/forward.sh
-gcc -o "$new_path_dir"/dash_w_otel "$my_dir"/forward.c -DEXECUTABLE="$(which dash)" -DARG1="$my_dir"/forward.sh
-gcc -o "$new_path_dir"/bash_w_otel "$my_dir"/forward.c -DEXECUTABLE="$(which bash)" -DARG1="$my_dir"/forward.sh
+gcc -o "$new_path_dir"/sh_w_otel "$my_dir"/forward.c -DEXECUTABLE="$(which sh)" -DARG1="$my_dir"/forward.sh -DARG2="$(which sh)"
+gcc -o "$new_path_dir"/dash_w_otel "$my_dir"/forward.c -DEXECUTABLE="$(which dash)" -DARG1="$my_dir"/forward.sh -DARG2="$(which dash)"
+gcc -o "$new_path_dir"/bash_w_otel "$my_dir"/forward.c -DEXECUTABLE="$(which bash)" -DARG1="$my_dir"/forward.sh -DARG2="$(which bash)"
 ln --symbolic "$new_path_dir"/sh_w_otel "$new_path_dir"/sh
 ln --symbolic "$new_path_dir"/dash_w_otel "$new_path_dir"/dash
 ln --symbolic "$new_path_dir"/bash_w_otel "$new_path_dir"/bash
