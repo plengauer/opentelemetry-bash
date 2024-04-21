@@ -56,7 +56,6 @@ jobs:
     needs: _build
     runs-on: ubuntu-latest
     steps:
-      - run: gcc
       - uses: actions/checkout@v4
       - uses: ./actions/instrument/job
         env:
