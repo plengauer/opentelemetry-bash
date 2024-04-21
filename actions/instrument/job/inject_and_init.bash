@@ -32,6 +32,10 @@ while ! [ -f "$traceparent_file" ]; do sleep 1; done
 export OTEL_TRACEPARENT="$(cat "$traceparent_file")"
 rm "$traceparent_file"
 
+if [ -z "$OTEL_SERVICE_NAME" ]; then
+  export OTEL_SERVICE_NAME="$(echo "$GITHUB_REPOSITORY | cut -d / -f 2-) CI"
+fi
+
 printenv | grep '^OTEL_' >> "$GITHUB_ENV"
 
 my_dir="$(echo "$0" | rev | cut -d / -f 2- | rev)"
