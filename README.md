@@ -143,6 +143,29 @@ If the command represents communication to a third party service (like a HTTP re
 
 Finally, a single root span will be created and activated that represents the script. This span will automatically be deactivated and ended when the script ends.
 
+## Automatic Instrumentation of Github Actions
+To automatically monitor your Github Workflows on job level and to auto-inject into all run steps, add the following step as first in every job you want to observe. You can configure the SDK as described <a href="https://opentelemetry.io/docs/languages/sdk-configuration/">here</a> by adding environment variables to the setup step.
+```yaml
+- uses: plengauer/opentelemetry-bash/actions/instrument/job@main
+  env:
+    OTEL_SERVICE_NAME: 'Test'
+    # ...
+```
+
+A full job may look like this:
+```yaml
+do-something:
+  runs-on: ubuntu-latest
+  steps:
+    - uses: plengauer/opentelemetry-bash/actions/instrument/job@main
+      env:
+        OTEL_SERVICE_NAME: ${{ secrets.SERVICE_NAME }}
+        # ...
+    - run: echo hello world
+    - run: |
+        echo hello world again
+```
+
 ## Manual Instrumentation
 Import the API by referencing the `otelapi.sh` file. This is only necessary if you do not choose a fully automatic approach described above. In case you use automatic instrumentation, the API will be imported automatically for you.
 The SDK needs to be initialized and shut down manually at the start and at the end of your script respectively. All config must be set before the call to `otel_init`. You can configure the underlying SDK with the same variables as any other OpenTelemetry SDK as described <a href="https://opentelemetry.io/docs/languages/sdk-configuration/">here</a>. We recommend not just setting the environment variables, but also exporting them so that automatically injected children inherit the same configuration.
