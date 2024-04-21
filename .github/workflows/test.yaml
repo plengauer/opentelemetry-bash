@@ -34,10 +34,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-#        os: ['debian:oldstable', 'debian:stable', 'debian:testing', 'debian:unstable', 'ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling', 'ubuntu:devel']
-#        shell: [sh, ash, dash, bash]
-        os: ['debian:oldstable']
-        shell: [sh]
+        os: ['debian:oldstable', 'debian:stable', 'debian:testing', 'debian:unstable', 'ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling', 'ubuntu:devel']
+        shell: [sh, ash, dash, bash]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
