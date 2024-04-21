@@ -33,7 +33,7 @@ export OTEL_TRACEPARENT="$(cat "$traceparent_file")"
 rm "$traceparent_file"
 
 if [ -z "$OTEL_SERVICE_NAME" ]; then
-  export OTEL_SERVICE_NAME="$(echo "$GITHUB_REPOSITORY | cut -d / -f 2-) CI"
+  export OTEL_SERVICE_NAME="$(echo "$GITHUB_REPOSITORY" | cut -d / -f 2-) CI"
 fi
 
 printenv | grep '^OTEL_' >> "$GITHUB_ENV"
