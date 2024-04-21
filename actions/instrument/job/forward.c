@@ -2,7 +2,7 @@
 
 // forward [ forward arg1 arg2 NULL ] => EXECUTABLE [ EXECUTABLE ARG1 ARG2 arg1 arg2 NULL ]
 
-#ifndef EXECUTBALE
+#ifndef EXECUTABLE
 #error must define executable
 #endif
 
