@@ -30,7 +30,6 @@ export OTEL_TRACEPARENT="$(cat "$traceparent_file")"
 rm "$traceparent_file"
 
 printenv | grep '^OTEL_' >> "$GITHUB_ENV"
-echo "Configured OpenTelemetry for subsequent steps" >&2
 
 my_dir="$(echo "$0" | rev | cut -d / -f 2- | rev)"
 new_path_dir="$(mktemp -d)"
@@ -41,4 +40,3 @@ ln --symbolic "$new_path_dir"/sh_w_otel "$new_path_dir"/sh
 ln --symbolic "$new_path_dir"/dash_w_otel "$new_path_dir"/dash
 ln --symbolic "$new_path_dir"/bash_w_otel "$new_path_dir"/bash
 echo "$new_path_dir" >> "$GITHUB_PATH"
-echo "Redirected shells to auto-injected executables" >&2
