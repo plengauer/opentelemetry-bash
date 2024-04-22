@@ -26,6 +26,34 @@ from opentelemetry.sdk._logs._internal import SeverityNumber
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor, ConsoleLogExporter
 from opentelemetry.exporter.otlp.proto.http._log_exporter import OTLPLogExporter
 
+class GithubActionResourceDetector(ResourceDetector):
+    def detect(self) -> Resource:
+        try:
+            if not 'GITHUB_RUN_ID' in os.environ:
+                return Resource.create({});
+            return Resource.create({
+                'github.sha': os.environ.get('GITHUB_SHA', ''),
+                'github.repository.id': os.environ.get('GITHUB_REPOSITORY_ID', ''),
+                'github.repository.name': os.environ.get('GITHUB_REPOSITORY', ''),
+                'github.repository.owner.id': os.environ.get('GITHUB_REPOSITORY_OWNER_ID', ''),
+                'github.repository.owner.name': os.environ.get('GITHUB_REPOSITORY_OWNER', ''),
+                'github.event.ref': os.environ.get('GITHUB_REF', ''),
+                'github.event.ref.sha': os.environ.get('GITHUB_SHA', ''),
+                'github.event.ref.name': os.environ.get('GITHUB_REF_NAME', ''),
+                'github.event.actor.id': os.environ.get('GITHUB_ACTOR_ID', ''),
+                'github.event.actor.name': os.environ.get('GITHUB_ACTOR', ''),
+                'github.event.name': os.environ.get('GITHUB_EVENT_NAME', ''),
+                'github.workflow.run.id': os.environ.get('GITHUB_RUN_ID', ''),
+                'github.workflow.run.attempt': os.environ.get('GITHUB_RUN_ATTEMPT', ''),
+                'github.workflow.ref': os.environ.get('GITHUB_WORKFLOW_REF', ''),
+                'github.workflow.sha': os.environ.get('GITHUB_WORKFLOW_SHA', ''),
+                'github.workflow.name': os.environ.get('GITHUB_WORKFLOW', ''),
+                'github.job.name': os.environ.get('GITHUB_JOB', ''),
+                'github.action.name': os.environ.get('GITHUB_ACTION', ''),
+            })
+        except:
+            return Resource.create({})
+
 class AwsEC2ResourceDetector(ResourceDetector):
     def detect(self) -> Resource:
         try:
@@ -115,6 +143,7 @@ def handle(scope, version, command, arguments):
                 OracleResourceDetector(),
                 KubernetesResourceDetector(),
                 DockerResourceDetector(),
+                GithubActionResourceDetector(),
                 OTELResourceDetector(),
             ]).merge(Resource.create(resource))
 

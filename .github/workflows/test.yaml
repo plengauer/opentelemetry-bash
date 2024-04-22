@@ -1,4 +1,4 @@
-name: Build
+name: Test
 
 on:
   workflow_call:
@@ -29,7 +29,7 @@ jobs:
       - run: sudo apt-get -y install ./package.deb
       - run: bash -c "cd tests && sudo bash run_tests.sh bash"
 
-  test-os-shell:
+  os-shell:
     needs: smoke
     runs-on: ubuntu-latest
     strategy:
@@ -50,8 +50,28 @@ jobs:
           OS: ${{ matrix.os }}
           SHELL: ${{ matrix.shell }}
 
+  action:
+    needs: _build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./actions/instrument/job
+        env:
+          OTEL_METRICS_EXPORTER: console
+          OTEL_LOGS_EXPORTER: console
+          OTEL_TRACES_EXPORTER: console
+      - run: echo hello world
+      - run: |
+          echo hello world again
+      - run: alias
+      - run: |
+          alias
+      - run: |
+          . otel.sh
+          echo echo world manually injected
+
   all:
-    needs: [package, test-os-shell]
+    needs: [package, os-shell, action]
     runs-on: ubuntu-latest
     steps:
       - run: exit 0

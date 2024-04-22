@@ -306,7 +306,7 @@ _otel_record_exec() {
 
 _otel_start_script() {
   otel_init || return $?
-  if \[ -n "$SSH_CLIENT"  ] && \[ -n "$SSH_CONNECTION" ] && \[ "$(\cat /proc/$PPID/cmdline | \tr -d '\000' | \cut -d' ' -f1)" = "sshd:" ]; then
+  if \[ -n "$SSH_CLIENT"  ] && \[ -n "$SSH_CONNECTION" ] && \[ "$(\cat /proc/$PPID/cmdline | \tr -d '\000' | \cut -d ' ' -f 1)" = "sshd:" ]; then
     _root_span_handle="$(otel_span_start SERVER ssh)"
     otel_span_attribute_typed $_root_span_handle string ssh.ip="$(\echo $SSH_CONNECTION | \cut -d ' ' -f 3)"
     otel_span_attribute_typed $_root_span_handle int ssh.port="$(\echo $SSH_CONNECTION | \cut -d ' ' -f 4)"
@@ -331,6 +331,12 @@ _otel_start_script() {
     _root_span_handle="$(otel_span_start SERVER "$(\echo "$cmdline" | \cut -d . -f 2- | \cut -d ' ' -f 1)")"
     otel_span_attribute_typed $_root_span_handle string debian.package.name="$(\echo "$cmdline" | \rev | \cut -d / -f 1 | \rev | \cut -d . -f 1)"
     otel_span_attribute_typed $_root_span_handle string debian.package.operation="$(\echo "$cmdline" | \cut -d . -f 2-)"
+  elif \[ -n "$GITHUB_RUN_ID" ] && \[ -n "$GITHUB_WORKFLOW" ] && \[ "$(\cat /proc/$PPID/cmdline | \tr '\000-\037' ' ' | \cut -d ' ' -f 1 | \rev | \cut -d / -f 1 | \rev)" = "Runner.Worker" ]; then
+    local name="$GITHUB_WORKFLOW"
+    local kind=CONSUMER
+    if \[ -n "$GITHUB_JOB" ]; then local name="$name / $GITHUB_JOB"; local kind=CONSUMER; fi
+    if \[ -n "$GITHUB_ACTION" ]; then local name="$name / $GITHUB_ACTION"; local kind=SERVER; fi
+    _root_span_handle="$(otel_span_start "$kind" "$name")"
   elif ! \[ "$OTEL_SHELL_AUTO_INJECTED" = TRUE ] && \[ -z "$OTEL_TRACEPARENT" ]; then
     _root_span_handle="$(otel_span_start SERVER "$(_otel_command_self)")"
   elif ! \[ "$OTEL_SHELL_AUTO_INJECTED" = TRUE ] && \[ -n "$OTEL_TRACEPARENT" ]; then

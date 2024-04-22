@@ -1,0 +1,7 @@
+name: 'OpenTelemetry'
+description: 'Observe Github Actions with OpenTelemetry'
+runs:
+  using: 'node20'
+  pre: 'inject_and_init.js'
+  main: 'nop.js'
+  post: 'shutdown.js'
