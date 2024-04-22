@@ -2,15 +2,13 @@ set -e
 
 if [ -z "$GITHUB_ACTION_REPOSITORY" ]; then export GITHUB_ACTION_REPOSITORY="$GITHUB_REPOSITORY"; fi
 action_tag_name="$(echo "$GITHUB_ACTION_REF" | cut -sd @ -f 2-)"
-if [ -n "$GITHUB_ACTION_REPOSITORY" ] && [ -n "$action_tag_name" ]; then
+if [ -n "$action_tag_name" ]; then
   debian_file="$(mktemp)"
   curl "$GITHUB_API_URL"/repos/"$GITHUB_ACTION_REPOSITORY"/releases | { if [ "$action_tag_name" = main ]; then jq '.[0]'; else jq '.[] | select(.tag_name=="'"$action_tag_name"'")'; fi } | jq -r '.assets[] | .browser_download_url' | xargs wget -O "$debian_file"
   sudo apt-get install -y "$debian_file"
   rm "$debian_file"
-elif [ -n "$GITHUB_ACTION_REPOSITORY" ]; then
-  wget -O - https://raw.githubusercontent.com/"$GITHUB_ACTION_REPOSITORY"/main/INSTALL.sh | sh -E
 else
-  wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh -E
+  wget -O - https://raw.githubusercontent.com/"$GITHUB_ACTION_REPOSITORY"/main/INSTALL.sh | sh -E
 fi
 
 root4job_end() {
