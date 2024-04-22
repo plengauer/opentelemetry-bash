@@ -4,7 +4,7 @@ action_repository="$(echo "$GITHUB_ACTION_REF" | cut -d / -f -2)"
 action_tag_name="$(echo "$GITHUB_ACTION_REF" | cut -d @ -f 2-)"
 if [ -n "$action_repository" ] && [ -n "$action_tag_name" ]; then
   debian_file="$(mktemp)"
-  curl https://api.github.com/repos/plengauer/opentelemetry-bash/releases | jq -r '.[] | select(.tag_name=="'"$action_tag_name"'") | .assets[] | .browser_download_url' | xargs wget -O "$debian_file"
+  curl "$GITHUB_API_URL"/repos/"$action_respository"/releases | jq -r '.[] | select(.tag_name=="'"$action_tag_name"'") | .assets[] | .browser_download_url' | xargs wget -O "$debian_file"
   sudo apt-get install -y "$debian_file"
   rm "$debian_file"
 else if [ -n "$action_repository" ]; then
