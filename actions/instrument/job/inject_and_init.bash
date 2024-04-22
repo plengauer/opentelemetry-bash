@@ -1,5 +1,6 @@
 set -e
 
+if [ -z "$GITHUB_ACTION_REPOSITORY" ]; then export GITHUB_ACTION_REPOSITORY="$GITHUB_REPOSITORY"; fi
 action_tag_name="$(echo "$GITHUB_ACTION_REF" | cut -sd @ -f 2-)"
 if [ -n "$GITHUB_ACTION_REPOSITORY" ] && [ -n "$action_tag_name" ]; then
   debian_file="$(mktemp)"
