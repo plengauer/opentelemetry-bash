@@ -2,12 +2,17 @@ set -e
 
 action_repository="$(echo "$GITHUB_ACTION_REF" | cut -d / -f -2)"
 action_tag_name="$(echo "$GITHUB_ACTION_REF" | cut -d @ -f 2-)"
-if [ -n "$action_repository" ] && [ -n "$action_tag_name" ]; then
+if [ -n "$action_repository" ] && [ "$action_tag_name" = main ]; then
+  debian_file="$(mktemp)"
+  curl "$GITHUB_API_URL"/repos/"$action_respository"/releases | jq -r '.[0] | .assets[] | .browser_download_url' | xargs wget -O "$debian_file"
+  sudo apt-get install -y "$debian_file"
+  rm "$debian_file"
+elif [ -n "$action_repository" ] && [ -n "$action_tag_name" ]; then
   debian_file="$(mktemp)"
   curl "$GITHUB_API_URL"/repos/"$action_respository"/releases | jq -r '.[] | select(.tag_name=="'"$action_tag_name"'") | .assets[] | .browser_download_url' | xargs wget -O "$debian_file"
   sudo apt-get install -y "$debian_file"
   rm "$debian_file"
-else if [ -n "$action_repository" ]; then
+elif [ -n "$action_repository" ]; then
   wget -O - https://raw.githubusercontent.com/"$action_repository"/main/INSTALL.sh | sh -E
 else
   wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh -E
