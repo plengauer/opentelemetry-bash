@@ -62,9 +62,9 @@ jobs:
           OTEL_TRACES_EXPORTER: console
       - run: alias
       - run: |
-          [ "$(alias | grep '_otel_observe' | wc -l)" -gt 0 ] && exit 0 || exit 1
+          [ "$(alias | grep '_otel_observe' | wc -l)" -gt 0 ]
       - run: |
-          [ -n "$OTEL_TRACEPARENT" ] && exit 0 || exit 1
+          [ -n "$OTEL_TRACEPARENT" ]
 
   all:
     needs: [package, os-shell, action]
