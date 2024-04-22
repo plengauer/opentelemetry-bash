@@ -1,7 +1,7 @@
 set -e
 
-action_repository="$(echo "$GITHUB_ACTION_REF" | cut -d / -f -2)"
-action_tag_name="$(echo "$GITHUB_ACTION_REF" | cut -d @ -f 2-)"
+action_repository="$(echo "$GITHUB_ACTION_REF" | cut -sd / -f -2)"
+action_tag_name="$(echo "$GITHUB_ACTION_REF" | cut -sd @ -f 2-)"
 if [ -n "$action_repository" ] && [ "$action_tag_name" = main ]; then
   debian_file="$(mktemp)"
   curl "$GITHUB_API_URL"/repos/"$action_respository"/releases | jq -r '.[0] | .assets[] | .browser_download_url' | xargs wget -O "$debian_file"
