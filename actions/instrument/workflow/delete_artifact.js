@@ -1,4 +1,3 @@
 const artifact = require('@actions/artifact');
-const artifactClient = artifact.create();
-const artifactName = process.argv[2];
-artifactClient.deleteArtifact(artifactName);
+const artifactName = process.argv[1];
+artifact.create().deleteArtifact(artifactName);
