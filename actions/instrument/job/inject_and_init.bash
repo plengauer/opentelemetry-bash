@@ -29,7 +29,7 @@ export -f root4job
 env_dir="$(mktemp -d)"
 node download_artifact.js otel.env "$env_dir"
 if [ -f "$env_dir"/otel.env ]; then
-  for read -r line; do
+  while read -r line; do
     export "$line"
   done < "$env_dir"/otel.env
 fi
