@@ -25,7 +25,13 @@ root4job() {
 }
 export -f root4job
 
-# TODO check if we need to wait for an external otel traceparent, then wait and downlaod as artifact
+# TODO check if we expect an otel env and wait for it if we do
+env_file="$(mktemp)"
+node download_artifact.js otel.env "$env_file"
+for read -r line; do
+  export "$line"
+done
+rm "$env_file"
 
 root_pid_file="$(mktemp -u | rev | cut -d / -f 2- | rev)/opentelemetry_shell_$GITHUB_RUN_ID.pid"
 traceparent_file="$(mktemp -u)"
