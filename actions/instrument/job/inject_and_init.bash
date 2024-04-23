@@ -26,12 +26,14 @@ root4job() {
 export -f root4job
 
 # TODO check if we expect an otel env and wait for it if we do
-env_file="$(mktemp)"
-node download_artifact.js otel.env "$env_file"
-for read -r line; do
-  export "$line"
-done
-rm "$env_file"
+env_dir="$(mktemp -d)"
+node download_artifact.js otel.env "$env_dir"
+if [ -f "$env_dir"/otel.env ]; then
+  for read -r line; do
+    export "$line"
+  done < "$env_dir"/otel.env
+fi
+rm -r "$env_dir"
 
 root_pid_file="$(mktemp -u | rev | cut -d / -f 2- | rev)/opentelemetry_shell_$GITHUB_RUN_ID.pid"
 traceparent_file="$(mktemp -u)"
