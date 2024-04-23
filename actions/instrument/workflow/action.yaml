@@ -1,1 +1,7 @@
-
+name: 'OpenTelemetry Workflow'
+description: 'Observe Github Workflows with OpenTelemetry'
+runs:
+  using: 'node20'
+  pre: 'inject_and_init.js'
+  main: 'nop.js'
+  post: 'shutdown.js'
