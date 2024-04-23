@@ -10,10 +10,14 @@ if [ -n "$action_tag_name" ]; then
 else
   wget -O - https://raw.githubusercontent.com/"$GITHUB_ACTION_REPOSITORY"/main/INSTALL.sh | sh -E
 fi
+npm install '@actions/artifact'
 
 . otelapi.sh
 otel_init
 span_handle="$(otel_span_start CONSUMER "$GITHUB_WORKFLOW")"
+otel_span_activate "$span_handle"
+# TODO upload OTEL_TRACEPARENT as artifact
+otel_span_deactivate "$span_handle"
 while [ "$(curl "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID" | jq -r '.status')" != completed ]; do sleep 1; done
 if [ "$(curl "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID" | jq -r '.conclusion')" = failure ]; then otel_span_error "$span_handle"; fi
 otel_span_end "$span_handle"
