@@ -150,20 +150,7 @@ To automatically monitor your Github Workflows on job level and to auto-inject i
   env:
     OTEL_SERVICE_NAME: 'Test'
     # ...
-```
-
-A full job may look like this:
-```yaml
-do-something:
-  runs-on: ubuntu-latest
-  steps:
-    - uses: plengauer/opentelemetry-bash/actions/instrument/job@main
-      env:
-        OTEL_SERVICE_NAME: ${{ secrets.SERVICE_NAME }}
-        # ...
-    - run: echo hello world
-    - run: |
-        echo hello world again
+- run: ...
 ```
 
 Optionally, setup a dedicted job that is used to collect all jobs under a single root span representing the entire workflow. 
