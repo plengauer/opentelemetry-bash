@@ -16,7 +16,10 @@ npm install '@actions/artifact'
 otel_init
 span_handle="$(otel_span_start CONSUMER "$GITHUB_WORKFLOW")"
 otel_span_activate "$span_handle"
-# TODO upload OTEL_TRACEPARENT as artifact
+env_file="$(mktemp)"
+printenv | grep '^OTEL_' | grep -v HEADERS > "$env_file"
+node upload_artifact.js "otel.env" "$env_file"
+rm "$env_file"
 otel_span_deactivate "$span_handle"
 while [ "$(curl "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID" | jq -r '.status')" != completed ]; do sleep 1; done
 if [ "$(curl "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID" | jq -r '.conclusion')" = failure ]; then otel_span_error "$span_handle"; fi
