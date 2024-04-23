@@ -153,7 +153,7 @@ To automatically monitor your Github Workflows on job level and to auto-inject i
 - run: ...
 ```
 
-Optionally, setup a dedicted job that is used to collect all jobs under a single root span representing the entire workflow. 
+Optionally, setup a dedicted job that is used to collect all jobs under a single root span representing the entire workflow.
 ```yaml
 observability:
   runs-on: ubuntu-latest
@@ -163,6 +163,7 @@ observability:
         OTEL_SERVICE_NAME: ${{ secrets.SERVICE_NAME }}
         # ...
 ```
+If you define that job to create a single root span for all other jobs, only the step in this root job has to be configured. The configuration will be propagated to the other jobs. The only exception to that are OpenTelemetry SDK Header configurations because they often contain API tokens and we cannot securely propagate these between jobs.
 
 ## Manual Instrumentation
 Import the API by referencing the `otelapi.sh` file. This is only necessary if you do not choose a fully automatic approach described above. In case you use automatic instrumentation, the API will be imported automatically for you.
