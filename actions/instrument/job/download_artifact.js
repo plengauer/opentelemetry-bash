@@ -1,4 +1,7 @@
 const { DefaultArtifactClient } = require('@actions/artifact');
 const artifactName = process.argv[2];
 const outputPath = process.argv[3];
-new DefaultArtifactClient().downloadArtifact(artifactName, outputPath);
+const client = new DefaultArtifactClient()
+client.listArtifacts()
+  .then(response => response.artifacts.find(artifact => artifact.name == artifactName).id)
+  .then(id => client.downloadArtifact(id, { path: TODO })
