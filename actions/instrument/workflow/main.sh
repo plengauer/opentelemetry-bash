@@ -1,5 +1,9 @@
 set -e
 
+curl_git() {
+  curl --no-progress-meter --fail --retry 10 "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/"$1"
+}
+
 if [ -z "$GITHUB_ACTION_REPOSITORY" ]; then export GITHUB_ACTION_REPOSITORY="$GITHUB_REPOSITORY"; fi
 action_tag_name="$(echo "$GITHUB_ACTION_REF" | cut -sd @ -f 2-)"
 if [ -n "$action_tag_name" ]; then
@@ -26,8 +30,8 @@ node upload_artifact.js opentelemetry "$env_dir"/.env
 rm -r "$env_dir"
 otel_span_deactivate "$span_handle"
 # TODO apparently this at some point 403's, i suspect a rate limit eventually kicks in
-while [ "$(curl --no-progress-meter --fail "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/jobs | jq -r '.jobs[] | select(.status != "completed") | .name' | wc -l)" -gt 1 ]; do sleep 60; done
-if [ "$(curl --no-progress-meter --fail "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/jobs | jq -r '.jobs[] | select(.status == "completed") | select(.conclusion == "failure") | .name' | wc -l)" -gt 0 ]; then otel_span_error "$span_handle"; fi
+while [ "$(curl_git jobs | jq -r '.jobs[] | select(.status != "completed") | .name' | wc -l)" -gt 1 ]; do sleep 3; done
+if [ "$(curl_git jobs | jq -r '.jobs[] | select(.status == "completed") | select(.conclusion == "failure") | .name' | wc -l)" -gt 0 ]; then otel_span_error "$span_handle"; fi
 otel_span_end "$span_handle"
 otel_shutdown
 node delete_artifact.js opentelemetry
