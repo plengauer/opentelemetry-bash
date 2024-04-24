@@ -37,7 +37,7 @@ export -f root4job
 
 # TODO check if we expect an otel env and wait for it if we do
 env_dir="$(mktemp -d)"
-node download_artifact.js otel.env "$env_dir"
+node download_artifact.js opentelemetry "$env_dir"
 if [ -f "$env_dir"/otel.env ]; then
   while read -r line; do
     export "$line"
