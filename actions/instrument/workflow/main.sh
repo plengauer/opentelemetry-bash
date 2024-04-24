@@ -1,4 +1,4 @@
-set -e
+set -ex
 
 curl() {
   \curl -v --no-progress-meter --fail --retry 10 "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/"$1"
