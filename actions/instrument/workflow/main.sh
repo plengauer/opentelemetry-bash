@@ -12,6 +12,10 @@ else
 fi
 npm install '@actions/artifact'
 
+if [ -z "$OTEL_SERVICE_NAME" ]; then
+  export OTEL_SERVICE_NAME="$(echo "$GITHUB_REPOSITORY" | cut -d / -f 2-) CI"
+fi
+
 . otelapi.sh
 otel_init
 span_handle="$(otel_span_start CONSUMER "$GITHUB_WORKFLOW")"
