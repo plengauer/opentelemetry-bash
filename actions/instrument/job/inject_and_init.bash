@@ -13,7 +13,7 @@ fi
 npm install '@actions/artifact'
 
 root4job_end() {
-  if [ "$(curl "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs" | jq -r ".jobs[] | select(.name==\"$GITHUB_JOB\") | select(.run_attempt==\"$GITHUB_RUN_ATTEMPT\") | .steps[] | select(.status==\"completed\") | select(.conclusion==\"failure\") | .name" | wc -l)" -gt 0 ]; then
+  if [ "$(curl --no-progress-meter --fail "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/jobs | jq -r ".jobs[] | select(.name==\"$GITHUB_JOB\") | select(.run_attempt==\"$GITHUB_RUN_ATTEMPT\") | .steps[] | select(.status==\"completed\") | select(.conclusion==\"failure\") | .name" | wc -l)" -gt 0 ]; then
     otel_span_error "$span_handle"
   fi
   otel_span_end "$span_handle"
@@ -35,7 +35,7 @@ root4job() {
 }
 export -f root4job
 
-# TODO check if we expect an otel env and wait for it if we do
+while curl --no-progress-meter --fail "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/jobs | jq -r '.jobs[] | select(status != "completed") | .name' | grep '^observe$'; do sleep 1; done
 env_dir="$(mktemp -d)"
 node download_artifact.js opentelemetry "$env_dir"
 if [ -f "$env_dir"/.env ]; then
