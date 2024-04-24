@@ -153,7 +153,7 @@ To automatically monitor your Github Workflows on job level and to auto-inject i
 - run: ...
 ```
 
-Optionally, setup a dedicted job that is used to collect all jobs under a single root span representing the entire workflow.
+Optionally, setup a dedicted job that is used to collect all jobs under a single root span representing the entire workflow. The job has to have exactly the name below and must neither depend on any other job nor being depent on.
 ```yaml
 observe:
   runs-on: ubuntu-latest
