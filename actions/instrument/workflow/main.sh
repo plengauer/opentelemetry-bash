@@ -16,13 +16,13 @@ npm install '@actions/artifact'
 otel_init
 span_handle="$(otel_span_start CONSUMER "$GITHUB_WORKFLOW")"
 otel_span_activate "$span_handle"
-env_file="$(mktemp)"
-printenv | grep '^OTEL_' | grep -v HEADERS > "$env_file"
-node upload_artifact.js otel.env "$env_file"
-rm "$env_file"
+env_dir="$(mktemp -d)"
+printenv | grep '^OTEL_' | grep -v HEADERS > "$env_dir"/.env
+node upload_artifact.js opentelemetry "$env_dir"/.env
+rm -r "$env_dir"
 otel_span_deactivate "$span_handle"
-while [ "$(curl "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID" | jq -r '.status')" != completed ]; do sleep 1; done
-if [ "$(curl "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID" | jq -r '.conclusion')" = failure ]; then otel_span_error "$span_handle"; fi
+while [ "$(curl "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID" | jq -r 'select(status != "completed") | .name' | wc -l)" -gt 1 ]; do sleep 1; done
+if [ "$(curl "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID" | jq -r 'select(status == "completed") | select(conclusion == "failure") | .name')" -gt 0 ]; then otel_span_error "$span_handle"; fi
 otel_span_end "$span_handle"
 otel_shutdown
 node delete_artifact.js "otel.env"
