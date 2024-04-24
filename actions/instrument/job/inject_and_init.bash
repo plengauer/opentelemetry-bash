@@ -12,6 +12,30 @@ else
 fi
 npm install '@actions/artifact'
 
+my_dir="$(echo "$0" | rev | cut -d / -f 2- | rev)"
+new_path_dir="$(mktemp -d)"
+gcc -o "$new_path_dir"/sh_w_otel "$my_dir"/forward.c -DEXECUTABLE="$(which sh)" -DARG1="$my_dir"/forward.sh -DARG2="$(which sh)"
+gcc -o "$new_path_dir"/dash_w_otel "$my_dir"/forward.c -DEXECUTABLE="$(which dash)" -DARG1="$my_dir"/forward.sh -DARG2="$(which dash)"
+gcc -o "$new_path_dir"/bash_w_otel "$my_dir"/forward.c -DEXECUTABLE="$(which bash)" -DARG1="$my_dir"/forward.sh -DARG2="$(which bash)"
+ln --symbolic "$new_path_dir"/sh_w_otel "$new_path_dir"/sh
+ln --symbolic "$new_path_dir"/dash_w_otel "$new_path_dir"/dash
+ln --symbolic "$new_path_dir"/bash_w_otel "$new_path_dir"/bash
+echo "$new_path_dir" >> "$GITHUB_PATH"
+
+while curl --no-progress-meter --fail "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/jobs | jq -r '.jobs[] | select(.status != "completed") | .name' | grep -q '^observe$' && curl --no-progress-meter --fail "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/artifacts | jq -r '.artifacts[].name' | grep -qv '^opentelemetry$'; do sleep 1; done
+env_dir="$(mktemp -d)"
+node download_artifact.js opentelemetry "$env_dir"
+if [ -f "$env_dir"/.env ]; then
+  while read -r line; do
+    export "$line"
+  done < "$env_dir"/.env
+fi
+rm -r "$env_dir"
+
+if [ -z "$OTEL_SERVICE_NAME" ]; then
+  export OTEL_SERVICE_NAME="$(echo "$GITHUB_REPOSITORY" | cut -d / -f 2-) CI"
+fi
+
 root4job_end() {
   if [ "$(curl --no-progress-meter --fail "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/jobs | jq -r ".jobs[] | select(.name==\"$GITHUB_JOB\") | select(.run_attempt==\"$GITHUB_RUN_ATTEMPT\") | .steps[] | select(.status==\"completed\") | select(.conclusion==\"failure\") | .name" | wc -l)" -gt 0 ]; then
     otel_span_error "$span_handle"
@@ -35,16 +59,6 @@ root4job() {
 }
 export -f root4job
 
-while curl --no-progress-meter --fail "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/jobs | jq -r '.jobs[] | select(.status != "completed") | .name' | grep '^observe$'; do sleep 1; done
-env_dir="$(mktemp -d)"
-node download_artifact.js opentelemetry "$env_dir"
-if [ -f "$env_dir"/.env ]; then
-  while read -r line; do
-    export "$line"
-  done < "$env_dir"/.env
-fi
-rm -r "$env_dir"
-
 root_pid_file="$(mktemp -u | rev | cut -d / -f 2- | rev)/opentelemetry_shell_$GITHUB_RUN_ID.pid"
 traceparent_file="$(mktemp -u)"
 nohup bash -c 'root4job "$@"' bash "$traceparent_file" &> /dev/null &
@@ -54,18 +68,4 @@ while ! [ -f "$traceparent_file" ]; do sleep 1; done
 export OTEL_TRACEPARENT="$(cat "$traceparent_file")"
 rm "$traceparent_file"
 
-if [ -z "$OTEL_SERVICE_NAME" ]; then
-  export OTEL_SERVICE_NAME="$(echo "$GITHUB_REPOSITORY" | cut -d / -f 2-) CI"
-fi
-
 printenv | grep '^OTEL_' >> "$GITHUB_ENV"
-
-my_dir="$(echo "$0" | rev | cut -d / -f 2- | rev)"
-new_path_dir="$(mktemp -d)"
-gcc -o "$new_path_dir"/sh_w_otel "$my_dir"/forward.c -DEXECUTABLE="$(which sh)" -DARG1="$my_dir"/forward.sh -DARG2="$(which sh)"
-gcc -o "$new_path_dir"/dash_w_otel "$my_dir"/forward.c -DEXECUTABLE="$(which dash)" -DARG1="$my_dir"/forward.sh -DARG2="$(which dash)"
-gcc -o "$new_path_dir"/bash_w_otel "$my_dir"/forward.c -DEXECUTABLE="$(which bash)" -DARG1="$my_dir"/forward.sh -DARG2="$(which bash)"
-ln --symbolic "$new_path_dir"/sh_w_otel "$new_path_dir"/sh
-ln --symbolic "$new_path_dir"/dash_w_otel "$new_path_dir"/dash
-ln --symbolic "$new_path_dir"/bash_w_otel "$new_path_dir"/bash
-echo "$new_path_dir" >> "$GITHUB_PATH"
