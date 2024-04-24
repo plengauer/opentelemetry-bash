@@ -14,9 +14,6 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      - uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: Version bump
       - run: |
           set -e
           version="$(cat VERSION)"
@@ -26,3 +23,6 @@ jobs:
           minor=$((minor + 1))
           patch=0
           echo -n "$major.$minor.$patch" > VERSION
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Version bump
