@@ -1,7 +1,7 @@
 set -e
 
-curl_git() {
-  curl --no-progress-meter --fail --retry 10 "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/"$1"
+curl() {
+  \curl --no-progress-meter --fail --retry 10 "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/"$1"
 }
 
 if [ -z "$GITHUB_ACTION_REPOSITORY" ]; then export GITHUB_ACTION_REPOSITORY="$GITHUB_REPOSITORY"; fi
