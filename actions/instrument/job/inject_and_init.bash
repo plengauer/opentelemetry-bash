@@ -1,6 +1,5 @@
 set -e
 
-npm install '@actions/artifact'
 if [ -z "$GITHUB_ACTION_REPOSITORY" ]; then export GITHUB_ACTION_REPOSITORY="$GITHUB_REPOSITORY"; fi
 action_tag_name="$(echo "$GITHUB_ACTION_REF" | cut -sd @ -f 2-)"
 if [ -n "$action_tag_name" ]; then
@@ -11,6 +10,7 @@ if [ -n "$action_tag_name" ]; then
 else
   wget -O - https://raw.githubusercontent.com/"$GITHUB_ACTION_REPOSITORY"/main/INSTALL.sh | sh -E
 fi
+npm install '@actions/artifact'
 
 root4job_end() {
   if [ "$(curl "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs" | jq -r ".jobs[] | select(.name==\"$GITHUB_JOB\") | select(.run_attempt==\"$GITHUB_RUN_ATTEMPT\") | .steps[] | select(.status==\"completed\") | select(.conclusion==\"failure\") | .name" | wc -l)" -gt 0 ]; then
@@ -38,10 +38,10 @@ export -f root4job
 # TODO check if we expect an otel env and wait for it if we do
 env_dir="$(mktemp -d)"
 node download_artifact.js opentelemetry "$env_dir"
-if [ -f "$env_dir"/otel.env ]; then
+if [ -f "$env_dir"/.env ]; then
   while read -r line; do
     export "$line"
-  done < "$env_dir"/otel.env
+  done < "$env_dir"/.env
 fi
 rm -r "$env_dir"
 
