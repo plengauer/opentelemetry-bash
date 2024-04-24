@@ -8,7 +8,7 @@ if [ -z "$GITHUB_ACTION_REPOSITORY" ]; then export GITHUB_ACTION_REPOSITORY="$GI
 action_tag_name="$(echo "$GITHUB_ACTION_REF" | cut -sd @ -f 2-)"
 if [ -n "$action_tag_name" ]; then
   debian_file="$(mktemp)"
-  curl releases | { if [ "$action_tag_name" = main ]; then jq '.[0]'; else jq '.[] | select(.tag_name=="'"$action_tag_name"'")'; fi } | jq -r '.assets[] | .browser_download_url' | xargs wget -O "$debian_file"
+  curl --no-progress-meter --fail --retry 10 "$GITHUB_API_URL"/repos/"$GITHUB_ACTION_REPOSITORY"/releases | { if [ "$action_tag_name" = main ]; then jq '.[0]'; else jq '.[] | select(.tag_name=="'"$action_tag_name"'")'; fi } | jq -r '.assets[] | .browser_download_url' | xargs wget -O "$debian_file"
   sudo apt-get install -y "$debian_file"
   rm "$debian_file"
 else
@@ -26,15 +26,15 @@ ln --symbolic "$new_path_dir"/dash_w_otel "$new_path_dir"/dash
 ln --symbolic "$new_path_dir"/bash_w_otel "$new_path_dir"/bash
 echo "$new_path_dir" >> "$GITHUB_PATH"
 
-while curl jobs | jq -r '.jobs[] | select(.status != "completed") | .name' | grep -q '^observe$' && ! curl artifacts | jq -r '.artifacts[].name' | grep -q '^opentelemetry$'; do sleep 1; done
-env_dir="$(mktemp -d)"
-node download_artifact.js opentelemetry "$env_dir" || true
-if [ -f "$env_dir"/.env ]; then
+if curl jobs | jq -r '.jobs[] | select(.status != "completed") | .name' | grep -q '^observe$'; then
+  while ! curl artifacts | jq -r '.artifacts[].name' | grep -q '^opentelemetry$'; do sleep 1; done
+  env_dir="$(mktemp -d)"
+  node download_artifact.js opentelemetry "$env_dir" || true
   while read -r line; do
     export "$line"
   done < "$env_dir"/.env
+  rm -r "$env_dir"
 fi
-rm -r "$env_dir"
 
 if [ -z "$OTEL_SERVICE_NAME" ]; then
   export OTEL_SERVICE_NAME="$(echo "$GITHUB_REPOSITORY" | cut -d / -f 2-) CI"
