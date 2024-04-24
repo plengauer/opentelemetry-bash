@@ -1,7 +1,7 @@
 set -e
 
 curl() {
-  \curl --no-progress-meter --fail --retry 10 "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/"$1"
+  command curl --no-progress-meter --fail --retry 10 "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/"$1"
 }
 
 if [ -z "$GITHUB_ACTION_REPOSITORY" ]; then export GITHUB_ACTION_REPOSITORY="$GITHUB_REPOSITORY"; fi
@@ -28,13 +28,15 @@ echo "$new_path_dir" >> "$GITHUB_PATH"
 
 if curl jobs | jq -r '.jobs[] | select(.status != "completed") | .name' | grep -q '^observe$'; then
   while ! curl artifacts | jq -r '.artifacts[].name' | grep -q '^opentelemetry$'; do sleep 1; done
-  env_dir="$(mktemp -d)"
-  node download_artifact.js opentelemetry "$env_dir" || true
+fi
+env_dir="$(mktemp -d)"
+node download_artifact.js opentelemetry "$env_dir" || true
+if [ -f "$env_dir"/.env ]; then
   while read -r line; do
     export "$line"
   done < "$env_dir"/.env
-  rm -r "$env_dir"
 fi
+rm -r "$env_dir"
 
 if [ -z "$OTEL_SERVICE_NAME" ]; then
   export OTEL_SERVICE_NAME="$(echo "$GITHUB_REPOSITORY" | cut -d / -f 2-) CI"
