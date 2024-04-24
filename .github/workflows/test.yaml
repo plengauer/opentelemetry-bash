@@ -60,15 +60,11 @@ jobs:
           OTEL_METRICS_EXPORTER: console
           OTEL_LOGS_EXPORTER: console
           OTEL_TRACES_EXPORTER: console
-      - run: echo hello world
-      - run: |
-          echo hello world again
       - run: alias
       - run: |
-          alias
+          [ "$(alias | grep '_otel_observe' | wc -l)" -gt 0 ]
       - run: |
-          . otel.sh
-          echo echo world manually injected
+          [ -n "$OTEL_TRACEPARENT" ]
 
   all:
     needs: [package, os-shell, action]
