@@ -23,6 +23,7 @@ ln --symbolic "$new_path_dir"/bash_w_otel "$new_path_dir"/bash
 echo "$new_path_dir" >> "$GITHUB_PATH"
 
 # TODO apparently this ends without an artifact being present
+curl --no-progress-meter --fail "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/jobs | jq .
 while curl --no-progress-meter --fail "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/jobs | jq -r '.jobs[] | select(.status != "completed") | .name' | grep -q '^observe$' && curl --no-progress-meter --fail "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/artifacts | jq -r '.artifacts[].name' | grep -qv '^opentelemetry$'; do sleep 1; done
 env_dir="$(mktemp -d)"
 node download_artifact.js opentelemetry "$env_dir" || true
