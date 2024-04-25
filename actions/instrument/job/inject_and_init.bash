@@ -13,7 +13,7 @@ if [ -n "$action_tag_name" ]; then
   sudo apt-get install -y "$debian_file"
   rm "$debian_file"
 else
-  wget -O - https://raw.githubusercontent.com/"$GITHUB_ACTION_REPOSITORY"/main/INSTALL.sh | sh -E
+  wget -O - https://raw.githubusercontent.com/"$GITHUB_ACTION_REPOSITORY"/main/INSTALL.sh | sh
 fi
 npm install '@actions/artifact'
 
