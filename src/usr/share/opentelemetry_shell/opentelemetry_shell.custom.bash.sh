@@ -17,7 +17,7 @@ _otel_inject_shell_args_with_c_flag() {
     if \[ "$1" = "-c" ]; then
       # we need a linebreak here for the aliases to work.
       shift; \echo -n "-c "; _otel_escape_arg ". otel.sh
-$1"; \echo -n " "; local found_inner=1; local dollar_zero=""; break
+$1"; \echo -n " "; shift; local found_inner=1; local dollar_zero=""; break
     else
       case "$1" in
         -*file) _otel_escape_arg "$1"; \echo -n " "; shift; _otel_escape_arg "$1"; \echo -n " " ;;
