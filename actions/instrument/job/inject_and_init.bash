@@ -28,7 +28,7 @@ ln --symbolic "$new_path_dir"/bash_w_otel "$new_path_dir"/bash
 echo "$new_path_dir" >> "$GITHUB_PATH"
 
 if curl jobs | jq -r '.jobs[] | select(.status != "completed") | .name' | grep -q '^observe$'; then
-  while ! curl artifacts | jq -r '.artifacts[].name' | grep -q '^opentelemetry$'; do sleep 1; done
+  while ! curl artifacts | jq -r '.artifacts[].name' | grep -q '^opentelemetry$'; do sleep 3; done
 fi
 env_dir="$(mktemp -d)"
 node download_artifact.js opentelemetry "$env_dir" || true
