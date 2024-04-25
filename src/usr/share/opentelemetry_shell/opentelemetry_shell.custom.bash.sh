@@ -45,7 +45,7 @@ _otel_inject_shell_with_c_flag() {
   # we use an ugly hack here to optimize for single most common case
   if _otel_string_contains "$cmdline" " -c "; then export OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$cmdline"; fi
   local exit_code=0
-  if \false && ! [ -t 0 ]; then
+  if \[ "$#" -eq 1 ] && ! [ -t 0 ]; then
     { \echo ". otel.sh"; \cat; } | OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$$" OTEL_SHELL_AUTO_INJECTED=TRUE \eval _otel_call "$injected_command_string" || local exit_code=$?
   else
     OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$$" OTEL_SHELL_AUTO_INJECTED=TRUE \eval _otel_call "$injected_command_string" || local exit_code=$?
