@@ -112,7 +112,7 @@ Finally, run your script and see traces, metrics, and logs printed to stderr.
 # Installation
 Install either via
 ```bash
-wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh -E
+wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh
 ```
 or via
 ```bash
