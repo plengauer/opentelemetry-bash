@@ -23,12 +23,11 @@ $1"; \echo -n " "; local found_inner=1; local dollar_zero=""; break
         -*file) _otel_escape_arg "$1"; \echo -n " "; shift; _otel_escape_arg "$1"; \echo -n " " ;;
             -*) _otel_escape_arg "$1"; \echo -n " " ;;
              # we cant have a linebreak here to not garble the argument positions
-             *) \echo -n "-c "; _otel_escape_arg ". otel.sh; . $1 "'"$@"'; \echo -n " "; local dollar_zero="$1"; local found_inner=1; break ;; # TODO lets use eval before $1 in case there is something fishy?
+             *) \echo -n "-c "; _otel_escape_arg ". otel.sh; . $1 "'"$@"'; \echo -n " "; local dollar_zero="$1"; shift; local found_inner=1; break ;; # TODO lets use eval before $1 in case there is something fishy?
       esac
     fi
     shift
   done
-  shift
   # abort in case its interactive or invalid arguments
   if \[ "$found_inner" -eq 0 ]; then return 0; fi
   # arguments
