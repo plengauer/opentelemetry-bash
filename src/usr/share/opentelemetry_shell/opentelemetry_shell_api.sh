@@ -90,7 +90,7 @@ _otel_resource_attributes() {
 
 _otel_command_self() {
   if \[ -n "$_otel_commandline_override" ]; then
-    \echo "$_otel_commandline_override"
+    \echo "$_otel_commandline_override" | \tr '\000-\037' ' '
   else
     _otel_resolve_command_self
   fi
