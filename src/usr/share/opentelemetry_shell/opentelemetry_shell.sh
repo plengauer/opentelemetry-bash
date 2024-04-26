@@ -58,8 +58,8 @@ _otel_auto_instrument() {
   local cache_key="$({ _otel_list_all_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_hint "$hint" | \sort -u; \alias; \echo "$OTEL_SHELL_EXPERIMENTAL_INSTRUMENT_MINIMALLY"; } | \md5sum | \cut -d ' ' -f 1)"
   local cache_file="$(\mktemp -u | \rev | \cut -d / -f 2- | \rev)/opentelemetry_shell_$(_otel_package_version opentelemetry-shell)"_"$_otel_shell"_instrumentation_cache_"$cache_key".aliases
   if \[ -f "$cache_file" ]; then
-    for otel_custom_file in $(\ls /usr/share/opentelemetry_shell | \grep '^opentelemetry_shell.custom.' | \grep '.sh$'); do \eval "$(\cat "/usr/share/opentelemetry_shell/$otel_custom_file" | \grep -v '_otel_alias_prepend')"; done
-    \eval "$(\cat $cache_file | \grep -v '^#' | \awk '{print "\\alias " $0 }')"
+    \eval "$(\grep -vh '_otel_alias_prepend ' $(_otel_list_special_auto_instrument_files))"
+    \eval "$(\grep -v '^#' "$cache_file" | \awk '{print "\\alias " $0 }')"
     return $?
   fi
 
@@ -70,7 +70,7 @@ _otel_auto_instrument() {
   if \[ "$_otel_shell" = bash ]; then _otel_alias_prepend source _otel_instrument_and_source; fi
 
   # custom instrumentations (injections and propagations)
-  for otel_custom_file in $(\ls /usr/share/opentelemetry_shell | \grep '^opentelemetry_shell.custom.' | \grep '.sh$'); do \. /usr/share/opentelemetry_shell/"$otel_custom_file"; done
+  for otel_custom_file in $(_otel_list_special_auto_instrument_files); do \. /usr/share/opentelemetry_shell/"$otel_custom_file"; done
 
   # deshebangify commands, propagate special instrumentations into aliases, instrument all commands
   ## (both otel_filter_commands_by_file and _otel_filter_commands_by_instrumentation are functionally optional, but helps optimizing time because the following loop AND otel_instrument itself is expensive!)
@@ -86,6 +86,10 @@ _otel_auto_instrument() {
 
   # cache
   \[ "$(\alias | \wc -l)" -gt 25 ] && \alias | \sed 's/^alias //' | { \[ -n "$hint" ] && \grep "$(_otel_resolve_instrumentation_hint "$hint" | \sed 's/[]\.^*[]/\\&/g' | \awk '$0="^"$0"="')" || \cat; } > "$cache_file" || \true
+}
+
+_otel_list_special_auto_instrument_files() {
+  \find /usr/share/opentelemetry_shell/ -maxdepth 1 -name 'opentelemetry_shell.custom.*.sh'
 }
 
 _otel_list_all_commands() {
