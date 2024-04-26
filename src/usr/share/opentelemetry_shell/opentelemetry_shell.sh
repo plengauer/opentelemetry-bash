@@ -70,7 +70,7 @@ _otel_auto_instrument() {
   if \[ "$_otel_shell" = bash ]; then _otel_alias_prepend source _otel_instrument_and_source; fi
 
   # custom instrumentations (injections and propagations)
-  for otel_custom_file in $(_otel_list_special_auto_instrument_files); do \. /usr/share/opentelemetry_shell/"$otel_custom_file"; done
+  for otel_custom_file in $(_otel_list_special_auto_instrument_files); do \. "$otel_custom_file"; done
 
   # deshebangify commands, propagate special instrumentations into aliases, instrument all commands
   ## (both otel_filter_commands_by_file and _otel_filter_commands_by_instrumentation are functionally optional, but helps optimizing time because the following loop AND otel_instrument itself is expensive!)
