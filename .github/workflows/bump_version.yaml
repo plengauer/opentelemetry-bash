@@ -1,15 +1,13 @@
 name: Bump Version
 
 on:
-  pull_request_target:
-    types: [opened]
-    branches: 'main'
+  push:
+    branches: 'renovate/**'
     paths: 'src/**'
 
 jobs:
   bump:
     runs-on: ubuntu-latest
-    if: github.actor == 'renovate[bot]' || github.actor == 'renovate-bot'
     permissions:
       contents: write
     steps:
