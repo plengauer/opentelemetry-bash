@@ -79,8 +79,7 @@ jobs:
       matrix: ${{ steps.dynamic-matrix.outputs.matrix }}
     steps:
       - run: |
-          echo -n "::set-output name=matrix::{}"
-          curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases | jq -r .[].tag_name | jq -nR '{"include": [inputs | select(length > 0) | {tag_name: .}]}'
+          curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases | jq -r .[].tag_name | jq -nR '{"include": [inputs | select(length > 0) | {tag_name: .}]}' | tr -d '\n' | xargs -I {} echo -n "::set-output name=matrix::{}"
         id: dynamic-matrix
   
   performance:
