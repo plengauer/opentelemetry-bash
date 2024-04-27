@@ -90,31 +90,34 @@ jobs:
       - run: curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases | jq -r '.[] | select(.tag_name == "${{ matrix.tag_name }}") | .assets[].browser_download_url' | grep '.deb$' | xargs wget
       - run: sudo apt-get install -y ./*.deb
       - run: |
-          command time -f '%U' bash -c '. /usr/bin/opentelemetry_shell.sh' 2>> performance.${{ matrix.tag_name }}.coldstart
-          for i in seq 1 10; do command time -f '%U' bash -c '. /usr/bin/opentelemetry_shell.sh' 2>> performance.${{ matrix.tag_name }}.warmstart; done
+          command time -f '%U' bash -c '. /usr/bin/opentelemetry_shell.sh' 2>> performance.${{ matrix.tag_name }}.coldstart.list
+          for i in seq 1 10; do command time -f '%U' bash -c '. /usr/bin/opentelemetry_shell.sh' 2>> performance.${{ matrix.tag_name }}.warmstart.list; done
       - uses: actions/upload-artifact@v4
         with:
           name: performance.${{ matrix.tag_name }}.coldstart
-          path: performance.${{ matrix.tag_name }}.coldstart
+          path: performance.${{ matrix.tag_name }}.coldstart.list
       - uses: actions/upload-artifact@v4
         with:
           name: performance.${{ matrix.tag_name }}.warmstart
-          path: performance.${{ matrix.tag_name }}.warmstart
+          path: performance.${{ matrix.tag_name }}.warmstart.list
   
   performance-summary:
     needs: performance
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
+        with:
+          pattern: 'performance.*'
+          merge-multiple: true
       - run: |
-          for file in performance.*.*; do
+          for file in performance.*.list; do
             type=$(echo $file | rev | cut -d . -f 1 | rev)
             version=$(echo $file | cut -d . -f 2- | rev | cut -d . -f 2- | rev)
             while IFS= read -r line; do
-              echo "$type $version $line" >> data.txt
+              echo "$type $version $line" >> data.list
             done < "$file"
           done
-      - run: cat data.txt
+      - run: cat data.list
       
 
 
