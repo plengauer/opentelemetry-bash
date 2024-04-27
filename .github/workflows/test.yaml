@@ -73,7 +73,6 @@ jobs:
       - run: exit 0
 
   performance-prepare:
-    # needs: _build
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.dynamic-matrix.outputs.matrix }}
@@ -83,7 +82,7 @@ jobs:
         id: dynamic-matrix
   
   performance:
-    needs: performance-prepare
+    needs: [performance-prepare, smoke]
     runs-on: ubuntu-latest
     strategy: 
       matrix: ${{ fromJSON(needs.performance-prepare.outputs.matrix) }}
@@ -91,9 +90,9 @@ jobs:
       - run: curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases | jq -r '.[] | select(.tag_name == "${{ matrix.tag_name }}") | .assets[].browser_download_url' | grep '.deb$' | xargs wget
       - run: sudo apt-get install -y ./*.deb
       - run: |
-          "$(which time)" -f '%U' bash -c '. otel.sh' 2>> performance.${{ matrix.tag_name }}.coldstart
+          command time -f '%U' bash -c '. otel.sh' 2>> performance.${{ matrix.tag_name }}.coldstart
       - run: |
-          for i in seq 1 10; do "$(which time)" -f '%U' bash -c '. otel.sh' 2>> performance.${{ matrix.tag_name }}.warmstart; done
+          for i in seq 1 10; do command time -f '%U' bash -c '. otel.sh' 2>> performance.${{ matrix.tag_name }}.warmstart; done
       - uses: actions/upload-artifact@v4
         with:
           name: performance.${{ matrix.tag_name }}.coldstart
