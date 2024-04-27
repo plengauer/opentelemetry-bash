@@ -90,7 +90,6 @@ _otel_auto_instrument() {
 }
 
 _otel_list_special_auto_instrument_files() {
-  # \find /usr/share/opentelemetry_shell/ -maxdepth 1 -name 'opentelemetry_shell.custom.*.sh'
   \echo /usr/share/opentelemetry_shell/opentelemetry_shell.custom.*.sh
 }
 
