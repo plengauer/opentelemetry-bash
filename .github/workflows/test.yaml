@@ -88,17 +88,11 @@ jobs:
       matrix: ${{ fromJSON(needs.performance-prepare.outputs.matrix) }}
     steps:
       - run: curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases | jq -r '.[] | select(.tag_name == "${{ matrix.tag_name }}") | .assets[].browser_download_url' | grep '.deb$' | xargs wget
-      - run: sudo apt-get install -y ./*.deb
+      - run: sudo apt-get install -y ./*.deb0
       - run: |
-          bash -c '. otel.sh'
+          command time -f '%U' bash -c '. /usr/bin/opentelemtry_shell.sh' 2>> performance.${{ matrix.tag_name }}.coldstart
       - run: |
-          bash -c '. otel.sh' 2>> /dev/null
-      - run:
-          command time bash -c '. otel.sh' 2>> /dev/null
-      - run: |
-          command time -f '%U' bash -c '. otel.sh' 2>> performance.${{ matrix.tag_name }}.coldstart
-      - run: |
-          for i in seq 1 10; do command time -f '%U' bash -c '. otel.sh' 2>> performance.${{ matrix.tag_name }}.warmstart; done
+          for i in seq 1 10; do command time -f '%U' bash -c '. /usr/bin/opentelemetry_shell.sh' 2>> performance.${{ matrix.tag_name }}.warmstart; done
       - uses: actions/upload-artifact@v4
         with:
           name: performance.${{ matrix.tag_name }}.coldstart
