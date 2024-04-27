@@ -131,11 +131,13 @@ jobs:
       - run: |
           sudo apt-get install -y gnuplot-nox
           echo '
-            set terminal pngcairo enhanced font "Verdana,10"
+            set terminal pngcairo enhanced font "Verdana,10" size 1024,1024
             set output "performance.png"
             set title "Performance Comparison"
-            set ylabel "Performance"
             set xlabel "Version"
+            set xtics rotate by -45
+            set ylabel "Performance"
+            set logscale y 10
             plot "coldstart.list" using 0:2:xticlabels(1) with linespoints title "Cold Start" lt rgb "blue", "warmstart.list" using 0:2:xticlabels(1) with linespoints title "Warm Start" lt rgb "red"
           ' > plot.gp
           gnuplot plot.gp
