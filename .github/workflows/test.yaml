@@ -115,31 +115,21 @@ jobs:
           for file in performance.*.list; do
             type=$(echo $file | rev | cut -d . -f 2 | rev)
             version=$(echo $file | cut -d . -f 2- | rev | cut -d . -f 3- | rev)
-            cat "$file" | grep -v 'No such file or directory' | while IFS= read -r line; do
-              echo "$type $version $line" >> data.list
-            done
+            cat "$file" | grep -v 'No such file or directory' | sort -n | head -n 1 | xargs echo "$version" >> "type".list
           done
-      - run: cat data.list
-#      - run: |
-#          sudo apt-get install -y gnuplot-nox
-#          echo '
-#            set terminal png size 800,600
-#            set output 'performance.png'
-#            set title "Performance by Version"
-#            set xlabel "Version"
-#            set ylabel "Performance"
-#            set grid
-#            set style fill solid 0.5
-#            set boxwidth 0.3 relative
-#            set style data boxplot
-#            set xtics rotate by -45
-#            plot \
-#              'data.list' using (strcol(1) == "warmstart" ? strcol(2) : 0):(strcol(1) == "warmstart" ? strcol(3) : 0) notitle with boxplot lc rgb "red", \
-#              'data.list' using (strcol(1) == "coldstart" ? strcol(2) : 0):(strcol(1) == "coldstart" ? strcol(3) : 0) notitle with boxplot lc rgb "blue"
-#          ' > plot.gp
-#          gnuplot plot.gp
-#      - uses: actions/upload-artifact@v4
-#        with:
-#          name: performance
-#          path: performance.png
-#          retention-days: 90
+      - run: |
+          sudo apt-get install -y gnuplot-nox
+          echo '
+            set terminal pngcairo enhanced font "Verdana,10"
+            set output "performance.png"
+            set title "Performance Comparison"
+            set ylabel "Performance"
+            set xlabel "Version"
+            plot "coldstart.list" using using 0:2:xticlabels(1) with linespoints title "Cold Start" lt rgb "blue", "warmstart.list" using using 0:2:xticlabels(1) with linespoints title 'Warm Start' lt rgb "red"
+          ' > plot.gp
+          gnuplot plot.gp
+      - uses: actions/upload-artifact@v4
+        with:
+          name: performance.png
+          path: performance.png
+          retention-days: 90
