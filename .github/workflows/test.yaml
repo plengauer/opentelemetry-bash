@@ -66,12 +66,6 @@ jobs:
       - run: |
           [ -n "$OTEL_TRACEPARENT" ]
 
-  all:
-    needs: [package, os-shell, action]
-    runs-on: ubuntu-latest
-    steps:
-      - run: exit 0
-
   performance-prepare:
     runs-on: ubuntu-latest
     outputs:
@@ -103,9 +97,9 @@ jobs:
           name: performance.${{ matrix.tag_name }}.warmstart
           path: performance.${{ matrix.tag_name }}.warmstart.list
           retention-days: 1
-  
-  performance-summary:
-    needs: performance
+
+  all:
+    needs: [package, os-shell, action, performance]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
