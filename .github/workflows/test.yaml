@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases/latest | jq -r '.assets[].browser_download_url' | xargs wget
-      - run: sudo apt-get -y install ./opentelemetry_shell_*.deb
+      - run: sudo apt-get -y install ./opentelemetry-shell_*.deb
       - uses: actions/download-artifact@v4
         with:
           name: package.deb
