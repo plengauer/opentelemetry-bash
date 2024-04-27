@@ -125,7 +125,7 @@ jobs:
             set title "Performance Comparison"
             set ylabel "Performance"
             set xlabel "Version"
-            plot "coldstart.list" using using 0:2:xticlabels(1) with linespoints title "Cold Start" lt rgb "blue", "warmstart.list" using using 0:2:xticlabels(1) with linespoints title 'Warm Start' lt rgb "red"
+            plot "coldstart.list" using 0:2:xticlabels(1) with linespoints title "Cold Start" lt rgb "blue", "warmstart.list" using 0:2:xticlabels(1) with linespoints title 'Warm Start' lt rgb "red"
           ' > plot.gp
           gnuplot plot.gp
       - uses: actions/upload-artifact@v4
