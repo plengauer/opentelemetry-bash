@@ -7,7 +7,7 @@ jobs:
   _build:
     uses: ./.github/workflows/build.yaml
 
-  package:
+  install:
     needs: _build
     runs-on: ubuntu-latest
     steps:
@@ -17,6 +17,17 @@ jobs:
       - run: sudo apt-get -y install ./package.deb
       - run: sudo apt-get -y remove opentelemetry-shell
 
+  upgrade:
+    needs: _build
+    runs-on: ubuntu-latest
+    steps:
+      - run: curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases/latest | jq -r '.assets[].browser_download_url' | xargs wget
+      - run: sudo apt-get -y install ./opentelemetry_shell.*.deb
+      - uses: actions/download-artifact@v4
+        with:
+          name: package.deb
+      - run: sudo apt-get -y install ./package.deb
+      
   smoke:
     needs: _build
     runs-on: ubuntu-latest
@@ -104,7 +115,7 @@ jobs:
           retention-days: 1
 
   all:
-    needs: [package, os-shell, action, performance]
+    needs: [install, upgrade, os-shell, action, performance]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
