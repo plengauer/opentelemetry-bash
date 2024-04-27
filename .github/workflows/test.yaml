@@ -113,8 +113,10 @@ jobs:
           merge-multiple: true
       - run: |
           for file in performance.*.list; do
+            # performance.local.coldstart.list 
             type=$(echo $file | rev | cut -d . -f 2 | rev)
             version=$(echo $file | cut -d . -f 2- | rev | cut -d . -f 3- | rev)
+            echo "file=$file, type=$type, version=$version"
             cat "$file" | grep -v 'No such file or directory' | sort -n | head -n 1 | xargs echo "$version" >> "type".list
           done
       - run: |
