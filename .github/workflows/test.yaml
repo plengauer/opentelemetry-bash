@@ -71,3 +71,65 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: exit 0
+
+  performance-prepare:
+    # needs: _build
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.dynamic-matrix.outputs.matrix }}
+    steps:
+      - run: |
+          echo -n "::set-output name=matrix::{}"
+          curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases | jq -r .[].tag_name | jq -nR '{"include": [inputs | select(length > 0) | {tag_name: .}]}'
+        id: dynamic-matrix
+  
+  performance:
+    needs: performance-prepare
+    runs-on: ubuntu-latest
+    strategy: 
+      matrix: ${{ fromJSON(needs.performance-prepare.outputs.matrix) }}
+    steps:
+      - run: curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases | jq -r '.[] | select(.tag_name == "${{ matrix.tag_name }}") | .assets[].browser_download_url' | grep '.deb$' | xargs wget
+      - run: sudo apt-get install -y ./*.deb
+      - run: |
+          "$(which time)" -f '%U' bash -c '. otel.sh' 2>> performance.${{ matrix.tag_name }}.coldstart
+      - run: |
+          for i in seq 1 10; do "$(which time)" -f '%U' bash -c '. otel.sh' 2>> performance.${{ matrix.tag_name }}.warmstart; done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: performance.${{ matrix.tag_name }}.coldstart
+          path: performance.${{ matrix.tag_name }}.coldstart
+      - uses: actions/upload-artifact@v4
+        with:
+          name: performance.${{ matrix.tag_name }}.warmstart
+          path: performance.${{ matrix.tag_name }}.warmstart
+  
+  performance-summary:
+    needs: performance-prepare
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+      - run: |
+          for file in performance.*.*; do
+            type=$(echo $file | rev | cut -d . -f 1 | rev)
+            version=$(echo $file | cut -d . -f 2- | rev | cut -d . -f 2- | rev)
+            while IFS= read -r line; do
+              echo "$type $version $line" >> data.txt
+            done < "$file"
+          done
+      - run: cat data.txt
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
