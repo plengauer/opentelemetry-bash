@@ -1,4 +1,4 @@
-name: Test
+7name: Test
 
 on:
   workflow_call:
@@ -89,6 +89,12 @@ jobs:
     steps:
       - run: curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases | jq -r '.[] | select(.tag_name == "${{ matrix.tag_name }}") | .assets[].browser_download_url' | grep '.deb$' | xargs wget
       - run: sudo apt-get install -y ./*.deb
+      - run: |
+          bash -c '. otel.sh'
+      - run: |
+          bash -c '. otel.sh' 2>> /dev/null
+      - run:
+          command time bash -c '. otel.sh' 2>> /dev/null
       - run: |
           command time -f '%U' bash -c '. otel.sh' 2>> performance.${{ matrix.tag_name }}.coldstart
       - run: |
