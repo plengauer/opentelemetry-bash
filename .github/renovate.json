@@ -8,5 +8,6 @@
   "automerge": true,
   "automergeType": "pr",
   "assignAutomerge": true,
-  "reviewers": ["plengauer", "ihudak", "moflwi", "probsJustin"]
+  "assignees": ["plengauer"],
+  "reviewers": ["ihudak", "moflwi", "probsJustin"]
 }
