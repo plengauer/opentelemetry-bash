@@ -19,12 +19,9 @@ npm install '@actions/artifact'
 
 my_dir="$(echo "$0" | rev | cut -d / -f 2- | rev)"
 new_path_dir="$(mktemp -d)"
-gcc -o "$new_path_dir"/sh_w_otel "$my_dir"/forward.c -DEXECUTABLE="$(which sh)" -DARG1="$my_dir"/decorate_action_run.sh -DARG2="$(which sh)"
-gcc -o "$new_path_dir"/dash_w_otel "$my_dir"/forward.c -DEXECUTABLE="$(which dash)" -DARG1="$my_dir"/decorate_action_run.sh -DARG2="$(which dash)"
-gcc -o "$new_path_dir"/bash_w_otel "$my_dir"/forward.c -DEXECUTABLE="$(which bash)" -DARG1="$my_dir"/decorate_action_run.sh -DARG2="$(which bash)"
-ln --symbolic "$new_path_dir"/sh_w_otel "$new_path_dir"/sh
-ln --symbolic "$new_path_dir"/dash_w_otel "$new_path_dir"/dash
-ln --symbolic "$new_path_dir"/bash_w_otel "$new_path_dir"/bash
+gcc -o "$new_path_dir"/sh "$my_dir"/forward.c -DEXECUTABLE="$(which sh)" -DARG1="$my_dir"/decorate_action_run.sh -DARG2="$(which sh)"
+gcc -o "$new_path_dir"/dash "$my_dir"/forward.c -DEXECUTABLE="$(which dash)" -DARG1="$my_dir"/decorate_action_run.sh -DARG2="$(which dash)"
+gcc -o "$new_path_dir"/bash "$my_dir"/forward.c -DEXECUTABLE="$(which bash)" -DARG1="$my_dir"/decorate_action_run.sh -DARG2="$(which bash)"
 echo "$new_path_dir" >> "$GITHUB_PATH"
 
 for node_path in /home/runner/runners/*/externals/node*/bin/node; do
