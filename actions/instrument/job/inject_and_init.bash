@@ -27,7 +27,7 @@ ln --symbolic "$new_path_dir"/dash_w_otel "$new_path_dir"/dash
 ln --symbolic "$new_path_dir"/bash_w_otel "$new_path_dir"/bash
 echo "$new_path_dir" >> "$GITHUB_PATH"
 
-for node_path in $(/home/runner/runners/*/externals/node*/bin/node); do
+for node_path in /home/runner/runners/*/externals/node*/bin/node; do
   mv "$node_path" "$node_path".original
   gcc -o "$node_path" "$my_dir"/forward.c -DEXECUTABLE="$(which sh)" -DARG1="$my_dir"/decorate.sh -DARG2="$node_path".original
 done
