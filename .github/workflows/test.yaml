@@ -65,7 +65,7 @@ jobs:
     needs: _build
     runs-on: ubuntu-latest
     steps:
-      - run: printenv
+      - run: find /home/runner/runners/
       - uses: actions/checkout@v4
       - uses: ./actions/instrument/job
         env:
