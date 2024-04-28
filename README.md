@@ -112,7 +112,7 @@ Finally, run your script and see traces, metrics, and logs printed to stderr.
 # Installation
 Install either via
 ```bash
-wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh -E
+wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh
 ```
 or via
 ```bash
@@ -144,27 +144,26 @@ If the command represents communication to a third party service (like a HTTP re
 Finally, a single root span will be created and activated that represents the script. This span will automatically be deactivated and ended when the script ends.
 
 ## Automatic Instrumentation of Github Actions
-To automatically monitor your Github Workflows on job level and to auto-inject into all run steps, add the following step as first in every job you want to observe. You can configure the SDK as described <a href="https://opentelemetry.io/docs/languages/sdk-configuration/">here</a> by adding environment variables to the setup step.
+To automatically monitor your Github Workflows on job level and to auto-inject into all `run` steps, add the following step as first in every job you want to observe. You can configure the SDK as described <a href="https://opentelemetry.io/docs/languages/sdk-configuration/">here</a> by adding environment variables to the setup step.
 ```yaml
 - uses: plengauer/opentelemetry-bash/actions/instrument/job@main
   env:
     OTEL_SERVICE_NAME: 'Test'
     # ...
+- run: ...
 ```
 
-A full job may look like this:
+Optionally, setup a dedicted job that is used to collect all jobs under a single root span representing the entire workflow. The job has to have exactly the name below and must neither depend on any other job nor being depent on.
 ```yaml
-do-something:
+observe:
   runs-on: ubuntu-latest
   steps:
-    - uses: plengauer/opentelemetry-bash/actions/instrument/job@main
+    - uses: plengauer/opentelemetry-bash/actions/instrument/workflow@main
       env:
         OTEL_SERVICE_NAME: ${{ secrets.SERVICE_NAME }}
         # ...
-    - run: echo hello world
-    - run: |
-        echo hello world again
 ```
+If you define that job to create a single root span for all other jobs, only the step in this root job has to be configured. The configuration will be propagated to the other jobs. The only exception to that are OpenTelemetry SDK Header configurations because they often contain API tokens and we cannot securely propagate these between jobs.
 
 ## Manual Instrumentation
 Import the API by referencing the `otelapi.sh` file. This is only necessary if you do not choose a fully automatic approach described above. In case you use automatic instrumentation, the API will be imported automatically for you.

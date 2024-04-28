@@ -1,22 +1,17 @@
 name: Bump Version
 
 on:
-  pull_request_target:
-    types: [opened]
-    branches: 'main'
+  push:
+    branches: 'renovate/**'
     paths: 'src/**'
 
 jobs:
   bump:
     runs-on: ubuntu-latest
-    if: github.actor == 'renovate[bot]'
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      - uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: Version bump
       - run: |
           set -e
           version="$(cat VERSION)"
@@ -26,3 +21,6 @@ jobs:
           minor=$((minor + 1))
           patch=0
           echo -n "$major.$minor.$patch" > VERSION
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Version bump

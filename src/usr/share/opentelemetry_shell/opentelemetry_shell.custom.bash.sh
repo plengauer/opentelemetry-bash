@@ -17,18 +17,17 @@ _otel_inject_shell_args_with_c_flag() {
     if \[ "$1" = "-c" ]; then
       # we need a linebreak here for the aliases to work.
       shift; \echo -n "-c "; _otel_escape_arg ". otel.sh
-$1"; \echo -n " "; local found_inner=1; local dollar_zero=""; break
+$1"; \echo -n " "; shift; local found_inner=1; local dollar_zero=""; break
     else
       case "$1" in
         -*file) _otel_escape_arg "$1"; \echo -n " "; shift; _otel_escape_arg "$1"; \echo -n " " ;;
             -*) _otel_escape_arg "$1"; \echo -n " " ;;
              # we cant have a linebreak here to not garble the argument positions
-             *) \echo -n "-c "; _otel_escape_arg ". otel.sh; . $1 "'"$@"'; \echo -n " "; local dollar_zero="$1"; local found_inner=1; break ;; # TODO lets use eval before $1 in case there is something fishy?
+             *) \echo -n "-c "; _otel_escape_arg ". otel.sh; . $1 "'"$@"'; \echo -n " "; local dollar_zero="$1"; shift; local found_inner=1; break ;; # TODO lets use eval before $1 in case there is something fishy?
       esac
     fi
     shift
   done
-  shift
   # abort in case its interactive or invalid arguments
   if \[ "$found_inner" -eq 0 ]; then return 0; fi
   # arguments
@@ -39,12 +38,17 @@ $1"; \echo -n " "; local found_inner=1; local dollar_zero=""; break
 _otel_inject_shell_with_c_flag() {
   local cmdline="$(_otel_dollar_star "$@")"
   local cmdline="${cmdline#\\}"
+  local injected_command_string="$(_otel_inject_shell_args_with_c_flag "$@")"
   # be careful about setting the instrumentation hint, setting it is only possible if its a -c invocation, not a script invocation
   # we could be safe and not set it. better have slow performance on -c injection that no spans at all from a script injection
   # we use an ugly hack here to optimize for single most common case
   if _otel_string_contains "$cmdline" " -c "; then export OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$cmdline"; fi
   local exit_code=0
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$$" OTEL_SHELL_AUTO_INJECTED=TRUE \eval _otel_call "$(_otel_inject_shell_args_with_c_flag "$@")" || local exit_code=$?
+  if \[ "$#" -eq 1 ] && ! [ -t 0 ]; then
+    { \echo ". otel.sh"; \cat; } | OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$$" OTEL_SHELL_AUTO_INJECTED=TRUE \eval _otel_call "$injected_command_string" || local exit_code=$?
+  else
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$$" OTEL_SHELL_AUTO_INJECTED=TRUE \eval _otel_call "$injected_command_string" || local exit_code=$?
+  fi
   unset OTEL_SHELL_AUTO_INSTRUMENTATION_HINT
   return $exit_code
 }

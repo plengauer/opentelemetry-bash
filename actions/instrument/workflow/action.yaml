@@ -1,0 +1,5 @@
+name: 'OpenTelemetry Workflow'
+description: 'Observe Github Workflows with OpenTelemetry'
+runs:
+  using: 'node20'
+  main: 'main.js'
