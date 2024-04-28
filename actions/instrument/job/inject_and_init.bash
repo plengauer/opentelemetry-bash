@@ -22,9 +22,11 @@ new_path_dir="$(mktemp -d)"
 gcc -o "$new_path_dir"/sh_w_otel "$my_dir"/forward.c -DEXECUTABLE="$(which sh)" -DARG1="$my_dir"/forward.sh -DARG2="$(which sh)"
 gcc -o "$new_path_dir"/dash_w_otel "$my_dir"/forward.c -DEXECUTABLE="$(which dash)" -DARG1="$my_dir"/forward.sh -DARG2="$(which dash)"
 gcc -o "$new_path_dir"/bash_w_otel "$my_dir"/forward.c -DEXECUTABLE="$(which bash)" -DARG1="$my_dir"/forward.sh -DARG2="$(which bash)"
+gcc -o "$new_path_dir"/node20_w_otel "$my_dir"/forward.c -DEXECUTABLE="$(which false)"
 ln --symbolic "$new_path_dir"/sh_w_otel "$new_path_dir"/sh
 ln --symbolic "$new_path_dir"/dash_w_otel "$new_path_dir"/dash
 ln --symbolic "$new_path_dir"/bash_w_otel "$new_path_dir"/bash
+ln --symbolic "$new_path_dir"/node20_w_otel "$new_path_dir"/node20
 echo "$new_path_dir" >> "$GITHUB_PATH"
 
 if curl jobs | jq -r '.jobs[] | select(.status != "completed") | .name' | grep -q '^observe$'; then
