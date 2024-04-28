@@ -1,5 +1,5 @@
-name: 'OpenTelemetry'
-description: 'Observe Github Actions with OpenTelemetry'
+name: 'OpenTelemetry Jobs'
+description: 'Observe Github Jobs with OpenTelemetry'
 runs:
   using: 'node20'
   pre: 'inject_and_init.js'
