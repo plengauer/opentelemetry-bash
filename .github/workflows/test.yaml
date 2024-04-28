@@ -65,14 +65,12 @@ jobs:
     needs: _build
     runs-on: ubuntu-latest
     steps:
-      - run: find /home/runner/runners/
       - uses: actions/checkout@v4
       - uses: ./actions/instrument/job
         env:
           OTEL_METRICS_EXPORTER: console
           OTEL_LOGS_EXPORTER: console
           OTEL_TRACES_EXPORTER: console
-      - run: alias
       - run: |
           [ "$(alias | grep '_otel_observe' | wc -l)" -gt 0 ]
       - run: |
