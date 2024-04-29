@@ -77,6 +77,8 @@ jobs:
       - run: | # check if traceparent is injected
           [ -n "$OTEL_TRACEPARENT" ]
       - uses: actions/download-artifact@v4 # check if node action works
+        with:
+          name: package.deb
 
   performance-prepare:
     runs-on: ubuntu-latest
