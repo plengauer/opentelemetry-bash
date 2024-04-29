@@ -340,7 +340,7 @@ _otel_start_script() {
     local name="$GITHUB_WORKFLOW"
     local kind=CONSUMER
     if \[ -n "$GITHUB_JOB" ]; then local name="$name / $GITHUB_JOB"; local kind=CONSUMER; fi
-    if \[ -n "$GITHUB_STEP" ]; then local name="$name / $GITHUB_STEP"; local kind=SERVER; fi
+    if \[ -n "$GITHUB_STEP" ]; then local name="$name / $GITHUB_STEP"; local kind=SERVER
     elif \[ -n "$GITHUB_ACTION" ]; then local name="$name / $GITHUB_ACTION"; local kind=SERVER; fi
     _root_span_handle="$(otel_span_start "$kind" "$name")"
   elif ! \[ "$OTEL_SHELL_AUTO_INJECTED" = TRUE ] && \[ -z "$OTEL_TRACEPARENT" ]; then
