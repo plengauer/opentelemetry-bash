@@ -25,8 +25,10 @@ gcc -o "$new_path_dir"/bash "$my_dir"/forward.c -DEXECUTABLE="$(which bash)" -DA
 echo "$new_path_dir" >> "$GITHUB_PATH"
 
 for node_path in /home/runner/runners/*/externals/node*/bin/node; do
-  mv "$node_path" "$node_path".original
-  gcc -o "$node_path" "$my_dir"/forward.c -DEXECUTABLE=/bin/sh -DARG1="$my_dir"/decorate_action_node.sh -DARG2="$node_path".original
+  node_path_new="$(mktemp -d)/node"
+  # node_path_new="$node_path".original
+  mv "$node_path" "$node_path_new"
+  gcc -o "$node_path" "$my_dir"/forward.c -DEXECUTABLE=/bin/sh -DARG1="$my_dir"/decorate_action_node.sh -DARG2="$node_path_new"
 done
 
 if curl jobs | jq -r '.jobs[] | select(.status != "completed") | .name' | grep -q '^observe$'; then
