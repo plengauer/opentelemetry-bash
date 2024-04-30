@@ -6,7 +6,7 @@
   otel_init
   span_handle="$(otel_span_start SERVER "$GITHUB_WORKFLOW / $GITHUB_JOB / $GITHUB_STEP")"
   otel_span_activate "$span_handle"
-  otel_observe "$@"
+  # otel_observe "$@"
   exit_code="$?"
   if [ "$exit_code" -ne 0 ]; then otel_span_error "$span_handle"; fi
   otel_span_deactivate "$span_handle"
