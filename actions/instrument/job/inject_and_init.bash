@@ -26,7 +26,7 @@ echo "$new_path_dir" >> "$GITHUB_PATH"
 
 for node_path in /home/runner/runners/*/externals/node*/bin/node; do
   # node_path_new="$(mktemp -d)/node"
-  node_path_new="$node_path".original
+  node_path_new=_"$node_path"
   mv "$node_path" "$node_path_new"
   gcc -o "$node_path" "$my_dir"/forward.c -DEXECUTABLE=/bin/sh -DARG1="$my_dir"/decorate_action_node.sh -DARG2="$node_path_new"
 done
