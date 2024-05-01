@@ -12,6 +12,12 @@
 #define XSTR(s) #s
 
 int main(int argc, char **argv) {
+    char **env = environ;
+    while (*env != NULL) {
+        printf("%s\n", *env);
+        env++;
+    }
+    
     int new_argc = argc;
 #ifdef ARG1
     new_argc++;
