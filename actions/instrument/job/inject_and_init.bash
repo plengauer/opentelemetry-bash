@@ -25,7 +25,9 @@ gcc -o "$new_path_dir"/bash "$my_dir"/forward.c -DEXECUTABLE="$(which bash)" -DA
 echo "$new_path_dir" >> "$GITHUB_PATH"
 
 for node_path in /home/runner/runners/*/externals/node*/bin/node; do
-  node_path_new="$node_path"_
+  dir_path_new="$(echo "$node_path" | rev | cut -d / -f 2- | rev).original"
+  mkdir "$dir_path_new"
+  node_path_new="$dir_path_new"/node
   mv "$node_path" "$node_path_new"
   gcc -o "$node_path" "$my_dir"/forward.c -DEXECUTABLE=/bin/bash -DARG1="$my_dir"/decorate_action_node.sh -DARG2="$node_path_new"
 done
