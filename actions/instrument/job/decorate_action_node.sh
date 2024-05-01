@@ -1,6 +1,6 @@
 #!/bin/sh
 #if [ -n "$GITHUB_ACTION" ] && [ "$(\cat /proc/$PPID/cmdline | \tr '\000-\037' ' ' | \cut -d ' ' -f 1 | \rev | \cut -d / -f 1 | \rev)" = "Runner.Worker" ]; then
-  export OTEL_SHELL_SDK_OUTPUT_REDIRECT=/dev/null
+  export OTEL_SHELL_SDK_OUTPUT_REDIRECT=/dev/null # not necessary probably
   export GITHUB_STEP="$(curl --no-progress-meter --fail --retry 12 --retry-all-errors "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/jobs 2> /dev/null | jq -r ".jobs[] | select(.name == \"$GITHUB_JOB\") | select(.run_attempt == $GITHUB_RUN_ATTEMPT) | .steps[] | select(.status == \"in_progress\") | .name")"
   . otelapi.sh
   otel_init
