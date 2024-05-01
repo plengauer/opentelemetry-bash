@@ -11,8 +11,6 @@
 #define STR(s) XSTR(s)
 #define XSTR(s) #s
 
-extern char **environ;
-
 int main(int argc, char **argv) {
     int new_argc = argc;
 #ifdef ARG1
