@@ -19,10 +19,18 @@ npm install '@actions/artifact'
 
 my_dir="$(echo "$0" | rev | cut -d / -f 2- | rev)"
 new_path_dir="$(mktemp -d)"
-gcc -o "$new_path_dir"/sh "$my_dir"/forward.c -DEXECUTABLE="$(which sh)" -DARG1="$my_dir"/forward.sh -DARG2="$(which sh)"
-gcc -o "$new_path_dir"/dash "$my_dir"/forward.c -DEXECUTABLE="$(which dash)" -DARG1="$my_dir"/forward.sh -DARG2="$(which dash)"
-gcc -o "$new_path_dir"/bash "$my_dir"/forward.c -DEXECUTABLE="$(which bash)" -DARG1="$my_dir"/forward.sh -DARG2="$(which bash)"
+gcc -o "$new_path_dir"/sh "$my_dir"/forward.c -DEXECUTABLE="$(which sh)" -DARG1="$my_dir"/decorate_action_run.sh -DARG2="$(which sh)"
+gcc -o "$new_path_dir"/dash "$my_dir"/forward.c -DEXECUTABLE="$(which dash)" -DARG1="$my_dir"/decorate_action_run.sh -DARG2="$(which dash)"
+gcc -o "$new_path_dir"/bash "$my_dir"/forward.c -DEXECUTABLE="$(which bash)" -DARG1="$my_dir"/decorate_action_run.sh -DARG2="$(which bash)"
 echo "$new_path_dir" >> "$GITHUB_PATH"
+
+for node_path in /home/runner/runners/*/externals/node*/bin/node; do
+  dir_path_new="$(echo "$node_path" | rev | cut -d / -f 2- | rev).original"
+  mkdir "$dir_path_new"
+  node_path_new="$dir_path_new"/node
+  mv "$node_path" "$node_path_new"
+  gcc -o "$node_path" "$my_dir"/forward.c -DEXECUTABLE=/bin/bash -DARG1="$my_dir"/decorate_action_node.sh -DARG2="$node_path_new"
+done
 
 if curl jobs | jq -r '.jobs[] | select(.status != "completed") | .name' | grep -q '^observe$'; then
   while ! curl artifacts | jq -r '.artifacts[].name' | grep -q '^opentelemetry$'; do sleep 3; done

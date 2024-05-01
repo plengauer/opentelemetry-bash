@@ -71,11 +71,14 @@ jobs:
           OTEL_METRICS_EXPORTER: console
           OTEL_LOGS_EXPORTER: console
           OTEL_TRACES_EXPORTER: console
-      - run: alias
-      - run: |
+      - run: echo hello world # check if simple command fails
+      - run: | # check if instrumentation happened
           [ "$(alias | grep '_otel_observe' | wc -l)" -gt 0 ]
-      - run: |
+      - run: | # check if traceparent is injected
           [ -n "$OTEL_TRACEPARENT" ]
+      - uses: actions/download-artifact@v4 # check if node action works
+        with:
+          name: package.deb
 
   performance-prepare:
     runs-on: ubuntu-latest
