@@ -49,6 +49,7 @@ class GithubActionResourceDetector(ResourceDetector):
                 'github.workflow.sha': os.environ.get('GITHUB_WORKFLOW_SHA', ''),
                 'github.workflow.name': os.environ.get('GITHUB_WORKFLOW', ''),
                 'github.job.name': os.environ.get('GITHUB_JOB', ''),
+                'github.step.name': os.environ.get('GITHUB_STEP', ''),
                 'github.action.name': os.environ.get('GITHUB_ACTION', ''),
             })
         except:
