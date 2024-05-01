@@ -1,4 +1,5 @@
 #!/bin/sh
+echo "$*" >&2
 exec "$@"
 #if [ -n "$GITHUB_ACTION" ] && [ "$(\cat /proc/$PPID/cmdline | \tr '\000-\037' ' ' | \cut -d ' ' -f 1 | \rev | \cut -d / -f 1 | \rev)" = "Runner.Worker" ]; then
   export OTEL_SHELL_SDK_OUTPUT_REDIRECT=/dev/null # not necessary probably
