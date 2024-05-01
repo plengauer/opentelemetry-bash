@@ -77,11 +77,11 @@ jobs:
       - run: | # check if traceparent is injected
           [ -n "$OTEL_TRACEPARENT" ]
       - run: |
-          curl -H 'Cache-Control: no-store' "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/jobs >&2
+          curl -H 'Cache-Control: no-cache' -v "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/jobs >&2
       - run: |
-          curl -H 'Cache-Control: no-store' -v "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/jobs | jq . >&2
+          curl -H 'Cache-Control: no-cache' -v "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/jobs | jq . >&2
       - run: |
-          curl -H 'Cache-Control: no-store' --no-progress-meter --fail --retry 12 --retry-all-errors "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/jobs | jq -r ".jobs[] | select(.name == \"$GITHUB_JOB\") | select(.run_attempt == $GITHUB_RUN_ATTEMPT) | .steps[]" >&2
+          curl -H 'Cache-Control: no-cache' -v "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/jobs | jq -r ".jobs[] | select(.name == \"$GITHUB_JOB\") | select(.run_attempt == $GITHUB_RUN_ATTEMPT) | .steps[]" >&2
       - uses: actions/download-artifact@v4 # check if node action works
         with:
           name: package.deb
