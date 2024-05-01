@@ -1,5 +1,6 @@
 #!/bin/sh
 printenv >&2
+export INPUT_MERGE_MULTIPLE=false
 echo "+ $*" >&2
 "$@"
 exit_code="$?"
