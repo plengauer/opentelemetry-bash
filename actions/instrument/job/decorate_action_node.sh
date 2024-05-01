@@ -1,4 +1,5 @@
 #!/bin/sh
+printenv >&2
 echo "+ $*" >&2
 "$@"
 exit_code="$?"
