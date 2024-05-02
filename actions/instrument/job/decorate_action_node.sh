@@ -3,7 +3,11 @@
 export GITHUB_STEP="$(curl --no-progress-meter --fail --retry 12 --retry-all-errors -H 'Cache-Control: no-cache' "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/jobs 2> /dev/null | jq -r ".jobs[] | select(.name == \"$GITHUB_JOB\") | select(.run_attempt == $GITHUB_RUN_ATTEMPT) | .steps[] | select(.status == \"in_progress\") | .name")"
 . otelapi.sh
 otel_init
-span_handle="$(otel_span_start INTERNAL "$GITHUB_WORKFLOW / $GITHUB_JOB / $GITHUB_ACTION")"
+if [ -n "$GITHUB_STEP" ]; then
+  span_handle="$(otel_span_start SERVER "$GITHUB_WORKFLOW / $GITHUB_JOB / $GITHUB_STEP")"
+else
+  span_handle="$(otel_span_start INTERNAL "$GITHUB_WORKFLOW / $GITHUB_JOB / $GITHUB_ACTION")"
+fi
 otel_span_activate "$span_handle"
 otel_observe "$@"
 exit_code="$?"
