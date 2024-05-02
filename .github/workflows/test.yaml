@@ -78,6 +78,7 @@ jobs:
           [ -n "$OTEL_TRACEPARENT" ]
       - name: test-step-name
         run: | # check if step name is resolved
+          echo "$GITHUB_STEP"
           [ "$GITHUB_STEP" = "test-step-name" ]
       - uses: actions/download-artifact@v4 # check if node action works
         with:
