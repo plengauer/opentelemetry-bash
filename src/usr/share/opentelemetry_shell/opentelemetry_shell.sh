@@ -336,7 +336,7 @@ _otel_start_script() {
     _root_span_handle="$(otel_span_start SERVER "$(\echo "$cmdline" | \cut -d . -f 2- | \cut -d ' ' -f 1)")"
     otel_span_attribute_typed $_root_span_handle string debian.package.name="$(\echo "$cmdline" | \rev | \cut -d / -f 1 | \rev | \cut -d . -f 1)"
     otel_span_attribute_typed $_root_span_handle string debian.package.operation="$(\echo "$cmdline" | \cut -d . -f 2-)"
-  elif \[ -n "$GITHUB_RUN_ID" ] && \[ -n "$GITHUB_WORKFLOW" ] && \[ "$(\cat /proc/$PPID/cmdline | \tr '\000-\037' ' ' | \cut -d ' ' -f 1 | \rev | \cut -d / -f 1 | \rev)" = "Runner.Worker" ]; then
+  elif \[ "$GITHUB_ACTIONS" = true ] && \[ -n "$GITHUB_RUN_ID" ] && \[ -n "$GITHUB_WORKFLOW" ] && \[ "$(\cat /proc/$PPID/cmdline | \tr '\000-\037' ' ' | \cut -d ' ' -f 1 | \rev | \cut -d / -f 1 | \rev)" = "Runner.Worker" ]; then
     local name="$GITHUB_WORKFLOW"
     local kind=CONSUMER
     if \[ -n "$GITHUB_JOB" ]; then local name="$name / $GITHUB_JOB"; local kind=CONSUMER; fi
