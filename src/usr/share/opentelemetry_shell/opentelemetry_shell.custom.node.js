@@ -5,7 +5,7 @@ const _execFile = child_process.execFile;
 
 child_process.spawn = function(command, args, options) {
   args = args ?? [];
-  args = [ '-e', '-c', '. otel.sh\n' + command + ' "$@"', 'node', ...args];
+  args = [ '-e', '-c', '. otel.sh\n' + command + ' "$@"', 'node'].concat(args);
   return _spawn('/bin/sh', args, options);
 }
 
@@ -15,6 +15,6 @@ child_process.exec = function(command, options, callback) {
 
 child_process.execFile = function(file, args, options, callback) {
   args = args ?? [];
-  args = [ '-e', '-c', '. otel.sh\n' + file + ' "$@"', 'node', ...args];
+  args = [ '-e', '-c', '. otel.sh\n' + file + ' "$@"', 'node'].concat(args);
   return _execFile('/bin/sh', args, options, callback);
 }
