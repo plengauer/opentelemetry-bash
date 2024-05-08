@@ -2,7 +2,7 @@
 node --version
 
 . otel.sh
-node -p "const child_process = require('child_process'); child_process.exec('echo hello world');"
+node -p "const child_process = require('child_process'); child_process.exec('echo hello world', {}, (error, stdout, stderr) => { console.log(stdout); console.error(stderr); });"
 assert_equals 0 $?
 resolve_span '.name == "echo hello world"'
 span="$(resolve_span '.name == "echo hello world"')"
