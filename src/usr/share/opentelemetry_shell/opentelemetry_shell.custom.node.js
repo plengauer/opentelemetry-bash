@@ -1,4 +1,4 @@
-const child_process = require('child_process');
+const child_process = require('node:child_process');
 const _spawn = child_process.spawn;
 const _exec = child_process.exec;
 const _execFile = child_process.execFile;
