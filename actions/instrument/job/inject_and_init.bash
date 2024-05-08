@@ -1,15 +1,27 @@
 set -e
 
-curl() {
-  command curl --no-progress-meter --fail --retry 12 --retry-all-errors "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/"$1"
+github() {
+  url="$GITHUB_API_URL"/"$1"?per_page=100
+  curl --no-progress-meter --fail --retry 16 --retry-all-errors --head "$url" \
+    | grep '^link: ' | cut -d ' '  -f 2- | tr -d ' <>' | tr ',' '\n' \
+    | grep 'rel="last"' | cut -d ';' -f1 | cut -d '?' -f 2- | tr '&' '\n' \
+    | grep '^page=' | cut -d = -f 2 \
+    | xargs seq 1 | while IFS= read -r page; do
+      command curl --no-progress-meter --fail --retry 12 --retry-all-errors "$url"\&page="$page"
+    done
 }
-export -f curl
+export -f github
+
+github_workflow() {
+  github repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/"$1"
+}
+export -f github_workflow
 
 if [ -z "$GITHUB_ACTION_REPOSITORY" ]; then export GITHUB_ACTION_REPOSITORY="$GITHUB_REPOSITORY"; fi
 action_tag_name="$(echo "$GITHUB_ACTION_REF" | cut -sd @ -f 2-)"
 if [ -n "$action_tag_name" ]; then
   debian_file="$(mktemp)"
-  command curl --no-progress-meter --fail --retry 12 --retry-all-errors "$GITHUB_API_URL"/repos/"$GITHUB_ACTION_REPOSITORY"/releases | { if [ "$action_tag_name" = main ]; then jq '.[0]'; else jq '.[] | select(.tag_name=="'"$action_tag_name"'")'; fi } | jq -r '.assets[] | .browser_download_url' | xargs wget -O "$debian_file"
+  github repos/"$GITHUB_ACTION_REPOSITORY"/releases | { if [ "$action_tag_name" = main ]; then jq '.[0]'; else jq '.[] | select(.tag_name=="'"$action_tag_name"'")'; fi } | jq -r '.assets[] | .browser_download_url' | xargs wget -O "$debian_file"
   sudo apt-get install -y "$debian_file"
   rm "$debian_file"
 else
@@ -32,8 +44,8 @@ for node_path in /home/runner/runners/*/externals/node*/bin/node; do
   gcc -o "$node_path" "$my_dir"/forward.c -DEXECUTABLE=/bin/bash -DARG1="$my_dir"/decorate_action_node.sh -DARG2="$node_path_new"
 done
 
-if curl jobs | jq -r '.jobs[] | select(.status != "completed") | .name' | grep -q '^observe$'; then
-  while ! curl artifacts | jq -r '.artifacts[].name' | grep -q '^opentelemetry$'; do sleep 3; done
+if github_workflow jobs | jq -r '.jobs[] | select(.status != "completed") | .name' | grep -q '^observe$'; then
+  while ! github_workflow artifacts | jq -r '.artifacts[].name' | grep -q '^opentelemetry$'; do sleep 3; done
 fi
 env_dir="$(mktemp -d)"
 node download_artifact.js opentelemetry "$env_dir" || true
@@ -49,7 +61,7 @@ if [ -z "$OTEL_SERVICE_NAME" ]; then
 fi
 
 root4job_end() {
-  if [ "$(curl jobs | jq -r ".jobs[] | select(.name == \"$GITHUB_JOB\" or .name | endswith(\" / $GITHUB_JOB\")) | select(.run_attempt == $GITHUB_RUN_ATTEMPT) | .steps[] | select(.status == \"completed\") | select(.conclusion == \"failure\") | .name" | wc -l)" -gt 0 ]; then
+  if [ "$(github_workflow jobs | jq -r ".jobs[] | select(.name == \"$GITHUB_JOB\") | select(.run_attempt == $GITHUB_RUN_ATTEMPT) | .steps[] | select(.status == \"completed\") | select(.conclusion == \"failure\") | .name" | wc -l)" -gt 0 ]; then
     otel_span_error "$span_handle"
   fi
   otel_span_end "$span_handle"
