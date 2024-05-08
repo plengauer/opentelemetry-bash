@@ -4,12 +4,17 @@ const _exec = child_process.exec;
 const _execFile = child_process.execFile;
 
 child_process.spawn = function(command, args, options) {
-  args = args ?? [];
-  args = [ '-e', '-c', '. otel.sh\n' + command + ' "$@"', 'node'].concat(args);
+  args = [ '-e', '-c', '. otel.sh\n' + command + ' "$@"', 'node'].concat(args ?? []);
+  options = options ?? {};
+  options.env = options.env ?? { ... options.env };
+  options.env['OTEL_SHELL_AUTO_INSTRUMENTATION_HINT'] = command;
   return _spawn('/bin/sh', args, options);
 }
 
 child_process.exec = function(command, options, callback) {
+  options = options ?? {};
+  options.env = options.env ?? { ... options.env };
+  options.env['OTEL_SHELL_AUTO_INSTRUMENTATION_HINT'] = command;
   return _exec('. otel.sh\n' + command, options, callback);
 }
 
