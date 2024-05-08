@@ -16,5 +16,5 @@ child_process.exec = function(command, options, callback) {
 child_process.execFile = function(file, args, options, callback) {
   args = args ?? [];
   args = [ '-e', '-c', '. otel.sh\n' + file + ' "$@"', 'node', ...args];
-  return execFile('/bin/sh', args, options, callback);
+  return _execFile('/bin/sh', args, options, callback);
 }
