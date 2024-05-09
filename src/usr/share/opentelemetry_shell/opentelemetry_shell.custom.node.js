@@ -17,6 +17,10 @@ child_process.spawn = function(command, args, options) {
 }
 
 child_process.exec = function(command, options, callback) {
+  if (options && !callback && typeof options == 'function') {
+    callback = options;
+    options = {};
+  }
   options = options ?? {};
   options.env = options.env ?? { ... process.env };
   options.env['OTEL_SHELL_AUTO_INSTRUMENTATION_HINT'] = command;
