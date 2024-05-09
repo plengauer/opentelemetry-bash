@@ -117,7 +117,7 @@ else
 fi
 
 _otel_resolve_package_version() {
-  \dpkg -s "$1" 2> /dev/null | \grep Version: | \cut -d ' ' -f 2
+  \dpkg -s "$1" 2> /dev/null | \grep '^Version: ' | \cut -d ' ' -f 2
 }
 
 otel_span_current() {
