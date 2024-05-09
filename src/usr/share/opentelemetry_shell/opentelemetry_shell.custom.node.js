@@ -6,6 +6,10 @@ const _execFile = child_process.execFile;
 // TODO make sure this can really be called in every possible way!
 
 child_process.spawn = function(command, args, options) {
+  if (args && !options && !Array.isArray(args)) {
+    options = args;
+    args = [];
+  }
   options = options ?? {};
   options.env = options.env ?? { ... process.env };
   options.env['OTEL_SHELL_AUTO_INSTRUMENTATION_HINT'] = command;
