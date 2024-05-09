@@ -8,12 +8,37 @@ assert_equals 0 $?
 span="$(resolve_span '.name == "echo hello world 0"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
 
+node -p "const child_process = require('child_process'); child_process.exec('echo hello world 1', {});"
+assert_equals 0 $?
+span="$(resolve_span '.name == "echo hello world 1"')"
+assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
+
+node -p "const child_process = require('child_process'); child_process.exec('echo hello world 2', (error, stdout, stderr) => { console.log(stdout); console.error(stderr); });"
+assert_equals 0 $?
+span="$(resolve_span '.name == "echo hello world 2"')"
+assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
+
+node -p "const child_process = require('child_process'); child_process.exec('echo hello world 3');"
+assert_equals 0 $?
+span="$(resolve_span '.name == "echo hello world 3"')"
+assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
+
 # node -p "const child_process = require('child_process'); child_process.execFile('echo', [ 'hello', 'world', '1' ], {}, (error, stdout, stderr) => { console.log(stdout); console.error(stderr); });"
 # assert_equals 0 $?
 # span="$(resolve_span '.name == "echo hello world 1"')"
 # assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
 
-node -p "const child_process = require('child_process'); child_process.spawn('echo', [ 'hello', 'world', '2' ], { stdio: 'inherit' });"
+node -p "const child_process = require('child_process'); child_process.spawn('echo', [ 'hello', 'world', '4' ], { stdio: 'inherit' });"
 assert_equals 0 $?
-span="$(resolve_span '.name == "echo hello world 2"')"
+span="$(resolve_span '.name == "echo hello world 4"')"
+assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
+
+node -p "const child_process = require('child_process'); child_process.spawn('echo', [ 'hello', 'world', '5' ]);"
+assert_equals 0 $?
+span="$(resolve_span '.name == "echo hello world 5"')"
+assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
+
+node -p "const child_process = require('child_process'); child_process.spawn('echo', { stdio: 'inherit' });"
+assert_equals 0 $?
+span="$(resolve_span '.name == "echo"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
