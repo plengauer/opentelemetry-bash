@@ -8,7 +8,7 @@ resolve_span '.name == "echo hello world 0"'
 span="$(resolve_span '.name == "echo hello world 0"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
 
-node -p "const child_process = require('child_process'); child_process.spawn('echo', [ 'hello', 'world', '1' ], { stdio: 'inerit' });"
+node -p "const child_process = require('child_process'); child_process.spawn('echo', [ 'hello', 'world', '1' ], { stdio: 'inherit' });"
 assert_equals 0 $?
 resolve_span '.name == "echo hello world 1"'
 span="$(resolve_span '.name == "echo hello world 1"')"
