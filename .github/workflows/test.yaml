@@ -65,6 +65,10 @@ jobs:
     needs: _build
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: package.deb
+      - run: sudo apt-get -y install ./package.deb
       - run: printenv | grep '^GITHUB_'
       - uses: actions/checkout@v4
       - uses: ./actions/instrument/job
