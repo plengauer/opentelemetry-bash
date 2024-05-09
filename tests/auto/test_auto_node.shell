@@ -5,12 +5,10 @@ if ! which node; then exit 0; fi
 
 node -p "const child_process = require('child_process'); child_process.exec('alias && echo hello world 0', {}, (error, stdout, stderr) => { console.log(stdout); console.error(stderr); });"
 assert_equals 0 $?
-resolve_span '.name == "echo hello world 0"'
 span="$(resolve_span '.name == "echo hello world 0"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
 
 node -p "const child_process = require('child_process'); child_process.spawn('echo', [ 'hello', 'world', '1' ], { stdio: 'inherit' });"
 assert_equals 0 $?
-resolve_span '.name == "echo hello world 1"'
 span="$(resolve_span '.name == "echo hello world 1"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
