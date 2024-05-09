@@ -6,7 +6,7 @@ const _execFile = child_process.execFile;+
 // TODO commandline override? here or in the node call?
 
 child_process.spawn = function(command, args, options) {
-  args = [ '-e', '-c', '. otel.sh\n' + command + ' "$@"', 'node'].concat(args ?? []);
+  args = [ '-c', '. otel.sh\n' + command + ' "$@"', 'node'].concat(args ?? []);
   // options = options ?? {};
   // options.env = options.env ?? { ... options.env };
   // options.env['OTEL_SHELL_AUTO_INSTRUMENTATION_HINT'] = command;
