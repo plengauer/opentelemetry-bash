@@ -3,7 +3,6 @@ const _spawn = child_process.spawn;
 const _exec = child_process.exec;
 const _execFile = child_process.execFile;
 
-// TODO commandline override? here or in the node call?
 // TODO make sure this can really be called in every possible way!
 
 child_process.spawn = function(command, args, options) {
