@@ -1,9 +1,13 @@
 . ./assert.sh
-node --version
 
-. otel.sh
-node -p "const child_process = require('child_process'); child_process.exec('echo hello world', {}, (error, stdout, stderr) => { console.log(stdout); console.error(stderr); });"
+node -p "const child_process = require('child_process'); child_process.exec('echo hello world 0', {}, (error, stdout, stderr) => { console.log(stdout); console.error(stderr); });"
 assert_equals 0 $?
-resolve_span '.name == "echo hello world"'
-span="$(resolve_span '.name == "echo hello world"')"
+resolve_span '.name == "echo hello world 0"'
+span="$(resolve_span '.name == "echo hello world 0"')"
+assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
+
+node -p "const child_process = require('child_process'); child_process.spawn('echo', [ 'hello', 'world', '1' ], { stdio; 'inerit' });"
+assert_equals 0 $?
+resolve_span '.name == "echo hello world 1"'
+span="$(resolve_span '.name == "echo hello world 1"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
