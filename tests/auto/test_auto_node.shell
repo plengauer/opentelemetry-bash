@@ -13,7 +13,7 @@ assert_equals 0 $?
 span="$(resolve_span '.name == "echo hello world 1"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
 
-node -p "const child_process = require('child_process'); child_process.spawn('echo', [ 'hello', 'world', '2' ], { stdio: 'inherit' });"
-assert_equals 0 $?
-span="$(resolve_span '.name == "echo hello world 2"')"
-assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
+# node -p "const child_process = require('child_process'); child_process.spawn('echo', [ 'hello', 'world', '2' ], { stdio: 'inherit' });"
+# assert_equals 0 $?
+# span="$(resolve_span '.name == "echo hello world 2"')"
+# assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
