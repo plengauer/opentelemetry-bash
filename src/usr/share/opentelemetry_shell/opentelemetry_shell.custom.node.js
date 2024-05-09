@@ -23,9 +23,11 @@ child_process.exec = function(command, options, callback) {
   return _exec('. otel.sh\n' + command, options, callback);
 }
 
+/*
 child_process.execFile = function(file, args, options, callback) {
   options = options ?? {};
   options.env = options.env ?? { ... process.env };
   options.env['OTEL_SHELL_AUTO_INSTRUMENTATION_HINT'] = file;
   return _execFile('/bin/sh', [ '-c', '. otel.sh\n' + file + ' "$@"', 'node' ].concat(args ?? []), options, callback);
 }
+*/
