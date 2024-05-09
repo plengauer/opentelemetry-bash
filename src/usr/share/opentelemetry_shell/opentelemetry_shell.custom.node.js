@@ -6,11 +6,10 @@ const _execFile = child_process.execFile;
 // TODO make sure this can really be called in every possible way!
 
 child_process.spawn = function(command, args, options) {
-  args = [ '-c', '. otel.sh\n' + command + ' "$@"', 'node'].concat(args ?? []);
   options = options ?? {};
   options.env = options.env ?? { ... process.env };
   options.env['OTEL_SHELL_AUTO_INSTRUMENTATION_HINT'] = command;
-  return _spawn('/bin/sh', args, options);
+  return _spawn('/bin/sh', [ '-c', '. otel.sh\n' + command + ' "$@"', 'node' ].concat(args ?? []), options);
 }
 
 child_process.exec = function(command, options, callback) {
@@ -20,10 +19,9 @@ child_process.exec = function(command, options, callback) {
   return _exec('. otel.sh\n' + command, options, callback);
 }
 
-/*
 child_process.execFile = function(file, args, options, callback) {
-  args = args ?? [];
-  args = [ '-e', '-c', '. otel.sh\n' + file + ' "$@"', 'node'].concat(args);
-  return _execFile('/bin/sh', args, options, callback);
+  options = options ?? {};
+  options.env = options.env ?? { ... process.env };
+  options.env['OTEL_SHELL_AUTO_INSTRUMENTATION_HINT'] = command;
+  return _execFile('/bin/sh', [ '-c', '. otel.sh\n' + file + ' "$@"', 'node' ].concat(args ?? []), options, callback);
 }
-*/
