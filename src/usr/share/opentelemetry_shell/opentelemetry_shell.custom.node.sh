@@ -1,9 +1,11 @@
 #!/bin/false
 
 _otel_inject_node() {
-  # TODO lets make it super dirty for now!
-  shift # TODO lets assume first arg is simply "node"
-  _otel_call \\node --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.js "$@"
+  local cmdline="$(_otel_dollar_star "$@")"
+  local cmdline="${cmdline#\\}"
+  local command="$1"
+  shift
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" _otel_call "$command" --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.js "$@"
 }
 
 _otel_alias_prepend node _otel_inject_node
