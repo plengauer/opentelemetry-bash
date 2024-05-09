@@ -1,3 +1,4 @@
+if ! which node; then exit 0; fi
 . ./assert.sh
 
 . otel.sh
