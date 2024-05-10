@@ -18,9 +18,9 @@ child_process.spawn = function(command, args, options) {
     if (typeof options.shell == 'boolean') options.shell = '/bin/sh';
     options.env['OTEL_SHELL_COMMANDLINE_OVERRIDE'] = options.shell + ' -c ' + command + ' ' + args.join(' ');
     options.env['OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE'] = process.pid;
+    options.env['OTEL_SHELL_AUTO_INJECTED'] = 'FALSE'
     return _spawn(options.shell, [ '-c', '. otel.sh\n' + command + ' "$@"', options.shell ].concat(args ?? []), { ... options, shell: false });
   } else {
-    //TODO this creates shell.* and code.* attributes, when really it shouldnt because it ... shouldnt run in a shell
     return _spawn('/bin/sh', [ '-c', '. otel.sh\n' + command + ' "$@"', 'node' ].concat(args ?? []), options);
   }
 }
@@ -35,6 +35,7 @@ child_process.exec = function(command, options, callback) {
   options.env['OTEL_SHELL_AUTO_INSTRUMENTATION_HINT'] = command;
   options.env['OTEL_SHELL_COMMANDLINE_OVERRIDE'] = (options.shell ?? '/bin/sh') + ' -c ' + command;
   options.env['OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE'] = process.pid;
+  options.env['OTEL_SHELL_AUTO_INJECTED'] = 'FALSE'
   return _exec('. otel.sh\n' + command, options, callback);
 }
 
