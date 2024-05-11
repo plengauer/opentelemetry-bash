@@ -6,7 +6,7 @@ _otel_inject_docker_args() {
   while \[ "$#" -gt 0 ] && _otel_string_starts_with "$1" -; do
     echo -n ' '
     _otel_escape_arg "$1"
-    if _otel_string_contains "$1" =; then
+    if ! _otel_string_contains "$1" =; then
       shift
       echo -n ' '
       _otel_escape_arg "$1"
