@@ -81,8 +81,6 @@ jobs:
         with:
           name: package.deb
       - uses: actions/hello-world-docker-action@main # check if docker action works
-      - run: echo "$PATH"
-      - run: echo "$PATH" | tr -d ':' '\n' | while IFS= read -r dir; do find "$dir"; done
 
   performance-prepare:
     runs-on: ubuntu-latest
