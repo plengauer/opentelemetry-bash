@@ -46,8 +46,8 @@ done
 
 # cant use the same path trick as for the shells, because path is resolved at the very start, so paths must not change
 docker_path="$(which docker)"
-mv "$docker_path" "$new_path_dir"
-gcc -o "$docker_path" "$my_dir"/forward.c -DEXECUTABLE="$(which sh)" -DARG1="$my_dir"/decorate_docker_run.sh -DARG2="$new_path_dir"/docker
+sudo mv "$docker_path" "$new_path_dir"
+sudo gcc -o "$docker_path" "$my_dir"/forward.c -DEXECUTABLE="$(which sh)" -DARG1="$my_dir"/decorate_docker_run.sh -DARG2="$new_path_dir"/docker
 
 if github_workflow jobs | jq -r '.jobs[] | select(.status != "completed") | .name' | grep -q '^observe$'; then
   while ! github_workflow artifacts | jq -r '.artifacts[].name' | grep -q '^opentelemetry$'; do sleep 3; done
