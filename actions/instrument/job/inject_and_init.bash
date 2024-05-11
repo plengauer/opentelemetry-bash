@@ -34,7 +34,6 @@ new_path_dir="$(mktemp -d)"
 gcc -o "$new_path_dir"/sh "$my_dir"/forward.c -DEXECUTABLE="$(which sh)" -DARG1="$my_dir"/decorate_action_run.sh -DARG2="$(which sh)"
 gcc -o "$new_path_dir"/dash "$my_dir"/forward.c -DEXECUTABLE="$(which dash)" -DARG1="$my_dir"/decorate_action_run.sh -DARG2="$(which dash)"
 gcc -o "$new_path_dir"/bash "$my_dir"/forward.c -DEXECUTABLE="$(which bash)" -DARG1="$my_dir"/decorate_action_run.sh -DARG2="$(which bash)"
-gcc -o "$new_path_dir"/docker "$my_dir"/forward.c -DEXECUTABLE="$(which sh)" -DARG1="$my_dir"/decorate_docker_run.sh -DARG2="$(which docker)"
 echo "$new_path_dir" >> "$GITHUB_PATH"
 
 for node_path in /home/runner/runners/*/externals/node*/bin/node; do
@@ -44,6 +43,11 @@ for node_path in /home/runner/runners/*/externals/node*/bin/node; do
   mv "$node_path" "$node_path_new"
   gcc -o "$node_path" "$my_dir"/forward.c -DEXECUTABLE=/bin/bash -DARG1="$my_dir"/decorate_action_node.sh -DARG2="$node_path_new"
 done
+
+# cant use the same path trick as for the shells, because path is resolved at the very start, so paths must not change
+docker_path="$(which docker)"
+mv "$docker_path" "$new_path_dir"
+gcc -o "$docker_path" "$my_dir"/forward.c -DEXECUTABLE="$(which sh)" -DARG1="$my_dir"/decorate_docker_run.sh -DARG2="$new_path_dir"/docker
 
 if github_workflow jobs | jq -r '.jobs[] | select(.status != "completed") | .name' | grep -q '^observe$'; then
   while ! github_workflow artifacts | jq -r '.artifacts[].name' | grep -q '^opentelemetry$'; do sleep 3; done
