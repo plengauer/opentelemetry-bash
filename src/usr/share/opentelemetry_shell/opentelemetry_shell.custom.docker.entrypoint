@@ -1,3 +1,3 @@
 #!/bin/sh
 . otel.sh
-exec "$@"
+exec "$@" # probably instrument exec better
