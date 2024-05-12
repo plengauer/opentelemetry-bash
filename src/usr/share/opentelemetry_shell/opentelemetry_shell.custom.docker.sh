@@ -19,7 +19,9 @@ _otel_inject_docker_args() {
   shift
   if \[ "$command" = run ]; then
     \echo -n ' '
-    _otel_escape_arg "--env OTEL_TRACEPARENT=$OTEL_TRACEPARENT"
+    _otel_escape_arg "--env"
+    \echo -n ' '
+    _otel_escape_arg "OTEL_TRACEPARENT=$OTEL_TRACEPARENT"
   fi
   while \[ "$#" -gt 0 ]; do
     \echo -n ' '
