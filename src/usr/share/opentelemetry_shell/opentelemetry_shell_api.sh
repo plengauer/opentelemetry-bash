@@ -15,6 +15,7 @@ fi
 
 # basic setup
 _otel_remote_sdk_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
+_otel_remote_sdk_pipe="${OTEL_REMOTE_SDK_PIPE:-$_otel_remote_sdk_pipe}"
 _otel_shell="$(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)"
 if \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = 0 ] || \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "$PPID" ] || \[ "$PPID" = 0 ] || \[ "$(\tr '\000-\037' ' ' < /proc/$PPID/cmdline)" = "$(\tr '\000-\037' ' ' < /proc/$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE/cmdline)" ]; then _otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"; fi
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE
@@ -23,6 +24,7 @@ unset OTEL_SHELL_COMMAND_TYPE_OVERRIDE
 unset OTEL_SHELL_SPAN_KIND_OVERRIDE
 
 otel_init() {
+  if \[ "$_otel_remote_sdk_pipe" = "$OTEL_REMOTE_SDK_PIPE" ]; then \exec 7> "$_otel_remote_sdk_pipe"; return 0; fi;
   if \[ -e "/dev/stderr" ] && \[ -e "$(\readlink -f /dev/stderr)" ]; then local sdk_output=/dev/stderr; else local sdk_output=/dev/null; fi
   local sdk_output="${OTEL_SHELL_SDK_OUTPUT_REDIRECT:-$sdk_output}"
   \mkfifo "$_otel_remote_sdk_pipe"
@@ -36,6 +38,7 @@ otel_init() {
 }
 
 otel_shutdown() {
+  if \[ "$_otel_remote_sdk_pipe" = "$OTEL_REMOTE_SDK_PIPE" ]; then \exec 7>&-; return 0; fi;
   _otel_sdk_communicate "SHUTDOWN"
   \exec 7>&-
   \rm "$_otel_remote_sdk_pipe"
