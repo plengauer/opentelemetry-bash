@@ -24,7 +24,9 @@ unset OTEL_SHELL_COMMAND_TYPE_OVERRIDE
 unset OTEL_SHELL_SPAN_KIND_OVERRIDE
 
 otel_init() {
-  if ! \[ -f "$_otel_remote_sdk_pipe" ]; then
+  if \[ -f "$_otel_remote_sdk_pipe" ]; then
+    _otel_remote_sdk_pipe_global=TRUE
+  else
     if \[ -e "/dev/stderr" ] && \[ -e "$(\readlink -f /dev/stderr)" ]; then local sdk_output=/dev/stderr; else local sdk_output=/dev/null; fi
     local sdk_output="${OTEL_SHELL_SDK_OUTPUT_REDIRECT:-$sdk_output}"
     \mkfifo "$_otel_remote_sdk_pipe"
@@ -33,8 +35,6 @@ otel_init() {
     if \env --help | \grep -q 'ignore-signal'; then local extra_env_flags='--ignore-signal=INT --ignore-signal=HUP'; fi
     ( (\env $extra_env_flags otelsdk "shell" "$(_otel_package_version opentelemetry-shell)" < "$_otel_remote_sdk_pipe" 1> "$sdk_output" 2> "$sdk_output") &)
     _otel_remote_sdk_pipe_global=FALSE
-  else
-    _otel_remote_sdk_pipe_global=TRUE
   fi
   \exec 7> "$_otel_remote_sdk_pipe"
   if \[ "$_otel_remote_sdk_pipe_global" != TRUE ]; then
