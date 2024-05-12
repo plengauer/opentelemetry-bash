@@ -8,4 +8,4 @@ function run(executable, args = []) {
   });
 }
 
-run('/bin/bash', [ '-e', __dirname + '/inject_and_init.bash' ])
+run('/bin/bash', [ '-e', __dirname + '/inject_and_init.sh' ])
