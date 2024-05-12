@@ -35,7 +35,7 @@ _otel_inject_docker_args() {
     for file in $(\dpkg -L opentelemetry-shell); do \echo -n ' '; _otel_escape_args --mount type=bind,source="$file",target="$file",readonly; done
     \echo -n ' '; _otel_escape_args --mount type=bind,source="$_otel_remote_sdk_pipe",target="/opt/opentelemetry_shell/pipe"
     \echo -n ' '; _otel_escape_args --env "OTEL_SHELL_AUTO_INJECTED=TRUE"
-    \echo -n ' '; _otel_escape_args --entrypoint /use/share/opentelemetry_shell.custom.docker.entrypoint
+    \echo -n ' '; _otel_escape_args --entrypoint /use/share/opentelemetry_shell/opentelemetry_shell.custom.docker.entrypoint
     \echo -n ' '; _otel_escape_arg "$1"; shift
     \echo -n ' '; \docker inspect "$image" | \jq -r .[0].Config.Entrypoint[] | _otel_escape_stdin
     \echo -n ' '; \docker inspect "$image" | \jq -r .[0].Config.Cmd[] | _otel_escape_stdin
