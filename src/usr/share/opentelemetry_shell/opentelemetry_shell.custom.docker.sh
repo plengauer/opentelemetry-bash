@@ -33,9 +33,9 @@ _otel_inject_docker_args() {
   if \[ "$command" = run ]; then
     for kvp in $(\printenv | \grep '^OTEL_'); do \echo -n ' '; _otel_escape_args --env "$kvp"; done
     for file in $(\dpkg -L opentelemetry-shell); do \echo -n ' '; _otel_escape_args --mount type=bind,source="$file",target="$file",readonly; done
-    \echo -n ' '; _otel_escape_args --mount type=bind,source="$_otel_remote_sdk_pipe",target="$_otel_remote_sdk_pipe",readonly
-    \echo -n ' '; _otel_escape_args --env "OTEL_REMOTE_SDK_PIPE=$_otel_remote_sdk_pipe"
-    \echo -n ' '; _otel_escape_args --entrypoint /bin/sh # TODO this should probably a specialized script
+    \echo -n ' '; _otel_escape_args --mount type=bind,source="$_otel_remote_sdk_pipe",target="/opt/opentelemetry_shell/pipe"
+    \echo -n ' '; _otel_escape_args --env "OTEL_SHELL_AUTO_INJECTED=TRUE"
+    \echo -n ' '; _otel_escape_args --entrypoint /use/share/opentelemetry_shell.custom.docker.entrypoint
     \echo -n ' '; _otel_escape_arg "$1"; shift
     \echo -n ' '; \docker inspect "$image" | \jq -r .[0].Config.Entrypoint[] | _otel_escape_stdin
     \echo -n ' '; \docker inspect "$image" | \jq -r .[0].Config.Cmd[] | _otel_escape_stdin
