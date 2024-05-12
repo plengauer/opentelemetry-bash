@@ -13,7 +13,7 @@ child_process.spawn = function(command, args, options) {
   }
   options = options ?? {};
   options.env = options.env ?? { ... process.env };
-  options.env['OTEL_SHELL_AUTO_INSTRUMENTATION_HINT'] = command;
+  options.env['OTEL_SHELL_AUTO_INSTRUMENTATION_HINT'] = command + ' ';
   if (options.shell) {
     if (typeof options.shell == 'boolean') options.shell = '/bin/sh';
     options.env['OTEL_SHELL_COMMANDLINE_OVERRIDE'] = options.shell + ' -c ' + command + ' ' + args.join(' ');
@@ -32,7 +32,7 @@ child_process.exec = function(command, options, callback) {
   }
   options = options ?? {};
   options.env = options.env ?? { ... process.env };
-  options.env['OTEL_SHELL_AUTO_INSTRUMENTATION_HINT'] = command;
+  options.env['OTEL_SHELL_AUTO_INSTRUMENTATION_HINT'] = command + ' ';
   options.env['OTEL_SHELL_COMMANDLINE_OVERRIDE'] = (options.shell ?? '/bin/sh') + ' -c ' + command;
   options.env['OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE'] = process.pid;
   options.env['OTEL_SHELL_AUTO_INJECTED'] = 'FALSE'
