@@ -84,6 +84,7 @@ jobs:
       - uses: actions/download-artifact@v4 # check if node action works
         with:
           name: package.deb
+      - uses: actions/hello-world-docker-action@main # check if docker action works
 
   performance-prepare:
     runs-on: ubuntu-latest
