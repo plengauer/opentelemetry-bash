@@ -299,14 +299,19 @@ _otel_record_exec() {
   local file="$1"
   local line="$2"
   if \[ -n "$file" ] && \[ -n "$line" ] && \[ -f "$file" ]; then local command="$(\cat "$file" | \sed -n "$line"p | \grep -F 'exec' | \sed 's/^.*exec /exec /')"; fi
-  if \[ -n "$command" ] && \echo "$command" | \grep -q '^exec [0-9]>'; then return 0; fi
   if \[ -z "$command" ]; then local command="exec"; fi
+  if \echo "$command" | \grep -q '^exec [0-9]>' || \[ "$(\printf '%s' "$command" | \sed 's/ \[0-9]*>.*$//')" = "exec" ]; then return 0; fi
+  if _otel_string_contains "$command" ';'; then return 0; fi # TODO just cut off the last ';'
   local span_id="$(otel_span_start INTERNAL "$command")"
-  if \[ "$(\printf '%s' "$command" | \sed 's/ \[0-9]*>.*$//')" != "exec" ]; then
-    otel_span_activate "$span_id"
-  fi
+  otel_span_activate "$span_id"
   otel_span_end "$span_id"
   _otel_sdk_communicate 'SPAN_AUTO_END'
+  \eval set -- "$command"
+  shift; local command="$1"; shift
+  export OTEL_SHELL_AUTO_INJECTED=TRUE
+  export OTEL_SHELL_INSTRUMENTATION_HINT="$command"
+  \exec sh -c ". otel.sh
+$command "'"$@"' sh "$@"
 }
 
 _otel_start_script() {
