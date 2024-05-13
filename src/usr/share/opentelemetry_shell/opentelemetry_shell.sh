@@ -306,7 +306,7 @@ _otel_record_exec() {
   otel_span_activate "$span_id"
   otel_span_end "$span_id"
   _otel_sdk_communicate 'SPAN_AUTO_END'
-  \eval set -- "$command"; shift
+  \eval set -- "$command"; shift # problem if this uses any $ like $1 or $@, its taken from the current function, not from the parent context
   if \[ "$#" = 0 ]; then return 0; fi
   local command="$1"; shift
   export OTEL_SHELL_AUTO_INJECTED=TRUE
