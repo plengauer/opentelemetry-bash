@@ -48,6 +48,9 @@ $(\docker inspect "$image" | \jq -r '.[0].Config.Entrypoint[]' | _otel_line_join
 }
 
 _otel_inject_docker() {
+  \echo "DEBUG DEBUG DEBUG" >&2
+  \echo "$@" >&2
+  _otel_inject_docker_args "$@" >&2
   \eval _otel_call "$(_otel_inject_docker_args "$@")"
 }
 
