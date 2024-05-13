@@ -30,15 +30,16 @@ _otel_inject_docker_args() {
   done
   # extract image
   local image="$1"
-  if \[ "$command" = run ]; then
+  if \[ "$command" = run ] && \docker run --rm -it "$image" cat /etc/os-release | \grep -q '^NAME=' | \grep -E 'Debian|Ubuntu'; then
     for kvp in $(\printenv | \grep '^OTEL_' | \cut -d = -f 1); do \echo -n ' '; _otel_escape_args --env "$kvp"; done
     for file in $(\dpkg -L opentelemetry-shell | \grep opentelemetry_shell); do \echo -n ' '; _otel_escape_args --mount type=bind,source="$file",target="$file",readonly; done
     \echo -n ' '; _otel_escape_args --mount type=bind,source="$_otel_remote_sdk_pipe",target="/opt/opentelemetry_shell/pipe"
     \echo -n ' '; _otel_escape_args --env "OTEL_SHELL_AUTO_INJECTED=TRUE"
     \echo -n ' '; _otel_escape_args --entrypoint /bin/sh
     \echo -n ' '; _otel_escape_arg "$1"; shift
-    \echo -n ' '; _otel_escape_args -c ". otel.sh
-$(\docker inspect "$image" | \jq -r '.[0].Config.Entrypoint[]' | _otel_line_join) "'"$@"' sh
+#    \echo -n ' '; _otel_escape_args -c ". otel.sh
+#$(\docker inspect "$image" | \jq -r '.[0].Config.Entrypoint[]' | _otel_line_join) "'"$@"' sh
+    \echo -n ' '; _otel_escape_args -c "$(\docker inspect "$image" | \jq -r '.[0].Config.Entrypoint[]' | _otel_line_join) "'"$@"' sh # this is temporary to fake injection, replace with line above to really inject
     \echo -n ' '; \docker inspect "$image" | \jq -r '.[0].Config.Cmd[]' | _otel_escape_stdin
   else
     \echo -n ' '; _otel_escape_arg "$1"; shift
