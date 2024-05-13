@@ -5,7 +5,6 @@
 # TODO maybe the remote pipe shouldnt be variable (to avoid clashes for temp files)
 
 _otel_inject_docker_args() {
-for arg in "$@"; do \printf '%s\n' "$arg" >&2; done
   # docker command
   _otel_escape_arg "$1"; shift
   # skip arguments
@@ -32,6 +31,7 @@ for arg in "$@"; do \printf '%s\n' "$arg" >&2; done
   # extract image
   local image="$1"
 \echo "DEBUG DEBUG DEBUG found image $image" >&2
+\docker run --rm -it "$image" cat /etc/os-release >&2
   if \[ "$command" = run ] && \docker run --rm -it "$image" cat /etc/os-release | \grep -q '^NAME=' | \grep -E 'Debian|Ubuntu'; then
 \echo "DEBUG DEBUG DEBUG injecting" >&2
     for kvp in $(\printenv | \grep '^OTEL_' | \cut -d = -f 1); do \echo -n ' '; _otel_escape_args --env "$kvp"; done
