@@ -5,7 +5,7 @@
 # TODO maybe the remote pipe shouldnt be variable (to avoid clashes for temp files)
 
 _otel_inject_docker_args() {
-for arg in "$@"; do \echo "$arg" >&2; done
+for arg in "$@"; do \printf '%s\n' "$arg" >&2; done
   # docker command
   _otel_escape_arg "$1"; shift
   # skip arguments
