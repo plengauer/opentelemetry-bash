@@ -297,12 +297,11 @@ _otel_instrument_and_source() {
 
 _otel_record_exec() {
   local file="$1"
-  local line="$2"
+  local line="$2"  
   if \[ -n "$file" ] && \[ -n "$line" ] && \[ -f "$file" ]; then local command="$(\cat "$file" | \sed -n "$line"p | \grep -F 'exec' | \sed 's/^.*exec /exec /')"; fi
   if \[ -z "$command" ]; then local command="exec"; fi
   if \echo "$command" | \grep -q '^exec [0-9]>' || \[ "$(\printf '%s' "$command" | \sed 's/ \[0-9]*>.*$//')" = "exec" ]; then return 0; fi
   if _otel_string_contains "$command" ';'; then return 0; fi # TODO just cut off the last ';'
-  \echo "DEBUG DEBUG DEBUG $file:L$line $command" >&2
   local span_id="$(otel_span_start INTERNAL "$command")"
   otel_span_activate "$span_id"
   otel_span_end "$span_id"
