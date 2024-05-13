@@ -297,7 +297,7 @@ _otel_instrument_and_source() {
 
 _otel_record_exec() {
   local file="$1"
-  local line="$2"  
+  local line="$2"
   if \[ -n "$file" ] && \[ -n "$line" ] && \[ -f "$file" ]; then local command="$(\cat "$file" | \sed -n "$line"p | \grep -F 'exec' | \sed 's/^.*exec /exec /')"; fi
   if \[ -z "$command" ]; then local command="exec"; fi
   if \echo "$command" | \grep -q '^exec [0-9]>' || \[ "$(\printf '%s' "$command" | \sed 's/ \[0-9]*>.*$//')" = "exec" ]; then return 0; fi
