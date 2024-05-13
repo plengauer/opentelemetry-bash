@@ -306,8 +306,9 @@ _otel_record_exec() {
   otel_span_activate "$span_id"
   otel_span_end "$span_id"
   _otel_sdk_communicate 'SPAN_AUTO_END'
-  \eval set -- "$command"
-  shift; local command="$1"; shift
+  \eval set -- "$command"; shift
+  if \[ "$#" = 0 ]; then return 0; fi
+  local command="$1"; shift
   export OTEL_SHELL_AUTO_INJECTED=TRUE
   export OTEL_SHELL_INSTRUMENTATION_HINT="$command"
   \exec sh -c ". otel.sh
