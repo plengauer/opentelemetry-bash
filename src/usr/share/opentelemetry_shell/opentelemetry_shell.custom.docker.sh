@@ -38,8 +38,8 @@ _otel_inject_docker_args() {
     \echo -n ' '; _otel_escape_args --entrypoint /bin/sh
     \echo -n ' '; _otel_escape_arg "$1"; shift
     \echo -n ' '; _otel_escape_args -c ". otel.sh
-$(\docker inspect "$image" | \jq -r .[0].Config.Entrypoint[] | _otel_line_join) "'"$@"' 'sh'
-    \echo -n ' '; \docker inspect "$image" | \jq -r .[0].Config.Cmd[] | _otel_escape_stdin
+$(\docker inspect "$image" | \jq -r '.[0].Config.Entrypoint[]' | _otel_line_join) "'"$@"' sh
+    \echo -n ' '; \docker inspect "$image" | \jq -r '.[0].Config.Cmd[]' | _otel_escape_stdin
   else
     \echo -n ' '; _otel_escape_arg "$1"; shift
   fi
