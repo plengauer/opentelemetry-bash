@@ -302,6 +302,7 @@ _otel_record_exec() {
   if \[ -z "$command" ]; then local command="exec"; fi
   if \echo "$command" | \grep -q '^exec [0-9]>' || \[ "$(\printf '%s' "$command" | \sed 's/ \[0-9]*>.*$//')" = "exec" ]; then return 0; fi
   if _otel_string_contains "$command" ';'; then return 0; fi # TODO just cut off the last ';'
+  \echo "DEBUG DEBUG DEBUG $file:L$line $command" >&2
   local span_id="$(otel_span_start INTERNAL "$command")"
   otel_span_activate "$span_id"
   otel_span_end "$span_id"
