@@ -310,7 +310,7 @@ _otel_record_exec() {
   if \[ "$#" = 0 ]; then return 0; fi
   local command="$1"; shift
   export OTEL_SHELL_AUTO_INJECTED=TRUE
-  export OTEL_SHELL_INSTRUMENTATION_HINT="$command"
+  export OTEL_SHELL_INSTRUMENTATION_HINT="$command "
   \exec sh -c ". otel.sh
 $command "'"$@"' sh "$@"
 }
