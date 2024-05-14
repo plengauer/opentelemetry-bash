@@ -310,7 +310,7 @@ _otel_record_exec() {
 
   export OTEL_SHELL_AUTO_INJECTED=TRUE
   export OTEL_SHELL_INSTRUMENTATION_HINT="$command "
-  _otel_escape_args '\\exec' sh -c ". otel.sh
+  _otel_escape_args '\exec' sh -c ". otel.sh
 $command" sh '"$@"'
 }
 
