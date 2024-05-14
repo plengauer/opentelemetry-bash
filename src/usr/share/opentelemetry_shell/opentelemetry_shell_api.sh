@@ -23,7 +23,7 @@ unset OTEL_SHELL_COMMAND_TYPE_OVERRIDE
 unset OTEL_SHELL_SPAN_KIND_OVERRIDE
 
 otel_init() {
-  if \[ -f "$_otel_remote_sdk_pipe" ]; then
+  if \[ -p "$_otel_remote_sdk_pipe" ]; then
     _otel_is_remote_sdk_mine=FALSE
   else
     if \[ -e "/dev/stderr" ] && \[ -e "$(\readlink -f /dev/stderr)" ]; then local sdk_output=/dev/stderr; else local sdk_output=/dev/null; fi
