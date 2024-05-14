@@ -1,8 +1,6 @@
 #!/bin/false
 
-# TODO check if docker container is compatible
 # TODO make it experimental configurable
-# TODO maybe the remote pipe shouldnt be variable (to avoid clashes for temp files)
 
 _otel_inject_docker_args() {
   # docker command
@@ -32,18 +30,19 @@ _otel_inject_docker_args() {
   local image="$1"
 \echo "DEBUG DEBUG DEBUG found image $image" >&2
 \docker run --rm --entrypoint cat "$image" /etc/os-release >&2
-  if \[ "$command" = run ] && \docker run --rm --entrypoint cat "$image" /etc/os-release | \grep -q '^NAME=' | \grep -E 'Debian|Ubuntu'; then
+  if \[ "$command" = run ] && \docker run --rm --entrypoint cat "$image" /etc/os-release | \grep -q '^NAME=' | \grep -qE 'Debian|Ubuntu|Alpine Linux'; then
 \echo "DEBUG DEBUG DEBUG injecting" >&2
     for kvp in $(\printenv | \grep '^OTEL_' | \cut -d = -f 1); do \echo -n ' '; _otel_escape_args --env "$kvp"; done
     for file in $(\dpkg -L opentelemetry-shell | \grep opentelemetry_shell); do \echo -n ' '; _otel_escape_args --mount type=bind,source="$file",target="$file",readonly; done
     \echo -n ' '; _otel_escape_args --mount type=bind,source="$_otel_remote_sdk_pipe",target="/opt/opentelemetry_shell/pipe"
+    \echo -n ' '; _otel_escape_args --mount type=bind,source="/tmp",target="/tmp" # TODO use TMPDIR?, also this is a huge security risk!
     \echo -n ' '; _otel_escape_args --env "OTEL_SHELL_AUTO_INJECTED=TRUE"
     \echo -n ' '; _otel_escape_args --entrypoint /bin/sh
     \echo -n ' '; _otel_escape_arg "$1"; shift
 #    \echo -n ' '; _otel_escape_args -c ". otel.sh
 #$(\docker inspect "$image" | \jq -r '.[0].Config.Entrypoint[]' | _otel_line_join) "'"$@"' sh
     \echo -n ' '; _otel_escape_args -c "$(\docker inspect "$image" | \jq -r '.[0].Config.Entrypoint[]' | _otel_line_join) "'"$@"' sh # this is temporary to fake injection, replace with line above to really inject
-    \echo -n ' '; \docker inspect "$image" | \jq -r '.[0].Config.Cmd[]' | _otel_escape_stdin
+    if \[ "$#" = 0 ]; then \echo -n ' '; \docker inspect "$image" | \jq -r '.[0].Config.Cmd[]' | _otel_escape_stdin; fi
   else
     \echo -n ' '; _otel_escape_arg "$1"; shift
   fi
