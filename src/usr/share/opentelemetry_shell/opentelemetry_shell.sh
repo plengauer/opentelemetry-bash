@@ -310,7 +310,7 @@ _otel_record_exec() {
   otel_span_end "$span_id"
   _otel_sdk_communicate 'SPAN_AUTO_END'
 
-  _otel_escape_args builtin exec sh -c "
+  _otel_escape_args builtin exec sh -xc "
 export OTEL_SHELL_AUTO_INJECTED=TRUE
 export OTEL_SHELL_INSTRUMENTATION_HINT=\"$command \"
 export OTEL_TRACEPARENT=\"$OTEL_TRACEPARENT\"
