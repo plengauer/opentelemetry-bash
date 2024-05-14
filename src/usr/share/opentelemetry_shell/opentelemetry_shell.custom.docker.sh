@@ -28,20 +28,11 @@ _otel_inject_docker_args() {
   done
   # extract image
   local image="$1"
-\echo "DEBUG DEBUG DEBUG found image $image ($command)" >&2
-\echo "DEBUG DEBUG DEBUG 0" >&2
-\docker run --rm --entrypoint cat "$image" /etc/os-release >&2
-\echo "DEBUG DEBUG DEBUG 1" >&2
-\docker run --rm --entrypoint cat "$image" /etc/os-release | \grep -E '^NAME=' >&2
-\echo "DEBUG DEBUG DEBUG 2" >&2
-\docker run --rm --entrypoint cat "$image" /etc/os-release | \grep -E '^NAME=' | \grep -E 'Debian|Ubuntu|Alpine Linux' >&2
-\echo "DEBUG DEBUG DEBUG 3" >&2
-\docker run --rm --entrypoint cat "$image" /etc/os-release | \grep -E 'Debian|Ubuntu|Alpine Linux' >&2
   if \[ "$command" = run ] && \docker run --rm --entrypoint cat "$image" /etc/os-release | \grep -E '^NAME=' | \grep -qE 'Debian|Ubuntu|Alpine Linux'; then
-\echo "DEBUG DEBUG DEBUG injecting" >&2
     for kvp in $(\printenv | \grep '^OTEL_' | \cut -d = -f 1); do \echo -n ' '; _otel_escape_args --env "$kvp"; done
     for file in $(\dpkg -L opentelemetry-shell | \grep opentelemetry_shell); do \echo -n ' '; _otel_escape_args --mount type=bind,source="$file",target="$file",readonly; done
-    \echo -n ' '; _otel_escape_args --mount type=bind,source="$_otel_remote_sdk_pipe",target="/opt/opentelemetry_shell/pipe"
+    \echo -n ' '; _otel_escape_args --mount type=bind,source="$_otel_remote_sdk_pipe",target="/tmp/opentelemetry_shell.global.pipe"
+    \echo -n ' '; _otel_escape_args --env "OTEL_REMOTE_SDK_PIPE=/tmp/opentelemetry_shell.global.pipe"
     \echo -n ' '; _otel_escape_args --mount type=bind,source="/tmp",target="/tmp" # TODO use TMPDIR?, also this is a huge security risk!
     \echo -n ' '; _otel_escape_args --env "OTEL_SHELL_AUTO_INJECTED=TRUE"
     \echo -n ' '; _otel_escape_args --entrypoint /bin/sh
