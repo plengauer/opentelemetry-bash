@@ -32,8 +32,8 @@ _otel_inject_docker_args() {
 \docker inspect "$image" | jq '.' >&2
 \docker inspect "$image" | jq '.[0]' >&2
 \docker inspect "$image" | jq '.[0].Config' >&2
-\docker inspect "$image" | jq '.[0].Config.Entrypoint[]' >&2
-\docker inspect "$image" | jq '.[0].Config.Cmd[]' >&2
+\docker inspect "$image" | jq '.[0].Config.Entrypoint[]?' >&2
+\docker inspect "$image" | jq '.[0].Config.Cmd[]?' >&2
     for kvp in $(\printenv | \grep '^OTEL_' | \cut -d = -f 1); do \echo -n ' '; _otel_escape_args --env "$kvp"; done
     for file in $(\dpkg -L opentelemetry-shell | \grep opentelemetry_shell); do \echo -n ' '; _otel_escape_args --mount type=bind,source="$file",target="$file",readonly; done
     \echo -n ' '; _otel_escape_args --mount type=bind,source="$_otel_remote_sdk_pipe",target="/tmp/opentelemetry_shell.global.pipe"
