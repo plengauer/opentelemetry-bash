@@ -37,9 +37,9 @@ _otel_inject_docker_args() {
     \echo -n ' '; _otel_escape_args --env "OTEL_SHELL_AUTO_INJECTED=TRUE"
     \echo -n ' '; _otel_escape_args --entrypoint /bin/sh
     \echo -n ' '; _otel_escape_arg "$1"; shift
-#    \echo -n ' '; _otel_escape_args -c ". otel.sh
-#$(\docker inspect "$image" | \jq -r '.[0].Config.Entrypoint[]' | _otel_line_join) "'"$@"' sh
-    \echo -n ' '; _otel_escape_args -c "$(\docker inspect "$image" | \jq -r '.[0].Config.Entrypoint[]' | _otel_line_join) "'"$@"' sh # this is temporary to fake injection, replace with line above to really inject
+    \echo -n ' '; _otel_escape_args -c ". otel.sh
+$(\docker inspect "$image" | \jq -r '.[0].Config.Entrypoint[]' | _otel_line_join) "'"$@"' sh
+#    \echo -n ' '; _otel_escape_args -c "$(\docker inspect "$image" | \jq -r '.[0].Config.Entrypoint[]' | _otel_line_join) "'"$@"' sh # this is temporary to fake injection, replace with line above to really inject
     if \[ "$#" = 0 ]; then \echo -n ' '; \docker inspect "$image" | \jq -r '.[0].Config.Cmd[]?' | _otel_escape_stdin; fi
   else
     \echo -n ' '; _otel_escape_arg "$1"; shift
