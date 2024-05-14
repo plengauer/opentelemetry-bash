@@ -25,7 +25,7 @@ unset OTEL_SHELL_SPAN_KIND_OVERRIDE
 
 otel_init() {
   if \[ -f "$_otel_remote_sdk_pipe" ]; then
-    _otel_remote_sdk_pipe_global=TRUE
+    _otel_is_remote_sdk_mine=FALSE
   else
     if \[ -e "/dev/stderr" ] && \[ -e "$(\readlink -f /dev/stderr)" ]; then local sdk_output=/dev/stderr; else local sdk_output=/dev/null; fi
     local sdk_output="${OTEL_SHELL_SDK_OUTPUT_REDIRECT:-$sdk_output}"
@@ -34,19 +34,19 @@ otel_init() {
     # several weird things going on in the next line, (1) using '((' fucks up the syntax highlighting in github while '( (' does not, and (2) &> causes weird buffering / late flushing behavior
     if \env --help | \grep -q 'ignore-signal'; then local extra_env_flags='--ignore-signal=INT --ignore-signal=HUP'; fi
     ( (\env $extra_env_flags otelsdk "shell" "$(_otel_package_version opentelemetry-shell)" < "$_otel_remote_sdk_pipe" 1> "$sdk_output" 2> "$sdk_output") &)
-    _otel_remote_sdk_pipe_global=FALSE
+    _otel_is_remote_sdk_mine=TRUE
   fi
   \exec 7> "$_otel_remote_sdk_pipe"
-  if \[ "$_otel_remote_sdk_pipe_global" != TRUE ]; then
+  if \[ "$_otel_is_remote_sdk_mine" = TRUE ]; then
     _otel_resource_attributes | while IFS= read -r kvp; do _otel_sdk_communicate "RESOURCE_ATTRIBUTE" "auto" "$kvp"; done
     _otel_sdk_communicate "INIT"
   fi
 }
 
 otel_shutdown() {
-  if \[ "$_otel_remote_sdk_pipe_global" != TRUE ]; then _otel_sdk_communicate "SHUTDOWN"; fi
+  if \[ "$_otel_is_remote_sdk_mine" = TRUE ]; then _otel_sdk_communicate "SHUTDOWN"; fi
   \exec 7>&-
-  if \[ "$_otel_remote_sdk_pipe_global" != TRUE ]; then \rm "$_otel_remote_sdk_pipe"; fi
+  if \[ "$_otel_is_remote_sdk_mine" = TRUE ]; then \rm "$_otel_remote_sdk_pipe"; fi
 }
 
 _otel_sdk_communicate() {
