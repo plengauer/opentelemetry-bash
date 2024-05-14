@@ -312,7 +312,7 @@ _otel_record_exec() {
 
   _otel_escape_args builtin exec sh -xc "
 export OTEL_SHELL_AUTO_INJECTED=TRUE
-export OTEL_SHELL_INSTRUMENTATION_HINT=\"$command \"
+export OTEL_SHELL_AUTO_INSTRUMENTATION_HINT=\"$command\"
 export OTEL_TRACEPARENT=\"$OTEL_TRACEPARENT\"
 . otel.sh
 $command" sh '"$@"'
