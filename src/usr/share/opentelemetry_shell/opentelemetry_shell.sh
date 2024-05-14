@@ -83,7 +83,7 @@ _otel_auto_instrument() {
   # super special instrumentations
   \alias .='_otel_instrument_and_source "$#" "$@" .'
   if \[ "$_otel_shell" = bash ]; then \alias source='_otel_instrument_and_source "$#" "$@" source'; fi
-  \alias exec='_otel_record_exec '$_otel_source_file_resolver' '$_otel_source_line_resolver'; exec'
+  \alias exec='eval "$(_otel_record_exec '$_otel_source_file_resolver' '$_otel_source_line_resolver')"; exec'
 
   # cache
   \[ "$(\alias | \wc -l)" -gt 25 ] && \alias | \sed 's/^alias //' | { \[ -n "$hint" ] && \grep "$(_otel_resolve_instrumentation_hint "$hint" | \sed 's/[]\.^*[]/\\&/g' | \awk '$0="^"$0"="')" || \cat; } | \awk '{print "\\alias " $0 }'  > "$cache_file" || \true
@@ -299,20 +299,19 @@ _otel_record_exec() {
   local file="$1"
   local line="$2"
   if \[ -n "$file" ] && \[ -n "$line" ] && \[ -f "$file" ]; then local command="$(\cat "$file" | \sed -n "$line"p | \grep -F 'exec' | \sed 's/^.*exec /exec /')"; fi
-  if \[ -z "$command" ]; then local command="exec"; fi
-  if \echo "$command" | \grep -q '^exec [0-9]>' || \[ "$(\printf '%s' "$command" | \sed 's/ \[0-9]*>.*$//')" = "exec" ]; then return 0; fi
-  if _otel_string_contains "$command" ';'; then return 0; fi # TODO just cut off the last ';'
-  local span_id="$(otel_span_start INTERNAL "$command")"
+  if _otel_string_contains "$command" ';'; then local command="$(\printf '%s' "$command" | \cut -d ';' -f 1)"; fi
+  if \[ -z "$command" ]; then return 0; fi
+  if \[ "$(\printf '%s' "$command" | \sed 's/ \[0-9]*>.*$//')" = "exec" ]; then return 0; fi
+
+  local span_id="$(otel_span_start INTERNAL exec)"
   otel_span_activate "$span_id"
   otel_span_end "$span_id"
   _otel_sdk_communicate 'SPAN_AUTO_END'
-  \eval set -- "$command"; shift # problem if this uses any $ like $1 or $@, its taken from the current function, not from the parent context
-  if \[ "$#" = 0 ]; then return 0; fi
-  local command="$1"; shift
+
   export OTEL_SHELL_AUTO_INJECTED=TRUE
   export OTEL_SHELL_INSTRUMENTATION_HINT="$command "
-  \exec sh -c ". otel.sh
-$command "'"$@"' sh "$@"
+  _otel_escape_args exec sh -c ". otel.sh
+$command" sh '"$@"'
 }
 
 _otel_start_script() {
