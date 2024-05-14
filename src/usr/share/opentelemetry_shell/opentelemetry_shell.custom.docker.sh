@@ -28,7 +28,7 @@ _otel_inject_docker_args() {
   done
   # extract image
   local image="$1"
-\echo "DEBUG DEBUG DEBUG found image $image" >&2
+\echo "DEBUG DEBUG DEBUG found image $image ($command)" >&2
 \docker run --rm --entrypoint cat "$image" /etc/os-release >&2
   if \[ "$command" = run ] && \docker run --rm --entrypoint cat "$image" /etc/os-release | \grep -q '^NAME=' | \grep -qE 'Debian|Ubuntu|Alpine Linux'; then
 \echo "DEBUG DEBUG DEBUG injecting" >&2
