@@ -35,7 +35,6 @@ otel_init() {
     ( (\env $extra_env_flags otelsdk "shell" "$(_otel_package_version opentelemetry-shell)" < "$_otel_remote_sdk_pipe" 1> "$sdk_output" 2> "$sdk_output") &)
     _otel_is_remote_sdk_mine=TRUE
   fi
-  \ls -la "$_otel_remote_sdk_pipe" >&2
   \exec 7> "$_otel_remote_sdk_pipe"
   if \[ "$_otel_is_remote_sdk_mine" = TRUE ]; then
     _otel_resource_attributes | while IFS= read -r kvp; do _otel_sdk_communicate "RESOURCE_ATTRIBUTE" "auto" "$kvp"; done
