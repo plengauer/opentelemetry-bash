@@ -30,7 +30,7 @@ _otel_inject_docker_args() {
   local image="$1"
 \echo "DEBUG DEBUG DEBUG found image $image ($command)" >&2
 \docker run --rm --entrypoint cat "$image" /etc/os-release >&2
-  if \[ "$command" = run ] && \docker run --rm --entrypoint cat "$image" /etc/os-release | \grep -q '^NAME=' | \grep -qE 'Debian|Ubuntu|Alpine Linux'; then
+  if \[ "$command" = run ] && \docker run --rm --entrypoint cat "$image" /etc/os-release | \grep -qE '^NAME=' | \grep -qE 'Debian|Ubuntu|Alpine Linux'; then
 \echo "DEBUG DEBUG DEBUG injecting" >&2
     for kvp in $(\printenv | \grep '^OTEL_' | \cut -d = -f 1); do \echo -n ' '; _otel_escape_args --env "$kvp"; done
     for file in $(\dpkg -L opentelemetry-shell | \grep opentelemetry_shell); do \echo -n ' '; _otel_escape_args --mount type=bind,source="$file",target="$file",readonly; done
