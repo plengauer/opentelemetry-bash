@@ -29,9 +29,14 @@ _otel_inject_docker_args() {
   # extract image
   local image="$1"
 \echo "DEBUG DEBUG DEBUG found image $image ($command)" >&2
+\echo "DEBUG DEBUG DEBUG 0" >&2
 \docker run --rm --entrypoint cat "$image" /etc/os-release >&2
+\echo "DEBUG DEBUG DEBUG 1" >&2
 \docker run --rm --entrypoint cat "$image" /etc/os-release | \grep -qE '^NAME=' >&2
+\echo "DEBUG DEBUG DEBUG 2" >&2
 \docker run --rm --entrypoint cat "$image" /etc/os-release | \grep -qE '^NAME=' | \grep -qE 'Debian|Ubuntu|Alpine Linux' >&2
+\echo "DEBUG DEBUG DEBUG 3" >&2
+\docker run --rm --entrypoint cat "$image" /etc/os-release | \grep -qE 'Debian|Ubuntu|Alpine Linux' >&2
   if \[ "$command" = run ] && \docker run --rm --entrypoint cat "$image" /etc/os-release | \grep -qE '^NAME=' | \grep -qE 'Debian|Ubuntu|Alpine Linux'; then
 \echo "DEBUG DEBUG DEBUG injecting" >&2
     for kvp in $(\printenv | \grep '^OTEL_' | \cut -d = -f 1); do \echo -n ' '; _otel_escape_args --env "$kvp"; done
