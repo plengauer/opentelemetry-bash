@@ -31,7 +31,7 @@ child_process.exec = function(command, options, callback) {
     callback = options;
     options = {};
   }
-  if (command.includes('/')) command = 'otel_observe ' + command;
+  if (command.trim().startsWith('/') || command.trim().startsWith('.')) command = 'otel_observe ' + command;
   options = options ?? {};
   options.env = options.env ?? { ... process.env };
   options.env['OTEL_SHELL_AUTO_INSTRUMENTATION_HINT'] = command + ' ';
