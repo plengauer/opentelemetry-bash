@@ -41,6 +41,9 @@ _otel_inject_docker_args() {
     # chown $(id -u):$(id -g) $_otel_remote_sdk_pipe
     # chmod 666 $_otel_remote_sdk_pipe
     \echo -n ' '; _otel_escape_args -c "
+id -u
+id -g
+ls -la $_otel_remote_sdk_pipe
 echo hello world > $_otel_remote_sdk_pipe
 . otel.sh
 $(\docker inspect "$image" | \jq -r '.[0].Config.Entrypoint[]' | _otel_line_join) "'"$@"' sh
