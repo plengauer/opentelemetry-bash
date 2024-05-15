@@ -43,7 +43,7 @@ id -u
 id -g
 ls -la $_otel_remote_sdk_pipe
 echo hello world > $_otel_remote_sdk_pipe
-chown $(id -u):$(id -g) $_otel_remote_sdk_pipe
+sudo chown $(id -u):$(id -g) $_otel_remote_sdk_pipe
 chmod 666 $_otel_remote_sdk_pipe
 ls -la $_otel_remote_sdk_pipe
 echo hello world > $_otel_remote_sdk_pipe
