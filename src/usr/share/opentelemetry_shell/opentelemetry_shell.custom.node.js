@@ -20,9 +20,9 @@ child_process.spawn = function(command, args, options) {
     options.env['OTEL_SHELL_COMMANDLINE_OVERRIDE'] = options.shell + ' -c ' + command + ' ' + args.join(' ');
     options.env['OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE'] = process.pid;
     options.env['OTEL_SHELL_AUTO_INJECTED'] = 'FALSE'
-    return _spawn(options.shell, [ '-c', '. otel.sh\n' + command + ' "$@"', options.shell ].concat(args ?? []), { ... options, shell: false });
+    return _spawn(options.shell, [ '-c', 'printenv\n. otel.sh\n' + command + ' "$@"', options.shell ].concat(args ?? []), { ... options, shell: false });
   } else {
-    return _spawn('/bin/sh', [ '-c', '. otel.sh\n' + command + ' "$@"', 'node' ].concat(args ?? []), options);
+    return _spawn('/bin/sh', [ '-c', 'printenv\n. otel.sh\n' + command + ' "$@"', 'node' ].concat(args ?? []), options);
   }
 }
 
@@ -38,7 +38,7 @@ child_process.exec = function(command, options, callback) {
   options.env['OTEL_SHELL_COMMANDLINE_OVERRIDE'] = (options.shell ?? '/bin/sh') + ' -c ' + command;
   options.env['OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE'] = process.pid;
   options.env['OTEL_SHELL_AUTO_INJECTED'] = 'FALSE'
-  return _exec('. otel.sh\n' + command, options, callback);
+  return _exec('printenv\n. otel.sh\n' + command, options, callback);
 }
 
 /*
