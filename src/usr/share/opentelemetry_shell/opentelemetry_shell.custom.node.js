@@ -7,6 +7,7 @@ const _execFile = child_process.execFile;
 if (process.platform != 'linux') return;
 
 child_process.spawn = function(command, args, options) {
+  console.error('DEBUG ' + command);
   if (args && !options && !Array.isArray(args)) {
     options = args;
     args = [];
@@ -26,6 +27,7 @@ child_process.spawn = function(command, args, options) {
 }
 
 child_process.exec = function(command, options, callback) {
+  console.error('DEBUG ' + command);
   if (options && !callback && typeof options == 'function') {
     callback = options;
     options = {};
