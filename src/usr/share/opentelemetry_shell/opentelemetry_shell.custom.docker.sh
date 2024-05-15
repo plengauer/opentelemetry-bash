@@ -39,7 +39,7 @@ _otel_inject_docker_args() {
     \echo -n ' '; _otel_escape_arg "$1"; shift
     \echo -n ' '; _otel_escape_args -c "
 chown $(id -u):$(id -g) $_otel_remote_sdk_pipe
-chmod 666 /mnt/fifo
+chmod 666 $_otel_remote_sdk_pipe
 . otel.sh
 $(\docker inspect "$image" | \jq -r '.[0].Config.Entrypoint[]' | _otel_line_join) "'"$@"' sh
 #    \echo -n ' '; _otel_escape_args -c "$(\docker inspect "$image" | \jq -r '.[0].Config.Entrypoint[]' | _otel_line_join) "'"$@"' sh # this is temporary to fake injection, replace with line above to really inject
