@@ -302,6 +302,7 @@ _otel_record_exec() {
   if _otel_string_contains "$command" ';'; then local command="$(\printf '%s' "$command" | \cut -d ';' -f 1)"; fi
   if \[ -z "$command" ]; then return 0; fi
   if \[ "$(\printf '%s' "$command" | \sed 's/ [0-9]*>.*$//')" = "exec" ]; then return 0; fi
+  local command="$(\printf '%s' "$command" | \cut -d ' ' -f 2-)"
 
   local span_id="$(otel_span_start INTERNAL exec "$command")"
   otel_span_activate "$span_id"
@@ -310,7 +311,7 @@ _otel_record_exec() {
   otel_span_end "$span_id"
   _otel_sdk_communicate 'SPAN_AUTO_END'
 
-  _otel_escape_args builtin exec sh -xc "
+  _otel_escape_args builtin exec sh -c "
 export OTEL_SHELL_AUTO_INJECTED=TRUE
 export OTEL_SHELL_AUTO_INSTRUMENTATION_HINT=\"$command\"
 export OTEL_TRACEPARENT=\"$OTEL_TRACEPARENT\"
