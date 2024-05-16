@@ -32,7 +32,7 @@ _otel_inject_docker_args() {
     ######
     # TODO user setting is necessary to write to pipe, however, why doesnt chmod work?
     # \echo -n ' '; _otel_escape_args --user "$(id -u)"
-    \chmod 0666 "$_otel_remote_sdk_pipe"
+    \chmod 666 "$_otel_remote_sdk_pipe"
     ######
     for kvp in $(\printenv | \grep '^OTEL_' | \cut -d = -f 1); do \echo -n ' '; _otel_escape_args --env "$kvp"; done
     for file in $(\dpkg -L opentelemetry-shell | \grep -vE '^/.$' | \grep -vE '^/usr$' | \grep -vE '^/usr/bin$' | \grep -vE '^/usr/share$' | \grep -vE '^/opt/'); do \echo -n ' '; _otel_escape_args --mount type=bind,source="$file",target="$file",readonly; done
