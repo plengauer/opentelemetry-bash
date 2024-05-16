@@ -52,3 +52,4 @@ _otel_inject_docker() {
 }
 
 _otel_alias_prepend docker _otel_inject_docker
+_otel_alias_prepend podman _otel_inject_docker
