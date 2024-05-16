@@ -38,7 +38,7 @@ _otel_inject_docker_args() {
     \echo -n ' '; _otel_escape_args --user "$(id -u)" # TODO we shouldnt override the user, we should chmod the pipe, but for some reason it doesnt work \chmod 666 "$_otel_remote_sdk_pipe"
     \echo -n ' '; _otel_escape_args --entrypoint /bin/sh
     \echo -n ' '; _otel_escape_arg "$1"; shift
-    \echo -n ' '; _otel_escape_args -c ". otel.sh
+    \echo -n ' '; _otel_escape_args -xc ". otel.sh
 $(\docker inspect "$image" | \jq -r '.[0].Config.Entrypoint[]' | _otel_line_join) "'"$@"' sh
     if \[ "$#" = 0 ]; then \echo -n ' '; \docker inspect "$image" | \jq -r '.[0].Config.Cmd[]?' | _otel_escape_stdin; fi
   else
