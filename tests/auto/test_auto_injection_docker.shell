@@ -4,18 +4,18 @@ export OTEL_SHELL_EXPERIMENTAL_INJECT_CONTAINERS=TRUE
 . ./assert.sh
 . /usr/bin/opentelemetry_shell.sh
 
-sudo docker run debian:latest echo hello world 0
+assert_equals "hello world 0" "$(sudo docker run debian:latest echo hello world 0)"
 span="$(resolve_span '.name == "echo hello world 0"')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | \jq -r '.kind')"
 
-sudo docker run ubuntu:latest echo hello world 1
+assert_equals "hello world 1" "$(sudo docker run ubuntu:latest echo hello world 1)"
 span="$(resolve_span '.name == "echo hello world 1"')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | \jq -r '.kind')"
 
-sudo docker run python:latest python3 -c 'print("hello world 2")'
-span="$(resolve_span '.name | contains("hello world 2")')"
+assert_equals "hello world 2" "$(sudo docker run python:latest python3 -c 'print("hello world 2")')"
+span="$(resolve_span '.name | startsWith("python3 -c ")')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | \jq -r '.kind')"
 
-sudo docker run node:latest node -e 'console.log("hello world 3")'
-span="$(resolve_span '.name | contains("hello world 4")')"
+assert_equals "hello world 3" "$(sudo docker run node:latest node -e 'console.log("hello world 3")')"
+span="$(resolve_span '.name | startsWith("node -e ")')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | \jq -r '.kind')"
