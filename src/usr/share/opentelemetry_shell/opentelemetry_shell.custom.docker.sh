@@ -3,6 +3,7 @@
 _otel_inject_docker_args() {
   # docker command
   local executable="$1"
+  local executable="${executable#\\}"
   _otel_escape_arg "$1"; shift
   # skip arguments
   while \[ "$#" -gt 0 ] && _otel_string_starts_with "$1" -; do
