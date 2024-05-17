@@ -5,7 +5,7 @@ export OTEL_SHELL_EXPERIMENTAL_INJECT_CONTAINERS=TRUE
 . /usr/bin/opentelemetry_shell.sh
 
 for arg in $(_otel_inject_docker_args docker run ubuntu:latest echo hello world); do
-  printf '%s\n' "$arg"
+  \printf '%s\n' "$arg"
 done
 sudo docker run ubuntu:latest echo hello world
 
