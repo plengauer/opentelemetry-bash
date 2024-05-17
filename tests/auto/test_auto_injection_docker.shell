@@ -4,10 +4,18 @@ export OTEL_SHELL_EXPERIMENTAL_INJECT_CONTAINERS=TRUE
 . ./assert.sh
 . /usr/bin/opentelemetry_shell.sh
 
-for arg in $(_otel_inject_docker_args docker run ubuntu:latest echo hello world); do
-  \printf '%s\n' "$arg"
-done
-sudo docker run ubuntu:latest echo hello world
+sudo docker run debian:latest echo hello world 0
+span="$(resolve_span '.name == "echo hello world 0"')"
+assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | \jq -r '.kind')"
 
-span="$(resolve_span '.name == "echo hello world"')"
+sudo docker run ubuntu:latest echo hello world 1
+span="$(resolve_span '.name == "echo hello world 2"')"
+assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | \jq -r '.kind')"
+
+sudo docker run python:latest python3 -c 'print("hello world 3")'
+span="$(resolve_span '.name | contains("hello world 3")')"
+assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | \jq -r '.kind')"
+
+sudo docker run ruby:latest node -e 'console.log("hello world 2")'
+span="$(resolve_span '.name | contains("hello world 4")')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | \jq -r '.kind')"
