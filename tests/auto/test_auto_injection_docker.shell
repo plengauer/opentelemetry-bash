@@ -21,6 +21,6 @@ assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | \jq -r '.kind')"
 # span="$(resolve_span '.name | startswith("node -e ")')"
 # assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | \jq -r '.kind')"
 
-assert_equals "hello world 0" "$(sudo docker --entry-point echo run debian:latest hello world 4)"
+assert_equals "hello world 0" "$(sudo docker --entrypoint echo run debian:latest hello world 4)"
 span="$(resolve_span '.name == "echo hello world 4"')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | \jq -r '.kind')"
