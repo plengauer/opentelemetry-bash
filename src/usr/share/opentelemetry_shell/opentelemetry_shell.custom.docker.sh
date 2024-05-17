@@ -2,6 +2,7 @@
 
 _otel_inject_docker_args() {
   # docker command
+  local executable="$1"
   _otel_escape_arg "$1"; shift
   # skip arguments
   while \[ "$#" -gt 0 ] && _otel_string_starts_with "$1" -; do
@@ -36,11 +37,11 @@ _otel_inject_docker_args() {
     \echo -n ' '; _otel_escape_args --env OTEL_SHELL_AUTO_INJECTED=TRUE    
     \echo -n ' '; _otel_escape_args --entrypoint /bin/sh
     \echo -n ' '; _otel_escape_arg "$1"; shift
-    local entrypoint="$(\docker inspect "$image" | \jq -r '.[0].Config.Entrypoint[]?' | _otel_line_join)"
+    local entrypoint="$("$executable" inspect "$image" | \jq -r '.[0].Config.Entrypoint[]?' | _otel_line_join)"
     if [ "-z" "$entrypoint" ]; then local entrypoint="/bin/sh -c"; fi
     \echo -n ' '; _otel_escape_args -c ". otel.sh
 $entrypoint "'"$@"' sh
-    if \[ "$#" = 0 ]; then \echo -n ' '; \docker inspect "$image" | \jq -r '.[0].Config.Cmd[]?' | _otel_escape_stdin; fi
+    if \[ "$#" = 0 ]; then \echo -n ' '; "$executable" inspect "$image" | \jq -r '.[0].Config.Cmd[]?' | _otel_escape_stdin; fi
   else
     \echo -n ' '; _otel_escape_arg "$1"; shift
   fi
