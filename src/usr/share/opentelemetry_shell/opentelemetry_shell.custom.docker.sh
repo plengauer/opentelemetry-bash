@@ -36,9 +36,9 @@ _otel_inject_docker_args() {
     \echo -n ' '; _otel_escape_args --mount type=bind,source="$_otel_remote_sdk_pipe",target=/var/opentelemetry_shell"$_otel_remote_sdk_pipe"
     \echo -n ' '; _otel_escape_args --env OTEL_REMOTE_SDK_PIPE=/var/opentelemetry_shell"$_otel_remote_sdk_pipe"
     \echo -n ' '; _otel_escape_args --env OTEL_SHELL_AUTO_INJECTED=TRUE    
-    \echo -n ' '; _otel_escape_args --entrypoint /bin/sh    
+    \echo -n ' '; _otel_escape_args --entrypoint /bin/sh
     \echo -n ' '; _otel_escape_arg "$1"; shift
-    \echo -n ' '; _otel_escape_args -c '"$@"' sh # inject here
+    \echo -n ' '; _otel_escape_args -c '. otel.sh; "$@"' sh # inject here
     \echo -n ' '; "$executable" inspect "$image" | \jq -r '.[0].Config.Entrypoint[]?' | _otel_escape_stdin
     if \[ "$#" = 0 ]; then \echo -n ' '; "$executable" inspect "$image" | \jq -r '.[0].Config.Cmd[]?' | _otel_escape_stdin; fi
   else
