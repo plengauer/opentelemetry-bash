@@ -29,7 +29,7 @@ _otel_inject_docker_args() {
   # extract image
   local image="$1"
   if \[ "$OTEL_SHELL_EXPERIMENTAL_INJECT_CONTAINERS" = TRUE ] && \[ "$command" = run ] && \docker run --rm --entrypoint cat "$image" /etc/os-release | \grep -E '^NAME=' | \grep -qE 'Debian|Ubuntu|Alpine Linux'; then
-    for file in $(\dpkg -L opentelemetry-shell | \grep -vE '^/usr/bin/'); do \echo -n ' '; _otel_escape_args --mount type=bind,source="$file",target="$file",readonly; done
+    for file in $(\dpkg -L opentelemetry-shell | \grep -E '^/usr/bin/'); do \echo -n ' '; _otel_escape_args --mount type=bind,source="$file",target="$file",readonly; done
     \echo -n ' '; _otel_escape_args --mount type=bind,source=/usr/share/opentelemetry_shell,target=/usr/share/opentelemetry_shell
     for kvp in $(\printenv | \grep '^OTEL_' | \cut -d = -f 1); do \echo -n ' '; _otel_escape_args --env "$kvp"; done
     \echo -n ' '; _otel_escape_args --mount type=bind,source="$_otel_remote_sdk_pipe",target=/var/opentelemetry_shell"$_otel_remote_sdk_pipe"
