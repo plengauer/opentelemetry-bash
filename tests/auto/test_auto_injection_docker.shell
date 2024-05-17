@@ -4,7 +4,7 @@ export OTEL_SHELL_EXPERIMENTAL_INJECT_CONTAINERS=TRUE
 . ./assert.sh
 . /usr/bin/opentelemetry_shell.sh
 
-sudo docker run echo hello world
+sudo docker run ubuntu:latest echo hello world
 
 span="$(resolve_span '.name == "echo hello world"')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | \jq -r '.kind')"
