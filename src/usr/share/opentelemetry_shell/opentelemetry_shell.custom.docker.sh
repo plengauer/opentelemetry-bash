@@ -35,7 +35,7 @@ _otel_inject_docker_args() {
     for kvp in $(\printenv | \grep '^OTEL_' | \cut -d = -f 1); do \echo -n ' '; _otel_escape_args --env "$kvp"; done
     \echo -n ' '; _otel_escape_args --mount type=bind,source="$_otel_remote_sdk_pipe",target=/var/opentelemetry_shell"$_otel_remote_sdk_pipe"
     \echo -n ' '; _otel_escape_args --env OTEL_REMOTE_SDK_PIPE=/var/opentelemetry_shell"$_otel_remote_sdk_pipe"
-    \echo -n ' '; _otel_escape_args --mount type=bind,source="$pipes_dir",target=/tmp"
+    \echo -n ' '; _otel_escape_args --mount type=bind,source="$pipes_dir",target=/tmp
     \echo -n ' '; _otel_escape_args --env OTEL_SHELL_RESPONSE_PIPE_MOUNT="$pipes_dir";
     \echo -n ' '; _otel_escape_args --env OTEL_SHELL_AUTO_INJECTED=TRUE
     \echo -n ' '; _otel_escape_args --env OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$("$executable" inspect "$image" | \jq -r '.[0].Config.Entrypoint[]?')"
