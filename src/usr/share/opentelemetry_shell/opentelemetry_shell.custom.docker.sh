@@ -26,7 +26,7 @@ _otel_inject_docker_args() {
   done
   # extract image
   local image="$1"
-  if \[ "$OTEL_SHELL_EXPERIMENTAL_INJECT_CONTAINERS" != TRUE ] && \[ "$command" = run ] && \docker run --rm --entrypoint cat "$image" /etc/os-release | \grep -E '^NAME=' | \grep -qE 'Debian|Ubuntu|Alpine Linux'; then
+  if \[ "$OTEL_SHELL_EXPERIMENTAL_INJECT_CONTAINERS" = TRUE ] && \[ "$command" = run ] && \docker run --rm --entrypoint cat "$image" /etc/os-release | \grep -E '^NAME=' | \grep -qE 'Debian|Ubuntu|Alpine Linux'; then
     for kvp in $(\printenv | \grep '^OTEL_' | \cut -d = -f 1); do \echo -n ' '; _otel_escape_args --env "$kvp"; done
     for file in $(\dpkg -L opentelemetry-shell | \grep -vE '^/.$' | \grep -vE '^/usr$' | \grep -vE '^/usr/bin$' | \grep -vE '^/usr/share$' | \grep -vE '^/opt/'); do \echo -n ' '; _otel_escape_args --mount type=bind,source="$file",target="$file",readonly; done
     # \echo -n ' '; _otel_escape_args --mount type=bind,source=/tmp,target=/tmp # TODO use TMPDIR?, also this is a huge security risk!
