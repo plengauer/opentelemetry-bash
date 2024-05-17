@@ -21,6 +21,7 @@ _otel_inject_docker_args() {
   while \[ "$#" -gt 0 ] && _otel_string_starts_with "$1" -; do
     \echo -n ' '; _otel_escape_arg "$1"
     if ! _otel_string_contains "$1" = && ! _otel_string_starts_with "$2" -; then
+      if \[ "$1" == --entrypoint ]; then local entrypoint_override="$2"; fi
       shift
       \echo -n ' '; _otel_escape_arg "$1"
     fi
@@ -43,7 +44,7 @@ _otel_inject_docker_args() {
     \echo -n ' '; _otel_escape_arg "$1"; shift
     \echo -n ' '; _otel_escape_args -c '. otel.sh
 eval "$(_otel_escape_args "$@")"' sh
-    \echo -n ' '; "$executable" inspect "$image" | \jq -r '.[0].Config.Entrypoint[]?' | _otel_escape_stdin
+    \echo -n ' '; if \[ -n "$entrypoint_override" ]; then \echo "$entrypoint_override" | _otel_line_split; else "$executable" inspect "$image" | \jq -r '.[0].Config.Entrypoint[]?'; fi | _otel_escape_stdin
     if \[ "$#" = 0 ]; then \echo -n ' '; "$executable" inspect "$image" | \jq -r '.[0].Config.Cmd[]?' | _otel_escape_stdin; fi
   else
     \echo -n ' '; _otel_escape_arg "$1"; shift
