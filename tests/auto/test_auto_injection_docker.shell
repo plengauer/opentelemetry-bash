@@ -1,0 +1,9 @@
+if ! type docker; then exit 0; fi
+
+. ./assert.sh
+. /usr/bin/opentelemetry_shell.sh
+
+sudo docker run echo hello world
+
+span="$(resolve_span '.name == "echo hello world"')"
+assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | \jq -r '.kind')"
