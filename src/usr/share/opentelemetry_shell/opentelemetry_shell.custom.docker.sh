@@ -29,7 +29,8 @@ _otel_inject_docker_args() {
   done
   # extract image
   local image="$1"
-  if \[ "$OTEL_SHELL_EXPERIMENTAL_INJECT_CONTAINERS" = TRUE ] && \[ "$command" = run ] && \docker run --rm --entrypoint cat "$image" /etc/os-release | \grep -E '^NAME=' | \grep -qE 'Debian|Ubuntu|Alpine Linux'; then
+  if \[ "$command" = run ] && \[ "$OTEL_SHELL_EXPERIMENTAL_INJECT_CONTAINERS" = TRUE ] && \docker run --rm --entrypoint cat "$image" /etc/os-release | \grep -E '^NAME=' | \grep -qE 'Debian|Ubuntu|Alpine Linux'; then
+    \echo -n ' '; _otel_escape_args --env OTEL_TRACEPARENT="$OTEL_TRACEPARENT"
     local pipes_dir="$(\mktemp -u)_opentelemetry_shell_$$.docker/tmp"; \mkdir -p "$pipes_dir"
     for file in $(\dpkg -L opentelemetry-shell | \grep -E '^/usr/bin/'); do \echo -n ' '; _otel_escape_args --mount type=bind,source="$file",target="$file",readonly; done
     \echo -n ' '; _otel_escape_args --mount type=bind,source=/usr/share/opentelemetry_shell,target=/usr/share/opentelemetry_shell
@@ -46,6 +47,9 @@ _otel_inject_docker_args() {
 eval "$(_otel_escape_args "$@")"' sh
     \echo -n ' '; if \[ -n "$entrypoint_override" ]; then \echo "$entrypoint_override" | _otel_line_split; else "$executable" inspect "$image" | \jq -r '.[0].Config.Entrypoint[]?'; fi | _otel_escape_stdin
     if \[ "$#" = 0 ]; then \echo -n ' '; "$executable" inspect "$image" | \jq -r '.[0].Config.Cmd[]?' | _otel_escape_stdin; fi
+  elif \[ "$command" = run ]; then
+    \echo -n ' '; _otel_escape_args --env OTEL_TRACEPARENT="$OTEL_TRACEPARENT"
+    \echo -n ' '; _otel_escape_arg "$1"; shift
   else
     \echo -n ' '; _otel_escape_arg "$1"; shift
   fi
