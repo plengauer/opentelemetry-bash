@@ -1,4 +1,5 @@
 set -e
+if [ "$GITHUB_JOB" != observe ]; then echo "Job name must be 'observe'!" >&2; exit 1; fi 
 
 github() {
   url="$GITHUB_API_URL"/"$1"?per_page=100
