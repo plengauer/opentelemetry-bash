@@ -29,7 +29,7 @@ _otel_inject_docker_args() {
   done
   # extract image
   local image="$1"
-  if \[ "$command" = run ] && \[ "$OTEL_SHELL_EXPERIMENTAL_INJECT_CONTAINERS" = TRUE ] && \docker run --rm --entrypoint cat "$image" /etc/os-release | \grep -E '^NAME=' | \grep -qE 'Debian|Ubuntu|Alpine Linux'; then
+  if \[ "$command" = run ] && \[ "$OTEL_SHELL_EXPERIMENTAL_INJECT_CONTAINERS" = TRUE ] && "$executable" run --rm --entrypoint cat "$image" /etc/os-release | \grep -E '^NAME=' | \grep -qE 'Debian|Ubuntu|Alpine Linux'; then
     \echo -n ' '; _otel_escape_args --env OTEL_TRACEPARENT="$OTEL_TRACEPARENT"
     local pipes_dir="$(\mktemp -u)_opentelemetry_shell_$$.docker/tmp"; \mkdir -p "$pipes_dir"
     for file in $(\dpkg -L opentelemetry-shell | \grep -E '^/usr/bin/'); do \echo -n ' '; _otel_escape_args --mount type=bind,source="$file",target="$file",readonly; done
