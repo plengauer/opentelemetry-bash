@@ -441,6 +441,14 @@ _otel_log_record() {
   _otel_sdk_communicate "LOG_RECORD" "$traceparent" "$line"
 }
 
+_otel_escape_stdin() {
+  local first=1
+  while IFS= read -r line; do
+    if \[ "$first" = 1 ]; then local first=0; else \echo -n " "; fi
+    _otel_escape_arg "$line"
+  done
+}
+
 _otel_escape_args() {
   # for arg in "$@"; do \echo "$arg"; done | _otel_escape_in # this may seem correct, but it doesnt handle linefeeds in arguments correctly
   local first=1
