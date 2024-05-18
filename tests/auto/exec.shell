@@ -1,5 +1,5 @@
 \echo "DEBUG exec.shell" >&2
-\printenv >&2
+\printenv | \grep OTEL_SHELL >&2
 set -e
 . /usr/bin/opentelemetry_shell.sh
 if [ "$OPEN_FD" = TRUE ]; then exec 3>&2; fi
