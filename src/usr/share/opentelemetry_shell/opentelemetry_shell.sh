@@ -87,9 +87,9 @@ _otel_auto_instrument() {
   if \[ "$_otel_shell" = bash ]; then \alias source='_otel_instrument_and_source "$#" "$@" source'; fi
   if \[ "$OTEL_SHELL_CONSERVATIVE_EXEC" = TRUE ]; then
     if \[ -n "$LINENO" ]; then
-      \alias exec='_otel_inject_and_exec_by_location '$_otel_source_file_resolver' '$_otel_source_line_resolver'; exec'
+      \alias exec='_otel_inject_and_exec_by_location '$_otel_source_file_resolver' '$_otel_source_line_resolver'; builtin exec'
     else
-      \alias exec='_otel_record_exec; exec'
+      \alias exec='_otel_record_exec; builtin exec'
     fi
   else
     \alias exec='_otel_inject_and_exec_directly exec'
@@ -310,7 +310,7 @@ _otel_inject_and_exec_directly() { # this function assumes there is no fd fucker
     \echo "DEBUG DEBUG DEBUG $OTEL_SHELL_CONSERVATIVE_EXEC" >&2
     \xargs -0 sh -c '. otelapi.sh; _otel_escape_args "$@"' sh < /proc/$$/cmdline >&2
     export OTEL_SHELL_CONSERVATIVE_EXEC=TRUE
-    \eval '"exec"' "$(\xargs -0 sh -c '. otelapi.sh; _otel_escape_args "$@"' sh < /proc/$$/cmdline)"
+    \eval 'builtin exec' "$(\xargs -0 sh -c '. otelapi.sh; _otel_escape_args "$@"' sh < /proc/$$/cmdline)"
   fi
   
   local span_id="$(otel_span_start INTERNAL "$@")"
@@ -351,7 +351,7 @@ _otel_exec_by_location() {
   export OTEL_SHELL_AUTO_INJECTED=TRUE
   export OTEL_SHELL_COMMANDLINE_OVERRIDE="exec"
   export OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$PPID"
-  \eval '"exec"' "$(_otel_escape_args sh -c '. otel.sh
+  \eval 'builtin exec' "$(_otel_escape_args sh -c '. otel.sh
 eval "$(_otel_escape_args "$@")"' sh)" "$command"
 }
 
