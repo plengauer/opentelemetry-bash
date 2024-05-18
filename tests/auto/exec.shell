@@ -1,6 +1,6 @@
 set -e
 . /usr/bin/opentelemetry_shell.sh
-exec 3>&2
+if [ "OPEN_FD" = TRUE ]; then exec 3>&2; fi
 if [  "$1" = "source" ]; then
   echo 'exec echo hello world sourced' > source_exec.shell
   . source_exec.shell
