@@ -320,7 +320,7 @@ _otel_inject_and_exec_directly() { # this function assumes there is no fd fucker
   
   export OTEL_TRACEPARENT="$otel_traceparent"
   export OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$(_otel_dollar_star "$@")"
-  export OTLE_SHELL_AUTO_INJECTED=TRUE
+  export OTEL_SHELL_AUTO_INJECTED=TRUE
   shift
   \exec sh -c '. otel.sh
 eval "$(_otel_escape_args "$@")"' sh "$@"
@@ -344,7 +344,7 @@ _otel_exec_by_location() {
 
   export OTEL_TRACEPARENT="$otel_traceparent"
   export OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$command"
-  export OTLE_SHELL_AUTO_INJECTED=TRUE
+  export OTEL_SHELL_AUTO_INJECTED=TRUE
   \eval '"exec"' "$(_otel_escape_args sh -c '. otel.sh
 eval "$(_otel_escape_args "$@")"' sh)" "$command"
 }
