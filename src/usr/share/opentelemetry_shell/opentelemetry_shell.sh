@@ -87,12 +87,12 @@ _otel_auto_instrument() {
   if \[ "$_otel_shell" = bash ]; then \alias source='_otel_instrument_and_source "$#" "$@" source'; fi
   if \[ "$OTEL_SHELL_CONSERVATIVE_EXEC" = TRUE ]; then
     if \[ -n "$LINENO" ]; then
-      \alias exec='_otel_inject_and_record_exec_by_location '$_otel_source_file_resolver' '$_otel_source_line_resolver'; exec'
+      \alias exec='_otel_inject_and_exec_by_location '$_otel_source_file_resolver' '$_otel_source_line_resolver'; exec'
     else
       \alias exec='_otel_record_exec; exec'
     fi
   else
-    \alias exec='_otel_inject_and_record_exec_directly exec'
+    \alias exec='_otel_inject_and_exec_directly exec'
   fi
 
   # cache
@@ -326,7 +326,7 @@ _otel_inject_and_exec_directly() { # this function assumes there is no fd fucker
 eval "$(_otel_escape_args "$@")"' sh "$@"
 }
 
-_otel_record_exec_by_location() {
+_otel_exec_by_location() {
   local file="$1"
   local line="$2"
   if \[ -n "$file" ] && \[ -n "$line" ] && \[ -f "$file" ]; then local command="$(\cat "$file" | \sed -n "$line"p | \grep -F 'exec' | \sed 's/^.*exec /exec /')"; fi
