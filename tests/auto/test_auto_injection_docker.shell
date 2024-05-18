@@ -1,5 +1,4 @@
 if ! type docker; then exit 0; fi
-export OTEL_SHELL_EXPERIMENTAL_INJECT_CONTAINERS=TRUE
 
 . ./assert.sh
 . /usr/bin/opentelemetry_shell.sh
