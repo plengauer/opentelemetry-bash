@@ -307,7 +307,6 @@ _otel_instrument_and_source() {
 
 _otel_inject_and_exec_directly() { # this function assumes there is no fd fuckery
   if \[ "$#" = 1 ]; then
-    \echo "DEBUG DEBUG DEBUG $OTEL_SHELL_CONSERVATIVE_EXEC" >&2
     \xargs -0 sh -c '. otelapi.sh; _otel_escape_args "$@"' sh < /proc/$$/cmdline >&2
     export OTEL_SHELL_CONSERVATIVE_EXEC=TRUE
     \eval 'builtin exec' "$(\xargs -0 sh -c '. otelapi.sh; _otel_escape_args "$@"' sh < /proc/$$/cmdline)"
