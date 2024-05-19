@@ -89,6 +89,7 @@ _otel_auto_instrument() {
   if \[ "$_otel_shell_conservative_exec" = TRUE ]; then
     if \[ -n "$LINENO" ]; then
       \alias exec='_otel_inject_and_exec_by_location '$_otel_source_file_resolver' '$_otel_source_line_resolver'; builtin exec'
+      \alias exec='eval "$(_otel_inject_and_exec_by_location $_otel_source_file_resolver $_otel_source_line_resolver)"; builtin exec'
     else
       \alias exec='_otel_record_exec; builtin exec'
     fi
@@ -335,8 +336,7 @@ _otel_inject_and_exec_by_location() {
   local line="$2"
   if \[ -n "$file" ] && \[ -n "$line" ] && \[ -f "$file" ]; then local command="$(\cat "$file" | \sed -n "$line"p | \grep -F 'exec' | \sed 's/^.*exec /exec /')"; fi
   if _otel_string_contains "$command" ';'; then local command="$(\printf '%s' "$command" | \cut -d ';' -f 1)"; fi
-  if \[ -z "$command" ]; then return 0; fi
-  if \[ "$(\printf '%s' "$command" | \sed 's/ [0-9]*>.*$//')" = "exec" ]; then return 0; fi
+  if \[ -z "$command" ] || \[ "$(\printf '%s' "$command" | \sed 's/ [0-9]*>.*$//')" = "exec" ]; then return 0; fi
   local command="$(\printf '%s' "$command" | \cut -d ' ' -f 2-)"
 
   local span_id="$(otel_span_start INTERNAL exec)"
@@ -354,6 +354,31 @@ _otel_inject_and_exec_by_location() {
   \eval 'builtin exec' "$(_otel_escape_args sh -c '. otel.sh
 eval "$(_otel_escape_args "$@")"' sh)" "$command"
 }
+
+_otel_inject_and_exec_by_location() {
+  local file="$1"
+  local line="$2"
+  if \[ -n "$file" ] && \[ -n "$line" ] && \[ -f "$file" ]; then local command="$(\cat "$file" | \sed -n "$line"p | \grep -F 'exec' | \sed 's/^.*exec /exec /')"; fi
+  if _otel_string_contains "$command" ';'; then local command="$(\printf '%s' "$command" | \cut -d ';' -f 1)"; fi
+  if \[ -z "$command" ] || \[ "$(\printf '%s' "$command" | \sed 's/ [0-9]*>.*$//')" = "exec" ]; then return 0; fi
+  local command="$(\printf '%s' "$command" | \cut -d ' ' -f 2-)"
+
+  local span_id="$(otel_span_start INTERNAL exec)"
+  otel_span_activate "$span_id"
+  local otel_traceparent="$OTEL_TRACEPARENT"
+  otel_span_deactivate "$span_id"
+  otel_span_end "$span_id"
+  _otel_sdk_communicate 'SPAN_AUTO_END'
+
+  \echo export OTEL_TRACEPARENT="$otel_traceparent"
+  \echo export OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$command"
+  \echo export OTEL_SHELL_AUTO_INJECTED=TRUE
+  \echo export OTEL_SHELL_COMMANDLINE_OVERRIDE="$(_otel_command_self)"
+  \echo export OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$PPID"
+  _otel_escape_args builtin exec sh -c '. otel.sh
+'"$command" sh
+}
+
 
 _otel_record_exec() {
   local span_id="$(otel_span_start INTERNAL exec)"
