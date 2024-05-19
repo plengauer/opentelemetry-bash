@@ -6,7 +6,7 @@ FROM $image
 WORKDIR /tests
 
 RUN apt-get update
-RUN if [ "$update" = TRUE ] && apt-get dist-upgrade -y || true
+RUN [ "$update" = TRUE ] && apt-get dist-upgrade -y || true
 RUN type "$shell" || apt-get install -y "$shell"
 RUN apt-get install -y ./package.deb && rm ./package.deb
 
