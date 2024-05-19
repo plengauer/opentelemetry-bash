@@ -14,7 +14,7 @@ if \[ -n "$OTEL_SHELL_TRACES_ENABLE" ] || \[ -n "$OTEL_SHELL_METRICS_ENABLE" ] |
 fi
 
 # basic setup
-_otel_remote_sdk_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
+_otel_remote_sdk_pipe="${OTEL_REMOTE_SDK_PIPE:-$(\mktemp -u)_opentelemetry_shell_$$.pipe}"
 _otel_shell="$(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)"
 if \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = 0 ] || \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "$PPID" ] || \[ "$PPID" = 0 ] || \[ "$(\tr '\000-\037' ' ' < /proc/$PPID/cmdline)" = "$(\tr '\000-\037' ' ' < /proc/$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE/cmdline)" ]; then _otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"; fi
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE
@@ -23,22 +23,29 @@ unset OTEL_SHELL_COMMAND_TYPE_OVERRIDE
 unset OTEL_SHELL_SPAN_KIND_OVERRIDE
 
 otel_init() {
-  if \[ -e "/dev/stderr" ] && \[ -e "$(\readlink -f /dev/stderr)" ]; then local sdk_output=/dev/stderr; else local sdk_output=/dev/null; fi
-  local sdk_output="${OTEL_SHELL_SDK_OUTPUT_REDIRECT:-$sdk_output}"
-  \mkfifo "$_otel_remote_sdk_pipe"
-  _otel_package_version opentelemetry-shell > /dev/null # to build the cache outside a subshell
-  # several weird things going on in the next line, (1) using '((' fucks up the syntax highlighting in github while '( (' does not, and (2) &> causes weird buffering / late flushing behavior
-  if \env --help | \grep -q 'ignore-signal'; then local extra_env_flags='--ignore-signal=INT --ignore-signal=HUP'; fi
-  ( (\env $extra_env_flags otelsdk "shell" "$(_otel_package_version opentelemetry-shell)" < "$_otel_remote_sdk_pipe" 1> "$sdk_output" 2> "$sdk_output") &)
+  if \[ -p "$_otel_remote_sdk_pipe" ]; then
+    _otel_is_remote_sdk_mine=FALSE
+  else
+    if \[ -e "/dev/stderr" ] && \[ -e "$(\readlink -f /dev/stderr)" ]; then local sdk_output=/dev/stderr; else local sdk_output=/dev/null; fi
+    local sdk_output="${OTEL_SHELL_SDK_OUTPUT_REDIRECT:-$sdk_output}"
+    \mkfifo "$_otel_remote_sdk_pipe"
+    _otel_package_version opentelemetry-shell > /dev/null # to build the cache outside a subshell
+    # several weird things going on in the next line, (1) using '((' fucks up the syntax highlighting in github while '( (' does not, and (2) &> causes weird buffering / late flushing behavior
+    if \env --help | \grep -q 'ignore-signal'; then local extra_env_flags='--ignore-signal=INT --ignore-signal=HUP'; fi
+    ( (\env $extra_env_flags otelsdk "shell" "$(_otel_package_version opentelemetry-shell)" < "$_otel_remote_sdk_pipe" 1> "$sdk_output" 2> "$sdk_output") &)
+    _otel_is_remote_sdk_mine=TRUE
+  fi
   \exec 7> "$_otel_remote_sdk_pipe"
-  _otel_resource_attributes | while IFS= read -r kvp; do _otel_sdk_communicate "RESOURCE_ATTRIBUTE" "auto" "$kvp"; done
-  _otel_sdk_communicate "INIT"
+  if \[ "$_otel_is_remote_sdk_mine" = TRUE ]; then
+    _otel_resource_attributes | while IFS= read -r kvp; do _otel_sdk_communicate "RESOURCE_ATTRIBUTE" "auto" "$kvp"; done
+    _otel_sdk_communicate "INIT"
+  fi
 }
 
 otel_shutdown() {
-  _otel_sdk_communicate "SHUTDOWN"
+  if \[ "$_otel_is_remote_sdk_mine" = TRUE ]; then _otel_sdk_communicate "SHUTDOWN"; fi
   \exec 7>&-
-  \rm "$_otel_remote_sdk_pipe"
+  if \[ "$_otel_is_remote_sdk_mine" = TRUE ]; then \rm "$_otel_remote_sdk_pipe"; fi
 }
 
 _otel_sdk_communicate() {
@@ -123,7 +130,7 @@ _otel_resolve_package_version() {
 otel_span_current() {
   local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
   \mkfifo "$response_pipe"
-  _otel_sdk_communicate "SPAN_HANDLE" "$response_pipe" "$OTEL_TRACEPARENT"
+  _otel_sdk_communicate "SPAN_HANDLE" "$OTEL_SHELL_RESPONSE_PIPE_MOUNT/$response_pipe" "$OTEL_TRACEPARENT"
   \cat "$response_pipe"
   \rm "$response_pipe" &> /dev/null
 }
@@ -133,7 +140,7 @@ otel_span_start() {
   local name="$2"
   local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
   \mkfifo "$response_pipe"
-  _otel_sdk_communicate "SPAN_START" "$response_pipe" "$OTEL_TRACEPARENT" "$kind" "$name"
+  _otel_sdk_communicate "SPAN_START" "$OTEL_SHELL_RESPONSE_PIPE_MOUNT/$response_pipe" "$OTEL_TRACEPARENT" "$kind" "$name"
   \cat "$response_pipe"
   \rm "$response_pipe" &> /dev/null
 }
@@ -165,7 +172,7 @@ otel_span_traceparent() {
   local span_handle="$1"
   local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
   \mkfifo "$response_pipe"
-  _otel_sdk_communicate "SPAN_TRACEPARENT" "$response_pipe" "$span_handle"
+  _otel_sdk_communicate "SPAN_TRACEPARENT" "$OTEL_SHELL_RESPONSE_PIPE_MOUNT/$response_pipe" "$span_handle"
   \cat "$response_pipe"
   \rm "$response_pipe" &> /dev/null
 }
@@ -190,7 +197,7 @@ otel_event_create() {
   local event_name="$1"
   local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
   \mkfifo "$response_pipe"
-  _otel_sdk_communicate "EVENT_CREATE" "$response_pipe" "$event_name"
+  _otel_sdk_communicate "EVENT_CREATE" "$OTEL_SHELL_RESPONSE_PIPE_MOUNT/$response_pipe" "$event_name"
   \cat "$response_pipe"
   \rm "$response_pipe" &> /dev/null
 }
@@ -218,7 +225,7 @@ otel_metric_create() {
   local metric_name="$1"
   local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
   \mkfifo "$response_pipe"
-  _otel_sdk_communicate "METRIC_CREATE" "$response_pipe" "$metric_name"
+  _otel_sdk_communicate "METRIC_CREATE" "$OTEL_SHELL_RESPONSE_PIPE_MOUNT/$response_pipe" "$metric_name"
   \cat "$response_pipe"
   \rm "$response_pipe" &> /dev/null
 }
@@ -439,6 +446,14 @@ _otel_log_record() {
   shift
   local line="$(_otel_dollar_star "$@")"
   _otel_sdk_communicate "LOG_RECORD" "$traceparent" "$line"
+}
+
+_otel_escape_stdin() {
+  local first=1
+  while IFS= read -r line; do
+    if \[ "$first" = 1 ]; then local first=0; else \echo -n " "; fi
+    _otel_escape_arg "$line"
+  done
 }
 
 _otel_escape_args() {
