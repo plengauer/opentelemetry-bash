@@ -3,6 +3,8 @@ ARG update
 ARG shell
 
 FROM $image
+ARG shell
+ARG update
 WORKDIR /tests
 
 RUN apt-get update
