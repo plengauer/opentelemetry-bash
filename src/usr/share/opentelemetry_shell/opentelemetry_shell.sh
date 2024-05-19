@@ -309,7 +309,7 @@ _otel_instrument_and_source() {
 _otel_inject_and_exec_directly() { # this function assumes there is no fd fuckery
   if \[ "$#" = 1 ]; then
     export OTEL_SHELL_CONSERVATIVE_EXEC=TRUE
-    \eval builtin exec "$(\xargs -0 sh -c '. otelapi.sh; _otel_escape_args "$@"' sh < /proc/$$/cmdline)"
+    \eval '"exec"' "$(\xargs -0 sh -c '. otelapi.sh; _otel_escape_args "$@"' sh < /proc/$$/cmdline)"
   fi
   
   local span_id="$(otel_span_start INTERNAL "$@")"
@@ -349,7 +349,7 @@ _otel_inject_and_exec_by_location() {
   \printf '%s\n' "$(_otel_escape_args export OTEL_SHELL_AUTO_INJECTED=TRUE)"
   \printf '%s\n' "$(_otel_escape_args export OTEL_SHELL_COMMANDLINE_OVERRIDE="$(_otel_command_self)")"
   \printf '%s\n' "$(_otel_escape_args export OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$PPID")"
-  _otel_escape_args builtin exec sh -c '. otel.sh
+  \echo -n '"exec" '; _otel_escape_args sh -c '. otel.sh
 '"$command"; \echo -n ' "$0" "$@"'
 }
 
