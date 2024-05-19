@@ -46,6 +46,7 @@ jobs:
     strategy:
       matrix:
         os: ['debian:oldstable', 'debian:stable', 'debian:testing', 'debian:unstable', 'ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling', 'ubuntu:devel']
+        update: [FALSE, TRUE]
         shell: [sh, ash, dash, bash]
     steps:
       - uses: actions/checkout@v4
@@ -56,9 +57,10 @@ jobs:
       - run: sudo apt-get update
       - run: sudo apt-get remove -y containerd.io
       - run: sudo apt-get install -y docker.io runc
-      - run: bash -c "cd tests && bash run_tests_containerized.sh $OS $SHELL"
+      - run: bash -c "cd tests && bash run_tests_containerized.sh $OS $UPDATE $SHELL"
         env:
           OS: ${{ matrix.os }}
+          UPDATE: ${{ matrix.update }}
           SHELL: ${{ matrix.shell }}
 
   action:
