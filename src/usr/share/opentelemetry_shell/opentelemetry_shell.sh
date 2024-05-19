@@ -88,7 +88,7 @@ _otel_auto_instrument() {
   if \[ "$_otel_shell" = bash ]; then \alias source='_otel_instrument_and_source "$#" "$@" source'; fi
   if \[ "$_otel_shell_conservative_exec" = TRUE ]; then
     if \[ -n "$LINENO" ]; then
-      \alias exec='eval "$(_otel_inject_and_exec_by_location '$_otel_source_file_resolver' '$_otel_source_line_resolver')"; builtin exec'
+      \alias exec='\echo "$0" "$@"; set -x; eval "$(_otel_inject_and_exec_by_location '$_otel_source_file_resolver' '$_otel_source_line_resolver')"; builtin exec'
     else
       \alias exec='_otel_record_exec; builtin exec'
     fi
@@ -307,7 +307,6 @@ _otel_instrument_and_source() {
 }
 
 _otel_inject_and_exec_directly() { # this function assumes there is no fd fuckery
-  set -x
   if \[ "$#" = 1 ]; then
     export OTEL_SHELL_CONSERVATIVE_EXEC=TRUE
     \eval 'builtin exec' "$(\xargs -0 sh -c '. otelapi.sh; _otel_escape_args "$@"' sh < /proc/$$/cmdline)"
@@ -331,7 +330,6 @@ eval "$(_otel_escape_args "$@")"' sh "$@"
 }
 
 _otel_inject_and_exec_by_location() {
-  set -x
   local file="$1"
   local line="$2"
   if \[ -n "$file" ] && \[ -n "$line" ] && \[ -f "$file" ]; then local command="$(\cat "$file" | \sed -n "$line"p | \grep -F 'exec' | \sed 's/^.*exec /exec /')"; fi
@@ -352,7 +350,7 @@ _otel_inject_and_exec_by_location() {
   \printf '%s\n' "$(_otel_escape_args export OTEL_SHELL_COMMANDLINE_OVERRIDE="$(_otel_command_self)")"
   \printf '%s\n' "$(_otel_escape_args export OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$PPID")"
   _otel_escape_args builtin exec sh -c '. otel.sh
-'"$command" sh; \echo -n '"$@"'
+'"$command"; \echo -n '"$0" "$@"'
 }
 
 
