@@ -11,6 +11,7 @@ if \[ "$_otel_shell_injected" = "TRUE" ]; then
 fi
 _otel_shell_injected=TRUE
 
+_otel_shell_conservative_exec="$OTEL_SHELL_CONSERVATIVE_EXEC"
 unset OTEL_SHELL_CONSERVATIVE_EXEC
 
 \. /usr/share/opentelemetry_shell/opentelemetry_shell_api.sh
@@ -58,7 +59,7 @@ _otel_auto_instrument() {
   ## (1) using the hint - will not work when scripts are changing or called the same but very fast!
   ## (2) using the resolved hint - will not work when new executables are added onto the system or their shebang changes or new bash.rc aliases are added
   ## (3) using the filtered list of commands - will work in every case but slowest
-  local cache_key="$({ _otel_list_path_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_hint "$hint" | \sort -u; \alias; \echo "$OTEL_SHELL_CONSERVATIVE_EXEC" "$OTEL_SHELL_EXPERIMENTAL_INSTRUMENT_MINIMALLY"; } | \md5sum | \cut -d ' ' -f 1)"
+  local cache_key="$({ _otel_list_path_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_hint "$hint" | \sort -u; \alias; \echo "$_otel_shell_conservative_exec" "$OTEL_SHELL_EXPERIMENTAL_INSTRUMENT_MINIMALLY"; } | \md5sum | \cut -d ' ' -f 1)"
   local cache_file="$(\mktemp -u | \rev | \cut -d / -f 2- | \rev)/opentelemetry_shell_$(_otel_package_version opentelemetry-shell)"_"$_otel_shell"_instrumentation_cache_"$cache_key".aliases
   if \[ -f "$cache_file" ]; then
     \eval "$(\grep -vh '_otel_alias_prepend ' $(_otel_list_special_auto_instrument_files))"
@@ -85,7 +86,7 @@ _otel_auto_instrument() {
   # super special instrumentations
   \alias .='_otel_instrument_and_source "$#" "$@" .'
   if \[ "$_otel_shell" = bash ]; then \alias source='_otel_instrument_and_source "$#" "$@" source'; fi
-  if \[ "$OTEL_SHELL_CONSERVATIVE_EXEC" = TRUE ]; then
+  if \[ "$_otel_shell_conservative_exec" = TRUE ]; then
     if \[ -n "$LINENO" ]; then
       \alias exec='_otel_inject_and_exec_by_location '$_otel_source_file_resolver' '$_otel_source_line_resolver'; builtin exec'
     else
