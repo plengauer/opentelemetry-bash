@@ -11,6 +11,7 @@ child_process.spawn = function(command, args, options) {
     options = args;
     args = [];
   }
+  if (options && options.stdio && Array.isArray(options.stdio) && options.stdio.length > 3) return _spawn(command, args, options);
   options = options ?? {};
   options.env = options.env ?? { ... process.env };
   options.env['OTEL_SHELL_AUTO_INSTRUMENTATION_HINT'] = command + ' ';
@@ -31,6 +32,7 @@ child_process.exec = function(command, options, callback) {
     callback = options;
     options = {};
   }
+  if (options && options.stdio && Array.isArray(options.stdio) && options.stdio.length > 3) return _exec(command, options, callback);
   if (command.trim().startsWith('/') || command.trim().startsWith('.')) command = 'otel_observe ' + command;
   options = options ?? {};
   options.env = options.env ?? { ... process.env };

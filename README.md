@@ -179,6 +179,13 @@ otel_init
 otel_shutdown
 ```
 
+## Configuration
+You can configure the underlying SDK with the same variables as any other OpenTelemetry SDK as described <a href="https://opentelemetry.io/docs/languages/sdk-configuration/">here</a>. In addition to that, use the following environment variables to further configure behavior to this project:
+| Variable                                     | Values          | Default | Description                                                                                 |
+| -------------------------------------------- | --------------- | ------- | ------------------------------------------------------------------------------------------- |
+| OTEL_SHELL_EXPERIMENTAL_OBSERVE_PIPES        | `TRUE`, `FALSE` | `FALSE` | Count bytes and lines on stdin, stdout, and stderr and add counts as attributes on spans.   |
+| OTEL_SHELL_EXPERIMENTAL_INSTRUMENT_MINIMALLY | `TRUE`, `FALSE` | `FALSE` | Only create `SERVER`, `CONSUMER`, `CLIENT` and `PRODUCER` spans, mute all `INTERNAL` spans. |
+
 ## Traces
 The API described below is for manually creating and customizing spans. We recommend to do this only if the automatic instrumentation is not sufficient.
 
@@ -242,6 +249,11 @@ otel_metric_add "$metric_handle" 42
 
 ## Logs
 As of now, there is no way to manually record logs. Logs, i.e., lines that are written to stderr, are recorded automatically when using auto-instrumentation and when using `otel_observe` as described above.
+
+# Performance
+Every command executed in the context of an automatically instrumented script produces a small amount of constant overhead. This is usually not a problem, especially in traditional scripts where the heavy lifting is done within external processes and not in the script itself.
+
+When a script is instrumented for the first time, instrumenting will cause some additional overhead the first time. For subsequent invocations of the same script, an instrumentation cache is created. The cache will be invalidated if the script changes or additional executables are installed on the system and will be automatically rebuilt on the next invocation of the script.
 
 # Extension to Semantic Conventions
 This projects adheres to the <a href="https://opentelemetry.io/docs/specs/semconv">OpenTelemetry Semantic Conventions</a>, but it also defines a number of shell-specifc extensions.
