@@ -352,7 +352,7 @@ _otel_inject_and_exec_by_location() {
   \printf '%s\n' "$(_otel_escape_args export OTEL_SHELL_COMMANDLINE_OVERRIDE="$(_otel_command_self)")"
   \printf '%s\n' "$(_otel_escape_args export OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$PPID")"
   _otel_escape_args builtin exec sh -c '. otel.sh
-'"$command" sh '"$@"'
+'"$command" sh; \echo -n '"$@"'
 }
 
 
