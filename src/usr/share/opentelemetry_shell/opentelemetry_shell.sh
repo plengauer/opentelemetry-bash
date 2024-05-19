@@ -308,8 +308,8 @@ _otel_instrument_and_source() {
 }
 
 _otel_inject_and_exec_directly() { # this function assumes there is no fd fuckery
+  set -x
   if \[ "$#" = 1 ]; then
-    \xargs -0 sh -c '. otelapi.sh; _otel_escape_args "$@"' sh < /proc/$$/cmdline >&2
     export OTEL_SHELL_CONSERVATIVE_EXEC=TRUE
     \eval 'builtin exec' "$(\xargs -0 sh -c '. otelapi.sh; _otel_escape_args "$@"' sh < /proc/$$/cmdline)"
   fi
@@ -332,6 +332,7 @@ eval "$(_otel_escape_args "$@")"' sh "$@"
 }
 
 _otel_inject_and_exec_by_location() {
+  set -x
   local file="$1"
   local line="$2"
   if \[ -n "$file" ] && \[ -n "$line" ] && \[ -f "$file" ]; then local command="$(\cat "$file" | \sed -n "$line"p | \grep -F 'exec' | \sed 's/^.*exec /exec /')"; fi
