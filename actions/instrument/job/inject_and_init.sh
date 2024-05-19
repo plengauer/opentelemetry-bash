@@ -18,6 +18,8 @@ github_workflow() {
 }
 export -f github_workflow
 
+echo "$GITHUB_ACTION" > /tmp/opentelemetry_shell_action_name
+
 if [ -z "$GITHUB_ACTION_REPOSITORY" ]; then export GITHUB_ACTION_REPOSITORY="$GITHUB_REPOSITORY"; fi
 action_tag_name="$(echo "$GITHUB_ACTION_REF" | cut -sd @ -f 2-)"
 if [ -n "$action_tag_name" ]; then
