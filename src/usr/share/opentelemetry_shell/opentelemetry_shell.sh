@@ -11,6 +11,9 @@ if \[ "$_otel_shell_injected" = "TRUE" ]; then
 fi
 _otel_shell_injected=TRUE
 
+_otel_shell_conservative_exec="$OTEL_SHELL_CONSERVATIVE_EXEC"
+unset OTEL_SHELL_CONSERVATIVE_EXEC
+
 \. /usr/share/opentelemetry_shell/opentelemetry_shell_api.sh
 _otel_package_version opentelemetry-shell > /dev/null # to build the cache outside a subshell
 
@@ -56,7 +59,7 @@ _otel_auto_instrument() {
   ## (1) using the hint - will not work when scripts are changing or called the same but very fast!
   ## (2) using the resolved hint - will not work when new executables are added onto the system or their shebang changes or new bash.rc aliases are added
   ## (3) using the filtered list of commands - will work in every case but slowest
-  local cache_key="$({ _otel_list_path_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_hint "$hint" | \sort -u; \alias; \echo "$OTEL_SHELL_EXPERIMENTAL_INSTRUMENT_MINIMALLY"; } | \md5sum | \cut -d ' ' -f 1)"
+  local cache_key="$({ _otel_list_path_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_hint "$hint" | \sort -u; \alias; \echo "$_otel_shell_conservative_exec" "$OTEL_SHELL_EXPERIMENTAL_INSTRUMENT_MINIMALLY"; } | \md5sum | \cut -d ' ' -f 1)"
   local cache_file="$(\mktemp -u | \rev | \cut -d / -f 2- | \rev)/opentelemetry_shell_$(_otel_package_version opentelemetry-shell)"_"$_otel_shell"_instrumentation_cache_"$cache_key".aliases
   if \[ -f "$cache_file" ]; then
     \eval "$(\grep -vh '_otel_alias_prepend ' $(_otel_list_special_auto_instrument_files))"
@@ -83,7 +86,15 @@ _otel_auto_instrument() {
   # super special instrumentations
   \alias .='_otel_instrument_and_source "$#" "$@" .'
   if \[ "$_otel_shell" = bash ]; then \alias source='_otel_instrument_and_source "$#" "$@" source'; fi
-  \alias exec='_otel_record_exec '$_otel_source_file_resolver' '$_otel_source_line_resolver'; exec'
+  if \[ "$_otel_shell_conservative_exec" = TRUE ]; then
+    if \[ -n "$LINENO" ]; then
+      \alias exec='eval "$(_otel_inject_and_exec_by_location "'$_otel_source_file_resolver'" "'$_otel_source_line_resolver'")"; exec'
+    else
+      \alias exec='_otel_record_exec; exec'
+    fi
+  else
+    \alias exec='_otel_inject_and_exec_directly exec'
+  fi
 
   # cache
   \[ "$(\alias | \wc -l)" -gt 25 ] && \alias | \sed 's/^alias //' | { \[ -n "$hint" ] && \grep "$(_otel_resolve_instrumentation_hint "$hint" | \sed 's/[]\.^*[]/\\&/g' | \awk '$0="^"$0"="')" || \cat; } | \awk '{print "\\alias " $0 }'  > "$cache_file" || \true
@@ -295,18 +306,62 @@ _otel_instrument_and_source() {
   \eval "'$command' '$file' $(if \[ $# -gt $(($n + 2)) ]; then \seq $(($n + 2 + 1)) $#; else \seq 1 $n; fi | while read i; do \echo '"$'"$i"'"'; done | _otel_line_join)"
 }
 
-_otel_record_exec() {
+_otel_inject_and_exec_directly() { # this function assumes there is no fd fuckery
+  if \[ "$#" = 1 ]; then
+    export OTEL_SHELL_CONSERVATIVE_EXEC=TRUE
+    \eval '"exec"' "$(\xargs -0 sh -c '. otelapi.sh; _otel_escape_args "$@"' sh < /proc/$$/cmdline)"
+  fi
+  
+  local span_id="$(otel_span_start INTERNAL "$@")"
+  otel_span_activate "$span_id"
+  local otel_traceparent="$OTEL_TRACEPARENT"
+  otel_span_deactivate "$span_id"
+  otel_span_end "$span_id"
+  _otel_sdk_communicate 'SPAN_AUTO_END'
+  
+  export OTEL_TRACEPARENT="$otel_traceparent"
+  export OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$(_otel_dollar_star "$@")"
+  export OTEL_SHELL_AUTO_INJECTED=TRUE
+  export OTEL_SHELL_COMMANDLINE_OVERRIDE="$(_otel_command_self)"
+  export OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$PPID"
+  shift
+  \exec sh -c '. otel.sh
+eval "$(_otel_escape_args "$@")"' sh "$@"
+}
+
+_otel_inject_and_exec_by_location() {
   local file="$1"
   local line="$2"
   if \[ -n "$file" ] && \[ -n "$line" ] && \[ -f "$file" ]; then local command="$(\cat "$file" | \sed -n "$line"p | \grep -F 'exec' | \sed 's/^.*exec /exec /')"; fi
-  if \[ -n "$command" ] && \echo "$command" | \grep -q '^exec [0-9]>'; then return 0; fi
-  if \[ -z "$command" ]; then local command="exec"; fi
-  local span_id="$(otel_span_start INTERNAL "$command")"
-  if \[ "$(\printf '%s' "$command" | \sed 's/ \[0-9]*>.*$//')" != "exec" ]; then
-    otel_span_activate "$span_id"
-  fi
+  if _otel_string_contains "$command" ';'; then local command="$(\printf '%s' "$command" | \cut -d ';' -f 1)"; fi
+  if \[ -z "$command" ] || \[ "$(\printf '%s' "$command" | \sed 's/ [0-9]*>.*$//')" = "exec" ]; then return 0; fi
+  local command="$(\printf '%s' "$command" | \cut -d ' ' -f 2-)"
+
+  local span_id="$(otel_span_start INTERNAL exec)"
+  otel_span_activate "$span_id"
+  local otel_traceparent="$OTEL_TRACEPARENT"
+  otel_span_deactivate "$span_id"
   otel_span_end "$span_id"
   _otel_sdk_communicate 'SPAN_AUTO_END'
+
+  \printf '%s\n' "$(_otel_escape_args export OTEL_TRACEPARENT="$otel_traceparent")"
+  \printf '%s\n' "$(_otel_escape_args export OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$command")"
+  \printf '%s\n' "$(_otel_escape_args export OTEL_SHELL_AUTO_INJECTED=TRUE)"
+  \printf '%s\n' "$(_otel_escape_args export OTEL_SHELL_COMMANDLINE_OVERRIDE="$(_otel_command_self)")"
+  \printf '%s\n' "$(_otel_escape_args export OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$PPID")"
+  \echo -n '"exec" '; _otel_escape_args sh -c '. otel.sh
+'"$command"; \echo -n ' "$0" "$@"'
+}
+
+
+_otel_record_exec() {
+  local span_id="$(otel_span_start INTERNAL exec)"
+  otel_span_activate "$span_id"
+  local otel_traceparent="$OTEL_TRACEPARENT"
+  otel_span_deactivate "$span_id"
+  otel_span_end "$span_id"
+  _otel_sdk_communicate 'SPAN_AUTO_END'
+  export OTEL_TRACEPARENT="$otel_traceparent"
 }
 
 _otel_start_script() {

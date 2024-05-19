@@ -1,11 +1,21 @@
 . ./assert.sh
 
-bash auto/exec.shell
+bash auto/exec.shell hello world 0
 assert_equals 0 $?
-span="$(resolve_span '.name == "bash auto/exec.shell"')"
-assert_equals "SpanKind.SERVER" $(\echo "$span" | jq -r '.kind')
-resolve_span '.name == "exec echo hello world"'
+span="$(resolve_span '.name == "echo hello world 0"')"
+assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
 
-bash auto/exec.shell source
+SOURCE=TRUE bash auto/exec.shell hello world 1
 assert_equals 0 $?
-span="$(resolve_span '.name == "exec echo hello world sourced"')"
+span="$(resolve_span '.name == "echo hello world 1"')"
+assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
+
+OPEN_FD=TRUE bash auto/exec.shell hello world 2
+assert_equals 0 $?
+span="$(resolve_span '.name == "echo hello world 2"')"
+assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
+
+SOURCE=TRUE OPEN_FD=TRUE bash auto/exec.shell hello world 3
+assert_equals 0 $?
+span="$(resolve_span '.name == "echo hello world 3"')"
+assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
