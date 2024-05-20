@@ -87,6 +87,9 @@ jobs:
         with:
           name: package.deb
       - uses: actions/hello-world-docker-action@main # check if docker action works
+      - uses: actions/first-interaction@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
 
   performance-prepare:
     runs-on: ubuntu-latest
