@@ -23,3 +23,15 @@ assert_equals "hello world 3" "$(sudo docker run node:latest node -e 'console.lo
 assert_equals "hello world 4" "$(sudo docker run --entrypoint echo debian:latest hello world 4)"
 span="$(resolve_span '.name == "echo hello world 4"')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | \jq -r '.kind')"
+
+sudo docker image ls
+assert_equals 0 "$?"
+
+sudo docker container ls
+assert_equals 0 "$?"
+
+sudo docker ps --format '{{.Names}}'
+assert_equals 0 "$?"
+
+sudo docker image inspect --format='{{json .Id}}' ubuntu:latest
+assert_equals 0 "$?"
