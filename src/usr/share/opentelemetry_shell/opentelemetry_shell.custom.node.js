@@ -29,7 +29,7 @@ function otel_spawn(command, args, options, original) {
   if (command.includes('/')) {
     if (_execSync("which " + command) == command, options.shell && typeof options.shell == 'string' ? { shell: options.shell } : {}) {
       command = command.substring(command.lastIndexOf('/') + 1);
-    } else
+    } else {
       command = 'otel_observe ' + command;
     }
   }
@@ -61,7 +61,7 @@ function otel_exec(command, options, callback, original) {
   if (command.trim().startsWith('/') || command.trim().startsWith('.')) {
     if (_execSync(options.shell ?? '/bin/sh' + " -c 'which \"$1\"' sh " + command) == command) {
       command = command.substring(command.lastIndexOf('/') + 1);
-    } else
+    } else {
       command = 'otel_observe ' + command;
     }
   }
