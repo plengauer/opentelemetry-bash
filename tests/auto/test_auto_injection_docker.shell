@@ -24,15 +24,6 @@ assert_equals "hello world 4" "$(sudo docker run --entrypoint echo debian:latest
 span="$(resolve_span '.name == "echo hello world 4"')"
 assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | \jq -r '.kind')"
 
-# from https://github.com/actions/first-interaction/blob/main/Dockerfile (added because it was hanging forever)
-dockerfile="$(mktemp)"
-echo 'FROM node:20.10-buster-slim' >> "$dockerfile"
-echo 'ENTRYPOINT ["node", "-e", "console.log(\"hello world 4\")"]' >> "$dockerfile"
-env -i sudo docker build -t docker_test_0 -f "$dockerfile" .
-assert_equals 0 "$?"
-assert_equals "hello world 4" "$(sudo docker run --rm=true docker_test_0)"
-assert_equals 0 "$?"
-
 sudo docker image ls
 assert_equals 0 "$?"
 
@@ -43,4 +34,13 @@ sudo docker ps --format '{{.Names}}'
 assert_equals 0 "$?"
 
 sudo docker image inspect --format='{{json .Id}}' ubuntu:latest
+assert_equals 0 "$?"
+
+# from https://github.com/actions/first-interaction/blob/main/Dockerfile (added because it was hanging forever)
+dockerfile="$(mktemp)"
+echo 'FROM node:20.10-buster-slim' >> "$dockerfile"
+echo 'ENTRYPOINT ["node", "-e", "console.log(\"hello world 4\")"]' >> "$dockerfile"
+env -i sudo docker build -t docker_test_0 -f "$dockerfile" .
+assert_equals 0 "$?"
+assert_equals "hello world 4" "$(sudo docker run --rm=true docker_test_0)"
 assert_equals 0 "$?"
