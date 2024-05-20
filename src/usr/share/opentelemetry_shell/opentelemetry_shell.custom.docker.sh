@@ -17,6 +17,11 @@ _otel_inject_docker_args() {
   # extract and skip command
   local command="$1"
   \echo -n ' '; _otel_escape_arg "$1"; shift
+  # early abort
+  if \[ "$command" != run ]; then
+    while \[ "$#" -gt 0 ]; do \echo -n ' '; _otel_escape_arg "$1"; shift; done
+    return 0
+  fi
   # skip more arguments
   while \[ "$#" -gt 0 ] && _otel_string_starts_with "$1" -; do
     \echo -n ' '; _otel_escape_arg "$1"
@@ -29,7 +34,7 @@ _otel_inject_docker_args() {
   done
   # extract image
   local image="$1"
-  if \[ "$command" = run ] && "$executable" run --rm --entrypoint cat "$image" /etc/os-release | \grep -E '^NAME=' | \grep -qE 'Debian|Ubuntu|Alpine Linux'; then
+  if "$executable" run --rm --entrypoint cat "$image" /etc/os-release | \grep -E '^NAME=' | \grep -qE 'Debian|Ubuntu|Alpine Linux'; then
     \echo -n ' '; _otel_escape_args --env OTEL_TRACEPARENT="$OTEL_TRACEPARENT"
     local pipes_dir="$(\mktemp -u)_opentelemetry_shell_$$.docker/tmp"; \mkdir -p "$pipes_dir"
     for file in $(\dpkg -L opentelemetry-shell | \grep -E '^/usr/bin/'); do \echo -n ' '; _otel_escape_args --mount type=bind,source="$file",target="$file",readonly; done
@@ -47,10 +52,8 @@ _otel_inject_docker_args() {
 eval "$(_otel_escape_args "$@")"' sh
     \echo -n ' '; if \[ -n "$entrypoint_override" ]; then \echo "$entrypoint_override" | _otel_line_split; else "$executable" inspect "$image" | \jq -r '.[0].Config.Entrypoint[]?'; fi | _otel_escape_stdin
     if \[ "$#" = 0 ]; then \echo -n ' '; "$executable" inspect "$image" | \jq -r '.[0].Config.Cmd[]?' | _otel_escape_stdin; fi
-  elif \[ "$command" = run ]; then
-    \echo -n ' '; _otel_escape_args --env OTEL_TRACEPARENT="$OTEL_TRACEPARENT"
-    \echo -n ' '; _otel_escape_arg "$1"; shift
   else
+    \echo -n ' '; _otel_escape_args --env OTEL_TRACEPARENT="$OTEL_TRACEPARENT"
     \echo -n ' '; _otel_escape_arg "$1"; shift
   fi
   # just skip the rest
