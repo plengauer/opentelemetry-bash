@@ -5,6 +5,7 @@
 _otel_inject_git_arguments() {
   local IFS=' 
 '
+  local executable="$1"
   _otel_escape_arg "$1"; shift
   local inject=1
   if \[ "$inject" = 1 ]; then
@@ -19,7 +20,7 @@ _otel_inject_git_arguments() {
   fi
   if \[ "$inject" = 1 ]; then
     \echo -n ' '; _otel_escape_args sh -c '. otel.sh
-eval "$(_otel_escape_args "$@")"' sh
+eval "$(_otel_escape_args "$@")"' "$executable"
   fi
   while \[ "$#" -gt 0 ]; do \echo -n ' '; _otel_escape_arg "$1"; shift; done
 }
