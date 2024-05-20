@@ -72,7 +72,7 @@ if [ -z "$OTEL_SERVICE_NAME" ]; then
 fi
 
 root4job_end() {
-  if [ "$(github_workflow jobs | jq -r ".jobs[] | select(.name == \"$GITHUB_JOB\") | select(.run_attempt == $GITHUB_RUN_ATTEMPT) | .steps[] | select(.status == \"completed\") | select(.conclusion == \"failure\") | .name" | wc -l)" -gt 0 ]; then
+  if [ -f /tmp/opentelemetry_shell.github.error ] || [ "$(github_workflow jobs | jq -r ".jobs[] | select(.name == \"$GITHUB_JOB\") | select(.run_attempt == $GITHUB_RUN_ATTEMPT) | .steps[] | select(.status == \"completed\") | select(.conclusion == \"failure\") | .name" | wc -l)" -gt 0 ]; then
     otel_span_error "$span_handle"
   fi
   otel_span_end "$span_handle"
@@ -82,6 +82,7 @@ root4job_end() {
 export -f root4job_end
 
 root4job() {
+  rm /tmp/opentelemetry_shell.github.error 2> /dev/null
   traceparent_file="$1"
   . otelapi.sh
   otel_init
