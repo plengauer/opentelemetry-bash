@@ -30,8 +30,10 @@ echo 'FROM node:20.10-buster-slim' > "$dockerfile"
 echo 'COPY . .' > "$dockerfile"
 echo 'RUN npm install --production' > "$dockerfile"
 echo 'ENTRYPOINT ["node", "/lib/main.js"]' > "$dockerfile"
-sudo docker build -t docker_test_0 -f ./Dockerfile .
+sudo docker build -t docker_test_0 -f "$dockerfile" .
+assert_equals 0 "$?"
 sudo docker run --rm -d docker_test_0
+assert_equals 0 "$?"
 
 sudo docker image ls
 assert_equals 0 "$?"
