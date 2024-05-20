@@ -87,11 +87,11 @@ jobs:
         with:
           name: package.deb
       - uses: actions/hello-world-docker-action@main # check if docker action works
-#      - uses: actions/first-interaction@v1
-#        with:
-#          repo-token: ${{ secrets.GITHUB_TOKEN }}
-#          issue-message: "Hello, thanks for adding an issue for the first time!"
-#          pr-message: "Hello, thanks for contributing for the first time!"
+      - uses: actions/first-interaction@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-message: "Hello, thanks for adding an issue for the first time!"
+          pr-message: "Hello, thanks for contributing for the first time!"
 
   performance-prepare:
     runs-on: ubuntu-latest
