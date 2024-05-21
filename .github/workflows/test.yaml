@@ -46,7 +46,7 @@ jobs:
     strategy:
       matrix:
         os: ['debian:oldstable', 'debian:stable', 'debian:testing', 'debian:unstable', 'ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling', 'ubuntu:devel']
-        update: [FALSE, TRUE]
+        update: ['FALSE', 'TRUE']
         shell: [sh, ash, dash, bash, 'busybox sh']
     steps:
       - uses: actions/checkout@v4
@@ -87,6 +87,11 @@ jobs:
         with:
           name: package.deb
       - uses: actions/hello-world-docker-action@main # check if docker action works
+      - uses: actions/first-interaction@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-message: "Hello, thanks for adding an issue for the first time!"
+          pr-message: "Hello, thanks for contributing for the first time!"
 
   performance-prepare:
     runs-on: ubuntu-latest
@@ -94,7 +99,7 @@ jobs:
       matrix: ${{ steps.dynamic-matrix.outputs.matrix }}
     steps:
       - run: |
-          { echo '~local'; curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases | jq -r .[].tag_name; } | jq -nR '{"include": [inputs | select(length > 0) | {tag_name: .}]}' | tr -d '\n' | xargs -0 -I {} echo 'matrix={}' >> "$GITHUB_OUTPUT"
+          { echo '~local'; curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases | jq -r .[].tag_name | head --lines=10; } | jq -nR '{"include": [inputs | select(length > 0) | {tag_name: .}]}' | tr -d '\n' | xargs -0 -I {} echo 'matrix={}' >> "$GITHUB_OUTPUT"
         id: dynamic-matrix
   
   performance:

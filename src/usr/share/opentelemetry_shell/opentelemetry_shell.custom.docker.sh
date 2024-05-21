@@ -34,14 +34,14 @@ _otel_inject_docker_args() {
   done
   # extract image
   local image="$1"
-  if "$executable" run --rm --entrypoint cat "$image" /etc/os-release | \grep -E '^NAME=' | \grep -qE 'Debian|Ubuntu|Alpine Linux'; then
+  if "$executable" run --rm --entrypoint cat "$image" /etc/os-release | \grep -E '^NAME=' | \grep -qE 'Debian|Ubuntu|Alpine Linux' && ( ! \[ "$GITHUB_ACTIONS" = true ] || ! \printenv | \cut -d = -f 1 | \grep -E '^INPUT_' | \grep -q - ); then
     \echo -n ' '; _otel_escape_args --env OTEL_TRACEPARENT="$OTEL_TRACEPARENT"
-    local pipes_dir="$(\mktemp -u)_opentelemetry_shell_$$.docker/tmp"; \mkdir -p "$pipes_dir"
     for file in $(\dpkg -L opentelemetry-shell | \grep -E '^/usr/bin/'); do \echo -n ' '; _otel_escape_args --mount type=bind,source="$file",target="$file",readonly; done
     \echo -n ' '; _otel_escape_args --mount type=bind,source=/usr/share/opentelemetry_shell,target=/usr/share/opentelemetry_shell
     for kvp in $(\printenv | \grep '^OTEL_' | \cut -d = -f 1); do \echo -n ' '; _otel_escape_args --env "$kvp"; done
     \echo -n ' '; _otel_escape_args --mount type=bind,source="$_otel_remote_sdk_pipe",target=/var/opentelemetry_shell"$_otel_remote_sdk_pipe"
     \echo -n ' '; _otel_escape_args --env OTEL_REMOTE_SDK_PIPE=/var/opentelemetry_shell"$_otel_remote_sdk_pipe"
+    local pipes_dir="$(\mktemp -u)_opentelemetry_shell_$$.docker/tmp"; \mkdir -p "$pipes_dir"
     \echo -n ' '; _otel_escape_args --mount type=bind,source="$pipes_dir",target=/tmp
     \echo -n ' '; _otel_escape_args --env OTEL_SHELL_RESPONSE_PIPE_MOUNT="$pipes_dir/..";
     \echo -n ' '; _otel_escape_args --env OTEL_SHELL_AUTO_INJECTED=TRUE
@@ -61,7 +61,11 @@ eval "$(_otel_escape_args "$@")"' sh
 }
 
 _otel_inject_docker() {
-  \eval _otel_call "$(_otel_inject_docker_args "$@")"
+  # some docker commands have otel built-in and do not support console exporters
+  if _otel_string_contains "$OTEL_LOGS_EXPORTER" console; then local otel_logs_exporter="$(\echo "$OTEL_LOGS_EXPORTER" | \tr ',' '\n' | \grep -vE '^console$' | \head --lines=1)"; fi
+  if _otel_string_contains "$OTEL_METRICS_EXPORTER" console; then local otel_metrics_exporter="$(\echo "$OTEL_METRICS_EXPORTER" | \tr ',' '\n' | \grep -vE '^console$' | \head --lines=1)"; fi
+  if _otel_string_contains "$OTEL_TRACES_EXPORTER" console; then local otel_traces_exporter="$(\echo "$OTEL_TRACES_EXPORTER" | \tr ',' '\n' | \grep -vE '^console$' | \head --lines=1)"; fi
+  OTEL_LOGS_EXPORTER="$otel_logs_exporter" OTEL_METRICS_EXPORTER="$otel_metrics_exporter" OTEL_TRACES_EXPORTER="$otel_traces_exporter" \eval _otel_call "$(_otel_inject_docker_args "$@")"
 }
 
 _otel_alias_prepend docker _otel_inject_docker
