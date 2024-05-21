@@ -61,7 +61,7 @@ eval "$(_otel_escape_args "$@")"' sh
 }
 
 _otel_inject_docker() {
-  if _otel_string_contains "$OTEL_TRACES_EXPORTER" console; then local otel_traces_exporter="$(\echo "$OTEL_TRACES_EXPORTER" | \tr ',' '\n' | \grep -vE '^console$' | \head --lines=1)"
+  if _otel_string_contains "$OTEL_TRACES_EXPORTER" console; then local otel_traces_exporter="$(\echo "$OTEL_TRACES_EXPORTER" | \tr ',' '\n' | \grep -vE '^console$' | \head --lines=1)"; fi
   OTEL_TRACES_EXPORTER="${otel_traces_exporter:-$OTEL_TRACES_EXPORTER}" \eval _otel_call "$(_otel_inject_docker_args "$@")"
 }
 
