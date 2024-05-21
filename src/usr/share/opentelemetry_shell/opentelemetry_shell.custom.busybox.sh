@@ -12,7 +12,9 @@ _otel_inject_busybox() {
   export OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0"
   export OTEL_SHELL_AUTO_INJECTED=TRUE
   export OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$cmdline"
-  \eval _otel_call "$(_otel_escape_args "$command" sh -c '. otel.sh
+  \eval _otel_call "$(_otel_escape_args "$command" sh -c 'printenv | grep -E "^OTEL"
+. otel.sh
+alias
 eval "$(_otel_escape_args "$@")"' sh "$@")"
 }
 
