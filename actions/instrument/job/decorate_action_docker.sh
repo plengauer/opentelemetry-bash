@@ -9,7 +9,7 @@ span_handle="$(otel_span_start INTERNAL "$GITHUB_WORKFLOW / $GITHUB_JOB / $GITHU
 otel_span_activate "$span_handle"
 otel_observe _otel_inject_docker "$@"
 exit_code="$?"
-if [ "$exit_code" -ne 0 ]; then otel_span_error "$span_handle"; fi
+if [ "$exit_code" != 0 ]; then otel_span_error "$span_handle"; touch /tmp/opentelemetry_shell.github.error; fi
 otel_span_deactivate "$span_handle"
 otel_span_end "$span_handle"
 otel_shutdown
