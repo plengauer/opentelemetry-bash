@@ -139,7 +139,7 @@ otel_span_start() {
   local kind="$1"
   local name="$2"
   local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
-  \mkfifo "$response_pipe"
+  \mkfifo --mode=666 "$response_pipe"
   _otel_sdk_communicate "SPAN_START" "$OTEL_SHELL_RESPONSE_PIPE_MOUNT/$response_pipe" "$OTEL_TRACEPARENT" "$kind" "$name"
   \cat "$response_pipe"
   \rm "$response_pipe" &> /dev/null
