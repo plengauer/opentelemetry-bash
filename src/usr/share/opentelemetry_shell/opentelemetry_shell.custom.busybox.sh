@@ -1,7 +1,7 @@
 #!/bin/false
 
 _otel_inject_busybox() {
-  if \[ "$#" -gt 0 ] && ( _otel_string_starts_with "$1" - || \[ "$1" = find ]); then
+  if \[ "$#" -gt 0 ] && _otel_string_starts_with "$1" -; then
     _otel_call "$@"
     return "$?"
   fi
