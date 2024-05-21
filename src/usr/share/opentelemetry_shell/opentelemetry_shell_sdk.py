@@ -215,7 +215,7 @@ def handle(scope, version, command, arguments):
         span = opentelemetry.trace.get_tracer(scope, version).start_span(name, kind=SpanKind[kind.upper()], context=TraceContextTextMapPropagator().extract({'traceparent': traceparent}))
         spans[str(span_id)] = span
         with open(response_path, 'w') as response:
-          response.write(str(span_id))
+            response.write(str(span_id))
         auto_end = False
     elif command == 'SPAN_END':
         span_id = arguments
