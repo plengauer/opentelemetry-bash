@@ -45,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: ['debian:oldstable', 'debian:stable', 'debian:testing', 'debian:unstable', 'ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling', 'ubuntu:devel']
+        os: ['debian:oldstable', 'debian:stable', 'debian:testing', 'debian:unstable', 'debian:oldstable-slim', 'debian:stable-slim', 'debian:testing-slim', 'debian:unstable-slim', 'ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling', 'ubuntu:devel']
         update: [FALSE, TRUE]
         shell: [sh, ash, dash, bash]
     steps:
