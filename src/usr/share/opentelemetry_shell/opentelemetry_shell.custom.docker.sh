@@ -61,7 +61,8 @@ eval "$(_otel_escape_args "$@")"' sh
 }
 
 _otel_inject_docker() {
-  \eval _otel_call "$(_otel_inject_docker_args "$@")"
+  if _otel_string_contains "$OTEL_TRACES_EXPORTER" console; then local otel_traces_exporter="$(\echo "$OTEL_TRACES_EXPORTER" | \tr ',' '\n' | \grep -vE '^console$' | \head --lines=1)"
+  OTEL_TRACES_EXPORTER="${otel_traces_exporter:-$OTEL_TRACES_EXPORTER}" \eval _otel_call "$(_otel_inject_docker_args "$@")"
 }
 
 _otel_alias_prepend docker _otel_inject_docker
