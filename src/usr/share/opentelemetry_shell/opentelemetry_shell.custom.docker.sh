@@ -61,6 +61,7 @@ eval "$(_otel_escape_args "$@")"' sh
 }
 
 _otel_inject_docker() {
+  # some docker commands have otel built-in and do not support console exporters
   if _otel_string_contains "$OTEL_LOGS_EXPORTER" console; then local otel_logs_exporter="$(\echo "$OTEL_LOGS_EXPORTER" | \tr ',' '\n' | \grep -vE '^console$' | \head --lines=1)"; fi
   if _otel_string_contains "$OTEL_METRICS_EXPORTER" console; then local otel_metrics_exporter="$(\echo "$OTEL_METRICS_EXPORTER" | \tr ',' '\n' | \grep -vE '^console$' | \head --lines=1)"; fi
   if _otel_string_contains "$OTEL_TRACES_EXPORTER" console; then local otel_traces_exporter="$(\echo "$OTEL_TRACES_EXPORTER" | \tr ',' '\n' | \grep -vE '^console$' | \head --lines=1)"; fi
