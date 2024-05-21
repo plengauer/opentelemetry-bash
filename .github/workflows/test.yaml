@@ -46,7 +46,7 @@ jobs:
     strategy:
       matrix:
         os: ['debian:oldstable', 'debian:stable', 'debian:testing', 'debian:unstable', 'ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling', 'ubuntu:devel']
-        update: [FALSE, TRUE]
+        update: ['FALSE', 'TRUE']
         shell: [sh, ash, dash, bash]
     steps:
       - uses: actions/checkout@v4
