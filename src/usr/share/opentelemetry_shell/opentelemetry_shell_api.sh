@@ -129,7 +129,7 @@ _otel_resolve_package_version() {
 
 otel_span_current() {
   local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
-  \mkfifo "$response_pipe"
+  \mkfifo --mode=666 "$response_pipe"
   _otel_sdk_communicate "SPAN_HANDLE" "$OTEL_SHELL_RESPONSE_PIPE_MOUNT/$response_pipe" "$OTEL_TRACEPARENT"
   \cat "$response_pipe"
   \rm "$response_pipe" &> /dev/null
@@ -141,8 +141,6 @@ otel_span_start() {
   local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
   \mkfifo --mode=666 "$response_pipe"
   _otel_sdk_communicate "SPAN_START" "$OTEL_SHELL_RESPONSE_PIPE_MOUNT/$response_pipe" "$OTEL_TRACEPARENT" "$kind" "$name"
-  \ls -la /tmp >&2
-  \ls -la "$response_pipe" >&2
   \cat "$response_pipe"
   \rm "$response_pipe" &> /dev/null
 }
@@ -173,7 +171,7 @@ otel_span_attribute_typed() {
 otel_span_traceparent() {
   local span_handle="$1"
   local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
-  \mkfifo "$response_pipe"
+  \mkfifo --mode=666 "$response_pipe"
   _otel_sdk_communicate "SPAN_TRACEPARENT" "$OTEL_SHELL_RESPONSE_PIPE_MOUNT/$response_pipe" "$span_handle"
   \cat "$response_pipe"
   \rm "$response_pipe" &> /dev/null
@@ -198,7 +196,7 @@ otel_span_deactivate() {
 otel_event_create() {
   local event_name="$1"
   local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
-  \mkfifo "$response_pipe"
+  \mkfifo --mode=666 "$response_pipe"
   _otel_sdk_communicate "EVENT_CREATE" "$OTEL_SHELL_RESPONSE_PIPE_MOUNT/$response_pipe" "$event_name"
   \cat "$response_pipe"
   \rm "$response_pipe" &> /dev/null
@@ -226,7 +224,7 @@ otel_event_add() {
 otel_metric_create() {
   local metric_name="$1"
   local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
-  \mkfifo "$response_pipe"
+  \mkfifo --mode=666 "$response_pipe"
   _otel_sdk_communicate "METRIC_CREATE" "$OTEL_SHELL_RESPONSE_PIPE_MOUNT/$response_pipe" "$metric_name"
   \cat "$response_pipe"
   \rm "$response_pipe" &> /dev/null
