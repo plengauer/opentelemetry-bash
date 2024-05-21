@@ -5,9 +5,6 @@ if [ "$SHELL" = "" ]; then
   echo "need to specify shell to test"
   exit 1
 fi
-if [ "$SHELL" = busybox ]; then
-  export SHELL='busybox sh'
-fi
 
 (while sleep 60; do pstree -a -c -p -l; done) &
 for dir in unit sdk auto integration; do
