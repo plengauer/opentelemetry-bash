@@ -86,7 +86,7 @@ _otel_resource_attributes() {
      yash) \echo process.runtime.description="Yet Another Shell" ;;
      bosh) \echo process.runtime.description="Bourne Shell" ;;
      fish) \echo process.runtime.description="Friendly Interactive Shell" ;;
-     busybox) \echo process.runtime.description="BusyBox" ;;
+     'busybox sh') \echo process.runtime.description="BusyBox" ;;
   esac
   \echo -n process.runtime.version=; _otel_package_version "$process_executable_name"
   \echo process.runtime.options="$-"
