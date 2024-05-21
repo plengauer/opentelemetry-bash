@@ -48,3 +48,4 @@ for i in $(seq 1 $n); do \touch "$directory/$i"; done
 expected="$(\find "$directory" -execdir echo {} '+')"
 actual="$(find "$directory" -execdir echo {} '+')"
 assert_equals "$expected" "$actual"
+
