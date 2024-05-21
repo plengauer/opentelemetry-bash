@@ -9,7 +9,7 @@ if [ -n "$GITHUB_RUN_ID" ] && [ -f "$3" ] && [ "$(echo "$3" | rev | cut -d . -f 
 $script"
   echo "$script" > "$file"
   exit_code=0
-  "$(cat /proc/$$/exe | tr -d '\000')" "$@" || exit_code="?"
+  /proc/$$/exe "$@" || exit_code="?"
   if [ "$exit_code" != 0 ]; then touch /tmp/opentelemetry_shell.github.error; fi
   exit "$?"
 else
