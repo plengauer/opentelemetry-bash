@@ -141,6 +141,8 @@ otel_span_start() {
   local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
   \mkfifo --mode=666 "$response_pipe"
   _otel_sdk_communicate "SPAN_START" "$OTEL_SHELL_RESPONSE_PIPE_MOUNT/$response_pipe" "$OTEL_TRACEPARENT" "$kind" "$name"
+  \ls -la /tmp >&2
+  \ls -la "$response_pipe" >&2
   \cat "$response_pipe"
   \rm "$response_pipe" &> /dev/null
 }
