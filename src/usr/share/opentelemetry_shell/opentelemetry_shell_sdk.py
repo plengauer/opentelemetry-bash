@@ -210,16 +210,12 @@ def handle(scope, version, command, arguments):
         traceparent = tokens[1]
         kind = tokens[2]
         name = tokens[3]
-        try:
-          span_id = next_span_id
-          next_span_id = next_span_id + 1
-          span = opentelemetry.trace.get_tracer(scope, version).start_span(name, kind=SpanKind[kind.upper()], context=TraceContextTextMapPropagator().extract({'traceparent': traceparent}))
-          spans[str(span_id)] = span
-          with open(response_path, 'w') as response:
-              response.write(str(span_id))
-        except:
-          with open(response_path, 'w') as response:
-              response.write('DEBUG DEBUG DEBUG')            
+        span_id = next_span_id
+        next_span_id = next_span_id + 1
+        span = opentelemetry.trace.get_tracer(scope, version).start_span(name, kind=SpanKind[kind.upper()], context=TraceContextTextMapPropagator().extract({'traceparent': traceparent}))
+        spans[str(span_id)] = span
+        with open(response_path, 'w') as response:
+          response.write(str(span_id))
         auto_end = False
     elif command == 'SPAN_END':
         span_id = arguments
