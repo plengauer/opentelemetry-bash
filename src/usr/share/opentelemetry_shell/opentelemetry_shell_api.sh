@@ -310,7 +310,7 @@ otel_observe() {
   return "$exit_code"
 }
 
-if \[ "$_otel_shell" = dash ] && \false; then # TODO its only old dashes
+if \[ "$_otel_shell" = dash ]; then # TODO its only old dashes
   # old versions of dash dont set env vars properly
   # more specifically they do not make variables that are set in front of commands part of the child process env vars but only of the local execution environment
   _otel_call() {
