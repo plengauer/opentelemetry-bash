@@ -1,4 +1,4 @@
-requests=2.23.2
+requests==2.23.2
 opentelemetry-sdk==1.24.0
 opentelemetry-exporter-otlp-proto-http==1.24.0
 opentelemetry-resourcedetector-docker==0.4.0
