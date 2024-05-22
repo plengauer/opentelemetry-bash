@@ -13,13 +13,6 @@ if \[ -n "$OTEL_SHELL_TRACES_ENABLE" ] || \[ -n "$OTEL_SHELL_METRICS_ENABLE" ] |
   export OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=delta
 fi
 
-if \[ "$(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)" = busybox ]; then
-  \echo 'DEBUG DEBUG DEBUG' >&2
-  \cat /proc/$$/cmdline | \tr '\000' ' ' >&2
-  \echo '' >&2
-  \printenv | \grep '^OTEL_' >&2
-fi
-
 # basic setup
 _otel_remote_sdk_pipe="${OTEL_REMOTE_SDK_PIPE:-$(\mktemp -u)_opentelemetry_shell_$$.pipe}"
 _otel_shell="$(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)"
