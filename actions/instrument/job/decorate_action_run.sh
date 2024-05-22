@@ -11,7 +11,7 @@ $script"
   exit_code=0
   "$@" || exit_code="$?"
   if [ "$exit_code" != 0 ]; then touch /tmp/opentelemetry_shell.github.error; fi
-  exit "$?"
+  exit "$exit_code"
 else
   exec "$@"
 fi
