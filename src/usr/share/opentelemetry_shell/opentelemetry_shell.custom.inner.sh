@@ -34,7 +34,7 @@ _otel_inject_inner_command() {
   local cmdline="${cmdline#\\}"
   local command_string="$(_otel_inject_inner_command_args "$@")"
   unset OTEL_SHELL_INJECT_INNER_COMMAND_MORE_ARGS # unset it also here, not just in subshell above
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$cmdline" \eval _otel_call "$command_string"
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE \eval _otel_call "$command_string"
 }
 
 # _otel_alias_prepend env _otel_inject_inner_command # injecting via changing the command is dangerous because there are some options affecting signal handling
@@ -54,7 +54,7 @@ _otel_alias_prepend xargs _otel_inject_inner_command
 # sudo apt-get update => sudo sh -c '. /otel.sh; apt-get update' 'sudo'
 
 _otel_inject_sudo() {
-  OTEL_SHELL_INJECT_INNER_COMMAND_MORE_ARGS="--preserve-env=$(\printenv | \grep '^OTEL_' | \cut -d= -f1 | \sort -u | \tr '\n' ','),OTEL_SHELL_COMMANDLINE_OVERRIDE,OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE,OTEL_SHELL_AUTO_INJECTED,OTEL_SHELL_AUTO_INSTRUMENTATION_HINT" _otel_inject_inner_command "$@"
+  OTEL_SHELL_INJECT_INNER_COMMAND_MORE_ARGS="--preserve-env=$(\printenv | \grep '^OTEL_' | \cut -d= -f1 | \sort -u | \tr '\n' ','),OTEL_SHELL_COMMANDLINE_OVERRIDE,OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE,OTEL_SHELL_AUTO_INJECTED" _otel_inject_inner_command "$@"
 }
 
 _otel_alias_prepend sudo _otel_inject_sudo
