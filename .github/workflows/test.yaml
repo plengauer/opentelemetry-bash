@@ -47,7 +47,7 @@ jobs:
       matrix:
         os: ['debian:oldstable', 'debian:stable', 'debian:testing', 'debian:unstable', 'debian:oldstable-slim', 'debian:stable-slim', 'debian:testing-slim', 'debian:unstable-slim', 'ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling', 'ubuntu:devel']
         update: ['FALSE', 'TRUE']
-        shell: [sh, ash, dash, bash]
+        shell: [sh, ash, dash, bash, ksh]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
