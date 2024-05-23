@@ -26,16 +26,13 @@ case "$-" in
   *)   _otel_is_interactive=FALSE;;
 esac
 
-if \[ "$_otel_is_interactive" = "TRUE" ]; then
+if \[ "$_otel_is_interactive" = "TRUE" ] || \[ "$(\readlink -f "$(\which "$0")" | \rev | \cut -d / -f 1 | \rev)" = "$(\readlink -f "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)" ]; then
   _otel_shell_auto_instrumentation_hint=""
-elif \[ -n "$OTEL_SHELL_AUTO_INSTRUMENTATION_HINT" ]; then
-  _otel_shell_auto_instrumentation_hint="$OTEL_SHELL_AUTO_INSTRUMENTATION_HINT"
-elif \[ "$(\readlink -f "$(\which "$0")" | \rev | \cut -d / -f 1 | \rev)" = "$(\readlink -f "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)" ]; then
-  _otel_shell_auto_instrumentation_hint=""
-else
+elif \[ -f "$0" ]; then
   _otel_shell_auto_instrumentation_hint="$0"
+else
+  _otel_shell_auto_instrumentation_hint="$(_otel_command_self)"
 fi
-unset OTEL_SHELL_AUTO_INSTRUMENTATION_HINT
 
 if \[ "$_otel_shell" = "bash" ]; then
   _otel_source_file_resolver='${BASH_SOURCE[0]}'
@@ -154,7 +151,6 @@ _otel_filter_commands_by_hint() {
 
 _otel_resolve_instrumentation_hint() {
   local hint="$1"
-  if \[ -z "$hint" ]; then return 0; fi
   { \[ -f "$hint" ] && \[ "$(\readlink -f "$hint")" != "$(\readlink -f "/proc/$$/exe")" ] && \[ "$(\readlink -f "$hint")" != "/usr/share/opentelemetry_shell/opentelemetry_shell.sh" ] && \cat "$hint" || \echo "$hint"; } | \tr -s ' $=";(){}/\\!#~^'\' '\n' | _otel_filter_by_validity | \sort -u
 }
 
@@ -320,7 +316,6 @@ _otel_inject_and_exec_directly() { # this function assumes there is no fd fucker
   _otel_sdk_communicate 'SPAN_AUTO_END'
   
   export OTEL_TRACEPARENT="$otel_traceparent"
-  export OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$(_otel_dollar_star "$@")"
   export OTEL_SHELL_AUTO_INJECTED=TRUE
   export OTEL_SHELL_COMMANDLINE_OVERRIDE="$(_otel_command_self)"
   export OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$PPID"
@@ -345,7 +340,6 @@ _otel_inject_and_exec_by_location() {
   _otel_sdk_communicate 'SPAN_AUTO_END'
 
   \printf '%s\n' "$(_otel_escape_args export OTEL_TRACEPARENT="$otel_traceparent")"
-  \printf '%s\n' "$(_otel_escape_args export OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$command")"
   \printf '%s\n' "$(_otel_escape_args export OTEL_SHELL_AUTO_INJECTED=TRUE)"
   \printf '%s\n' "$(_otel_escape_args export OTEL_SHELL_COMMANDLINE_OVERRIDE="$(_otel_command_self)")"
   \printf '%s\n' "$(_otel_escape_args export OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$PPID")"

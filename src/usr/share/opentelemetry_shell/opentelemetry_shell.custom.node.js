@@ -25,7 +25,6 @@ function otel_spawn(command, args, options, original) {
   if (options && options.stdio && Array.isArray(options.stdio) && options.stdio.length > 3) return _spawn(command, args, options);
   options = options ?? {};
   options.env = options.env ?? { ... process.env };
-  options.env['OTEL_SHELL_AUTO_INSTRUMENTATION_HINT'] = command + ' ';
   if (command.includes('/')) {
     if (_execSync("which " + command) == command, options.shell && typeof options.shell == 'string' ? { shell: options.shell } : {}) {
       command = command.substring(command.lastIndexOf('/') + 1);
@@ -67,7 +66,6 @@ function otel_exec(command, options, callback, original) {
   }
   options = options ?? {};
   options.env = options.env ?? { ... process.env };
-  options.env['OTEL_SHELL_AUTO_INSTRUMENTATION_HINT'] = command + ' ';
   options.env['OTEL_SHELL_COMMANDLINE_OVERRIDE'] = (options.shell ?? '/bin/sh') + ' -c ' + command;
   options.env['OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE'] = process.pid;
   options.env['OTEL_SHELL_AUTO_INJECTED'] = 'FALSE'
@@ -78,7 +76,6 @@ function otel_exec(command, options, callback, original) {
 child_process.execFile = function(file, args, options, callback) {
   options = options ?? {};
   options.env = options.env ?? { ... process.env };
-  options.env['OTEL_SHELL_AUTO_INSTRUMENTATION_HINT'] = file;
   return _execFile('/bin/sh', [ '-c', '. otel.sh\n' + file + ' "$@"', 'node' ].concat(args ?? []), options, callback);
 }
 */
