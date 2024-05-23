@@ -423,3 +423,5 @@ _otel_auto_instrument "$_otel_shell_auto_instrumentation_hint"
 trap _otel_end_script EXIT
 
 _otel_start_script
+
+if \[ "$(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)" = busybox ]; then \alias; fi
