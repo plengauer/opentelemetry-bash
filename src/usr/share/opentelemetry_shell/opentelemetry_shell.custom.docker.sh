@@ -26,7 +26,7 @@ _otel_inject_docker_args() {
   while \[ "$#" -gt 0 ] && _otel_string_starts_with "$1" -; do
     \echo -n ' '; _otel_escape_arg "$1"
     if ! _otel_string_contains "$1" = && ! _otel_string_starts_with "$2" -; then
-      if \[ "$1" == --entrypoint ]; then local entrypoint_override="$2"; fi
+      if \[ "$1" = --entrypoint ]; then local entrypoint_override="$2"; fi
       shift
       \echo -n ' '; _otel_escape_arg "$1"
     fi
