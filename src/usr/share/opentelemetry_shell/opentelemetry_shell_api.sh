@@ -13,7 +13,7 @@ if \[ -n "$OTEL_SHELL_TRACES_ENABLE" ] || \[ -n "$OTEL_SHELL_METRICS_ENABLE" ] |
   export OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=delta
 fi
 
-if \[ "$_otel_shell" = busybox ]; then
+if \[ "$(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)" = busybox ]; then
   \echo "DEBUG DEBUG DEBUG" >&2
   \¢at /proc/$$/cmdline | \tr '\000' ' ' >&2
   \echo '' >&2
