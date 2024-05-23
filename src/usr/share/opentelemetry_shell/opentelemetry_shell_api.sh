@@ -15,7 +15,7 @@ fi
 
 if \[ "$(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)" = busybox ]; then
   \echo "DEBUG DEBUG DEBUG" >&2
-  \¢at /proc/$$/cmdline | \tr '\000' ' ' >&2
+  \cat /proc/$$/cmdline | \tr '\000' ' ' >&2
   \echo '' >&2
   \printenv | \grep -E '^OTEL_'>&2
 fi
