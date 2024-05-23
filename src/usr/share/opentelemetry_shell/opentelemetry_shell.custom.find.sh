@@ -17,7 +17,8 @@ _otel_inject_find_arguments() {
     \echo -n ' '
     if \[ "$in_exec" -eq 0 ] && (\[ "$arg" = "-exec" ] || \[ "$arg" = "-execdir" ]); then
       local in_exec=1
-      \echo -n "$arg $_otel_shell -c '. otel.sh
+      if \[ "$_otel_shell" = 'busybox sh' ]; then local extra_flags="-x"; fi 
+      \echo -n "$arg $_otel_shell $extra_flags -c '. otel.sh
 "
     elif \[ "$in_exec" -eq 1 ] && \[ "$arg" = "{}" ]; then
       \echo -n '"$@"'
