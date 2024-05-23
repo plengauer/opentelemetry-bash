@@ -316,7 +316,6 @@ _otel_inject_and_exec_directly() { # this function assumes there is no fd fucker
   _otel_sdk_communicate 'SPAN_AUTO_END'
   
   export OTEL_TRACEPARENT="$otel_traceparent"
-  export OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$(_otel_dollar_star "$@")"
   export OTEL_SHELL_AUTO_INJECTED=TRUE
   export OTEL_SHELL_COMMANDLINE_OVERRIDE="$(_otel_command_self)"
   export OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$PPID"
@@ -341,7 +340,6 @@ _otel_inject_and_exec_by_location() {
   _otel_sdk_communicate 'SPAN_AUTO_END'
 
   \printf '%s\n' "$(_otel_escape_args export OTEL_TRACEPARENT="$otel_traceparent")"
-  \printf '%s\n' "$(_otel_escape_args export OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$command")"
   \printf '%s\n' "$(_otel_escape_args export OTEL_SHELL_AUTO_INJECTED=TRUE)"
   \printf '%s\n' "$(_otel_escape_args export OTEL_SHELL_COMMANDLINE_OVERRIDE="$(_otel_command_self)")"
   \printf '%s\n' "$(_otel_escape_args export OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$PPID")"
