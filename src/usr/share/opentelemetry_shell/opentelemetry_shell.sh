@@ -78,12 +78,14 @@ _otel_auto_instrument() {
   ## avoid piping directly into the loops, then it will be considered a subshell and aliases won't take effect here
   for cmd in $(_otel_list_path_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_hint "$hint" | \sort -u); do _otel_deshebangify "$cmd" || \true; done
   for cmd in $(_otel_list_alias_commands | _otel_filter_commands_by_special | \sort -u); do _otel_dealiasify "$cmd" || \true; done
+if \[ "$_otel_shell" = 'busybox sh' ]; then
 \echo 'DEBUG 0' >&2; _otel_list_all_commands \grep echo >&2
 \echo 'DEBUG 1' >&2; _otel_list_all_commands | _otel_filter_commands_by_special | \grep echo >&2
 \echo 'DEBUG 2' >&2; _otel_list_all_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_instrumentation | \grep echo >&2
 \echo 'DEBUG 3' >&2; _otel_list_all_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_instrumentation | _otel_filter_commands_by_mode | \grep echo >&2
 \echo 'DEBUG 4' >&2; _otel_list_all_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_instrumentation | _otel_filter_commands_by_mode | _otel_filter_commands_by_hint "$hint" | \grep echo >&2
 \echo 'DEBUG 5' >&2; _otel_list_all_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_instrumentation | _otel_filter_commands_by_mode | _otel_filter_commands_by_hint "$hint" | \sort -u | \grep echo >&2
+fi
   for cmd in $(_otel_list_all_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_instrumentation | _otel_filter_commands_by_mode | _otel_filter_commands_by_hint "$hint" | \sort -u); do otel_instrument "$cmd"; done
 
   # super special instrumentations
