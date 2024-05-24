@@ -82,6 +82,9 @@ _otel_inject_docker() {
   for arg in "$@"; do
     \printf 'DEBUG %s\n' "$arg" >&2
   done
+  for arg in $(_otel_inject_docker_args "$@"); do
+    \printf 'DEBUG %s\n' "$arg" >&2
+  done
 
   # some docker commands have otel built-in and do not support console exporters
   if _otel_string_contains "$OTEL_LOGS_EXPORTER" console; then local otel_logs_exporter="$(\echo "$OTEL_LOGS_EXPORTER" | \tr ',' '\n' | \grep -vE '^console$' | \head --lines=1)"; fi
