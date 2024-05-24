@@ -11,7 +11,6 @@ _otel_is_boolean_docker_option() {
     -rm) return 0;;
     --rm) return 0;;
     --privileged) return 0;;
-    -v) return 0;;
     --version) return 0;;
     --help) return 0;;
     *) return 1;;
