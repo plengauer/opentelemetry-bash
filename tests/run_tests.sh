@@ -1,6 +1,6 @@
 #!/bin/bash
 set -ex
-export SHELL="$1"
+export SHELL="$*"
 if [ "$SHELL" = "" ]; then
   echo "need to specify shell to test"
   exit 1
