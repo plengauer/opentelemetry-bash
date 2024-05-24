@@ -151,9 +151,7 @@ _otel_list_builtin_commands() {
 _otel_filter_commands_by_hint() {
   local hint="$1"
   if \[ -n "$hint" ]; then
-    set -x
-    \grep -xF "$(_otel_resolve_instrumentation_hint "$hint")"
-    set +x
+    /bin/grep -xF "$(_otel_resolve_instrumentation_hint "$hint")"
   else
     \cat
   fi
