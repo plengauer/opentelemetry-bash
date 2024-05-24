@@ -68,9 +68,7 @@ span="$(resolve_span '.name == "cat file"')"
 assert_equals "SpanKind.INTERNAL" $(echo "$span" | jq -r '.kind')
 assert_equals "null" $(echo "$span" | jq -r '.parent_id')
 assert_equals "ERROR" $(echo "$span" | jq -r '.status.status_code')
-if [ "$SHELL" != 'busybox sh' ]; then
-  assert_equals "file" "$(echo "$span" | jq -r '.attributes."shell.command.type"')"
-fi
+assert_equals "file" "$(echo "$span" | jq -r '.attributes."shell.command.type"')"
 assert_equals "cat file" "$(echo "$span" | jq -r '.attributes."shell.command_line"')"
 assert_equals "cat" "$(echo "$span" | jq -r '.attributes."shell.command"')"
 assert_equals "cat" "$(echo "$span" | jq -r '.attributes."subprocess.executable.name"')"
