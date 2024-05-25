@@ -30,6 +30,9 @@ if [ "$SHELL" = "sh" ] || [ "$SHELL" = "ash" ] || [ "$SHELL" = "dash" ]; then
 elif [ "$SHELL" = "bash" ]; then
   assert_equals "bash" "$(echo "$span" | jq -r '.resource.attributes."process.runtime.name"')"
   assert_equals "Bourne Again Shell" "$(echo "$span" | jq -r '.resource.attributes."process.runtime.description"')"
+elif [ "$SHELL" = "busybox sh" ]; then
+  assert_equals "busybox sh" "$(echo "$span" | jq -r '.resource.attributes."process.runtime.name"')"
+  assert_equals "Busy Box" "$(echo "$span" | jq -r '.resource.attributes."process.runtime.description"')"
 else
   exit 1
 fi
