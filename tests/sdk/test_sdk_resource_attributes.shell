@@ -15,6 +15,8 @@ assert_not_equals "null" $(echo "$span" | jq -r '.resource.attributes."telemetry
 assert_not_equals "null" $(echo "$span" | jq -r '.resource.attributes."process.pid"')
 if  [ "$SHELL" = "sh" ] || [ "$SHELL" = "ash" ]; then
   assert_equals "dash" $(echo "$span" | jq -r '.resource.attributes."process.executable.name"')
+elif  [ "$SHELL" = "busybox sh" ]; then
+  assert_equals "busybox" $(echo "$span" | jq -r '.resource.attributes."process.executable.name"')
 else
   assert_equals "$SHELL" $(echo "$span" | jq -r '.resource.attributes."process.executable.name"')
 fi
