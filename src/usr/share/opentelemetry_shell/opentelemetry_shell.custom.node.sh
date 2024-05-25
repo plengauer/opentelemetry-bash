@@ -6,15 +6,15 @@ _otel_inject_node() {
   local command="$1"
   shift
   if \[ "$OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP" = TRUE ] && \type npm &> /dev/null; then
-    for local arg in "$@"; do
-      if \[ "-r" ] || \[ "--require" ]; then local skip=1; continue; fi
-      if \[ "$skip" = 1 ] || _otel_string_starts_with "$arg" -; then local skip=0; continue; fi
-      if _otel_string_ends_with "$arg" .js; then local script="$arg"; fi
+    for _otel_node_arg in "$@"; do
+      if \[ "$_otel_node_arg" = -r ] || \[ "$_otel_node_arg" = --require ]; then local skip=1; continue; fi
+      if \[ "$skip" = 1 ] || _otel_string_starts_with "$_otel_node_arg" -; then local skip=0; continue; fi
+      if _otel_string_ends_with "$_otel_node_arg" .js; then local script="$_otel_node_arg"; fi
       break
     done
-    if \[ -f "$arg" ]; then
+    if \[ -f "$script" ]; then
       local wd="$(pwd)"
-      local dir="$(\echo "$arg" | \rev | \cut -d / -f 2- | \rev)"
+      local dir="$(\echo "$script" | \rev | \cut -d / -f 2- | \rev)"
       cd "$dir"
       \cp package.json package.json.otel.backup 2> /dev/null || \true
       \cp /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.package.json package.json
