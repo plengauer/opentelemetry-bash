@@ -5,7 +5,7 @@ _otel_inject_node() {
   local cmdline="${cmdline#\\}"
   local command="$1"
   shift
-  if \[ "$OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP" = TRUE ] && \type npm &> /dev/null; then
+  if \[ "$OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP" = TRUE ] && \[ "$OTEL_TRACES_EXPORTER" = otlp ] && \type npm &> /dev/null; then
     \pwd >&2
     \echo "$@" >&2
     for _otel_node_arg in "$@"; do
