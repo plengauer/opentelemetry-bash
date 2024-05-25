@@ -6,8 +6,6 @@ _otel_inject_node() {
   local command="$1"
   shift
   if \[ "$OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP" = TRUE ] && \[ "$OTEL_TRACES_EXPORTER" = otlp ] && \type npm &> /dev/null; then
-    \pwd >&2
-    \echo "$@" >&2
     for _otel_node_arg in "$@"; do
       if \[ "$_otel_node_arg" = -r ] || \[ "$_otel_node_arg" = --require ]; then local skip=1; continue; fi
       if \[ "$skip" = 1 ] || _otel_string_starts_with "$_otel_node_arg" -; then local skip=0; continue; fi
