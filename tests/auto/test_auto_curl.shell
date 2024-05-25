@@ -6,6 +6,9 @@ $SHELL auto/curl.shell
 # the --no-progress-meter shouldnt be there, but sometimes printing it disrups capturing data
 span="$(resolve_span '.name == "curl --no-progress-meter http://www.google.com/"')"
 assert_equals "curl --no-progress-meter http://www.google.com/" "$(\echo "$span" | jq -r '.name')"
+assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
+
+span="$(resolve_span '.name == "GET"')"
 assert_equals "SpanKind.CLIENT" $(\echo "$span" | jq -r '.kind')
 assert_not_equals "null" $(\echo "$span" | jq -r '.parent_id')
 assert_equals "UNSET" $(\echo "$span" | jq -r '.status.status_code')
