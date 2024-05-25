@@ -13,7 +13,6 @@ const opentelemetry_resources_aws = require('@opentelemetry/resource-detector-aw
 const opentelemetry_resources_gcp = require('@opentelemetry/resource-detector-gcp');
 const opentelemetry_resources_alibaba_cloud = require('@opentelemetry/resource-detector-alibaba-cloud');
 
-// TODO select right exporter depending on OTEL_TRACES_EXPORTER
 let sdk = new opentelemetry_sdk.NodeSDK({
   spanProcessor: new opentelemetry_tracing.BatchSpanProcessor(new opentelemetry_traces_otlp.OTLPTraceExporter()),
   instrumentations: [ opentelemetry_auto_instrumentations.getNodeAutoInstrumentations() ],
