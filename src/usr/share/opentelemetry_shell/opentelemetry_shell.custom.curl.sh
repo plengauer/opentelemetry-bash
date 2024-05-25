@@ -80,7 +80,7 @@ _otel_pipe_curl_stderr() {
       local ip=""
       local port=""
     fi
-    if \[ -n "$span_handle"]; then
+    if \[ -n "$span_handle" ]; then
       if _otel_string_starts_with "$line" "< HTTP/"; then
         local response_code="$(\printf '%s' "$line" | \cut -d ' ' -f 3)"
         otel_span_attribute_typed "$span_handle" int http.response.status_code="$response_code"
