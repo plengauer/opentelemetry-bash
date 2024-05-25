@@ -9,6 +9,7 @@ _otel_inject_node() {
     \cp package.json package.json.otel.backup 2> /dev/null
     \cp /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.package.json package.json
     \npm install --package-lock=false
+    \find node_modules
     \cp package.json.otel.backup package.json 2> /dev/null
     local extra_flags="--require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.js"
   fi
