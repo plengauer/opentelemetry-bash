@@ -8,7 +8,7 @@ _otel_inject_node() {
   if \[ "$OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP" = TRUE ] && \type npm &> /dev/null; then
     \cp package.json package.json.otel.backup 2> /dev/null
     \cp /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.package.json package.json
-    \npm install --global --package-lock=false
+    \npm install --package-lock=false
     \cp package.json.otel.backup package.json 2> /dev/null
     local extra_flags="--require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.js"
   fi
