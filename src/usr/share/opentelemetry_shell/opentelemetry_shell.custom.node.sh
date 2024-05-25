@@ -5,7 +5,7 @@ _otel_inject_node() {
   local cmdline="${cmdline#\\}"
   local command="$1"
   shift
-  if \[ "$OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP" = TRUE ] && type npm 2> /dev/null; then
+  if \[ "$OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP" = TRUE ] && type npm &> /dev/null; then
     # \ln --symbolic /usr/share/opentelemetry_shell.custom.node.deep.package.json opentelemetry_shell.package.json
     \npm install --global --package /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.package.json
     local extra_flags="--require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.js"
