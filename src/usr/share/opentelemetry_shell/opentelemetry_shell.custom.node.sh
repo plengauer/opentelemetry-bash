@@ -20,7 +20,7 @@ _otel_inject_node() {
       while [ -n "$dir" ] && ! \[ -d "$dir"/node_modules ]; do
         local dir="$(\echo "$dir" | \rev | \cut -d / -f 2- | \rev)"
       done
-      if \[ -f "$dir"/node_modules ]; then
+      if \[ -d "$dir"/node_modules ]; then
         \cd "$dir"
         \cp package.json .package.json.otel.backup 2> /dev/null || \true
         \cp /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.package.json package.json
