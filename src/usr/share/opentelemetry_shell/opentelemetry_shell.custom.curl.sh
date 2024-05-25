@@ -109,4 +109,4 @@ _otel_pipe_curl_stderr() {
   if \[ -n "$span_handle" ]; then otel_span_end "$span_handle"; fi
 }
 
-_otel_alias_prepend curl 'OTEL_SHELL_SPAN_KIND_OVERRIDE=CLIENT _otel_propagate_curl'
+_otel_alias_prepend curl _otel_propagate_curl
