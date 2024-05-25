@@ -7,31 +7,10 @@ _otel_propagate_curl() {
     *m*) local job_control=1; \set +m;;
     *) local job_control=0;;
   esac
-  local command="$(_otel_dollar_star "$@")"
-  if _otel_string_contains "$command" " -v "; then local is_verbose=1; fi
-  local url=$(\printf '%s' "$command" | \awk '{for(i=1;i<=NF;i++) if ($i ~ /^http/) print $i}')
-  local span_handle="$(otel_span_current)"
-  otel_span_attribute_typed "$span_handle" string network.protocol.name=http
-  otel_span_attribute_typed "$span_handle" string network.transport=tcp
-  if _otel_string_contains "$command" " -X "; then
-    otel_span_attribute_typed "$span_handle" string http.request.method="$(\printf '%s' "$command" | \awk '{for(i=1;i<=NF;i++) if ($i == "-X") print $(i+1)}')"
-  elif _otel_string_contains "$command" " -d " || _otel_string_contains "$command" " --data "; then
-    otel_span_attribute_typed "$span_handle" string http.request.method=POST
-  elif _otel_string_contains "$command" " --head "; then
-    otel_span_attribute_typed "$span_handle" string http.request.method=HEAD
-  else
-    otel_span_attribute_typed "$span_handle" string http.request.method=GET
-  fi
-  otel_span_attribute_typed "$span_handle" string "server.address=$(\printf '%s' "$url" | \cut -d / -f 3 | \cut -d : -f 1)"
-  otel_span_attribute_typed "$span_handle" int "server.port=$(\printf '%s' "$url" | \cut -d / -f 3 | \cut -sd : -f 2)"
-  otel_span_attribute_typed "$span_handle" string "url.full=$url"
-  otel_span_attribute_typed "$span_handle" string "url.path=/$(\printf '%s' "$url" | \cut -d / -f 4- | \cut -d ? -f 1)"
-  otel_span_attribute_typed "$span_handle" string "url.query=$(\printf '%s' "$url" | \cut -sd ? -f 2-)"
-  otel_span_attribute_typed "$span_handle" string "url.scheme=$(\printf '%s' "$url" | \cut -sd : -f 1)"
-  otel_span_attribute_typed "$span_handle" string user_agent.original=curl
+  if _otel_string_contains "$(_otel_dollar_star "$@")" " -v "; then local is_verbose=1; fi
   local stderr_pipe="$(\mktemp -u)_opentelemetry_shell_$$.stderr.curl.pipe"
   \mkfifo "$stderr_pipe"
-  while read -r line; do _otel_pipe_curl_stderr_line "$is_verbose" "$span_handle" "$line" >&2; done < "$stderr_pipe" &
+  _otel_pipe_curl_stderr "$is_verbose" < "$stderr_pipe" >&2 &
   local stderr_pid="$!"
   local exit_code=0
   _otel_call "$@" -H "traceparent: $OTEL_TRACEPARENT" -v 2> "$stderr_pipe" || exit_code="$?"
@@ -66,34 +45,68 @@ _otel_propagate_curl() {
 # { [11811 bytes data]
 # * Connection #0 to host www.google.at left intact
 
-_otel_pipe_curl_stderr_line() {
+_otel_pipe_curl_stderr() {
   local is_verbose="$1"
-  local span_handle="$2"
-  local line="$3"  
-  if _otel_string_starts_with "$line" "* Connected to "; then
-    otel_span_attribute_typed "$span_handle" string network.peer.address="$(\printf '%s' "$line" | \cut -d ' ' -f 5 | \tr -d '()')"
-    otel_span_attribute_typed "$span_handle" int network.peer.port="$(\printf '%s' "$line" | \cut -d ' ' -f 7)"    
-  elif _otel_string_starts_with "$line" "< HTTP/"; then
-    otel_span_attribute_typed "$span_handle" int http.response.status_code="$(\printf '%s' "$line" | \cut -d ' ' -f 3)"
-  elif _otel_string_starts_with "$line" "} [" && _otel_string_contains "bytes data]"; then
-    otel_span_attribute_typed "$span_handle" int http.request.body.size="$(\printf '%s' "$line" | \cut -d ' ' -f 2 | \tr -d '[')"
-  elif _otel_string_starts_with "$line" "{ [" && _otel_string_contains "bytes data]"; then
-    otel_span_attribute_typed "$span_handle" int http.response.body.size="$(\printf '%s' "$line" | \cut -d ' ' -f 2 | \tr -d '[')"
-  elif _otel_string_starts_with "$(\printf '%s' "$line" | \tr '[:upper:]' '[:lower:]')" "> user-agent: "; then
-    otel_span_attribute_typed "$span_handle" string user_agent.original="$(\printf '%s' "$line" | \cut -d ' ' -f 3-)"
-  elif _otel_string_starts_with "$(\printf '%s' "$line" | \tr '[:upper:]' '[:lower:]')" "> content-length: "; then
-    otel_span_attribute_typed "$span_handle" int http.request.body.size="$(\printf '%s' "$line" | \cut -d ' ' -f 3)"
-  elif _otel_string_starts_with "$(\printf '%s' "$line" | \tr '[:upper:]' '[:lower:]')" "< content-length: "; then
-    otel_span_attribute_typed "$span_handle" int http.response.body.size="$(\printf '%s' "$line" | \cut -d ' ' -f 3)"
-  fi
-  if _otel_string_starts_with "$line" "> " && _otel_string_contains "$line" ": " && ! _otel_string_contains "$(\printf '%s' "$line" | \tr '[:upper:]' '[:lower:]')" "authorization: " && ! _otel_string_contains "$(\printf '%s' "$line" | \tr '[:upper:]' '[:lower:]')" "token: " && ! _otel_string_contains "$(\printf '%s' "$line" | \tr '[:upper:]' '[:lower:]')" "key: "; then
-    otel_span_attribute_typed "$span_handle" string[1] http.request.header."$(\printf '%s' "$line" | \cut -d ' ' -f 2 | \tr -d ':' | \tr '[:upper:]' '[:lower:]')"="$(\printf '%s' "$line" | \cut -d ' ' -f 3-)"
-  elif _otel_string_starts_with "$line" "< " && _otel_string_contains "$line" ": "; then
-    otel_span_attribute_typed "$span_handle" string[1] http.response.header."$(\printf '%s' "$line" | \cut -d ' ' -f 2 | \tr -d ':' | \tr '[:upper:]' '[:lower:]')"="$(\printf '%s' "$line" | \cut -d ' ' -f 3-)"
-  fi
-  if \[ "$is_verbose" = 1 ] || ! ( _otel_string_starts_with "$line" "* " || _otel_string_starts_with "$line" "> " || _otel_string_starts_with "$line" "< " || _otel_string_starts_with "$line" "{ " || _otel_string_starts_with "$line" "} " ); then
-    \echo "$line"
-  fi
+  local span_handle=""
+  local host=""
+  local ip=""
+  local port=""
+  while read -r line; do
+    if \[ -n "$span_handle" ] && _otel_string_starts_with "$line" "* processing: "; then otel_span_end "$span_handle"; local span_handle=""; fi
+    if \[ -n "$span_handle" ] && _otel_string_starts_with "$line" "* Connected to "; then otel_span_end "$span_handle"; local span_handle=""; fi
+    if \[ -z "$span_handle" ] && _otel_string_starts_with "$line" "* Connected to "; then
+      local host="$(\printf '%s' "$line" | \cut -d ' ' -f 4)"
+      local ip="$(\printf '%s' "$line" | \cut -d ' ' -f 5 | \tr -d '()')"
+      local port="$(\printf '%s' "$line" | \cut -d ' ' -f 7)"
+    fi
+    if \[ -z "$span_handle" ] && \[ -n "$host" ] && \[ -n "$ip" ] && \[ -n "$port" ] && _otel_string_starts_with "$line" "> " && _otel_string_contains "$line" " HTTP/"; then
+      local protocol="$(\printf '%s' "$line" | \cut -d ' ' -f 4 | \cut -d / -f 1 | \tr '[:upper:]' '[:lower:]')"
+      local path_and_query="$(\printf '%s' "$line" | \cut -d ' ' -f 3)"
+      local span_handle="$(otel_span_start CLIENT "$(\printf '%s' "$line" | \cut -d ' ' -f 2)")"
+      otel_span_attribute_typed "$span_handle" string network.transport=tcp
+      otel_span_attribute_typed "$span_handle" string network.protocol.name="$protocol"
+      otel_span_attribute_typed "$span_handle" string network.protocol.version="$(\printf '%s' "$line" | \cut -d ' ' -f 4 | \cut -d / -f 2)"
+      otel_span_attribute_typed "$span_handle" string network.peer.address="$ip"
+      otel_span_attribute_typed "$span_handle" int network.peer.port="$port"
+      otel_span_attribute_typed "$span_handle" string server.address="$host"
+      otel_span_attribute_typed "$span_handle" int server.port="$port"
+      otel_span_attribute_typed "$span_handle" string url.full="$protocol://$host:$port$path_and_query"
+      otel_span_attribute_typed "$span_handle" string url.path="/$(\printf '%s' "$path" | \cut -d ? -f 1)"
+      otel_span_attribute_typed "$span_handle" string url.query="$(\printf '%s' "$url" | \cut -sd ? -f 2-)"
+      otel_span_attribute_typed "$span_handle" string url.scheme="$protocol"
+      otel_span_attribute_typed "$span_handle" string http.request.method="$(\printf '%s' "$line" | \cut -d ' ' -f 2)"
+      otel_span_attribute_typed "$span_handle" string user_agent.original=curl
+      local host=""
+      local ip=""
+      local port=""
+    fi
+    if \[ -n "$span_handle"]; then
+      if _otel_string_starts_with "$line" "< HTTP/"; then
+        local response_code="$(\printf '%s' "$line" | \cut -d ' ' -f 3)"
+        otel_span_attribute_typed "$span_handle" int http.response.status_code="$response_code"
+        if \[ "$response_code" -ge 300 ]; then otel_span_error "$span_handle"; fi
+      elif _otel_string_starts_with "$line" "} [" && _otel_string_contains "bytes data]"; then
+        otel_span_attribute_typed "$span_handle" int http.request.body.size="$(\printf '%s' "$line" | \cut -d ' ' -f 2 | \tr -d '[')"
+      elif _otel_string_starts_with "$line" "{ [" && _otel_string_contains "bytes data]"; then
+        otel_span_attribute_typed "$span_handle" int http.response.body.size="$(\printf '%s' "$line" | \cut -d ' ' -f 2 | \tr -d '[')"
+      elif _otel_string_starts_with "$(\printf '%s' "$line" | \tr '[:upper:]' '[:lower:]')" "> user-agent: "; then
+        otel_span_attribute_typed "$span_handle" string user_agent.original="$(\printf '%s' "$line" | \cut -d ' ' -f 3-)"
+      elif _otel_string_starts_with "$(\printf '%s' "$line" | \tr '[:upper:]' '[:lower:]')" "> content-length: "; then
+        otel_span_attribute_typed "$span_handle" int http.request.body.size="$(\printf '%s' "$line" | \cut -d ' ' -f 3)"
+      elif _otel_string_starts_with "$(\printf '%s' "$line" | \tr '[:upper:]' '[:lower:]')" "< content-length: "; then
+        otel_span_attribute_typed "$span_handle" int http.response.body.size="$(\printf '%s' "$line" | \cut -d ' ' -f 3)"
+      fi
+      if _otel_string_starts_with "$line" "> " && _otel_string_contains "$line" ": " && ! _otel_string_contains "$(\printf '%s' "$line" | \tr '[:upper:]' '[:lower:]')" "authorization: " && ! _otel_string_contains "$(\printf '%s' "$line" | \tr '[:upper:]' '[:lower:]')" "token: " && ! _otel_string_contains "$(\printf '%s' "$line" | \tr '[:upper:]' '[:lower:]')" "key: "; then
+        otel_span_attribute_typed "$span_handle" string[1] http.request.header."$(\printf '%s' "$line" | \cut -d ' ' -f 2 | \tr -d ':' | \tr '[:upper:]' '[:lower:]')"="$(\printf '%s' "$line" | \cut -d ' ' -f 3-)"
+      elif _otel_string_starts_with "$line" "< " && _otel_string_contains "$line" ": "; then
+        otel_span_attribute_typed "$span_handle" string[1] http.response.header."$(\printf '%s' "$line" | \cut -d ' ' -f 2 | \tr -d ':' | \tr '[:upper:]' '[:lower:]')"="$(\printf '%s' "$line" | \cut -d ' ' -f 3-)"
+      fi
+    fi
+    if \[ "$is_verbose" = 1 ] || ! ( _otel_string_starts_with "$line" "* " || _otel_string_starts_with "$line" "> " || _otel_string_starts_with "$line" "< " || _otel_string_starts_with "$line" "{ " || _otel_string_starts_with "$line" "} " ); then
+      \echo "$line"
+    fi
+  done
+  if \[ -n "$span_handle" ]; then otel_span_end "$span_handle"; fi
 }
 
 _otel_alias_prepend curl 'OTEL_SHELL_SPAN_KIND_OVERRIDE=CLIENT _otel_propagate_curl'
