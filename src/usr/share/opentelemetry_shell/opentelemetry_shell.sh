@@ -113,7 +113,7 @@ _otel_list_path_commands() {
 }
 
 _otel_list_path_executables() {
-  \echo "$PATH" | \tr ':' '\n' | while read dir; do /bin/find "$dir" -maxdepth 1 -type f,l -executable 2> /dev/null; done # busybox find doesnt have all features we need here, so lets default to real find
+  \echo "$PATH" | \tr ':' '\n' | while read dir; do if \[ "$_otel_shell" = 'busybox sh' ]; then /bin/find "$dir" -maxdepth 1 -type f,l -executable 2> /dev/null; else \find "$dir" -maxdepth 1 -type f,l -executable 2> /dev/null; fi done
 }
 
 _otel_list_alias_commands() {
@@ -143,7 +143,11 @@ _otel_list_builtin_commands() {
 _otel_filter_commands_by_hint() {
   local hint="$1"
   if \[ -n "$hint" ]; then
-    /bin/grep -xF "$(_otel_resolve_instrumentation_hint "$hint")" # busybox grep in theory has all options, but behavior is not the same, so lets use real grep
+    if \[ "$_otel_shell" = 'busybox sh' ]; then
+      /bin/grep -xF "$(_otel_resolve_instrumentation_hint "$hint")"
+    else
+      \grep -xF "$(_otel_resolve_instrumentation_hint "$hint")"
+    fi
   else
     \cat
   fi
