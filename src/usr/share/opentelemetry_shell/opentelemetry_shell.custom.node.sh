@@ -13,14 +13,16 @@ _otel_inject_node() {
       break
     done
     if \[ -f "$script" ]; then
+set -x
       local wd="$(pwd)"
       local dir="$(\echo "$script" | \rev | \cut -d / -f 2- | \rev)"
       cd "$dir"
       \cp package.json package.json.otel.backup 2> /dev/null || \true
       \cp /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.package.json package.json
-      \npm install --package-lock=false &> /dev/null && local extra_flags="--require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.js" || \true
+      \npm install --package-lock=false && local extra_flags="--require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.js" || \true
       \cp package.json.otel.backup package.json 2> /dev/null || \true
       cd "$wd"
+set +x
     fi
   fi
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE _otel_call "$command" --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.js $extra_flags "$@"
