@@ -10,6 +10,7 @@ _otel_inject_node() {
     \cp /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.package.json package.json
     \npm install --package-lock=false > /dev/null && local extra_flags="--require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.js"
     \cp package.json.otel.backup package.json 2> /dev/null || \true
+    \echo 'DEBUG DEBUG DEBUG' "$@" >&2
   fi
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE _otel_call "$command" --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.js $extra_flags "$@"
 }
