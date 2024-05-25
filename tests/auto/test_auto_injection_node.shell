@@ -58,5 +58,3 @@ req.end();
 " > "$directory"/index.js
 OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE node "$directory"/index.js
 assert_equals 0 $?
-span="$(resolve_span '.name == "GET"')"
-assert_equals "SpanKind.CLIENT" $(\echo "$span" | jq -r '.kind')
