@@ -43,6 +43,7 @@ assert_equals 0 $?
 span="$(resolve_span '.name == "echo"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
 
+type npm || exit 1
 directory="$(mktemp -d)"
 echo "
 const https = require('https');
