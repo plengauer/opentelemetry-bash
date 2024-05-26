@@ -1,2 +1,2 @@
 . /usr/bin/opentelemetry_shell.sh
-curl --no-progress-meter http://www.google.com/
+curl http://www.google.com/
