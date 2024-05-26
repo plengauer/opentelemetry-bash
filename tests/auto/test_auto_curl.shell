@@ -3,9 +3,8 @@ set -e
 
 $SHELL auto/curl.shell http://www.google.com/
 
-# the --no-progress-meter shouldnt be there, but sometimes printing it disrups capturing data
 span="$(resolve_span '.name == "curl http://www.google.com/"')"
-assert_equals "curl --no-progress-meter http://www.google.com/" "$(\echo "$span" | jq -r '.name')"
+assert_equals "curl http://www.google.com/" "$(\echo "$span" | jq -r '.name')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
 assert_equals "0" $(\echo "$span" | jq -r '.attributes."shell.command.exit_code"')
 
