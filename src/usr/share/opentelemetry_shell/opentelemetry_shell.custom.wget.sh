@@ -45,9 +45,9 @@ _otel_pipe_wget_stderr() {
     if _otel_string_starts_with "$line" --; then
       case "$line" in
         --****-**-**' '**:**:**--'  '*)
-          local url="$(\printf '%s' "$line" | \cut -d ' ' -f 3-)"
-          local protocol="$(\printf '%s' "$line" | \cut -d : -f 1)"
-          local path_and_query="/$(\printf '%s' "$line" | \cut -sd / -f 4-)"
+          local url="$(\printf '%s' "$line" | \cut -d ' ' -f 4-)"
+          local protocol="$(\printf '%s' "$url" | \cut -d : -f 1)"
+          local path_and_query="/$(\printf '%s' "$url" | \cut -sd / -f 4-)"
           ;;
       esac
     fi
