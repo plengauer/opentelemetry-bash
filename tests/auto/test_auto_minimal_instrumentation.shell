@@ -1,10 +1,11 @@
 . ./assert.sh
-set -x
 . /usr/bin/opentelemetry_shell.sh
 alias
 
 if [ -n "$(alias | grep ech | grep cho)" ]; then printf '%s\n' "e-cho has been instrumented"; exit 1; fi
+set -x
 . auto/count_fail_no_auto.shell
+set +x
 alias
 if [ -z "$(alias | grep ech | grep cho)" ]; then printf '%s\n' "e-cho has not been instrumented"; exit 1; fi
 
