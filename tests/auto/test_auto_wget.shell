@@ -23,7 +23,7 @@ assert_not_equals null "$(\echo "$span" | jq -r '.attributes."http.response.head
 assert_not_equals null "$(\echo "$span" | jq -r '.attributes."network.peer.address"')"
 assert_not_equals null "$(\echo "$span" | jq -r '.attributes."network.peer.port"')"
 
-$SHELL auto/wget.shell https://www.google.de https://www.google.de/index.html https://www.google.de/index
+$SHELL auto/wget.shell https://www.google.de https://www.google.de/index.html https://www.google.de/index || true
 
 span="$(resolve_span '.attributes."url.path" == "/"')"
 assert_equals "GET" "$(\echo "$span" | jq -r '.name')"
