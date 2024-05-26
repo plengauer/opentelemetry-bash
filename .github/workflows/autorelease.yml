@@ -1,0 +1,16 @@
+name: Autorelease
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: plengauer/autorelease@v0.1.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          openai_token: ${{ secrets.OPENAI_TOKEN }}
