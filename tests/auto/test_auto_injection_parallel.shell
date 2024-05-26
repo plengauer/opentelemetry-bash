@@ -80,7 +80,7 @@ if [ "$SHELL" = bash ]; then
   span="$(resolve_span '.name == "my_wget http://www.google.at"')"
   assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
   span="$(resolve_span '.name == "wget -O - http://www.google.at"')"
-  assert_equals "SpanKind.CLIENT" "$(\echo "$span" | jq -r '.kind')"
+  assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
 else
   true
 fi
