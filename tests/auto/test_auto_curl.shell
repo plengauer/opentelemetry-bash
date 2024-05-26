@@ -1,7 +1,7 @@
 set -e
 . ./assert.sh
 
-$SHELL auto/curl.shell
+$SHELL auto/curl.shell http://www.google.com
 
 # the --no-progress-meter shouldnt be there, but sometimes printing it disrups capturing data
 span="$(resolve_span '.name == "curl http://www.google.com/"')"
@@ -16,6 +16,72 @@ assert_equals "UNSET" $(\echo "$span" | jq -r '.status.status_code')
 assert_equals "http" "$(\echo "$span" | jq -r '.attributes."network.protocol.name"')"
 assert_equals "tcp" "$(\echo "$span" | jq -r '.attributes."network.transport"')"
 assert_equals "http://www.google.com:80/" "$(\echo "$span" | jq -r '.attributes."url.full"')"
+assert_equals "http" "$(\echo "$span" | jq -r '.attributes."url.scheme"')"
+assert_equals "/" "$(\echo "$span" | jq -r '.attributes."url.path"')"
+assert_equals "null" "$(\echo "$span" | jq -r '.attributes."url.query"')"
+assert_not_equals "null" "$(\echo "$span" | jq -r '.attributes."user_agent.original"')"
+assert_equals "200" "$(\echo "$span" | jq -r '.attributes."http.response.status_code"')"
+assert_not_equals null "$(\echo "$span" | jq -r '.attributes."http.response.header.content-type"')"
+assert_not_equals null "$(\echo "$span" | jq -r '.attributes."network.peer.address"')"
+assert_not_equals null "$(\echo "$span" | jq -r '.attributes."network.peer.port"')"
+
+$SHELL auto/curl.shell https://www.google.at https://www.google.de/index.html https://www.google.de/index http://www.bing.com
+span="$(resolve_span '."server.address" == "www.google.at"')"
+assert_equals "GET" $(\echo "$span" | jq -r '.name')
+assert_equals "SpanKind.CLIENT" $(\echo "$span" | jq -r '.kind')
+assert_not_equals "null" $(\echo "$span" | jq -r '.parent_id')
+assert_equals "UNSET" $(\echo "$span" | jq -r '.status.status_code')
+assert_equals "http" "$(\echo "$span" | jq -r '.attributes."network.protocol.name"')"
+assert_equals "tcp" "$(\echo "$span" | jq -r '.attributes."network.transport"')"
+assert_equals "http://www.google.at:80/" "$(\echo "$span" | jq -r '.attributes."url.full"')"
+assert_equals "http" "$(\echo "$span" | jq -r '.attributes."url.scheme"')"
+assert_equals "/" "$(\echo "$span" | jq -r '.attributes."url.path"')"
+assert_equals "null" "$(\echo "$span" | jq -r '.attributes."url.query"')"
+assert_not_equals "null" "$(\echo "$span" | jq -r '.attributes."user_agent.original"')"
+assert_equals "200" "$(\echo "$span" | jq -r '.attributes."http.response.status_code"')"
+assert_not_equals null "$(\echo "$span" | jq -r '.attributes."http.response.header.content-type"')"
+assert_not_equals null "$(\echo "$span" | jq -r '.attributes."network.peer.address"')"
+assert_not_equals null "$(\echo "$span" | jq -r '.attributes."network.peer.port"')"
+span="$(resolve_span '."url.path" == "/index.html"')"
+assert_equals "GET" $(\echo "$span" | jq -r '.name')
+assert_equals "SpanKind.CLIENT" $(\echo "$span" | jq -r '.kind')
+assert_not_equals "null" $(\echo "$span" | jq -r '.parent_id')
+assert_equals "UNSET" $(\echo "$span" | jq -r '.status.status_code')
+assert_equals "http" "$(\echo "$span" | jq -r '.attributes."network.protocol.name"')"
+assert_equals "tcp" "$(\echo "$span" | jq -r '.attributes."network.transport"')"
+assert_equals "http://www.google.at:80/index.html" "$(\echo "$span" | jq -r '.attributes."url.full"')"
+assert_equals "http" "$(\echo "$span" | jq -r '.attributes."url.scheme"')"
+assert_equals "/index.html" "$(\echo "$span" | jq -r '.attributes."url.path"')"
+assert_equals "null" "$(\echo "$span" | jq -r '.attributes."url.query"')"
+assert_not_equals "null" "$(\echo "$span" | jq -r '.attributes."user_agent.original"')"
+assert_equals "200" "$(\echo "$span" | jq -r '.attributes."http.response.status_code"')"
+assert_not_equals null "$(\echo "$span" | jq -r '.attributes."http.response.header.content-type"')"
+assert_not_equals null "$(\echo "$span" | jq -r '.attributes."network.peer.address"')"
+assert_not_equals null "$(\echo "$span" | jq -r '.attributes."network.peer.port"')"
+span="$(resolve_span '."url.path" == "/index"')"
+assert_equals "GET" $(\echo "$span" | jq -r '.name')
+assert_equals "SpanKind.CLIENT" $(\echo "$span" | jq -r '.kind')
+assert_not_equals "null" $(\echo "$span" | jq -r '.parent_id')
+assert_equals "UNSET" $(\echo "$span" | jq -r '.status.status_code')
+assert_equals "http" "$(\echo "$span" | jq -r '.attributes."network.protocol.name"')"
+assert_equals "tcp" "$(\echo "$span" | jq -r '.attributes."network.transport"')"
+assert_equals "http://www.google.at:80/index.html" "$(\echo "$span" | jq -r '.attributes."url.full"')"
+assert_equals "http" "$(\echo "$span" | jq -r '.attributes."url.scheme"')"
+assert_equals "/index" "$(\echo "$span" | jq -r '.attributes."url.path"')"
+assert_equals "null" "$(\echo "$span" | jq -r '.attributes."url.query"')"
+assert_not_equals "null" "$(\echo "$span" | jq -r '.attributes."user_agent.original"')"
+assert_equals "404" "$(\echo "$span" | jq -r '.attributes."http.response.status_code"')"
+assert_not_equals null "$(\echo "$span" | jq -r '.attributes."http.response.header.content-type"')"
+assert_not_equals null "$(\echo "$span" | jq -r '.attributes."network.peer.address"')"
+assert_not_equals null "$(\echo "$span" | jq -r '.attributes."network.peer.port"')"
+span="$(resolve_span '."server.address" == "www.bing.com"')"
+assert_equals "GET" $(\echo "$span" | jq -r '.name')
+assert_equals "SpanKind.CLIENT" $(\echo "$span" | jq -r '.kind')
+assert_not_equals "null" $(\echo "$span" | jq -r '.parent_id')
+assert_equals "UNSET" $(\echo "$span" | jq -r '.status.status_code')
+assert_equals "http" "$(\echo "$span" | jq -r '.attributes."network.protocol.name"')"
+assert_equals "tcp" "$(\echo "$span" | jq -r '.attributes."network.transport"')"
+assert_equals "http://www.bing.com:80/index.html" "$(\echo "$span" | jq -r '.attributes."url.full"')"
 assert_equals "http" "$(\echo "$span" | jq -r '.attributes."url.scheme"')"
 assert_equals "/" "$(\echo "$span" | jq -r '.attributes."url.path"')"
 assert_equals "null" "$(\echo "$span" | jq -r '.attributes."url.query"')"
