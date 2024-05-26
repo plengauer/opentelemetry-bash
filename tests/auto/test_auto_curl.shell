@@ -1,7 +1,7 @@
 set -e
 . ./assert.sh
 
-$SHELL auto/curl.shell http://www.google.com
+$SHELL auto/curl.shell http://www.google.com/
 
 # the --no-progress-meter shouldnt be there, but sometimes printing it disrups capturing data
 span="$(resolve_span '.name == "curl http://www.google.com/"')"
