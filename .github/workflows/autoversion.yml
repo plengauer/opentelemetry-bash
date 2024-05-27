@@ -6,7 +6,7 @@ on:
     - cron: '0 0 * * 0'
 
 jobs:
-  release:
+  bump:
     runs-on: ubuntu-latest
     steps:
       - uses: plengauer/autoversion@v0.1.0
