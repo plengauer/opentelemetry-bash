@@ -104,4 +104,6 @@ while ! [ -f "$traceparent_file" ]; do sleep 1; done
 export OTEL_TRACEPARENT="$(cat "$traceparent_file")"
 rm "$traceparent_file"
 
+export OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE
+
 printenv | grep '^OTEL_' >> "$GITHUB_ENV"
