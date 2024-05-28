@@ -11,5 +11,5 @@ jobs:
     steps:
       - uses: plengauer/autoversion@v0.1.0
         with:
-          github_token: ${{ secrets.RENOVATE_TOKEN }}
+          github_token: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
           openai_token: ${{ secrets.OPENAI_TOKEN }}
