@@ -18,7 +18,7 @@ jobs:
       - run: sudo apt-get -y remove opentelemetry-shell
 
   upgrade:
-    needs: _build
+    needs: install
     runs-on: ubuntu-latest
     steps:
       - run: curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases/latest | jq -r '.assets[].browser_download_url' | xargs wget
@@ -29,7 +29,7 @@ jobs:
       - run: sudo apt-get -y install ./package.deb
       
   smoke:
-    needs: _build
+    needs: install
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -64,7 +64,7 @@ jobs:
           SHELL: ${{ matrix.shell }}
 
   action:
-    needs: _build
+    needs: smoke
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
