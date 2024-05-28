@@ -1,5 +1,22 @@
 #!/bin/false
 
+# /usr/bin/docker run --rm --privileged tonistiigi/binfmt:latest --install all
+
+_otel_is_boolean_docker_option() {
+  case "$1" in
+    -d) return 0;;
+    --detach) return 0;;
+    -t) return 0;;
+    --tty) return 0;;
+    -rm) return 0;;
+    --rm) return 0;;
+    --privileged) return 0;;
+    --version) return 0;;
+    --help) return 0;;
+    *) return 1;;
+  esac
+}
+
 _otel_inject_docker_args() {
   # docker command
   local executable="$1"
@@ -8,7 +25,7 @@ _otel_inject_docker_args() {
   # skip arguments
   while \[ "$#" -gt 0 ] && _otel_string_starts_with "$1" -; do
     \echo -n ' '; _otel_escape_arg "$1"
-    if ! _otel_string_contains "$1" = && ! _otel_string_starts_with "$2" -; then
+    if ! _otel_is_boolean_docker_option "$1" && ! _otel_string_contains "$1" =; then
       shift
       \echo -n ' '; _otel_escape_arg "$1"
     fi
@@ -25,7 +42,7 @@ _otel_inject_docker_args() {
   # skip more arguments
   while \[ "$#" -gt 0 ] && _otel_string_starts_with "$1" -; do
     \echo -n ' '; _otel_escape_arg "$1"
-    if ! _otel_string_contains "$1" = && ! _otel_string_starts_with "$2" -; then
+    if ! _otel_is_boolean_docker_option "$1" && ! _otel_string_contains "$1" =; then
       if \[ "$1" = --entrypoint ]; then local entrypoint_override="$2"; fi
       shift
       \echo -n ' '; _otel_escape_arg "$1"
