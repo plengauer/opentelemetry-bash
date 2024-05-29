@@ -22,7 +22,7 @@ switch (process.env.OTEL_TRACES_EXPORTER) {
   default: return;
 }
 let sdk = new opentelemetry_sdk.NodeSDK({
-  spanProcessor: new opentelemetry_tracing.BatchSpanProcessor(new opentelemetry_traces_otlp.OTLPTraceExporter()),
+  spanProcessor: new opentelemetry_tracing.BatchSpanProcessor(exporter),
   instrumentations: [ opentelemetry_auto_instrumentations.getNodeAutoInstrumentations() ],
   resourceDetectors: [
     opentelemetry_resources_alibaba_cloud.alibabaCloudEcsDetector,
