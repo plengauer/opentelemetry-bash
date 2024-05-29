@@ -143,11 +143,7 @@ _otel_list_builtin_commands() {
 _otel_filter_commands_by_hint() {
   local hint="$1"
   if \[ -n "$hint" ]; then
-    if \[ "$_otel_shell" = 'busybox sh' ]; then
-      /bin/grep -xF "$(_otel_resolve_instrumentation_hint "$hint")"
-    else
-      \grep -xF "$(_otel_resolve_instrumentation_hint "$hint")"
-    fi
+    \grep -xF "$(_otel_resolve_instrumentation_hint "$hint")"
   else
     \cat
   fi
