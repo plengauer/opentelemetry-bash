@@ -144,6 +144,10 @@ _otel_filter_commands_by_hint() {
   local hint="$1"
   if \[ -n "$hint" ]; then
     if \[ "$_otel_shell" = 'busybox sh' ]; then
+\echo "DEBUG list" >&2
+_otel_list_path_commands >&2
+\echo "DEBUG grepped special" >&2
+_otel_list_path_commands | _otel_filter_commands_by_special >&2
 \echo "DEBUG resolve $hint" >&2
 _otel_resolve_instrumentation_hint "$hint" >&2
 \echo "DEBUG grepping" >&2
