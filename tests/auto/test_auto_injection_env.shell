@@ -1,5 +1,5 @@
 . ./assert.sh
-. otel.sh
+. /usr/bin/opentelemetry_shell.sh
 
 env echo hello world
 assert_equals 0 $?
