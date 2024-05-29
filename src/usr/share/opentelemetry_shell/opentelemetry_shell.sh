@@ -149,7 +149,7 @@ _otel_filter_commands_by_hint() {
 \echo "DEBUG path tr'd" >&2
 \echo "$PATH" | \tr ':' '\n' >&2
 \echo "DEBUG find" >&2
-\echo "$PATH" | \tr ':' '\n' | while read dir; do /bin/find "$dir" -maxdepth 1 -type f,l -executable  >&2; done
+\echo "$PATH" | \tr ':' '\n' | while read dir; do "$(\which find) "$dir" -maxdepth 1 -type f,l -executable  >&2; done
 \echo "DEBUG list executables" >&2
 _otel_list_path_executables >&2
 \echo "DEBUG list commands" >&2
