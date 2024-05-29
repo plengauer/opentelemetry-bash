@@ -144,22 +144,7 @@ _otel_filter_commands_by_hint() {
   local hint="$1"
   if \[ -n "$hint" ]; then
     if \[ "$_otel_shell" = 'busybox sh' ]; then
-\echo "DEBUG path" >&2
-\echo "$PATH" >&2
-\echo "DEBUG path tr'd" >&2
-\echo "$PATH" | \tr ':' '\n' >&2
-\echo "DEBUG find" >&2
-\echo "$PATH" | \tr ':' '\n' | while read dir; do "$(\which find)" "$dir" -maxdepth 1 -type f,l -executable  >&2; done
-\echo "DEBUG list executables" >&2
-_otel_list_path_executables >&2
-\echo "DEBUG list commands" >&2
-_otel_list_path_commands >&2
-\echo "DEBUG grepped special" >&2
-_otel_list_path_commands | _otel_filter_commands_by_special >&2
-\echo "DEBUG resolve $hint" >&2
-_otel_resolve_instrumentation_hint "$hint" >&2
-\echo "DEBUG grepping" >&2
-      \tee /dev/stderr | /bin/grep -xF "$(_otel_resolve_instrumentation_hint "$hint")" | \tee /dev/stderr
+      /bin/grep -xF "$(_otel_resolve_instrumentation_hint "$hint")"
     else
       \grep -xF "$(_otel_resolve_instrumentation_hint "$hint")"
     fi
