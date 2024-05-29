@@ -13,6 +13,14 @@ const opentelemetry_resources_aws = require('@opentelemetry/resource-detector-aw
 const opentelemetry_resources_gcp = require('@opentelemetry/resource-detector-gcp');
 const opentelemetry_resources_alibaba_cloud = require('@opentelemetry/resource-detector-alibaba-cloud');
 
+if (!process.env.OTEL_TRACES_EXPORTER) process.env.OTEL_TRACES_EXPORTER = 'otlp';
+
+let exporter = null;
+switch (process.env.OTEL_TRACES_EXPORTER) {
+  case 'otlp': exporter = opentelemetry_traces_otlp.OTLPTraceExporter(); break;
+  case 'console': exporter = opentelemetry_tracing.ConsoleSpanExporter(); break;
+  default: return;
+}
 let sdk = new opentelemetry_sdk.NodeSDK({
   spanProcessor: new opentelemetry_tracing.BatchSpanProcessor(new opentelemetry_traces_otlp.OTLPTraceExporter()),
   instrumentations: [ opentelemetry_auto_instrumentations.getNodeAutoInstrumentations() ],
