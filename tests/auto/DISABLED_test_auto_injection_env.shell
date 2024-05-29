@@ -1,7 +1,5 @@
-pwd
-ls
 . ./assert.sh
-. /usr/bin/opentelemetry_shell.sh
+. otel.sh
 
 env echo hello world
 assert_equals 0 $?
