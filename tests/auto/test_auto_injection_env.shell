@@ -1,3 +1,5 @@
+pwd
+ls
 . ./assert.sh
 . /usr/bin/opentelemetry_shell.sh
 
