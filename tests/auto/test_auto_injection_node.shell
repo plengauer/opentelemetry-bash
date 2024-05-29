@@ -42,3 +42,19 @@ node -p "const child_process = require('child_process'); child_process.spawn('ec
 assert_equals 0 $?
 span="$(resolve_span '.name == "echo"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
+
+type npm || exit 1
+directory="$(mktemp -d)"
+echo "
+const https = require('https');
+const options = {
+  hostname: 'example.com',
+  port: 443,
+  path: '/',
+  method: 'GET'
+};
+const req = https.request(options, (res) => {});
+req.end();
+" > "$directory"/index.js
+OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE node "$directory"/index.js
+assert_equals 0 $?

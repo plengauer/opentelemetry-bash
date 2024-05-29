@@ -187,6 +187,7 @@ You can configure the underlying SDK with the same variables as any other OpenTe
 | -------------------------------------------- | --------------- | ------- | ------------------------------------------------------------------------------------------- |
 | OTEL_SHELL_EXPERIMENTAL_OBSERVE_PIPES        | `TRUE`, `FALSE` | `FALSE` | Count bytes and lines on stdin, stdout, and stderr and add counts as attributes on spans.   |
 | OTEL_SHELL_EXPERIMENTAL_INSTRUMENT_MINIMALLY | `TRUE`, `FALSE` | `FALSE` | Only create `SERVER`, `CONSUMER`, `CLIENT` and `PRODUCER` spans, mute all `INTERNAL` spans. |
+| OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP          | `TRUE`, `FALSE` | `FALSE` | Inject native OpenTelemetry into scripting languages like node.js.                          |
 
 ## Traces
 The API described below is for manually creating and customizing spans. We recommend to do this only if the automatic instrumentation is not sufficient.

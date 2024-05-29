@@ -526,3 +526,10 @@ _otel_string_starts_with() {
     *) return 1;;
   esac
 }
+
+_otel_string_ends_with() {
+  case "$1" in
+    *"$2") return 0;;
+    *) return 1;;
+  esac
+}

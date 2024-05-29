@@ -23,7 +23,7 @@ jobs:
       - uses: actions/create-release@v1
         id: create_release
         env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_RELEASE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
         with:
           tag_name: v${{ steps.version.outputs.version }}
           release_name: Release v${{ steps.version.outputs.version }}
@@ -32,7 +32,7 @@ jobs:
       - uses: actions/upload-release-asset@v1
         id: upload-release-asset
         env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_RELEASE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./package.deb

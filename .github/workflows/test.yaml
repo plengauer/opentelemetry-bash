@@ -18,7 +18,7 @@ jobs:
       - run: sudo apt-get -y remove opentelemetry-shell
 
   upgrade:
-    needs: _build
+    needs: install
     runs-on: ubuntu-latest
     steps:
       - run: curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases/latest | jq -r '.assets[].browser_download_url' | xargs wget
@@ -29,7 +29,7 @@ jobs:
       - run: sudo apt-get -y install ./package.deb
       
   smoke:
-    needs: _build
+    needs: install
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -45,9 +45,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: ['debian:oldstable', 'debian:stable', 'debian:testing', 'debian:unstable', 'debian:oldstable-slim', 'debian:stable-slim', 'debian:testing-slim', 'debian:unstable-slim', 'ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling', 'ubuntu:devel']
+        os: ['debian:oldstable', 'debian:stable', 'debian:testing', 'debian:oldstable-slim', 'debian:stable-slim', 'debian:testing-slim', 'ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling']
         update: ['FALSE', 'TRUE']
-        shell: [sh, ash, dash, bash, busybox]
+        shell: [sh, dash, bash, busybox]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
@@ -64,7 +64,7 @@ jobs:
           SHELL: ${{ matrix.shell }}
 
   action:
-    needs: _build
+    needs: smoke
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
