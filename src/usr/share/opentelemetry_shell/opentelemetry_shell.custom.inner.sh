@@ -76,4 +76,4 @@ _otel_inject_env() {
   fi
 }
 
-_otel_alias_prepend env _otel_inject_env
+# _otel_alias_prepend env _otel_inject_env
