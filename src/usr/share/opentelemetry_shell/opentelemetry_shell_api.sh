@@ -14,6 +14,7 @@ if \[ -n "$OTEL_SHELL_TRACES_ENABLE" ] || \[ -n "$OTEL_SHELL_METRICS_ENABLE" ] |
 fi
 
 if \[ -n "$OTEL_REMOTE_SDK_PIPE" ]; then \ls -la "$(echo $OTEL_REMOTE_SDK_PIPE | rev | cut -d / -f 2- | rev)" >&2; fi
+if \[ -n "$OTEL_SHELL_RESPONSE_PIPE_MOUNT" ]; then \ls -la "$OTEL_SHELL_RESPONSE_PIPE_MOUNT" >&2; fi
 
 # basic setup
 _otel_remote_sdk_pipe="${OTEL_REMOTE_SDK_PIPE:-$(\mktemp -u)_opentelemetry_shell_$$.pipe}"
