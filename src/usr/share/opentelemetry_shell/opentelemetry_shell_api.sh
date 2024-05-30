@@ -17,6 +17,7 @@ fi
 _otel_remote_sdk_pipe="${OTEL_REMOTE_SDK_PIPE:-$(\mktemp -u)_opentelemetry_shell_$$.pipe}"
 if \[ -z "$OTEL_SHELL_RESPONSE_PIPE_MOUNT" ]; then OTEL_SHELL_RESPONSE_PIPE_MOUNT=/tmp; fi
 _otel_shell="$(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)"
+if \[ "$_otel_shell" = busybox ]; then _otel_shell="busybox sh"; fi
 if \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = 0 ] || \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "$PPID" ] || \[ "$PPID" = 0 ] || \[ "$(\tr '\000-\037' ' ' < /proc/$PPID/cmdline)" = "$(\tr '\000-\037' ' ' < /proc/$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE/cmdline)" ]; then _otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"; fi
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE
@@ -33,7 +34,7 @@ otel_init() {
     \mkfifo "$_otel_remote_sdk_pipe"
     _otel_package_version opentelemetry-shell > /dev/null # to build the cache outside a subshell
     # several weird things going on in the next line, (1) using '((' fucks up the syntax highlighting in github while '( (' does not, and (2) &> causes weird buffering / late flushing behavior
-    if \env --help | \grep -q 'ignore-signal'; then local extra_env_flags='--ignore-signal=INT --ignore-signal=HUP'; fi
+    if \env --help 2>&1 | \grep -q 'ignore-signal'; then local extra_env_flags='--ignore-signal=INT --ignore-signal=HUP'; fi
     ( (\env $extra_env_flags otelsdk "shell" "$(_otel_package_version opentelemetry-shell)" < "$_otel_remote_sdk_pipe" 1> "$sdk_output" 2> "$sdk_output") &)
     _otel_is_remote_sdk_mine=TRUE
   fi
@@ -87,6 +88,7 @@ _otel_resource_attributes() {
      yash) \echo process.runtime.description="Yet Another Shell" ;;
      bosh) \echo process.runtime.description="Bourne Shell" ;;
      fish) \echo process.runtime.description="Friendly Interactive Shell" ;;
+     'busybox sh') \echo process.runtime.description="Busy Box" ;;
   esac
   \echo -n process.runtime.version=; _otel_package_version "$process_executable_name"
   \echo process.runtime.options="$-"
@@ -311,7 +313,7 @@ otel_observe() {
   return "$exit_code"
 }
 
-if \[ "$_otel_shell" = dash ]; then # TODO its only old dashes
+if \[ "$_otel_shell" = dash ] || \[ "$_otel_shell" = 'busybox sh' ]; then # TODO its only old dashes
   # old versions of dash dont set env vars properly
   # more specifically they do not make variables that are set in front of commands part of the child process env vars but only of the local execution environment
   _otel_call() {
@@ -432,6 +434,7 @@ else
       "$1 is a shell alias for "*) \echo alias;;
       "$1 is an alias for "*) \echo alias;;
       "$1 is a shell function") \echo 'function';;
+      "$1 is a function") \echo 'function';;
       "$1 is a shell builtin") \echo builtin;;
       "$1 is $1") \echo file;;
       *) \echo file;;
@@ -472,7 +475,7 @@ _otel_escape_arg() {
     local do_escape=1
   else
     case "$1X" in
-      *[[:space:]\&\<\>\|\'\"\(\)\`!\$\;\\]*) local do_escape=1 ;;
+      *[[:space:]\&\<\>\|\'\"\(\)\`!\$\;\\\*]*) local do_escape=1 ;;
       *) local do_escape=0 ;;
     esac
   fi

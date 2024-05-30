@@ -1,14 +1,17 @@
 #!/bin/bash
 set -e
-export SHELL=$1
+export SHELL="$1"
 if [ "$SHELL" = "" ]; then
   echo "need to specify shell to test"
   exit 1
 fi
+if [ "$SHELL" = busybox ]; then
+  export SHELL="busybox sh";
+fi
 
 (while sleep 60; do pstree -a -c -p -l; done) &
 for dir in unit sdk auto integration; do
-  for file in $(find $dir -iname 'test_*.shell') $(find $dir -iname 'test_*.'$SHELL); do
+  for file in $(find $dir -iname 'test_*.shell') $(find $dir -iname 'test_*.'"$SHELL"); do
     rm /tmp/opentelemetry_shell_*_instrumentation_cache_*.aliases 2> /dev/null || true
     export OTEL_EXPORT_LOCATION=$(mktemp -u).sdk.out
     export OTEL_SHELL_SDK_OUTPUT_REDIRECT=$(mktemp -u).pipe

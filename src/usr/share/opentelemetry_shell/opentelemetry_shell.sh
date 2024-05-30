@@ -113,7 +113,7 @@ _otel_list_path_commands() {
 }
 
 _otel_list_path_executables() {
-  \echo "$PATH" | \tr ':' '\n' | while read dir; do \find "$dir" -maxdepth 1 -type f,l -executable 2> /dev/null; done
+  \echo "$PATH" | \tr ':' '\n' | while read dir; do if \[ "$_otel_shell" = 'busybox sh' ]; then "$(\which find)" "$dir" -maxdepth 1 -type f,l -executable 2> /dev/null; else \find "$dir" -maxdepth 1 -type f,l -executable 2> /dev/null; fi; done
 }
 
 _otel_list_alias_commands() {
@@ -143,7 +143,11 @@ _otel_list_builtin_commands() {
 _otel_filter_commands_by_hint() {
   local hint="$1"
   if \[ -n "$hint" ]; then
-    \grep -xF "$(_otel_resolve_instrumentation_hint "$hint")"
+    if \[ "$_otel_shell" = 'busybox sh' ]; then
+      "$(\which grep)" -xF "$(_otel_resolve_instrumentation_hint "$hint")"
+    else
+      \grep -xF "$(_otel_resolve_instrumentation_hint "$hint")"
+    fi
   else
     \cat
   fi
