@@ -37,7 +37,6 @@ _otel_inject_inner_command() {
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE \eval _otel_call "$command_string"
 }
 
-# _otel_alias_prepend env _otel_inject_inner_command # injecting via changing the command is dangerous because there are some options affecting signal handling
 _otel_alias_prepend taskset _otel_inject_inner_command
 _otel_alias_prepend nice _otel_inject_inner_command
 _otel_alias_prepend ionice _otel_inject_inner_command
@@ -58,3 +57,23 @@ _otel_inject_sudo() {
 }
 
 _otel_alias_prepend sudo _otel_inject_sudo
+
+_otel_can_inject_env() {
+  while \[ "$#" -gt 0 ]; do
+    if ! _otel_string_starts_with "$1" -; then return 0; fi
+    if \[ "$1" = -i ]; then return 1; fi # do not inject if environment is intentionally cleared, because then also config will be missing and the inner should clearly be intentionally separated
+    if _otel_string_starts_with "$1" --block-signal || _otel_string_starts_with "$1" --ignore-signal; then return 1; fi # do not inject if signals are ignored or blocked because a shell will not propagate this, however, inject if they are reset to default
+    shift
+  done
+  return 1
+}
+
+_otel_inject_env() {
+  if _otel_can_inject_env "$@"; then
+    _otel_inject_inner_command "$@"
+  else
+    _otel_call "$@"
+  fi
+}
+
+_otel_alias_prepend env _otel_inject_env
