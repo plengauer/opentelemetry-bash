@@ -56,6 +56,7 @@ _otel_inject_docker_args() {
     for file in $(\dpkg -L opentelemetry-shell | \grep -E '^/usr/bin/'); do \echo -n ' '; _otel_escape_args --mount type=bind,source="$file",target="$file",readonly; done
     \echo -n ' '; _otel_escape_args --mount type=bind,source=/usr/share/opentelemetry_shell,target=/usr/share/opentelemetry_shell
     for kvp in $(\printenv | \grep '^OTEL_' | \cut -d = -f 1); do \echo -n ' '; _otel_escape_args --env "$kvp"; done
+    \chmod 666 "$_otel_remote_sdk_pipe"
     \echo -n ' '; _otel_escape_args --mount type=bind,source="$_otel_remote_sdk_pipe",target=/var/opentelemetry_shell"$_otel_remote_sdk_pipe"
     \echo -n ' '; _otel_escape_args --env OTEL_REMOTE_SDK_PIPE=/var/opentelemetry_shell"$_otel_remote_sdk_pipe"
     local pipes_dir="$(\mktemp -u)_opentelemetry_shell_$$.docker/tmp"; \mkdir -p "$pipes_dir"
