@@ -15,6 +15,7 @@ fi
 
 # basic setup
 _otel_remote_sdk_pipe="${OTEL_REMOTE_SDK_PIPE:-$(\mktemp -u)_opentelemetry_shell_$$.pipe}"
+if \[ -z "$OTEL_SHELL_RESPONSE_PIPE_MOUNT" ]; then OTEL_SHELL_RESPONSE_PIPE_MOUNT=/tmp; fi
 _otel_shell="$(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)"
 if \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = 0 ] || \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "$PPID" ] || \[ "$PPID" = 0 ] || \[ "$(\tr '\000-\037' ' ' < /proc/$PPID/cmdline)" = "$(\tr '\000-\037' ' ' < /proc/$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE/cmdline)" ]; then _otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"; fi
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE
@@ -129,9 +130,9 @@ _otel_resolve_package_version() {
 }
 
 otel_span_current() {
-  local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
+  local response_pipe="$(\mktemp -u -p "$OTEL_SHELL_RESPONSE_PIPE_MOUNT")_opentelemetry_shell_$$.pipe"
   \mkfifo $_otel_mkfifo_flags "$response_pipe"
-  _otel_sdk_communicate "SPAN_HANDLE" "$OTEL_SHELL_RESPONSE_PIPE_MOUNT/$response_pipe" "$OTEL_TRACEPARENT"
+  _otel_sdk_communicate "SPAN_HANDLE" "$response_pipe" "$OTEL_TRACEPARENT"
   \cat "$response_pipe"
   \rm "$response_pipe" &> /dev/null
 }
@@ -139,9 +140,9 @@ otel_span_current() {
 otel_span_start() {
   local kind="$1"
   local name="$2"
-  local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
+  local response_pipe="$(\mktemp -u -p "$OTEL_SHELL_RESPONSE_PIPE_MOUNT")_opentelemetry_shell_$$.pipe"
   \mkfifo $_otel_mkfifo_flags "$response_pipe"
-  _otel_sdk_communicate "SPAN_START" "$OTEL_SHELL_RESPONSE_PIPE_MOUNT/$response_pipe" "$OTEL_TRACEPARENT" "$kind" "$name"
+  _otel_sdk_communicate "SPAN_START" "$response_pipe" "$OTEL_TRACEPARENT" "$kind" "$name"
   \cat "$response_pipe"
   \rm "$response_pipe" &> /dev/null
 }
@@ -171,9 +172,9 @@ otel_span_attribute_typed() {
 
 otel_span_traceparent() {
   local span_handle="$1"
-  local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
+  local response_pipe="$(\mktemp -u -p "$OTEL_SHELL_RESPONSE_PIPE_MOUNT")_opentelemetry_shell_$$.pipe"
   \mkfifo $_otel_mkfifo_flags "$response_pipe"
-  _otel_sdk_communicate "SPAN_TRACEPARENT" "$OTEL_SHELL_RESPONSE_PIPE_MOUNT/$response_pipe" "$span_handle"
+  _otel_sdk_communicate "SPAN_TRACEPARENT" "$response_pipe" "$span_handle"
   \cat "$response_pipe"
   \rm "$response_pipe" &> /dev/null
 }
@@ -196,9 +197,9 @@ otel_span_deactivate() {
 
 otel_event_create() {
   local event_name="$1"
-  local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
+  local response_pipe="$(\mktemp -u -p "$OTEL_SHELL_RESPONSE_PIPE_MOUNT")_opentelemetry_shell_$$.pipe"
   \mkfifo $_otel_mkfifo_flags "$response_pipe"
-  _otel_sdk_communicate "EVENT_CREATE" "$OTEL_SHELL_RESPONSE_PIPE_MOUNT/$response_pipe" "$event_name"
+  _otel_sdk_communicate "EVENT_CREATE" "$response_pipe" "$event_name"
   \cat "$response_pipe"
   \rm "$response_pipe" &> /dev/null
 }
@@ -224,9 +225,9 @@ otel_event_add() {
 
 otel_metric_create() {
   local metric_name="$1"
-  local response_pipe="$(\mktemp -u)_opentelemetry_shell_$$.pipe"
+  local response_pipe="$(\mktemp -u -p "$OTEL_SHELL_RESPONSE_PIPE_MOUNT")_opentelemetry_shell_$$.pipe"
   \mkfifo $_otel_mkfifo_flags "$response_pipe"
-  _otel_sdk_communicate "METRIC_CREATE" "$OTEL_SHELL_RESPONSE_PIPE_MOUNT/$response_pipe" "$metric_name"
+  _otel_sdk_communicate "METRIC_CREATE" "$response_pipe" "$metric_name"
   \cat "$response_pipe"
   \rm "$response_pipe" &> /dev/null
 }
