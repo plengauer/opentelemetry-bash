@@ -95,6 +95,7 @@ jobs:
       - uses: renovatebot/github-action@v40.1.11 # complex action, node with complex call to docker
         env:
           RENOVATE_DRY_RUN: full
+          RENOVATE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   performance-prepare:
     runs-on: ubuntu-latest
