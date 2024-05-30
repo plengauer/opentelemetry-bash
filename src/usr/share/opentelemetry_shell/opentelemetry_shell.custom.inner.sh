@@ -62,7 +62,7 @@ _otel_can_inject_env() {
   while \[ "$#" -gt 0 ]; do
     if ! _otel_string_starts_with "$1" -; then return 0; fi
     if \[ "$1" = -i ]; then return 1; fi # do not inject if environment is intentionally cleared, because then also config will be missing and the inner should clearly be intentionally separated
-    if _otel_string_starts_with "$1" --block-signal || _otel_string_starts_with "$1" --ignore-signal; then return 1; fi # do not inject if signal are ignored or blocked because a shell will not propagate this, however, inject if they are reset to default
+    if _otel_string_starts_with "$1" --block-signal || _otel_string_starts_with "$1" --ignore-signal; then return 1; fi # do not inject if signals are ignored or blocked because a shell will not propagate this, however, inject if they are reset to default
     shift
   done
   return 1
