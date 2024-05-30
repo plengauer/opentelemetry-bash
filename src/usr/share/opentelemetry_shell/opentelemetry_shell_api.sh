@@ -13,6 +13,8 @@ if \[ -n "$OTEL_SHELL_TRACES_ENABLE" ] || \[ -n "$OTEL_SHELL_METRICS_ENABLE" ] |
   export OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=delta
 fi
 
+if \[ -n "$OTEL_REMOTE_SDK_PIPE" ]; then \ls -a "$OTEL_REMOTE_SDK_PIPE"; fi
+
 # basic setup
 _otel_remote_sdk_pipe="${OTEL_REMOTE_SDK_PIPE:-$(\mktemp -u)_opentelemetry_shell_$$.pipe}"
 if \[ -z "$OTEL_SHELL_RESPONSE_PIPE_MOUNT" ]; then OTEL_SHELL_RESPONSE_PIPE_MOUNT=/tmp; fi
