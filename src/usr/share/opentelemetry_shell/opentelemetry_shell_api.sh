@@ -36,6 +36,7 @@ if \[ -p "$_otel_remote_sdk_pipe" ]; then
     \echo "$response_pipe" >&2
     \ls -la "$_otel_shell_pipe_dir" >&2
     \ls -la "$_otel_shell_pipe_dir/.." >&2
+    \ls -la "/tmp" >&2
   }
 
   otel_shutdown() {
