@@ -67,7 +67,9 @@ _otel_inject_docker_args() {
     \echo -n ' '; _otel_escape_args --env OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$("$executable" inspect "$image" | \jq -r '.[0].Config.Entrypoint[]?')"
     \echo -n ' '; _otel_escape_args --entrypoint /bin/sh
     \echo -n ' '; _otel_escape_arg "$1"; shift
-    \echo -n ' '; _otel_escape_args -c '. otel.sh
+    \echo -n ' '; _otel_escape_args -c '
+chmod 666 "$OTEL_SHELL_PIPE_DIR"
+. otel.sh
 eval "$(_otel_escape_args "$@")"' sh
     \echo -n ' '; if \[ -n "$entrypoint_override" ]; then \echo "$entrypoint_override" | _otel_line_split; else "$executable" inspect "$image" | \jq -r '.[0].Config.Entrypoint[]?'; fi | _otel_escape_stdin
     if \[ "$#" = 0 ]; then \echo -n ' '; "$executable" inspect "$image" | \jq -r '.[0].Config.Cmd[]?' | _otel_escape_stdin; fi
