@@ -29,6 +29,11 @@ if \[ -p "$_otel_remote_sdk_pipe" ]; then
   otel_init() {
     _otel_mkfifo_flags=--mode=666
     \exec 7> "$_otel_remote_sdk_pipe"
+
+    \echo 'DEBUG DEBUG DEBUG' >&2
+    \mktemp -u -p "$_otel_shell_pipe_dir" >&2
+    local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.traceparent.pipe"
+    \echo "$response_pipe" >&2
   }
 
   otel_shutdown() {
