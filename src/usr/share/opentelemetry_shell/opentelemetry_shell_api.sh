@@ -136,7 +136,7 @@ _otel_resolve_package_version() {
 }
 
 otel_span_current() {
-  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.pipe"
+  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.span.handle.pipe"
   \mkfifo $_otel_mkfifo_flags "$response_pipe"
   _otel_sdk_communicate "SPAN_HANDLE" "$response_pipe" "$OTEL_TRACEPARENT"
   \cat "$response_pipe"
@@ -146,7 +146,7 @@ otel_span_current() {
 otel_span_start() {
   local kind="$1"
   local name="$2"
-  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.pipe"
+  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.span.handle.pipe"
   \mkfifo $_otel_mkfifo_flags "$response_pipe"
   _otel_sdk_communicate "SPAN_START" "$response_pipe" "$OTEL_TRACEPARENT" "$kind" "$name"
   \cat "$response_pipe"
@@ -178,7 +178,7 @@ otel_span_attribute_typed() {
 
 otel_span_traceparent() {
   local span_handle="$1"
-  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.pipe"
+  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.traceparent.pipe"
   \mkfifo $_otel_mkfifo_flags "$response_pipe"
   _otel_sdk_communicate "SPAN_TRACEPARENT" "$response_pipe" "$span_handle"
   \cat "$response_pipe"
@@ -203,7 +203,7 @@ otel_span_deactivate() {
 
 otel_event_create() {
   local event_name="$1"
-  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.pipe"
+  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.event.handle.pipe"
   \mkfifo $_otel_mkfifo_flags "$response_pipe"
   _otel_sdk_communicate "EVENT_CREATE" "$response_pipe" "$event_name"
   \cat "$response_pipe"
@@ -231,7 +231,7 @@ otel_event_add() {
 
 otel_metric_create() {
   local metric_name="$1"
-  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.pipe"
+  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.metric.handle.pipe"
   \mkfifo $_otel_mkfifo_flags "$response_pipe"
   _otel_sdk_communicate "METRIC_CREATE" "$response_pipe" "$metric_name"
   \cat "$response_pipe"
