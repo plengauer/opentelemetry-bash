@@ -34,7 +34,7 @@ if \[ -p "$_otel_remote_sdk_pipe" ]; then
     \mktemp -u -p "$_otel_shell_pipe_dir" >&2
     local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.traceparent.pipe"
     \echo "$response_pipe" >&2
-    \mktemp --help >&2
+    \ls -la "$_otel_shell_pipe_dir" >&2
   }
 
   otel_shutdown() {
