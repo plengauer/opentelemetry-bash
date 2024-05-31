@@ -85,12 +85,12 @@ _otel_auto_instrument() {
   if \[ "$_otel_shell" = bash ]; then \alias source='_otel_instrument_and_source "$#" "$@" source'; fi
   if \[ "$_otel_shell_conservative_exec" = TRUE ]; then
     if \[ -n "$LINENO" ]; then
-      #\alias exec='eval "$(_otel_inject_and_exec_by_location "'$_otel_source_file_resolver'" "'$_otel_source_line_resolver'")"; exec'
+      \alias exec='eval "$(_otel_inject_and_exec_by_location "'$_otel_source_file_resolver'" "'$_otel_source_line_resolver'")"; exec'
     else
-      #\alias exec='_otel_record_exec; exec'
+      \alias exec='_otel_record_exec; exec'
     fi
   else
-    #\alias exec='_otel_inject_and_exec_directly exec'
+    \alias exec='_otel_inject_and_exec_directly exec'
   fi
 
   # cache
