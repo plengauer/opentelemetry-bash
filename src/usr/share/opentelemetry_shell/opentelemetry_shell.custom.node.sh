@@ -2,6 +2,7 @@
 
 _otel_inject_node() {
   local cmdline="$(_otel_dollar_star "$@")"
+  \echo 'DEBUG DEBUG DEBUG' "$cmdline" >&2
   local cmdline="${cmdline#\\}"
   local command="$1"
   shift
