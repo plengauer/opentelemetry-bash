@@ -62,6 +62,7 @@ jobs:
           OS: ${{ matrix.os }}
           UPDATE: ${{ matrix.update }}
           SHELL: ${{ matrix.shell }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   action:
     needs: smoke
