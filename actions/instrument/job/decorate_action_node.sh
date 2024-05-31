@@ -1,7 +1,7 @@
 #!/bin/bash
 # need to use bash over sh, because it propagates invalid env vars correctly (env vars with dashes in keys)
 if [ "$(cat /tmp/opentelemetry_shell_action_name 2> /dev/null)" = "$GITHUB_ACTION" ] || [ -z "$GITHUB_RUN_ID" ] || [ "$(cat /proc/$PPID/cmdline | tr '\000-\037' ' ' | cut -d ' ' -f 1 | rev | cut -d / -f 1 | rev)" != "Runner.Worker" ]; then exec "$@"; fi
-while true; do sleep 1; ps -ef | grep node >&2; done &
+while true; do sleep 1; ps -ef | grep -E 'node|renovate' >&2; done &
 # export GITHUB_STEP="$(curl --no-progress-meter --fail --retry 12 --retry-all-errors "$GITHUB_API_URL"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/jobs 2> /dev/null | jq -r ".jobs[] | select(.name == \"$GITHUB_JOB\") | select(.run_attempt == $GITHUB_RUN_ATTEMPT) | .steps[] | select(.status == \"in_progress\") | .name")"
 . otelapi.sh
 eval "$(cat /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.sh | grep -v '_otel_alias_prepend ')"
