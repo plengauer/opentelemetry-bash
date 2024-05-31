@@ -96,6 +96,7 @@ jobs:
         env:
           RENOVATE_DRY_RUN: full
           RENOVATE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RENOVATE_REPOSITORIES: ${{ github.repository }}
 
   performance-prepare:
     runs-on: ubuntu-latest
