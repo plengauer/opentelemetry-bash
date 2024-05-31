@@ -44,6 +44,7 @@ _otel_inject_docker_args() {
     \echo -n ' '; _otel_escape_arg "$1"
     if ! _otel_is_boolean_docker_option "$1" && ! _otel_string_contains "$1" =; then
       if \[ "$1" = --entrypoint ]; then local entrypoint_override="$2"; fi
+      if ( \[ "$1" = -v ] || \[ "$1" = --volume ] ) && \[ "$2" = '/tmp:/tmp' ]; then local is_tmp_mounted=1; fi 
       shift
       \echo -n ' '; _otel_escape_arg "$1"
     fi
@@ -60,7 +61,7 @@ _otel_inject_docker_args() {
     \echo -n ' '; _otel_escape_args --mount type=bind,source="$_otel_remote_sdk_pipe",target=/var/opentelemetry_shell"$_otel_remote_sdk_pipe"
     \echo -n ' '; _otel_escape_args --env OTEL_REMOTE_SDK_PIPE=/var/opentelemetry_shell"$_otel_remote_sdk_pipe"
     local pipes_dir="$(\mktemp -u)_opentelemetry_shell_$$.docker"; \mkdir -p "$pipes_dir"; \chmod 666 "$pipes_dir"
-    \echo -n ' '; _otel_escape_args --mount type=bind,source="$pipes_dir",target="$pipes_dir"
+    if ! \[ "$is_tmp_mounted" = 1 ] ; then \echo -n ' '; _otel_escape_args --mount type=bind,source="$pipes_dir",target="$pipes_dir"; fi
     \echo -n ' '; _otel_escape_args --env OTEL_SHELL_PIPE_DIR="$pipes_dir"
     \echo -n ' '; _otel_escape_args --env OTEL_SHELL_AUTO_INJECTED=TRUE
     \echo -n ' '; _otel_escape_args --env OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$("$executable" inspect "$image" | \jq -r '.[0].Config.Entrypoint[]?')"
