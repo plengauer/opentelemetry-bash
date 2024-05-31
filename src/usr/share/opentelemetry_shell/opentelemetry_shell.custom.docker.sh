@@ -44,7 +44,6 @@ _otel_inject_docker_args() {
     \echo -n ' '; _otel_escape_arg "$1"
     if ! _otel_is_boolean_docker_option "$1" && ! _otel_string_contains "$1" =; then
       if \[ "$1" = --entrypoint ]; then local entrypoint_override="$2"; fi
-      # if ( \[ "$1" = -v ] || \[ "$1" = --volume ] ) && \[ "$2" = '/tmp:/tmp' ]; then local is_tmp_mounted=1; fi 
       shift
       \echo -n ' '; _otel_escape_arg "$1"
     fi
