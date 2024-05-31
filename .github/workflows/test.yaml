@@ -66,7 +66,7 @@ jobs:
   action:
     # TODO revert before merge
     # needs: smoke
-    needs: build
+    needs: _build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
