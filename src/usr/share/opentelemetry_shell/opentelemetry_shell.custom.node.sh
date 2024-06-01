@@ -6,6 +6,8 @@ _otel_is_node_injected() {
     \cat "$dir"/package-lock.json | \grep -q '"@opentelemetry/'
   elif \[ -f "$dir"/package.json ]; then
     \cat "$dir"/package.json | \grep -q '"@opentelemetry/'
+  elif \[ -d "$dir"/node_modules ];
+    return 1
   else
     return 1
   fi
@@ -29,18 +31,16 @@ _otel_inject_node() {
       while [ -n "$dir" ] && ! \[ -d "$dir"/node_modules ]; do
         local dir="$(\echo "$dir" | \rev | \cut -d / -f 2- | \rev)"
       done
-      if \[ -d "$dir"/node_modules ]; then
-        if _otel_is_node_injected "$dir"; then
-          local extra_flags="$extra_flags --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.link.js"
-        elif \type npm &> /dev/null; then
-          local wd="$(\pwd)"
-          \cd "$dir"
-          \cp package.json .package.json.otel.backup 2> /dev/null || \true
-          \cp /usr/share/opentelemetry_shell/package.json package.json
-          \npm install --package-lock=false &> /dev/null && local extra_flags="$extra_flags --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.link.js --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.instrument.js" || \true
-          \cp .package.json.otel.backup package.json 2> /dev/null && \rm .package.json.otel.backup 2> /dev/null || \true
-          \cd "$wd"
-        fi
+      if \[ -n "$dir" ]; then local dir="$(\echo "$script" | \rev | \cut -d / -f 2- | \rev)"; fi
+      if _otel_is_node_injected "$dir"; then
+        local extra_flags="$extra_flags --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.link.js"
+      elif \type npm &> /dev/null; then
+        local wd="$(\pwd)"
+        \cd "$dir"
+        \cp package.json .package.json.otel.backup 2> /dev/null || \true
+        \cp /usr/share/opentelemetry_shell/package.json package.json && \npm install --package-lock=false &> /dev/null && local extra_flags="$extra_flags --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.link.js --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.instrument.js" || \true
+        \cp .package.json.otel.backup package.json 2> /dev/null && \rm .package.json.otel.backup 2> /dev/null || \true
+        \cd "$wd"
       fi
     fi
   fi
