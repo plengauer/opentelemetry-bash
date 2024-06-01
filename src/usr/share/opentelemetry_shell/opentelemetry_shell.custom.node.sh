@@ -38,7 +38,7 @@ _otel_inject_node() {
         local wd="$(\pwd)"
         \cd "$dir"
         \cp package.json .package.json.otel.backup 2> /dev/null || \true
-        \cp /usr/share/opentelemetry_shell/package.json package.json && \npm install --package-lock=false &> /dev/null && local extra_flags="$extra_flags --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.link.js --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.instrument.js" || \true
+        \cp /usr/share/opentelemetry_shell/package.json package.json && \npm install --package-lock=false && local extra_flags="$extra_flags --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.link.js --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.instrument.js" || \true
         \cp .package.json.otel.backup package.json 2> /dev/null && \rm .package.json.otel.backup 2> /dev/null || \true
         \cd "$wd"
       fi
