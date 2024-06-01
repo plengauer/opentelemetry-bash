@@ -362,7 +362,7 @@ _otel_record_exec() {
 }
 
 command() {
-  if \[ "$#" = 2 ] && \[ "$1" = -v ]; then
+  if \[ "$#" = 2 ] && \[ "$1" = -v ] && _otel_string_contains "$(\alias "$2")" " OTEL_SHELL_COMMAND_TYPE_OVERRIDE=file "; then
     \which "$2"
   else
     \command "$@"
