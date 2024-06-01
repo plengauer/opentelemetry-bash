@@ -64,9 +64,7 @@ jobs:
           SHELL: ${{ matrix.shell }}
 
   action:
-    # TODO revert before merge
-    # needs: smoke
-    needs: _build
+    needs: smoke
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
