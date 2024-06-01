@@ -13,12 +13,12 @@ _otel_inject_node() {
       break
     done
     if \[ -f "$script" ]; then
-      local wd="$(\pwd)"
       local dir="$(\echo "$script" | \rev | \cut -d / -f 2- | \rev)"
       while [ -n "$dir" ] && ! \[ -d "$dir"/node_modules ]; do
         local dir="$(\echo "$dir" | \rev | \cut -d / -f 2- | \rev)"
       done
       if \[ -d "$dir"/node_modules ]; then
+        local wd="$(\pwd)"
         \cd "$dir"
         \cp package.json .package.json.otel.backup 2> /dev/null || \true
         \cp /usr/share/opentelemetry_shell/package.json package.json
