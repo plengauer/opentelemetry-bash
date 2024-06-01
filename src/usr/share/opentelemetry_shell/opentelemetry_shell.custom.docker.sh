@@ -20,23 +20,13 @@ _otel_is_boolean_docker_option() {
 _otel_is_docker_image_injectable() {
   local executable="$1"
   local image="$2"
-  local image_id="$("$executable" inspect "$image" | \jq -r .[0].Id)"
-  local cache_file="$(\mktemp -u | \rev | \cut -d / -f 2- | \rev)"/opentelemetry_shell_docker_image_cache_"$image_id".os_release
-  if ! \[ -f "$cache_file" ]; then
-    "$executable" run --rm --entrypoint cat "$image" /etc/os-release > "$cache_file"
-  fi
-  \cat "$cache_file" | \grep -E '^NAME=' | \grep -qE 'Debian|Ubuntu|Alpine Linux'
+  "$executable" run --rm --entrypoint cat "$image" /etc/os-release | \grep -E '^NAME=' | \grep -qE 'Debian|Ubuntu|Alpine Linux'
 }
 
 _otel_is_docker_image_injected() {
   local executable="$1"
   local image="$2"
-  local image_id="$("$executable" inspect "$image" | \jq -r .[0].Id)"
-  local cache_file="$(\mktemp -u | \rev | \cut -d / -f 2- | \rev)"/opentelemetry_shell_docker_image_cache_"$image_id".injected
-  if ! \[ -f "$cache_file" ]; then
-    { "$executable" run --rm --entrypoint which "$image" otel.sh &> /dev/null && \echo TRUE || \echo FALSE; } > "$cache_file"
-  fi
-  \[ "$(\cat "$cache_file")" = TRUE ]
+  "$executable" run --rm --entrypoint which "$image" otel.sh &> /dev/null
 }
 
 _otel_inject_docker_args() {
