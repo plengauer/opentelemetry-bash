@@ -49,7 +49,7 @@ _otel_alias_prepend watch _otel_inject_inner_command
 _otel_alias_prepend at _otel_inject_inner_command
 _otel_alias_prepend flock _otel_inject_inner_command
 _otel_alias_prepend xargs _otel_inject_inner_command
-_otel_alias_prepeend dumb-init _otel_inject_inner_command
+_otel_alias_prepend dumb-init _otel_inject_inner_command
 
 # sudo apt-get update => sudo sh -c '. /otel.sh; apt-get update' 'sudo'
 
