@@ -351,7 +351,6 @@ _otel_inject_and_exec_by_location() {
 '"$command"; \echo -n ' "$0" "$@"'
 }
 
-
 _otel_record_exec() {
   local span_id="$(otel_span_start INTERNAL exec)"
   otel_span_activate "$span_id"
@@ -360,6 +359,14 @@ _otel_record_exec() {
   otel_span_end "$span_id"
   _otel_sdk_communicate 'SPAN_AUTO_END'
   export OTEL_TRACEPARENT="$otel_traceparent"
+}
+
+command() {
+  if \[ "$#" = 2 ] && \[ "$1" = -v ]; then
+    \which "$2"
+  else
+    \command "$@"
+  fi
 }
 
 _otel_start_script() {
