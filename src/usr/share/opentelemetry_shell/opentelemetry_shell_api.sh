@@ -14,8 +14,9 @@ if \[ -n "$OTEL_SHELL_TRACES_ENABLE" ] || \[ -n "$OTEL_SHELL_METRICS_ENABLE" ] |
 fi
 
 # basic setup
-_otel_remote_sdk_pipe="${OTEL_REMOTE_SDK_PIPE:-$(\mktemp -u)_opentelemetry_shell_$$.pipe}"
-if \[ -z "$OTEL_SHELL_RESPONSE_PIPE_MOUNT" ]; then OTEL_SHELL_RESPONSE_PIPE_MOUNT=/tmp; fi
+_otel_remote_sdk_pipe="${OTEL_REMOTE_SDK_PIPE:-$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.pipe}"
+if \[ -z "$TMPDIR" ]; then TMPDIR=/tmp; fi
+_otel_shell_pipe_dir="${OTEL_SHELL_PIPE_DIR:-$TMPDIR}"
 _otel_shell="$(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)"
 if \[ "$_otel_shell" = busybox ]; then _otel_shell="busybox sh"; fi
 if \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = 0 ] || \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "$PPID" ] || \[ "$PPID" = 0 ] || \[ "$(\tr '\000-\037' ' ' < /proc/$PPID/cmdline)" = "$(\tr '\000-\037' ' ' < /proc/$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE/cmdline)" ]; then _otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"; fi
@@ -24,11 +25,17 @@ unset OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE
 unset OTEL_SHELL_COMMAND_TYPE_OVERRIDE
 unset OTEL_SHELL_SPAN_KIND_OVERRIDE
 
-otel_init() {
-  if \[ -p "$_otel_remote_sdk_pipe" ]; then
-    _otel_is_remote_sdk_mine=FALSE
+if \[ -p "$_otel_remote_sdk_pipe" ]; then
+  otel_init() {
     _otel_mkfifo_flags=--mode=666
-  else
+    \exec 7> "$_otel_remote_sdk_pipe"
+  }
+
+  otel_shutdown() {
+    \exec 7>&-
+  }
+else
+  otel_init() {
     if \[ -e "/dev/stderr" ] && \[ -e "$(\readlink -f /dev/stderr)" ]; then local sdk_output=/dev/stderr; else local sdk_output=/dev/null; fi
     local sdk_output="${OTEL_SHELL_SDK_OUTPUT_REDIRECT:-$sdk_output}"
     \mkfifo "$_otel_remote_sdk_pipe"
@@ -36,20 +43,17 @@ otel_init() {
     # several weird things going on in the next line, (1) using '((' fucks up the syntax highlighting in github while '( (' does not, and (2) &> causes weird buffering / late flushing behavior
     if \env --help 2>&1 | \grep -q 'ignore-signal'; then local extra_env_flags='--ignore-signal=INT --ignore-signal=HUP'; fi
     ( (\env $extra_env_flags otelsdk "shell" "$(_otel_package_version opentelemetry-shell)" < "$_otel_remote_sdk_pipe" 1> "$sdk_output" 2> "$sdk_output") &)
-    _otel_is_remote_sdk_mine=TRUE
-  fi
-  \exec 7> "$_otel_remote_sdk_pipe"
-  if \[ "$_otel_is_remote_sdk_mine" = TRUE ]; then
+    \exec 7> "$_otel_remote_sdk_pipe"
     _otel_resource_attributes | while IFS= read -r kvp; do _otel_sdk_communicate "RESOURCE_ATTRIBUTE" "auto" "$kvp"; done
     _otel_sdk_communicate "INIT"
-  fi
-}
+  }
 
-otel_shutdown() {
-  if \[ "$_otel_is_remote_sdk_mine" = TRUE ]; then _otel_sdk_communicate "SHUTDOWN"; fi
-  \exec 7>&-
-  if \[ "$_otel_is_remote_sdk_mine" = TRUE ]; then \rm "$_otel_remote_sdk_pipe"; fi
-}
+  otel_shutdown() {
+    _otel_sdk_communicate "SHUTDOWN"
+    \exec 7>&-
+    \rm "$_otel_remote_sdk_pipe"
+  }
+fi
 
 _otel_sdk_communicate() {
   if _otel_string_contains "$*" "
@@ -132,7 +136,7 @@ _otel_resolve_package_version() {
 }
 
 otel_span_current() {
-  local response_pipe="$(\mktemp -u -p "$OTEL_SHELL_RESPONSE_PIPE_MOUNT")_opentelemetry_shell_$$.pipe"
+  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.span.handle.pipe"
   \mkfifo $_otel_mkfifo_flags "$response_pipe"
   _otel_sdk_communicate "SPAN_HANDLE" "$response_pipe" "$OTEL_TRACEPARENT"
   \cat "$response_pipe"
@@ -142,7 +146,7 @@ otel_span_current() {
 otel_span_start() {
   local kind="$1"
   local name="$2"
-  local response_pipe="$(\mktemp -u -p "$OTEL_SHELL_RESPONSE_PIPE_MOUNT")_opentelemetry_shell_$$.pipe"
+  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.span.handle.pipe"
   \mkfifo $_otel_mkfifo_flags "$response_pipe"
   _otel_sdk_communicate "SPAN_START" "$response_pipe" "$OTEL_TRACEPARENT" "$kind" "$name"
   \cat "$response_pipe"
@@ -174,7 +178,7 @@ otel_span_attribute_typed() {
 
 otel_span_traceparent() {
   local span_handle="$1"
-  local response_pipe="$(\mktemp -u -p "$OTEL_SHELL_RESPONSE_PIPE_MOUNT")_opentelemetry_shell_$$.pipe"
+  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.traceparent.pipe"
   \mkfifo $_otel_mkfifo_flags "$response_pipe"
   _otel_sdk_communicate "SPAN_TRACEPARENT" "$response_pipe" "$span_handle"
   \cat "$response_pipe"
@@ -199,7 +203,7 @@ otel_span_deactivate() {
 
 otel_event_create() {
   local event_name="$1"
-  local response_pipe="$(\mktemp -u -p "$OTEL_SHELL_RESPONSE_PIPE_MOUNT")_opentelemetry_shell_$$.pipe"
+  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.event.handle.pipe"
   \mkfifo $_otel_mkfifo_flags "$response_pipe"
   _otel_sdk_communicate "EVENT_CREATE" "$response_pipe" "$event_name"
   \cat "$response_pipe"
@@ -227,7 +231,7 @@ otel_event_add() {
 
 otel_metric_create() {
   local metric_name="$1"
-  local response_pipe="$(\mktemp -u -p "$OTEL_SHELL_RESPONSE_PIPE_MOUNT")_opentelemetry_shell_$$.pipe"
+  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.metric.handle.pipe"
   \mkfifo $_otel_mkfifo_flags "$response_pipe"
   _otel_sdk_communicate "METRIC_CREATE" "$response_pipe" "$metric_name"
   \cat "$response_pipe"
@@ -336,7 +340,7 @@ _otel_call_and_record_logs() {
   esac
   local call_command="$1"; shift
   local traceparent="$OTEL_TRACEPARENT"
-  local stderr_logs="$(\mktemp -u)_opentelemetry_shell_$$.stderr.logs.pipe"
+  local stderr_logs="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.stderr.logs.pipe"
   \mkfifo "$stderr_logs"
   while IFS= read -r line; do _otel_log_record "$traceparent" "$line"; \echo "$line" >&2; done < "$stderr_logs" &
   local stderr_pid="$!"
@@ -364,20 +368,20 @@ _otel_call_and_record_pipes() {
   local span_handle="$1"; shift
   local command_type="$1"; shift
   local call_command="$1"; shift
-  local stdin_bytes_result="$(\mktemp -u)_opentelemetry_shell_$$.stdin.bytes.result"
-  local stdin_lines_result="$(\mktemp -u)_opentelemetry_shell_$$.stdin.lines.result"
-  local stdout_bytes_result="$(\mktemp -u)_opentelemetry_shell_$$.stdout.bytes.result"
-  local stdout_lines_result="$(\mktemp -u)_opentelemetry_shell_$$.stdout.lines.result"
-  local stderr_bytes_result="$(\mktemp -u)_opentelemetry_shell_$$.stderr.bytes.result"
-  local stderr_lines_result="$(\mktemp -u)_opentelemetry_shell_$$.stderr.lines.result"
-  local stdout="$(\mktemp -u)_opentelemetry_shell_$$.stdout.pipe"
-  local stderr="$(\mktemp -u)_opentelemetry_shell_$$.stderr.pipe"
-  local stdin_bytes="$(\mktemp -u)_opentelemetry_shell_$$.stdin.bytes.pipe"
-  local stdin_lines="$(\mktemp -u)_opentelemetry_shell_$$.stdin.lines.pipe"
-  local stdout_bytes="$(\mktemp -u)_opentelemetry_shell_$$.stdout.bytes.pipe"
-  local stdout_lines="$(\mktemp -u)_opentelemetry_shell_$$.stdout.lines.pipe"
-  local stderr_bytes="$(\mktemp -u)_opentelemetry_shell_$$.stderr.bytes.pipe"
-  local stderr_lines="$(\mktemp -u)_opentelemetry_shell_$$.stderr.lines.pipe"
+  local stdin_bytes_result="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.stdin.bytes.result"
+  local stdin_lines_result="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.stdin.lines.result"
+  local stdout_bytes_result="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.stdout.bytes.result"
+  local stdout_lines_result="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.stdout.lines.result"
+  local stderr_bytes_result="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.stderr.bytes.result"
+  local stderr_lines_result="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.stderr.lines.result"
+  local stdout="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.stdout.pipe"
+  local stderr="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.stderr.pipe"
+  local stdin_bytes="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.stdin.bytes.pipe"
+  local stdin_lines="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.stdin.lines.pipe"
+  local stdout_bytes="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.stdout.bytes.pipe"
+  local stdout_lines="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.stdout.lines.pipe"
+  local stderr_bytes="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.stderr.bytes.pipe"
+  local stderr_lines="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.stderr.lines.pipe"
   local exit_code=0
   \mkfifo "$stdout" "$stderr" "$stdin_bytes" "$stdin_lines" "$stdout_bytes" "$stdout_lines" "$stderr_bytes" "$stderr_lines"
   \wc -c < "$stdin_bytes" > "$stdin_bytes_result" &

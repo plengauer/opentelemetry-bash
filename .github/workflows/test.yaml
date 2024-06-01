@@ -88,11 +88,17 @@ jobs:
         with:
           name: package.deb
       - uses: actions/hello-world-docker-action@main # check if docker action works
-      - uses: actions/first-interaction@v1
+      - uses: actions/first-interaction@v1 # node action with - in env vars
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           issue-message: "Hello, thanks for adding an issue for the first time!"
           pr-message: "Hello, thanks for contributing for the first time!"
+      - uses: renovatebot/github-action@v40.1.11 # integration, node action with call to docker, docker flags that make injection more complicated, then call a node script via exec that already is injected with otel
+        env:
+          RENOVATE_DRY_RUN: full
+          RENOVATE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RENOVATE_REPOSITORIES: ${{ github.repository }}
+          LOG_LEVEL: debug
 
   performance-prepare:
     runs-on: ubuntu-latest
