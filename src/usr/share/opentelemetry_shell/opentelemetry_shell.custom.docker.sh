@@ -17,6 +17,28 @@ _otel_is_boolean_docker_option() {
   esac
 }
 
+_otel_is_docker_image_injectable() {
+  local executable="$1"
+  local image="$2"
+  local image_id="$("$executable" inspect "$image" | jq -r .[0].Id)"
+  local cache_file="$(\mktemp -u | \rev | \cut -d / -f 2- | \rev)"/opentelemetry_shell_docker_image_cache_"$image_id".os_release
+  if ! \[ -f "$cache_file" ]; then
+    "$executable" run --rm --entrypoint cat "$image" /etc/os-release > "$cache_file"
+  fi
+  \cat "$cache_file" | \grep -E '^NAME=' | \grep -qE 'Debian|Ubuntu|Alpine Linux'
+}
+
+_otel_is_docker_image_injected() {
+  local executable="$1"
+  local image="$2"
+  local image_id="$("$executable" inspect "$image" | jq -r .[0].Id)"
+  local cache_file="$(\mktemp -u | \rev | \cut -d / -f 2- | \rev)"/opentelemetry_shell_docker_image_cache_"$image_id".injected
+  if ! \[ -f "$cache_file" ]; then
+    { "$executable" run --rm --entrypoint which "$image" otel.sh &> /dev/null && \echo TRUE || \echo FALSE; } > "$cache_file"
+  fi
+  \[ "$(\cat "$cache_file")" = TRUE ]
+}
+
 _otel_inject_docker_args() {
   # docker command
   local executable="$1"
@@ -51,7 +73,7 @@ _otel_inject_docker_args() {
   done
   # extract image
   local image="$1"
-  if "$executable" run --rm --entrypoint cat "$image" /etc/os-release | \grep -E '^NAME=' | \grep -qE 'Debian|Ubuntu|Alpine Linux' && ! "$executable" run --rm --entrypoint which "$image" otel.sh &> /dev/null && ( ! \[ "$GITHUB_ACTIONS" = true ] || ! \printenv | \cut -d = -f 1 | \grep -E '^INPUT_' | \grep -q - ); then
+  if _otel_is_docker_image_injectable "$executable" "$image" && ! _otel_is_docker_image_injected "$executable" "$image" && ( ! \[ "$GITHUB_ACTIONS" = true ] || ! \printenv | \cut -d = -f 1 | \grep -E '^INPUT_' | \grep -q - ); then
     \echo -n ' '; _otel_escape_args --env OTEL_TRACEPARENT="$OTEL_TRACEPARENT"
     for file in $(\dpkg -L opentelemetry-shell | \grep -E '^/usr/bin/'); do \echo -n ' '; _otel_escape_args --mount type=bind,source="$file",target="$file",readonly; done
     \echo -n ' '; _otel_escape_args --mount type=bind,source=/usr/share/opentelemetry_shell,target=/usr/share/opentelemetry_shell
