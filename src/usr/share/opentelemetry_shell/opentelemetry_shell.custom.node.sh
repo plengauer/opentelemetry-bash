@@ -5,7 +5,7 @@ _otel_is_node_injected() {
   if \[ -f "$dir"/package-lock.json ]; then
     \cat "$dir"/package-lock.json | \grep -q '"@opentelemetry/'
   elif \[ -d "$dir"/node_modules ]; then
-    \find "$dir"/node_modules | \grep -q 'opentelemetry/'
+    \find "$dir"/node_modules | \grep -q '/@opentelemetry/'
   elif \[ -f "$dir"/package.json ]; then
     \cat "$dir"/package.json | \grep -q '"@opentelemetry/'
   else
