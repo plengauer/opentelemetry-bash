@@ -23,7 +23,7 @@ _otel_inject_node() {
     for _otel_node_arg in "$@"; do
       if \[ "$_otel_node_arg" = -r ] || \[ "$_otel_node_arg" = --require ]; then local skip=1; continue; fi
       if \[ "$skip" = 1 ] || _otel_string_starts_with "$_otel_node_arg" -; then local skip=0; continue; fi
-      if _otel_string_ends_with "$_otel_node_arg".js || _otel_string_ends_with "$_otel_node_arg" .ts; then local script="$_otel_node_arg"; fi
+      if _otel_string_ends_with "$_otel_node_arg" .js || _otel_string_ends_with "$_otel_node_arg" .ts; then local script="$_otel_node_arg"; fi
       break
     done
     if \[ -f "$script" ]; then
