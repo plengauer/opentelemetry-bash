@@ -1,5 +1,6 @@
 #!/bin/bash -e
 if [ "$1" = 'remove' ] || [ "$1" = 'purge' ] || [ "$1" = 'disappear' ]; then
+  rm -rf /usr/share/opentelemetry_shell 2> /dev/null || true
   rm -rf /opt/opentelemetry_shell
 elif [ "$1" = 'upgrade' ]; then
   true
