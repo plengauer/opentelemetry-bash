@@ -25,7 +25,7 @@ _otel_inject_node() {
       if \[ "$skip" = 1 ] || _otel_string_starts_with "$_otel_node_arg" -; then local skip=0; continue; fi
       if _otel_string_ends_with "$_otel_node_arg".js || _otel_string_ends_with "$_otel_node_arg" .ts; then local script="$_otel_node_arg"; fi
       break
-    done    
+    done
     if \[ -f "$script" ]; then
       local dir="$(\echo "$script" | \rev | \cut -d / -f 2- | \rev)"
       while [ -n "$dir" ] && ! \[ -d "$dir"/node_modules ] && ! \[ -f "$dir"/package.json ] && ! \[ -f "$dir"/package-lock.json ]; do
