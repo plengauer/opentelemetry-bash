@@ -53,7 +53,7 @@ const options = {
   path: '/',
   method: 'GET'
 };
-const req = https.request(options, (res) => {});
+const req = https.request(options, (res) => console.log(res.statusCode));
 req.end();
 " > "$directory"/index.js
 OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE node "$directory"/index.js
