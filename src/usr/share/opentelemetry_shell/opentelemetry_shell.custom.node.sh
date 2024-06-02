@@ -38,6 +38,7 @@ _otel_inject_node() {
       fi
     fi
   fi
+  \echo "DEBUG DEBUG DEBUG extra flags: $extra_flags" >&2
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE _otel_call "$command" $extra_flags "$@"
 }
 
