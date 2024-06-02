@@ -31,7 +31,7 @@ _otel_inject_node() {
       while [ -n "$dir" ] && ! \[ -d "$dir"/node_modules ] && ! \[ -f "$dir"/package.json ] && ! \[ -f "$dir"/package-lock.json ]; do
         local dir="$(\echo "$dir" | \rev | \cut -d / -f 2- | \rev)"
       done
-      if \[ -n "$dir" ]; then local dir="$(\echo "$script" | \rev | \cut -d / -f 2- | \rev)"; fi
+      if \[ -z "$dir" ]; then local dir="$(\echo "$script" | \rev | \cut -d / -f 2- | \rev)"; fi
       if _otel_is_node_injected "$dir"; then
         local extra_flags="$extra_flags --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.link.js"
       elif \type npm &> /dev/null; then
