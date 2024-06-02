@@ -44,7 +44,7 @@ _otel_inject_node() {
             ( \[ -L .otel.inject.js ] || \ln --symbolic /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.inject.js .otel.inject.js ) && \
             ( \[ -L .otel.instrument.js ] || \ln --symbolic /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.instrument.js .otel.instrument.js ) && \
             \cp /usr/share/opentelemetry_shell/package.json package.json 2> /dev/null && \npm install --package-lock=false 2> /dev/null && \
-            local extra_flags="$extra_flags --require .otel.inject.js --require .otel.instrument.js" || \true
+            local extra_flags="$extra_flags --require $dir/.otel.inject.js --require $dir/.otel.instrument.js" || \true
           \cp .package.json.otel.backup package.json 2> /dev/null && \rm .package.json.otel.backup 2> /dev/null || \true          
         else
           \cp package.json .package.json.otel.backup 2> /dev/null || \true
