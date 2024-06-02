@@ -19,38 +19,22 @@ _otel_inject_node() {
   local command="$1"
   shift
   local extra_flags="--require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.js"
-  if \[ "$OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP" = TRUE ] && ( \[ "$OTEL_TRACES_EXPORTER" = console ] || \[ "$OTEL_TRACES_EXPORTER" = otlp ] ); then
+  if \[ "$OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP" = TRUE ] && ( \[ "$OTEL_TRACES_EXPORTER" = console ] || \[ "$OTEL_TRACES_EXPORTER" = otlp ] ) && \[ -d "/usr/share/opentelemetry_shell/node_modules" ]; then
     for _otel_node_arg in "$@"; do
       if \[ "$_otel_node_arg" = -r ] || \[ "$_otel_node_arg" = --require ]; then local skip=1; continue; fi
       if \[ "$skip" = 1 ] || _otel_string_starts_with "$_otel_node_arg" -; then local skip=0; continue; fi
       if _otel_string_ends_with "$_otel_node_arg".js || _otel_string_ends_with "$_otel_node_arg" .ts; then local script="$_otel_node_arg"; fi
       break
-    done
+    done    
     if \[ -f "$script" ]; then
       local dir="$(\echo "$script" | \rev | \cut -d / -f 2- | \rev)"
       while [ -n "$dir" ] && ! \[ -d "$dir"/node_modules ] && ! \[ -f "$dir"/package.json ] && ! \[ -f "$dir"/package-lock.json ]; do
         local dir="$(\echo "$dir" | \rev | \cut -d / -f 2- | \rev)"
       done
       if \[ -z "$dir" ]; then local dir="$(\echo "$script" | \rev | \cut -d / -f 2- | \rev)"; fi
-      if _otel_is_node_injected "$dir"; then
-        local extra_flags="$extra_flags --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.link.js"
-      elif \type npm &> /dev/null; then
-        local wd="$(\pwd)"
-        \cd "$dir"
-        if \true; then
-          \cp package.json .package.json.otel.backup 2> /dev/null
-          : && \
-            ( \[ -L .otel.inject.js ] || \ln --symbolic /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.inject.js .otel.inject.js ) && \
-            ( \[ -L .otel.instrument.js ] || \ln --symbolic /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.instrument.js .otel.instrument.js ) && \
-            \cp /usr/share/opentelemetry_shell/package.json package.json 2> /dev/null && \npm install --package-lock=false 2> /dev/null && \
-            local extra_flags="$extra_flags --require $dir/.otel.inject.js --require $dir/.otel.instrument.js" || \true
-          \cp .package.json.otel.backup package.json 2> /dev/null && \rm .package.json.otel.backup 2> /dev/null || \true          
-        else
-          \cp package.json .package.json.otel.backup 2> /dev/null || \true
-          \cp /usr/share/opentelemetry_shell/package.json package.json 2> /dev/null && \npm install --package-lock=false 2> /dev/null && local extra_flags="$extra_flags --require $dir/.otel.inject.js --require $dir/.otel.instrument.js" || \true
-          \cp .package.json.otel.backup package.json 2> /dev/null && \rm .package.json.otel.backup 2> /dev/null || \true
-        fi
-        \cd "$wd"
+      local extra_flags="$extra_flags --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.inject.js"
+      if ! _otel_is_node_injected "$dir"; then
+        local extra_flags="$extra_flags --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.instrumented.js"
       fi
     fi
   fi
