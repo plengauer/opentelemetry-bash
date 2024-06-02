@@ -19,9 +19,7 @@ _otel_inject_node() {
   local command="$1"
   shift
   local extra_flags="--require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.js"
-  \ls -la /usr/share/opentelemetry_shell/node_modules >&2
   if \[ "$OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP" = TRUE ] && ( \[ "$OTEL_TRACES_EXPORTER" = console ] || \[ "$OTEL_TRACES_EXPORTER" = otlp ] ) && \[ -d "/usr/share/opentelemetry_shell/node_modules" ]; then
-    set -x
     for _otel_node_arg in "$@"; do
       if \[ "$_otel_node_arg" = -r ] || \[ "$_otel_node_arg" = --require ]; then local skip=1; continue; fi
       if \[ "$skip" = 1 ] || _otel_string_starts_with "$_otel_node_arg" -; then local skip=0; continue; fi
@@ -39,9 +37,7 @@ _otel_inject_node() {
         local extra_flags="$extra_flags --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.instrumented.js"
       fi
     fi
-    set +x
   fi
-  \echo "DEBUG DEBUG DEBUG extra flags: $extra_flags" >&2
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE _otel_call "$command" $extra_flags "$@"
 }
 
