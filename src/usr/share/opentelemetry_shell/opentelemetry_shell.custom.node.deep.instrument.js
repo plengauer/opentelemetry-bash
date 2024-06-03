@@ -17,8 +17,8 @@ if (!process.env.OTEL_TRACES_EXPORTER) process.env.OTEL_TRACES_EXPORTER = 'otlp'
 
 let exporter = null;
 switch (process.env.OTEL_TRACES_EXPORTER) {
-  case 'otlp': exporter = opentelemetry_traces_otlp.OTLPTraceExporter(); break;
-  case 'console': exporter = opentelemetry_tracing.ConsoleSpanExporter(); break;
+  case 'otlp': exporter = new opentelemetry_traces_otlp.OTLPTraceExporter(); break;
+  case 'console': exporter = new opentelemetry_tracing.ConsoleSpanExporter(); break;
   default: return;
 }
 let sdk = new opentelemetry_sdk.NodeSDK({
