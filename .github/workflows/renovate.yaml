@@ -12,7 +12,7 @@ jobs:
   renovate:
     runs-on: ubuntu-latest
     steps:
-      - uses: renovatebot/github-action@v40.1.11
+      - uses: renovatebot/github-action@v40.1.12
         env:
           RENOVATE_REPOSITORIES: ${{ github.repository }}
         with:
