@@ -6,6 +6,7 @@ const opentelemetry_semantic_conventions = require('@opentelemetry/semantic-conv
 const opentelemetry_metrics_otlp = require('@opentelemetry/exporter-metrics-otlp-proto');
 const opentelemetry_traces_otlp = require('@opentelemetry/exporter-trace-otlp-proto');
 const opentelemetry_auto_instrumentations = require('@opentelemetry/auto-instrumentations-node');
+const opentelemetry_resources = requore('@opentelemetry/resources');
 const opentelemetry_resources_git = require('opentelemetry-resource-detector-git');
 const opentelemetry_resources_github = require('@opentelemetry/resource-detector-github');
 const opentelemetry_resources_container = require('@opentelemetry/resource-detector-container');
