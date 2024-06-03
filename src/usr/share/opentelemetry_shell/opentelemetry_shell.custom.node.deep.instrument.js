@@ -42,6 +42,6 @@ let sdk = new opentelemetry_sdk.NodeSDK({
 });
 process.on('exit', () => sdk.shutdown());
 process.on('SIGINT', () => sdk.shutdown());
-process.on('SIGQUIT', () => sdk.shutdown());
-let result = sdk.start();
-console.log('DEBUG DEBUG DEBUG SDK started: ' + result);
+process.on('SIGQUIT', () => sdk.shutdown())
+
+sdk.start();
