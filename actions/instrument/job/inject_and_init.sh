@@ -105,5 +105,6 @@ export OTEL_TRACEPARENT="$(cat "$traceparent_file")"
 rm "$traceparent_file"
 
 export OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE
+export OTEL_SHELL_EXPERIMENTAL_OBSERVE_PIPES=TRUE
 
 printenv | grep '^OTEL_' >> "$GITHUB_ENV"
