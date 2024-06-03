@@ -34,7 +34,7 @@ _otel_inject_node() {
       if \[ -z "$dir" ]; then local dir="$(\echo "$script" | \rev | \cut -d / -f 2- | \rev)"; fi
       local extra_flags="$extra_flags --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.inject.js"
       if ! _otel_is_node_injected "$dir"; then
-        local extra_flags="$extra_flags --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.instrumented.js"
+        local extra_flags="$extra_flags --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.instrument.js"
       fi
     fi
   fi
