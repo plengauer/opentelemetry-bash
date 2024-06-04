@@ -83,7 +83,7 @@ export -f root4job_end
 
 root4job() {
   rm /tmp/opentelemetry_shell.github.error 2> /dev/null
-  ( cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" > "$(mktemp -u | rev | cut -d / -f 2- | rev)/opentelemetry_shell_$GITHUB_RUN_ID.out" ) &
+  ( nohup cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" > "$(mktemp -u | rev | cut -d / -f 2- | rev)/opentelemetry_shell_$GITHUB_RUN_ID.out" ) &
   traceparent_file="$1"
   . otelapi.sh
   otel_init
