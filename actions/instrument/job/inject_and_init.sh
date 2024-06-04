@@ -95,11 +95,12 @@ root4job() {
 }
 export -f root4job
 
-export OTEL_SHELL_SDK_OUTPUT_REDIRECT="$(mktemp)"
-root_pid_file="$(mktemp -u | rev | cut -d / -f 2- | rev)/opentelemetry_shell_$GITHUB_RUN_ID.pid"
+export OTEL_SHELL_SDK_OUTPUT_REDIRECT="$(mktemp -u)"
+mkfifo "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"
 traceparent_file="$(mktemp -u)"
 nohup bash -c 'root4job "$@"' bash "$traceparent_file" &> /dev/null &
-echo "$!" > "$root_pid_file"
+echo "$!" > "$(mktemp -u | rev | cut -d / -f 2- | rev)/opentelemetry_shell_$GITHUB_RUN_ID.pid"
+nohup tail -F "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" >> "$(mktemp -u | rev | cut -d / -f 2- | rev)/opentelemetry_shell_$GITHUB_RUN_ID.out" &> /dev/null &
 
 while ! [ -f "$traceparent_file" ]; do sleep 1; done
 export OTEL_TRACEPARENT="$(cat "$traceparent_file")"
