@@ -205,14 +205,15 @@ def handle(scope, version, command, arguments):
         raise EOFError
     elif command == 'SPAN_START':
         global next_span_id
-        tokens = arguments.split(' ', 3)
+        tokens = arguments.split(' ', 4)
         response_path = tokens[0]
         traceparent = tokens[1]
-        kind = tokens[2]
-        name = tokens[3]
+        tracestate = tokens[2]
+        kind = tokens[3]
+        name = tokens[4]
         span_id = next_span_id
         next_span_id = next_span_id + 1
-        span = opentelemetry.trace.get_tracer(scope, version).start_span(name, kind=SpanKind[kind.upper()], context=TraceContextTextMapPropagator().extract({'traceparent': traceparent}))
+        span = opentelemetry.trace.get_tracer(scope, version).start_span(name, kind=SpanKind[kind.upper()], context=TraceContextTextMapPropagator().extract({'traceparent': traceparent, 'tracestate': tracestate}))
         spans[str(span_id)] = span
         with open(response_path, 'w') as response:
             response.write(str(span_id))
