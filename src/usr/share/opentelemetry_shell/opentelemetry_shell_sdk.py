@@ -172,7 +172,7 @@ def handle(scope, version, command, arguments):
                 sampler = sampling.ParentBased(sampling.DEFAULT_OFF)
             elif sampling_strategy == 'parentbased_traceidratio':
                 sampler = sampling.ParentBased(sampling.TradeIdRatioBased(float(sampling_strategy_arg)))
-            else
+            else:
                 raise Exception('Unknown sampler: ' + sampler)
             tracer_provider = TracerProvider(sampler=sampler, resource=final_resources)
             for traces_exporter in traces_exporters.split(','):
