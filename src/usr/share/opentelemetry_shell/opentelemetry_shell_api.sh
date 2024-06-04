@@ -189,7 +189,7 @@ otel_span_activate() {
   local span_handle="$1"
   export OTEL_TRACEPARENT_STACK="$OTEL_TRACEPARENT/$OTEL_TRACEPARENT_STACK"
   export OTEL_TRACEPARENT="$(otel_span_traceparent "$span_handle")"
-  export OTEL_TRACESTATE=""
+  if \[-z "$OTEL_TRACESTATE" ]; then export OTEL_TRACESTATE=""; fi
 }
 
 otel_span_deactivate() {
