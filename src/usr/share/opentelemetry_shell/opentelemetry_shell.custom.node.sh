@@ -21,8 +21,9 @@ _otel_inject_node() {
   local extra_flags="--require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.js"
   if \[ "$OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP" = TRUE ] && ( \[ "$OTEL_TRACES_EXPORTER" = console ] || \[ "$OTEL_TRACES_EXPORTER" = otlp ] ) && \[ -d "/usr/share/opentelemetry_shell/node_modules" ]; then
     for _otel_node_arg in "$@"; do
-      if \[ "$_otel_node_arg" = -r ] || \[ "$_otel_node_arg" = --require ]; then local skip=1; continue; fi
       if \[ "$skip" = 1 ] || _otel_string_starts_with "$_otel_node_arg" -; then local skip=0; continue; fi
+      if \[ "$_otel_node_arg" = -e ] || \[ "$_otel_node_arg" = --eval ] || \[ "$_otel_node_arg" = -p ] || \[ "$_otel_node_arg" = --print ]; then break; fi
+      if \[ "$_otel_node_arg" = -r ] || \[ "$_otel_node_arg" = --require ]; then local skip=1; continue; fi
       if _otel_string_ends_with "$_otel_node_arg" .js || _otel_string_ends_with "$_otel_node_arg" .ts; then local script="$_otel_node_arg"; fi
       break
     done
