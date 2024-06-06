@@ -37,11 +37,21 @@ _otel_inject_node_args() {
         if _otel_is_node_injected "$dir"; then
           _otel_escape_args -e "const opentelemetry = require('@opentelemetry/api'); opentelemetry.context.with(opentelemetry.trace.setSpanContext(opentelemetry.context.active(), opentelemetry.propagation.extract(opentelemetry.context.active(), { traceparent: process.env.OTEL_TRACEPARENT })), () => { require('$script') });"
           shift
-        elif ( \[ "$OTEL_TRACES_EXPORTER" = console ] || \[ "$OTEL_TRACES_EXPORTER" = otlp ] ); then
+        elif ( \[ "$OTEL_TRACES_EXPORTER" = console ] || \[ "$OTEL_TRACES_EXPORTER" = otlp ] ) && type npm 1> /dev/null 2> /dev/null; then
           _otel_escape_args --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.instrument.js; \echo -n ' '
-          # TODO context injection like above doesnt work because the api will not be found
           _otel_escape_arg "$1"
           shift
+# following code has the problem that it non-safely installs directly in the app directory, and then in following calls, this case wouldnt trigger anymore, but rather the above
+#          local wd="$(\pwd)"
+#          \cd "$dir"
+#          \cp package.json .package.json.otel.backup 2> /dev/null || \true
+#          \cp /usr/share/opentelemetry_shell/package.json package.json
+#          \cp /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.instrument.js .instrument.js && \npm install --package-lock=false &> /dev/null; && \
+#            _otel_escape_args --require .instrument.js -e "const opentelemetry = require('@opentelemetry/api'); opentelemetry.context.with(opentelemetry.trace.setSpanContext(opentelemetry.context.active(), opentelemetry.propagation.extract(opentelemetry.context.active(), { traceparent: process.env.OTEL_TRACEPARENT })), () => { require('$script') });" || \
+#            _otel_escape_arg "$1"
+#          \cp .package.json.otel.backup package.json 2> /dev/null && \rm .package.json.otel.backup 2> /dev/null || \true
+#          \cd "$wd"
+#          shift
         else
           _otel_escape_arg "$1"
           shift
