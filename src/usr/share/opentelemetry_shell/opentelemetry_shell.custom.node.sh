@@ -13,33 +13,46 @@ _otel_is_node_injected() {
   fi
 }
 
+_otel_inject_node_args() {
+  _otel_escape_arg "$1"
+  shift
+  \echo -n ' '; _otel_escape_args --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.js
+  while \[ "$#" -gt ]; do
+    \echo -n ' '
+    if \[ "$skip" = 1 ]; then
+      _otel_escape_arg "$1"; shift; local skip=0
+    elif \[ "$1" = -e ] || \[ "$1" = --eval ] || \[ "$1" = -p ] || \[ "$1" = --print ]; then
+      _otel_escape_arg "$1"; shift; local skip=1
+    elif \[ "$1" = -r ] || \[ "$1" = --require ]; then
+      _otel_escape_arg "$1"; shift; local skip=1
+    elif ( _otel_string_ends_with "$1" .js || _otel_string_ends_with "$1" .ts ) && \[ -f "$1" ]; then
+      if \[ "$OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP" = TRUE ] && ( \[ "$OTEL_TRACES_EXPORTER" = console ] || \[ "$OTEL_TRACES_EXPORTER" = otlp ] ) && \[ -d "/usr/share/opentelemetry_shell/node_modules" ]; then
+        local script="$1"
+        local dir="$(\echo "$script" | \rev | \cut -d / -f 2- | \rev)"
+        while [ -n "$dir" ] && ! \[ -d "$dir"/node_modules ] && ! \[ -f "$dir"/package.json ] && ! \[ -f "$dir"/package-lock.json ]; do
+          local dir="$(\echo "$dir" | \rev | \cut -d / -f 2- | \rev)"
+        done
+        if \[ -z "$dir" ]; then local dir="$(\echo "$script" | \rev | \cut -d / -f 2- | \rev)"; fi
+        if ! _otel_is_node_injected "$dir"; then
+          _otel_escape_args --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.instrument.js; \echo -n ' '
+        fi
+        _otel_escape_args -e "const opentelemetry = require('@opentelemetry/api'); opentelemetry.context.with(opentelemetry.trace.setSpanContext(opentelemetry.context.active(), opentelemetry.propagation.extract(opentelemetry.context.active(), { traceparent: process.env.OTEL_TRACEPARENT })), () => { require('$script') });"
+        shift
+      else
+        _otel_escape_arg "$1"; shift
+      fi
+    elif _otel_string_starts_with "$1" -; then
+      _otel_escape_arg "$1"; shift
+    else
+      _otel_escape_arg "$1"; shift; break;
+    fi
+  done
+}
+
 _otel_inject_node() {
   local cmdline="$(_otel_dollar_star "$@")"
   local cmdline="${cmdline#\\}"
-  local command="$1"
-  shift
-  local extra_flags="--require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.js"
-  if \[ "$OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP" = TRUE ] && ( \[ "$OTEL_TRACES_EXPORTER" = console ] || \[ "$OTEL_TRACES_EXPORTER" = otlp ] ) && \[ -d "/usr/share/opentelemetry_shell/node_modules" ]; then
-    for _otel_node_arg in "$@"; do
-      if \[ "$skip" = 1 ] || _otel_string_starts_with "$_otel_node_arg" -; then local skip=0; continue; fi
-      if \[ "$_otel_node_arg" = -e ] || \[ "$_otel_node_arg" = --eval ] || \[ "$_otel_node_arg" = -p ] || \[ "$_otel_node_arg" = --print ]; then break; fi
-      if \[ "$_otel_node_arg" = -r ] || \[ "$_otel_node_arg" = --require ]; then local skip=1; continue; fi
-      if _otel_string_ends_with "$_otel_node_arg" .js || _otel_string_ends_with "$_otel_node_arg" .ts; then local script="$_otel_node_arg"; fi
-      break
-    done
-    if \[ -f "$script" ]; then
-      local dir="$(\echo "$script" | \rev | \cut -d / -f 2- | \rev)"
-      while [ -n "$dir" ] && ! \[ -d "$dir"/node_modules ] && ! \[ -f "$dir"/package.json ] && ! \[ -f "$dir"/package-lock.json ]; do
-        local dir="$(\echo "$dir" | \rev | \cut -d / -f 2- | \rev)"
-      done
-      if \[ -z "$dir" ]; then local dir="$(\echo "$script" | \rev | \cut -d / -f 2- | \rev)"; fi
-      local extra_flags="$extra_flags --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.inject.js"
-      if ! _otel_is_node_injected "$dir"; then
-        local extra_flags="$extra_flags --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.instrument.js"
-      fi
-    fi
-  fi
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE _otel_call "$command" $extra_flags "$@"
+  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE _otel_call "$(_otel_inject_node_args "$@")"
 }
 
 _otel_alias_prepend node _otel_inject_node
