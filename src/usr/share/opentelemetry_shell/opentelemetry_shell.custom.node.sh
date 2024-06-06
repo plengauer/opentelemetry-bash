@@ -17,7 +17,7 @@ _otel_inject_node_args() {
   _otel_escape_arg "$1"
   shift
   \echo -n ' '; _otel_escape_args --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.js
-  while \[ "$#" -gt ]; do
+  while \[ "$#" -gt 0 ]; do
     \echo -n ' '
     if \[ "$skip" = 1 ]; then
       _otel_escape_arg "$1"; shift; local skip=0
@@ -26,14 +26,14 @@ _otel_inject_node_args() {
     elif \[ "$1" = -r ] || \[ "$1" = --require ]; then
       _otel_escape_arg "$1"; shift; local skip=1
     elif ( _otel_string_ends_with "$1" .js || _otel_string_ends_with "$1" .ts ) && \[ -f "$1" ]; then
-      if \[ "$OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP" = TRUE ] && ( \[ "$OTEL_TRACES_EXPORTER" = console ] || \[ "$OTEL_TRACES_EXPORTER" = otlp ] ) && \[ -d "/usr/share/opentelemetry_shell/node_modules" ]; then
+      if \[ "$OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP" = TRUE ] && \[ -d "/usr/share/opentelemetry_shell/node_modules" ]; then
         local script="$1"
         local dir="$(\echo "$script" | \rev | \cut -d / -f 2- | \rev)"
         while [ -n "$dir" ] && ! \[ -d "$dir"/node_modules ] && ! \[ -f "$dir"/package.json ] && ! \[ -f "$dir"/package-lock.json ]; do
           local dir="$(\echo "$dir" | \rev | \cut -d / -f 2- | \rev)"
         done
         if \[ -z "$dir" ]; then local dir="$(\echo "$script" | \rev | \cut -d / -f 2- | \rev)"; fi
-        if ! _otel_is_node_injected "$dir"; then
+        if ( \[ "$OTEL_TRACES_EXPORTER" = console ] || \[ "$OTEL_TRACES_EXPORTER" = otlp ] ) && ! _otel_is_node_injected "$dir"; then
           _otel_escape_args --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.instrument.js; \echo -n ' '
         fi
         _otel_escape_args -e "const opentelemetry = require('@opentelemetry/api'); opentelemetry.context.with(opentelemetry.trace.setSpanContext(opentelemetry.context.active(), opentelemetry.propagation.extract(opentelemetry.context.active(), { traceparent: process.env.OTEL_TRACEPARENT })), () => { require('$script') });"
@@ -44,9 +44,10 @@ _otel_inject_node_args() {
     elif _otel_string_starts_with "$1" -; then
       _otel_escape_arg "$1"; shift
     else
-      _otel_escape_arg "$1"; shift; break;
+      break;
     fi
   done
+  while \[ "$#" -gt 0 ]; do \echo -n ' '; _otel_escape_arg "$1"; shift; done
 }
 
 _otel_inject_node() {
