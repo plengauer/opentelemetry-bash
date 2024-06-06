@@ -34,11 +34,18 @@ _otel_inject_node_args() {
           local dir="$(\echo "$dir" | \rev | \cut -d / -f 2- | \rev)"
         done
         if \[ -z "$dir" ]; then local dir="$(\echo "$script" | \rev | \cut -d / -f 2- | \rev)"; fi
-        if ( \[ "$OTEL_TRACES_EXPORTER" = console ] || \[ "$OTEL_TRACES_EXPORTER" = otlp ] ) && ! _otel_is_node_injected "$dir"; then
+        if _otel_is_node_injected "$dir"; then
+          _otel_escape_args -e "const opentelemetry = require('@opentelemetry/api'); opentelemetry.context.with(opentelemetry.trace.setSpanContext(opentelemetry.context.active(), opentelemetry.propagation.extract(opentelemetry.context.active(), { traceparent: process.env.OTEL_TRACEPARENT })), () => { require('$script') });"
+          shift
+        elif ( \[ "$OTEL_TRACES_EXPORTER" = console ] || \[ "$OTEL_TRACES_EXPORTER" = otlp ] ); then
           _otel_escape_args --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.instrument.js; \echo -n ' '
-        fi
-        _otel_escape_args -e "const opentelemetry = require('@opentelemetry/api'); opentelemetry.context.with(opentelemetry.trace.setSpanContext(opentelemetry.context.active(), opentelemetry.propagation.extract(opentelemetry.context.active(), { traceparent: process.env.OTEL_TRACEPARENT })), () => { require('$script') });"
-        shift
+          # TODO context injection like above doesnt work because the api will not be found
+          _otel_escape_arg "$1"
+          shift
+        else
+          _otel_escape_arg "$1"
+          shift
+        fi        
       else
         break
       fi
@@ -54,7 +61,6 @@ _otel_inject_node_args() {
 _otel_inject_node() {
   local cmdline="$(_otel_dollar_star "$@")"
   local cmdline="${cmdline#\\}"
-  _otel_inject_node_args "$@" >&2
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE \eval _otel_call "$(_otel_inject_node_args "$@")"
 }
 
