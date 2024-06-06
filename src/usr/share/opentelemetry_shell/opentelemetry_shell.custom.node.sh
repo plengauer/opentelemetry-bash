@@ -14,7 +14,7 @@ _otel_is_node_injected() {
 }
 
 _otel_inject_node_args() {
-  \printf '%s' "$1"
+  _otel_escape_args command "${1#\\}"
   shift
   \echo -n ' '; _otel_escape_args --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.js
   while \[ "$#" -gt 0 ]; do
@@ -44,7 +44,7 @@ _otel_inject_node_args() {
     elif _otel_string_starts_with "$1" -; then
       _otel_escape_arg "$1"; shift
     else
-      break;
+      break
     fi
   done
   while \[ "$#" -gt 0 ]; do \echo -n ' '; _otel_escape_arg "$1"; shift; done
