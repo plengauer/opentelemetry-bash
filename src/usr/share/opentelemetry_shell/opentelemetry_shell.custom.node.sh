@@ -39,7 +39,7 @@ _otel_inject_node_args() {
         _otel_escape_args -e "const opentelemetry = require('@opentelemetry/api'); opentelemetry.context.with(opentelemetry.trace.setSpanContext(opentelemetry.context.active(), opentelemetry.propagation.extract(opentelemetry.context.active(), { traceparent: process.env.OTEL_TRACEPARENT })), () => { require('$script') });"
         shift
       else
-        _otel_escape_arg "$1"; shift
+        break
       fi
     elif _otel_string_starts_with "$1" -; then
       _otel_escape_arg "$1"; shift
