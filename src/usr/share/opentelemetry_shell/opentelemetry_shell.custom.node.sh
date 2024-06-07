@@ -34,14 +34,10 @@ _otel_inject_node_args() {
         done
         if \[ -z "$dir" ]; then local dir="$(\echo "$script" | \rev | \cut -d / -f 2- | \rev)"; fi
         if _otel_is_node_injected "$dir"; then
-          _otel_escape_args --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.link.js; \echo -n ' '
-          _otel_escape_arg "$1"
+          _otel_escape_args --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.link.js "$1"
           shift
-          # _otel_escape_args -e "const opentelemetry_api = require('@opentelemetry/api'); const opentelemetry_sdk = require('@opentelemetry/sdk-node'); opentelemetry_api.context.with(new opentelemetry_sdk.core.W3CTraceContextPropagator().extract(opentelemetry_api.ROOT_CONTEXT, { traceparent: process.env.OTEL_TRACEPARENT }, opentelemetry_api.defaultTextMapGetter), () => { require('$script'); });"
-          # shift
         elif ( \[ "$OTEL_TRACES_EXPORTER" = console ] || \[ "$OTEL_TRACES_EXPORTER" = otlp ] ); then
-          _otel_escape_args --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.instrument.js; \echo -n ' '
-          _otel_escape_arg "$1"
+          _otel_escape_args --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.instrument.js "$1"
           shift
         else
           _otel_escape_arg "$1"
@@ -62,6 +58,7 @@ _otel_inject_node_args() {
 _otel_inject_node() {
   local cmdline="$(_otel_dollar_star "$@")"
   local cmdline="${cmdline#\\}"
+  \echo -n 'DEBUG DEBUG DEBUG' >&2; _otel_inject_node_args "$@" >&2
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE \eval _otel_call "$(_otel_inject_node_args "$@")"
 }
 
