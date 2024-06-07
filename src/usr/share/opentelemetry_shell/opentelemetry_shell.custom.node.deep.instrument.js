@@ -65,15 +65,18 @@ class CustomRootContextManager {
 
   active() {
     let context = this.inner.active();
+    console.error("inner: " + context);
     if (opentelemetry_api.ROOT_CONTEXT == context) {
       context = this.custom_root;
     }
+    console.error("active: " + context);
     return context;
   }
 }
 
 
 const MY_ROOT_CONTEXT = opentelemetry_api.trace.setSpanContext(opentelemetry_api.context.active(), opentelemetry_api.propagation.extract(opentelemetry_api.context.active(), { traceparent: process.env.OTEL_TRACEPARENT }));
+console.error(MY_ROOT_CONTEXT);
 const context_manager = new CustomRootContextManager(semver.gte(process.version, '14.8.0') ? new context_async_hooks.AsyncLocalStorageContextManager() : new context_async_hooks.AsyncHooksContextManager(), MY_ROOT_CONTEXT);
 context_manager.enable();
 opentelemetry_api.context.setGlobalContextManager(context_manager);
