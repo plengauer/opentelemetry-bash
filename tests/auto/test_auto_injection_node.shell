@@ -39,6 +39,7 @@ span="$(resolve_span '.name == "echo"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
 
 type npm || exit 1
+
 directory="$(mktemp -d)"
 echo "
 const https = require('https');
@@ -77,6 +78,6 @@ const options = {
 const req = https.request(options, (res) => console.log(res.statusCode));
 req.end();
 " > "$directory"/index.js
-(cd "$directory" && npm install @opentelemetry/api @opentelemetry/sdk-node @opentelemetry/sdk-trace-node @opentelemetry/auto-instrumentations-node && find .)
+(cd "$directory" && npm install @opentelemetry/api @opentelemetry/sdk-node @opentelemetry/sdk-trace-node @opentelemetry/auto-instrumentations-node)
 OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE node "$directory"/index.js
 assert_equals 0 $?
