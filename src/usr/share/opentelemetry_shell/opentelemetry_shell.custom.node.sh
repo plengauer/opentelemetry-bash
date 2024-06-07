@@ -3,11 +3,11 @@
 _otel_is_node_injected() {
   local dir="$dir"
   if \[ -f "$dir"/package-lock.json ]; then
-    \cat "$dir"/package-lock.json | \grep -q '"@opentelemetry/'
+    \cat "$dir"/package-lock.json | \grep -q '"@opentelemetry/' 2> /dev/null
   elif \[ -d "$dir"/node_modules ]; then
     \find "$dir"/node_modules | \grep -q '/@opentelemetry/'
   elif \[ -f "$dir"/package.json ]; then
-    \cat "$dir"/package.json | \grep -q '"@opentelemetry/'
+    \cat "$dir"/package.json | \grep -q '"@opentelemetry/' 2> /dev/null
   else
     return 1
   fi
@@ -19,12 +19,10 @@ _otel_inject_node_args() {
   \echo -n ' '; _otel_escape_args --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.js
   while \[ "$#" -gt 0 ]; do
     \echo -n ' '
-    if \[ "$skip" = 1 ]; then
-      _otel_escape_arg "$1"; shift; local skip=0
-    elif \[ "$1" = -e ] || \[ "$1" = --eval ] || \[ "$1" = -p ] || \[ "$1" = --print ]; then
-      _otel_escape_arg "$1"; shift; local skip=1
+    if \[ "$1" = -e ] || \[ "$1" = --eval ] || \[ "$1" = -p ] || \[ "$1" = --print ]; then
+      _otel_escape_arg "$1"; shift; if \[ "$#" -gt 0 ]; then _otel_escape_arg "$1"; shift; fi; break
     elif \[ "$1" = -r ] || \[ "$1" = --require ]; then
-      _otel_escape_arg "$1"; shift; local skip=1
+      _otel_escape_arg "$1"; shift; if \[ "$#" -gt 0 ]; then _otel_escape_arg "$1"; shift; fi
     elif ( _otel_string_ends_with "$1" .js || _otel_string_ends_with "$1" .ts ) && \[ -f "$1" ]; then
       if \[ "$OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP" = TRUE ] && \[ -d "/usr/share/opentelemetry_shell/node_modules" ]; then
         local script="$1"
