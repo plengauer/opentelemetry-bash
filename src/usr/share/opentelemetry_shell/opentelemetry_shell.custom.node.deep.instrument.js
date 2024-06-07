@@ -62,6 +62,7 @@ class CustomRootContextManager {
     let context = this.inner.active();
     if (opentelemetry_api.ROOT_CONTEXT == context || !opentelemetry_api.trace.getSpan(context)) {
       context = this.custom_root;
+      context = opentelemetry_api.trace.setSpanContext(opentelemetry_api.context.active(), opentelemetry_api.propagation.extract(opentelemetry_api.context.active(), { traceparent: process.env.OTEL_TRACEPARENT }));
     }
     return context;
   }
