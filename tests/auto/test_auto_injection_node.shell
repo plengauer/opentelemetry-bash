@@ -23,11 +23,6 @@ assert_equals 0 $?
 span="$(resolve_span '.name == "echo hello world 3"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
 
-# node -e "const child_process = require('child_process'); child_process.execFile('echo', [ 'hello', 'world', '1' ], {}, (error, stdout, stderr) => { console.log(stdout); console.error(stderr); });"
-# assert_equals 0 $?
-# span="$(resolve_span '.name == "echo hello world 1"')"
-# assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
-
 node -e "const child_process = require('child_process'); child_process.spawn('echo', [ 'hello', 'world', '4' ], { stdio: 'inherit' });"
 assert_equals 0 $?
 span="$(resolve_span '.name == "echo hello world 4"')"
@@ -61,3 +56,27 @@ assert_equals 0 $?
 # span="$(resolve_span '.name == "GET"')"
 # assert_equals "SpanKind.CLIENT" $(\echo "$span" | jq -r '.kind')
 # the checks above actually dont work, because the output redirect is not going to a file. but we should see the span on stdout
+
+directory="$(mktemp -d)"
+echo "
+const { NodeSDK } = require('@opentelemetry/sdk-node');
+const { ConsoleSpanExporter } = require('@opentelemetry/sdk-trace-node');
+const { getNodeAutoInstrumentations } = require('@opentelemetry/auto-instrumentations-node');
+const sdk = new NodeSDK({
+  traceExporter: new ConsoleSpanExporter(),
+  instrumentations: [getNodeAutoInstrumentations()]
+});
+sdk.start();
+const https = require('https');
+const options = {
+  hostname: 'example.com',
+  port: 443,
+  path: '/',
+  method: 'GET'
+};
+const req = https.request(options, (res) => console.log(res.statusCode));
+req.end();
+" > "$directory"/index.js
+(cd "$directory" && npm install @opentelemetry/sdk-node @opentelemetry/sdk-trace-node @opentelemetry/auto-instrumentations-node )
+OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE node "$directory"/index.js
+assert_equals 0 $?
