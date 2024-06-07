@@ -46,9 +46,11 @@ const semver = require("semver");
 
 class CustomRootContextManager {
   inner;
+  custom_context;
   
-  constructor(inner) {
+  constructor(inner, custom_context) {
     this.inner = inner;
+    this.custom_context = custom_context;
   }
 
   enable() { this.inner.enable(); return this; }
@@ -59,16 +61,16 @@ class CustomRootContextManager {
   active() {
     let context = this.inner.active();
     if (opentelemetry_api.ROOT_CONTEXT == context || !opentelemetry_api.trace.getSpan(context)) {
-      console.error('CUSTOM ROOT CONTEXT env var: ' + JSON.stringify(process.env.OTEL_TRACEPARENT));
-      console.error('CUSTOM ROOT CONTEXT context: ' + JSON.stringify(opentelemetry_api.propagation.extract(context, { traceparent: process.env.OTEL_TRACEPARENT })));
-      context = opentelemetry_api.trace.setSpanContext(context, opentelemetry_api.propagation.extract(context, { traceparent: process.env.OTEL_TRACEPARENT }));
-      console.error('CUSTOM ROOT CONTEXT span context: ' + JSON.stringify(context));
+      context = this.custom_context;
     }
     return context;
   }
 }
 
-opentelemetry_api.context.setGlobalContextManager((new CustomRootContextManager(semver.gte(process.version, '14.8.0') ? new context_async_hooks.AsyncLocalStorageContextManager() : new context_async_hooks.AsyncHooksContextManager())).enable());
+// const MY_ROOT_CONTEXT = opentelemetry_api.trace.setSpanContext(context, opentelemetry_api.propagation.extract(context, { traceparent: process.env.OTEL_TRACEPARENT }));
+const MY_ROOT_CONTEXT = new opentelemetry_sdk.core.W3CTraceContextPropagator().extract(context, { traceparent: process.env.OTEL_TRACEPARENT }, opentelemetry_api.defaultTextMapGetter);
+const context_manager = new CustomRootContextManager(semver.gte(process.version, '14.8.0') ? new context_async_hooks.AsyncLocalStorageContextManager() : new context_async_hooks.AsyncHooksContextManager(), MY_ROOT_CONTEXT);
+opentelemetry_api.context.setGlobalContextManager(context_manager.enable());
 process.on('exit', () => sdk.shutdown());
 process.on('SIGINT', () => sdk.shutdown());
 process.on('SIGQUIT', () => sdk.shutdown())
