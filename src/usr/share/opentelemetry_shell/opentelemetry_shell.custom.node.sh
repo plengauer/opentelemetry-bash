@@ -34,8 +34,11 @@ _otel_inject_node_args() {
         done
         if \[ -z "$dir" ]; then local dir="$(\echo "$script" | \rev | \cut -d / -f 2- | \rev)"; fi
         if _otel_is_node_injected "$dir"; then
-          _otel_escape_args -e "const opentelemetry_api = require('@opentelemetry/api'); const opentelemetry_sdk = require('@opentelemetry/sdk-node'); opentelemetry_api.context.with(new opentelemetry_sdk.core.W3CTraceContextPropagator().extract(opentelemetry_api.ROOT_CONTEXT, { traceparent: process.env.OTEL_TRACEPARENT }, opentelemetry_api.defaultTextMapGetter), () => { require('$script'); });"
+          _otel_escape_args --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.link.js; \echo -n ' '
+          _otel_escape_arg "$1"
           shift
+          # _otel_escape_args -e "const opentelemetry_api = require('@opentelemetry/api'); const opentelemetry_sdk = require('@opentelemetry/sdk-node'); opentelemetry_api.context.with(new opentelemetry_sdk.core.W3CTraceContextPropagator().extract(opentelemetry_api.ROOT_CONTEXT, { traceparent: process.env.OTEL_TRACEPARENT }, opentelemetry_api.defaultTextMapGetter), () => { require('$script'); });"
+          # shift
         elif ( \[ "$OTEL_TRACES_EXPORTER" = console ] || \[ "$OTEL_TRACES_EXPORTER" = otlp ] ); then
           _otel_escape_args --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.instrument.js; \echo -n ' '
           _otel_escape_arg "$1"
