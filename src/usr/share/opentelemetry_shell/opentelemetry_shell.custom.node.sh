@@ -3,11 +3,11 @@
 _otel_is_node_injected() {
   local dir="$dir"
   if \[ -f "$dir"/package-lock.json ]; then
-    \cat "$dir"/package-lock.json | \grep -q '"@opentelemetry/' 2> /dev/null
+    \cat "$dir"/package-lock.json | \grep -q '"@opentelemetry/'
   elif \[ -d "$dir"/node_modules ]; then
     \find "$dir"/node_modules | \grep -q '/@opentelemetry/'
   elif \[ -f "$dir"/package.json ]; then
-    \cat "$dir"/package.json | \grep -q '"@opentelemetry/' 2> /dev/null
+    \cat "$dir"/package.json | \grep -q '"@opentelemetry/'
   else
     return 1
   fi
@@ -53,7 +53,6 @@ _otel_inject_node_args() {
 _otel_inject_node() {
   local cmdline="$(_otel_dollar_star "$@")"
   local cmdline="${cmdline#\\}"
-  \echo -n 'DEBUG DEBUG DEBUG ' >&2; _otel_inject_node_args "$@" >&2
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE \eval _otel_call "$(_otel_inject_node_args "$@")"
 }
 
