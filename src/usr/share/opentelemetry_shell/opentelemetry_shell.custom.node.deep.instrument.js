@@ -62,6 +62,7 @@ class CustomRootContextManager {
     let context = this.inner.active();
     console.error("inner: " + JSON.stringify(context));
     if (opentelemetry_api.ROOT_CONTEXT == context) {
+      console.error('using custom root');
       context = this.custom_root;
     }
     console.error("active: " + JSON.stringify(context));
