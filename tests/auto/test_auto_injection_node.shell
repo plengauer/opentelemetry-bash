@@ -77,6 +77,6 @@ const options = {
 const req = https.request(options, (res) => console.log(res.statusCode));
 req.end();
 " > "$directory"/index.js
-(cd "$directory" && npm install @opentelemetry/api @opentelemetry/sdk-node @opentelemetry/sdk-trace-node @opentelemetry/auto-instrumentations-node )
+(cd "$directory" && npm install @opentelemetry/api @opentelemetry/sdk-node @opentelemetry/sdk-trace-node @opentelemetry/auto-instrumentations-node && find .)
 OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE node "$directory"/index.js
 assert_equals 0 $?
