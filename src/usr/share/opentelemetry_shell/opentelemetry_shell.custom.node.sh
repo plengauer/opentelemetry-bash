@@ -20,9 +20,9 @@ _otel_inject_node_args() {
   while \[ "$#" -gt 0 ]; do
     \echo -n ' '
     if \[ "$1" = -e ] || \[ "$1" = --eval ] || \[ "$1" = -p ] || \[ "$1" = --print ]; then
-      _otel_escape_arg "$1"; shift; if \[ "$#" -gt 0 ]; then _otel_escape_arg "$1"; shift; fi; break
+      _otel_escape_arg "$1"; shift; if \[ "$#" -gt 0 ]; then \echo -n ' '; _otel_escape_arg "$1"; shift; fi; break
     elif \[ "$1" = -r ] || \[ "$1" = --require ]; then
-      _otel_escape_arg "$1"; shift; if \[ "$#" -gt 0 ]; then _otel_escape_arg "$1"; shift; fi
+      _otel_escape_arg "$1"; shift; if \[ "$#" -gt 0 ]; then \echo -n ' '; _otel_escape_arg "$1"; shift; fi
     elif ( _otel_string_ends_with "$1" .js || _otel_string_ends_with "$1" .ts ) && \[ -f "$1" ]; then
       if \[ "$OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP" = TRUE ] && \[ -d "/usr/share/opentelemetry_shell/node_modules" ]; then
         local script="$1"
