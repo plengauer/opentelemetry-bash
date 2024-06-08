@@ -28,7 +28,6 @@ class CustomRootContextManager {
   active() {
     let context = this.inner.active();
     if (opentelemetry_api.ROOT_CONTEXT == context || !opentelemetry_api.trace.getSpan(context)) {
-      console.error(this.custom_context);
       context = this.custom_context;
     }
     return context;
@@ -61,4 +60,3 @@ process.on('SIGINT', () => sdk.shutdown());
 process.on('SIGQUIT', () => sdk.shutdown())
 
 sdk.start();
-opentelemetry_api.context.setGlobalContextManager(context_manager);
