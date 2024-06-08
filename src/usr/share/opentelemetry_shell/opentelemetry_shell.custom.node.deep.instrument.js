@@ -8,27 +8,6 @@ const opentelemetry_resources_container = require('@opentelemetry/resource-detec
 const opentelemetry_resources_aws = require('@opentelemetry/resource-detector-aws');
 const opentelemetry_resources_gcp = require('@opentelemetry/resource-detector-gcp');
 const opentelemetry_resources_alibaba_cloud = require('@opentelemetry/resource-detector-alibaba-cloud');
-
-if (!process.env.OTEL_TRACES_EXPORTER) process.env.OTEL_TRACES_EXPORTER = 'otlp';
-
-let sdk = new opentelemetry_sdk.NodeSDK({
-  instrumentations: [ opentelemetry_auto_instrumentations.getNodeAutoInstrumentations() ],
-  resourceDetectors: [
-    opentelemetry_resources_alibaba_cloud.alibabaCloudEcsDetector,
-    // opentelemetry_resources_gcp.gcpDetector, // TODO makes noisy spans!
-    opentelemetry_resources_aws.awsBeanstalkDetector,
-    opentelemetry_resources_aws.awsEc2Detector,
-    opentelemetry_resources_aws.awsEcsDetector,
-    opentelemetry_resources_aws.awsEksDetector,
-    // TODO k8s detector
-    opentelemetry_resources_container.containerDetector,
-    opentelemetry_resources_git.gitSyncDetector,
-    opentelemetry_resources_github.gitHubDetector,
-    opentelemetry_resources.processDetector,
-    opentelemetry_resources.envDetector
-  ],
-});
-
 const context_async_hooks = require("@opentelemetry/context-async-hooks");
 const semver = require("semver");
 
@@ -56,9 +35,28 @@ class CustomRootContextManager {
 }
 
 const MY_ROOT_CONTEXT = new opentelemetry_sdk.core.W3CTraceContextPropagator().extract(opentelemetry_api.ROOT_CONTEXT, { traceparent: process.env.OTEL_TRACEPARENT }, opentelemetry_api.defaultTextMapGetter);
-const context_manager = new CustomRootContextManager(semver.gte(process.version, '14.8.0') ? new context_async_hooks.AsyncLocalStorageContextManager() : new context_async_hooks.AsyncHooksContextManager(), MY_ROOT_CONTEXT);
-opentelemetry_api.context.setGlobalContextManager(context_manager.enable());
+
+let sdk = new opentelemetry_sdk.NodeSDK({
+  contextManager: new CustomRootContextManager(semver.gte(process.version, '14.8.0') ? new context_async_hooks.AsyncLocalStorageContextManager() : new context_async_hooks.AsyncHooksContextManager(), MY_ROOT_CONTEXT)
+  instrumentations: [ opentelemetry_auto_instrumentations.getNodeAutoInstrumentations() ],
+  resourceDetectors: [
+    opentelemetry_resources_alibaba_cloud.alibabaCloudEcsDetector,
+    // opentelemetry_resources_gcp.gcpDetector, // TODO makes noisy spans!
+    opentelemetry_resources_aws.awsBeanstalkDetector,
+    opentelemetry_resources_aws.awsEc2Detector,
+    opentelemetry_resources_aws.awsEcsDetector,
+    opentelemetry_resources_aws.awsEksDetector,
+    // TODO k8s detector
+    opentelemetry_resources_container.containerDetector,
+    opentelemetry_resources_git.gitSyncDetector,
+    opentelemetry_resources_github.gitHubDetector,
+    opentelemetry_resources.processDetector,
+    opentelemetry_resources.envDetector
+  ],
+});
+
 process.on('exit', () => sdk.shutdown());
 process.on('SIGINT', () => sdk.shutdown());
 process.on('SIGQUIT', () => sdk.shutdown())
+
 sdk.start();
