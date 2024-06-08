@@ -9,6 +9,6 @@ script=". otel.sh
 $script"
 echo "$script" > "$file"
 exit_code=0
-"$@" || exit_code="$?"
+OTEL_SHELL_IS_GITHUB_ACTION_ROOT=TRUE "$@" || exit_code="$?"
 if [ "$exit_code" != 0 ]; then touch /tmp/opentelemetry_shell.github.error; fi
 exit "$exit_code"
