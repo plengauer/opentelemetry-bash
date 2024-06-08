@@ -61,4 +61,4 @@ process.on('SIGINT', () => sdk.shutdown());
 process.on('SIGQUIT', () => sdk.shutdown())
 
 sdk.start();
-opentelemetry_api.trace.context.setGlobalContextManager(context_manager);
+opentelemetry_api.context.setGlobalContextManager(context_manager);
