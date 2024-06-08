@@ -30,7 +30,8 @@ const MY_ROOT_CONTEXT = new opentelemetry_sdk.core.W3CTraceContextPropagator().e
 const context_manager = new CustomRootContextManager(semver.gte(process.version, '14.8.0') ? new context_async_hooks.AsyncLocalStorageContextManager() : new context_async_hooks.AsyncHooksContextManager(), MY_ROOT_CONTEXT);
 opentelemetry_api.context.setGlobalContextManager(context_manager.enable());
 
-//_setGlobalContextManager = opentelemetry_api.context.setGlobalContextManager;
-//opentelemetry_api.context.setGlobalContextManager = function(context_manager) {
-//  return __setGlobalContextManager(new CustomRootContextManager(context_manager, MY_ROOT_CONTEXT));
-//}
+_setGlobalContextManager = opentelemetry_api.context.setGlobalContextManager;
+opentelemetry_api.context.setGlobalContextManager = function(context_manager) {
+  console.error(context_manager);
+  return __setGlobalContextManager(new CustomRootContextManager(context_manager, MY_ROOT_CONTEXT));
+}
