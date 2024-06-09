@@ -40,6 +40,13 @@ assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
 
 type npm || exit 1
 
+OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE node -e "const child_process = require('child_process'); child_process.spawn('echo', [ 'hello', 'world', '6' ]);"
+assert_equals 0 $?
+span="$(resolve_span '.name == "echo hello world 6"')"
+assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
+assert_not_equals null $(\echo "$span" | jq -r '.parent_id')
+# assert_equals $(resolve_span '.name == "echo hello world 6"' | jq -r .parent_id) $(resolve_span '.name == "TODO"' | jq -r .id)
+
 directory="$(mktemp -d)"
 echo "
 const https = require('https');
@@ -49,14 +56,14 @@ const options = {
   path: '/',
   method: 'GET'
 };
-const req = https.request(options, (res) => console.log(res.statusCode));
+const req = https.request(options, (res) => {});
 req.end();
 " > "$directory"/index.js
-OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE node "$directory"/index.js
+span="$(OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE node "$directory"/index.js >&2)"
 assert_equals 0 $?
-# span="$(resolve_span '.name == "GET"')"
-# assert_equals "SpanKind.CLIENT" $(\echo "$span" | jq -r '.kind')
-# the checks above actually dont work, because the output redirect is not going to a file. but we should see the span on stdout
+assert_equals "GET" $(\echo "$span" | jq -r '.name')
+assert_equals "SpanKind.CLIENT" $(\echo "$span" | jq -r '.kind')
+# assert_not_equals null $(\echo "$span" | jq -r '.parentId')
 
 directory="$(mktemp -d)"
 echo "
@@ -75,9 +82,12 @@ const options = {
   path: '/',
   method: 'GET'
 };
-const req = https.request(options, (res) => console.log(res.statusCode));
+const req = https.request(options, (res) => {});
 req.end();
 " > "$directory"/index.js
 (cd "$directory" && npm install @opentelemetry/api @opentelemetry/sdk-node @opentelemetry/sdk-trace-node @opentelemetry/auto-instrumentations-node)
-OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE node "$directory"/index.js
+span="$(OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE node "$directory"/index.js >&2)"
 assert_equals 0 $?
+assert_equals "GET" $(\echo "$span" | jq -r '.name')
+assert_equals "SpanKind.CLIENT" $(\echo "$span" | jq -r '.kind')
+# assert_not_equals null $(\echo "$span" | jq -r '.parentId')
