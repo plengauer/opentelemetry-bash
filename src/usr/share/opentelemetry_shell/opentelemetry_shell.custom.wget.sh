@@ -79,7 +79,7 @@ _otel_pipe_wget_stderr() {
         # HTTP request sent, awaiting response... 200 OK
         local response_code="$(\printf '%s' "$line" | \cut -d ' ' -f 6)"
         otel_span_attribute_typed "$span_handle" int http.response.status_code="$response_code"
-        if \[ "$response_code" -ge 300 ]; then otel_span_error "$span_handle"; fi
+        if \[ "$response_code" -ge 400 ]; then otel_span_error "$span_handle"; fi
       elif _otel_string_starts_with "$line" "Length: "; then
         # Length: unspecified [text/html]
         # Length: 17826 (17K) [application/octet-stream]
