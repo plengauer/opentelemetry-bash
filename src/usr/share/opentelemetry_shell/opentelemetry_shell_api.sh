@@ -148,7 +148,7 @@ otel_span_start() {
   local name="$2"
   local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.span.handle.pipe"
   \mkfifo $_otel_mkfifo_flags "$response_pipe"
-  _otel_sdk_communicate "SPAN_START" "$response_pipe" "$OTEL_TRACEPARENT" "$kind" "$name"
+  _otel_sdk_communicate "SPAN_START" "$response_pipe" "$OTEL_TRACEPARENT" "$OTEL_TRACESTATE" "$kind" "$name"
   \cat "$response_pipe"
   \rm "$response_pipe" &> /dev/null
 }
@@ -189,6 +189,7 @@ otel_span_activate() {
   local span_handle="$1"
   export OTEL_TRACEPARENT_STACK="$OTEL_TRACEPARENT/$OTEL_TRACEPARENT_STACK"
   export OTEL_TRACEPARENT="$(otel_span_traceparent "$span_handle")"
+  if \[ -z "$OTEL_TRACESTATE" ]; then export OTEL_TRACESTATE=""; fi
 }
 
 otel_span_deactivate() {
@@ -198,6 +199,11 @@ otel_span_deactivate() {
   else
     export OTEL_TRACEPARENT="$OTEL_TRACEPARENT_STACK"
     export OTEL_TRACEPARENT_STACK=""
+  fi
+  if \[ -z "$OTEL_TRACEPARENT" ]; then
+    unset OTEL_TRACEPARENT_STACK
+    unset OTEL_TRACEPARENT
+    unset OTEL_TRACESTATE
   fi
 }
 
