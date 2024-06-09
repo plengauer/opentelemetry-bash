@@ -28,6 +28,6 @@ class CustomRootContextManager {
 
 const _setGlobalContextManager = opentelemetry_api.context.setGlobalContextManager;
 opentelemetry_api.context.setGlobalContextManager = function(context_manager) {
-  const MY_ROOT_CONTEXT = new opentelemetry_sdk.core.W3CTraceContextPropagator().extract(opentelemetry_api.ROOT_CONTEXT, { traceparent: process.env.OTEL_TRACEPARENT ?? '', tracestate: process.env.OTEL_TRACESTATE ?? '' }, opentelemetry_api.defaultTextMapGetter);
+  const MY_ROOT_CONTEXT = new opentelemetry_sdk.core.W3CTraceContextPropagator().extract(opentelemetry_api.ROOT_CONTEXT, { traceparent: process.env.TRACEPARENT, tracestate: process.env.TRACESTATE }, opentelemetry_api.defaultTextMapGetter);
   return _setGlobalContextManager(new CustomRootContextManager(context_manager, MY_ROOT_CONTEXT));
 }
