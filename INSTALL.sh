@@ -6,6 +6,6 @@ wget -O $package https://github.com/plengauer/opentelemetry-bash/releases/latest
 if [ "$(whoami)" = "root" ]; then
   apt-get install -y $package
 else
-  sudo apt-get install -y $package
+  sudo -E apt-get install -y $package
 fi
 rm $package

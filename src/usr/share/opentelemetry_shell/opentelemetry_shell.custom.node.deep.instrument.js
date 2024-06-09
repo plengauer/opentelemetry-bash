@@ -1,28 +1,43 @@
 const opentelemetry_api = require('@opentelemetry/api');
 const opentelemetry_sdk = require('@opentelemetry/sdk-node');
-const opentelemetry_metrics = require('@opentelemetry/sdk-metrics');
-const opentelemetry_tracing = require('@opentelemetry/sdk-trace-base');
-const opentelemetry_semantic_conventions = require('@opentelemetry/semantic-conventions');
-const opentelemetry_metrics_otlp = require('@opentelemetry/exporter-metrics-otlp-proto');
-const opentelemetry_traces_otlp = require('@opentelemetry/exporter-trace-otlp-proto');
 const opentelemetry_auto_instrumentations = require('@opentelemetry/auto-instrumentations-node');
+const opentelemetry_resources = require('@opentelemetry/resources');
 const opentelemetry_resources_git = require('opentelemetry-resource-detector-git');
 const opentelemetry_resources_github = require('@opentelemetry/resource-detector-github');
 const opentelemetry_resources_container = require('@opentelemetry/resource-detector-container');
 const opentelemetry_resources_aws = require('@opentelemetry/resource-detector-aws');
 const opentelemetry_resources_gcp = require('@opentelemetry/resource-detector-gcp');
 const opentelemetry_resources_alibaba_cloud = require('@opentelemetry/resource-detector-alibaba-cloud');
+const context_async_hooks = require("@opentelemetry/context-async-hooks");
+const semver = require("semver");
 
-if (!process.env.OTEL_TRACES_EXPORTER) process.env.OTEL_TRACES_EXPORTER = 'otlp';
+class CustomRootContextManager {
+  inner;
+  custom_context;
+  
+  constructor(inner, custom_context) {
+    this.inner = inner;
+    this.custom_context = custom_context;
+  }
 
-let exporter = null;
-switch (process.env.OTEL_TRACES_EXPORTER) {
-  case 'otlp': exporter = opentelemetry_traces_otlp.OTLPTraceExporter(); break;
-  case 'console': exporter = opentelemetry_tracing.ConsoleSpanExporter(); break;
-  default: return;
+  enable() { this.inner.enable(); return this; }
+  disable() { this.inner.disable(); return this; }
+  bind(...args) { return this.inner.bind(...args); }
+  with(...args) { return this.inner.with(...args); }
+
+  active() {
+    let context = this.inner.active();
+    if (opentelemetry_api.ROOT_CONTEXT == context || !opentelemetry_api.trace.getSpan(context)) {
+      context = this.custom_context;
+    }
+    return context;
+  }
 }
-let sdk = new opentelemetry_sdk.NodeSDK({
-  spanProcessor: new opentelemetry_tracing.BatchSpanProcessor(exporter),
+
+const MY_ROOT_CONTEXT = new opentelemetry_sdk.core.W3CTraceContextPropagator().extract(opentelemetry_api.ROOT_CONTEXT, { traceparent: process.env.OTEL_TRACEPARENT ?? '', tracestate: process.env.OTEL_TRACESTATE ?? '' }, opentelemetry_api.defaultTextMapGetter);
+const context_manager = new CustomRootContextManager(semver.gte(process.version, '14.8.0') ? new context_async_hooks.AsyncLocalStorageContextManager() : new context_async_hooks.AsyncHooksContextManager(), MY_ROOT_CONTEXT);
+const sdk = new opentelemetry_sdk.NodeSDK({
+  contextManager: context_manager.enable(),
   instrumentations: [ opentelemetry_auto_instrumentations.getNodeAutoInstrumentations() ],
   resourceDetectors: [
     opentelemetry_resources_alibaba_cloud.alibabaCloudEcsDetector,
@@ -39,15 +54,9 @@ let sdk = new opentelemetry_sdk.NodeSDK({
     opentelemetry_resources.envDetector
   ],
 });
+
 process.on('exit', () => sdk.shutdown());
 process.on('SIGINT', () => sdk.shutdown());
-process.on('SIGQUIT', () => sdk.shutdown());
-sdk.start();
+process.on('SIGQUIT', () => sdk.shutdown())
 
-let span_context = opentelemetry_api.propagation.extract(opentelemetry_api.trace.ROOT_CONTEXT, { traceparent: process.env.OTEL_TRACEPARENT });
-let context = opentelemetry_api.trace.setSpan(opentelemetry_api.trace.ROOT_CONTEXT, opentelemetry_api.trace.wrapSpanContext(span_context.span));
-opentelemetry_api.trace.context.setGlobalContextManager({
-  active() {
-    return context;
-  },
-});
+sdk.start();

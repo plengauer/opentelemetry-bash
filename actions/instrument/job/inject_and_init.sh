@@ -25,10 +25,10 @@ action_tag_name="$(echo "$GITHUB_ACTION_REF" | cut -sd @ -f 2-)"
 if [ -n "$action_tag_name" ]; then
   debian_file="$(mktemp)"
   github repos/"$GITHUB_ACTION_REPOSITORY"/releases | { if [ "$action_tag_name" = main ]; then jq '.[0]'; else jq '.[] | select(.tag_name=="'"$action_tag_name"'")'; fi } | jq -r '.assets[] | .browser_download_url' | xargs wget -O "$debian_file"
-  sudo apt-get install -y "$debian_file"
+  sudo -E apt-get install -y "$debian_file"
   rm "$debian_file"
-elif [ "$GITHUB_REPOSITORY" = "$GITHUB_ACTION_REPOSITORY" ] && dpkg -l | grep -q opentelemetry-shell; then
-  true # nothing to do
+elif [ "$GITHUB_REPOSITORY" = "$GITHUB_ACTION_REPOSITORY" ] && [ -f package.deb ]; then
+  sudo -E apt-get install -y ./package.deb
 else
   wget -O - https://raw.githubusercontent.com/"$GITHUB_ACTION_REPOSITORY"/main/INSTALL.sh | sh
 fi
@@ -107,5 +107,6 @@ export OTEL_TRACEPARENT="$(cat "$traceparent_file")"
 rm "$traceparent_file"
 
 export OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE
+export OTEL_SHELL_EXPERIMENTAL_OBSERVE_PIPES=TRUE
 
 printenv | grep '^OTEL_' >> "$GITHUB_ENV"
