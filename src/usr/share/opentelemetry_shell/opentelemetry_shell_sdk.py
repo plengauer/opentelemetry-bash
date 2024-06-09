@@ -151,13 +151,30 @@ def handle(scope, version, command, arguments):
         traces_exporters = os.environ.get('OTEL_TRACES_EXPORTER', 'otlp')
         metrics_exporters = os.environ.get('OTEL_METRICS_EXPORTER', 'otlp')
         logs_exporters = os.environ.get('OTEL_LOGS_EXPORTER', 'otlp')
-        propagator = os.environ.get('OTEL_PROPAGATORS', 'tracecontext');
+        propagator = os.environ.get('OTEL_PROPAGATORS', 'tracecontext')
+        sampling_strategy = os.environ.get('OTEL_TRACES_SAMPLER', 'parentbased_always_on')
+        sampling_strategy_arg = os.environ.get('OTEL_TRACES_SAMPLER_ARG', '1.0')
 
         if propagator != 'tracecontext':
-          raise Exception('Unsupported propagator: ' + propagator);
+          raise Exception('Unsupported propagator: ' + propagator)
 
         if traces_exporters:
-            tracer_provider = TracerProvider(sampler=sampling.DEFAULT_ON, resource=final_resources)
+            sampler = None
+            if sampling_strategy == 'always_on':
+                sampler = sampling.DEFAULT_ON
+            elif sampling_strategy == 'always_off':
+                sampler = sampling.DEFAULT_OFF
+            elif sampling_strategy == 'traceidratio':
+                sampler = sampling.TradeIdRatioBased(float(sampling_strategy_arg))
+            elif sampling_strategy == 'parentbased_always_on':
+                sampler = sampling.ParentBased(sampling.DEFAULT_ON)
+            elif sampling_strategy == 'parentbased_always_off':
+                sampler = sampling.ParentBased(sampling.DEFAULT_OFF)
+            elif sampling_strategy == 'parentbased_traceidratio':
+                sampler = sampling.ParentBased(sampling.TradeIdRatioBased(float(sampling_strategy_arg)))
+            else:
+                raise Exception('Unknown sampler: ' + sampler)
+            tracer_provider = TracerProvider(sampler=sampler, resource=final_resources)
             for traces_exporter in traces_exporters.split(','):
                 if traces_exporter == '':
                     pass
