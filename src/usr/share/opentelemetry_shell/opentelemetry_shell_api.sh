@@ -138,7 +138,7 @@ _otel_resolve_package_version() {
 otel_span_current() {
   local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.span.handle.pipe"
   \mkfifo $_otel_mkfifo_flags "$response_pipe"
-  _otel_sdk_communicate "SPAN_HANDLE" "$response_pipe" "$OTEL_TRACEPARENT"
+  _otel_sdk_communicate "SPAN_HANDLE" "$response_pipe" "$TRACEPARENT"
   \cat "$response_pipe"
   \rm "$response_pipe" &> /dev/null
 }
@@ -148,7 +148,7 @@ otel_span_start() {
   local name="$2"
   local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.span.handle.pipe"
   \mkfifo $_otel_mkfifo_flags "$response_pipe"
-  _otel_sdk_communicate "SPAN_START" "$response_pipe" "$OTEL_TRACEPARENT" "$OTEL_TRACESTATE" "$kind" "$name"
+  _otel_sdk_communicate "SPAN_START" "$response_pipe" "$TRACEPARENT" "$TRACESTATE" "$kind" "$name"
   \cat "$response_pipe"
   \rm "$response_pipe" &> /dev/null
 }
@@ -187,23 +187,23 @@ otel_span_traceparent() {
 
 otel_span_activate() {
   local span_handle="$1"
-  export OTEL_TRACEPARENT_STACK="$OTEL_TRACEPARENT/$OTEL_TRACEPARENT_STACK"
-  export OTEL_TRACEPARENT="$(otel_span_traceparent "$span_handle")"
-  if \[ -z "$OTEL_TRACESTATE" ]; then export OTEL_TRACESTATE=""; fi
+  export TRACEPARENT_STACK="$TRACEPARENT/$TRACEPARENT_STACK"
+  export TRACEPARENT="$(otel_span_traceparent "$span_handle")"
+  if \[ -z "$TRACESTATE" ]; then export TRACESTATE=""; fi
 }
 
 otel_span_deactivate() {
-  if _otel_string_contains "$OTEL_TRACEPARENT_STACK" /; then
-    export OTEL_TRACEPARENT="${OTEL_TRACEPARENT_STACK%%/*}"
-    export OTEL_TRACEPARENT_STACK="${OTEL_TRACEPARENT_STACK#*/}"
+  if _otel_string_contains "$TRACEPARENT_STACK" /; then
+    export TRACEPARENT="${TRACEPARENT_STACK%%/*}"
+    export TRACEPARENT_STACK="${TRACEPARENT_STACK#*/}"
   else
-    export OTEL_TRACEPARENT="$OTEL_TRACEPARENT_STACK"
-    export OTEL_TRACEPARENT_STACK=""
+    export TRACEPARENT="$TRACEPARENT_STACK"
+    export TRACEPARENT_STACK=""
   fi
-  if \[ -z "$OTEL_TRACEPARENT" ]; then
-    unset OTEL_TRACEPARENT_STACK
-    unset OTEL_TRACEPARENT
-    unset OTEL_TRACESTATE
+  if \[ -z "$TRACEPARENT" ]; then
+    unset TRACEPARENT_STACK
+    unset TRACEPARENT
+    unset TRACESTATE
   fi
 }
 
@@ -345,7 +345,7 @@ _otel_call_and_record_logs() {
     *) local job_control=0;;
   esac
   local call_command="$1"; shift
-  local traceparent="$OTEL_TRACEPARENT"
+  local traceparent="$TRACEPARENT"
   local stderr_logs="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.stderr.logs.pipe"
   \mkfifo "$stderr_logs"
   while IFS= read -r line; do _otel_log_record "$traceparent" "$line"; \echo "$line" >&2; done < "$stderr_logs" &
