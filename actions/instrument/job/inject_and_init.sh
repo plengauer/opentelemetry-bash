@@ -83,6 +83,7 @@ export -f root4job_end
 
 root4job() {
   rm /tmp/opentelemetry_shell.github.error 2> /dev/null
+  ( while true; do cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"; done >> "$(mktemp -u | rev | cut -d / -f 2- | rev)/opentelemetry_shell_$GITHUB_RUN_ID.out" ) &> /dev/null &
   traceparent_file="$1"
   . otelapi.sh
   otel_init
@@ -95,10 +96,11 @@ root4job() {
 }
 export -f root4job
 
-root_pid_file="$(mktemp -u | rev | cut -d / -f 2- | rev)/opentelemetry_shell_$GITHUB_RUN_ID.pid"
+export OTEL_SHELL_SDK_OUTPUT_REDIRECT="$(mktemp -u)"
+mkfifo "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"
 traceparent_file="$(mktemp -u)"
 nohup bash -c 'root4job "$@"' bash "$traceparent_file" &> /dev/null &
-echo "$!" > "$root_pid_file"
+echo "$!" > "$(mktemp -u | rev | cut -d / -f 2- | rev)/opentelemetry_shell_$GITHUB_RUN_ID.pid"
 
 while ! [ -f "$traceparent_file" ]; do sleep 1; done
 export OTEL_TRACEPARENT="$(cat "$traceparent_file")"
