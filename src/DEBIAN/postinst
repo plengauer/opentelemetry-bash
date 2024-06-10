@@ -15,10 +15,11 @@ elif [ "$1" = 'configure' ]; then
   if type npm; then
     # (cd /usr/share/opentelemetry_shell && npm install --package-lock=false)
     # runuser -l runner -c 'cd /usr/share/opentelemetry_shell && npm install --package-lock=false'
-    cache="$(npm config list -l | grep -E '^cache = ' | cut -d '=' -f 2- | tr -d '" ')"
-    runuser -l runner -c 'npm config set cache="$(mktemp -d)"'
+    user=runner
+    cache="$(runuser -l "$user -c 'npm config list -l' | grep -E '^cache = ' | cut -d '=' -f 2- | tr -d '" ')"
+    runuser -l "$user" -c 'npm config set cache="$1"' runuser "$(mktemp -d)"
     (cd /usr/share/opentelemetry_shell && npm install --package-lock=false)
-    runuser -l runner -c "npm config set cache=$cache"
+    runuser -l "$user" -c 'npm config set cache="$1"' runuser "$cache"
   else
     true
   fi
