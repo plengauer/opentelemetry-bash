@@ -1,6 +1,6 @@
 #!/bin/bash -e
 if [ "$1" = 'remove' ]; then
-  rm -rf /usr/share/opentelemetry_shell 2> /dev/null || true
+  rm -rf /usr/share/opentelemetry_shell/node_modules 2> /dev/null || true
 else
   true
 fi
