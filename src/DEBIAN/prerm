@@ -1,6 +1,6 @@
 #!/bin/bash -e
 if [ "$1" = 'remove' ] || [ "$1" = 'deconfigure' ] || [ "$1" = 'upgrade' ]; then
-  rm -rf /opt/opentelemetry_shell/venv /usr/share/opentelemetry_shell/node_modules 2> /dev/null || true
+  rm -rf /opt/opentelemetry_shell/venv /usr/share/opentelemetry_shell/node_modules
 elif [ "$1" = 'failed-upgrade' ]; then
   true
 else
