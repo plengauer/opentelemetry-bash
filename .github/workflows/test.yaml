@@ -31,7 +31,7 @@ jobs:
   smoke:
     needs: install
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
@@ -69,10 +69,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: printenv | grep '^GITHUB_'
-      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
           name: package.deb
+      - run: sudo -E apt-get install ./package.deb
+      - uses: actions/checkout@v4
       - uses: ./actions/instrument/job
         env:
           OTEL_METRICS_EXPORTER: console

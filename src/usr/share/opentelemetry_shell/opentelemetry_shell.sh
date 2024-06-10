@@ -314,12 +314,12 @@ _otel_inject_and_exec_directly() { # this function assumes there is no fd fucker
   
   local span_id="$(otel_span_start INTERNAL "$@")"
   otel_span_activate "$span_id"
-  local otel_traceparent="$OTEL_TRACEPARENT"
+  local my_traceparent="$TRACEPARENT"
   otel_span_deactivate "$span_id"
   otel_span_end "$span_id"
   _otel_sdk_communicate 'SPAN_AUTO_END'
   
-  export OTEL_TRACEPARENT="$otel_traceparent"
+  export TRACEPARENT="$my_traceparent"
   export OTEL_SHELL_AUTO_INJECTED=TRUE
   export OTEL_SHELL_COMMANDLINE_OVERRIDE="$(_otel_command_self)"
   export OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$PPID"
@@ -338,12 +338,12 @@ _otel_inject_and_exec_by_location() {
 
   local span_id="$(otel_span_start INTERNAL exec)"
   otel_span_activate "$span_id"
-  local otel_traceparent="$OTEL_TRACEPARENT"
+  local my_traceparent="$TRACEPARENT"
   otel_span_deactivate "$span_id"
   otel_span_end "$span_id"
   _otel_sdk_communicate 'SPAN_AUTO_END'
 
-  \printf '%s\n' "$(_otel_escape_args export OTEL_TRACEPARENT="$otel_traceparent")"
+  \printf '%s\n' "$(_otel_escape_args export TRACEPARENT="$my_traceparent")"
   \printf '%s\n' "$(_otel_escape_args export OTEL_SHELL_AUTO_INJECTED=TRUE)"
   \printf '%s\n' "$(_otel_escape_args export OTEL_SHELL_COMMANDLINE_OVERRIDE="$(_otel_command_self)")"
   \printf '%s\n' "$(_otel_escape_args export OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$PPID")"
@@ -354,11 +354,11 @@ _otel_inject_and_exec_by_location() {
 _otel_record_exec() {
   local span_id="$(otel_span_start INTERNAL exec)"
   otel_span_activate "$span_id"
-  local otel_traceparent="$OTEL_TRACEPARENT"
+  local my_traceparent="$TRACEPARENT"
   otel_span_deactivate "$span_id"
   otel_span_end "$span_id"
   _otel_sdk_communicate 'SPAN_AUTO_END'
-  export OTEL_TRACEPARENT="$otel_traceparent"
+  export TRACEPARENT="$my_traceparent"
 }
 
 command() {
@@ -404,9 +404,9 @@ _otel_start_script() {
     if \[ -n "$GITHUB_STEP" ]; then local name="$name / $GITHUB_STEP"; local kind=SERVER
     elif \[ -n "$GITHUB_ACTION" ]; then local name="$name / $GITHUB_ACTION"; local kind=INTERNAL; fi
     _root_span_handle="$(otel_span_start "$kind" "$name")"
-  elif ! \[ "$OTEL_SHELL_AUTO_INJECTED" = TRUE ] && \[ -z "$OTEL_TRACEPARENT" ]; then
+  elif ! \[ "$OTEL_SHELL_AUTO_INJECTED" = TRUE ] && \[ -z "$TRACEPARENT" ]; then
     _root_span_handle="$(otel_span_start SERVER "$(_otel_command_self)")"
-  elif ! \[ "$OTEL_SHELL_AUTO_INJECTED" = TRUE ] && \[ -n "$OTEL_TRACEPARENT" ]; then
+  elif ! \[ "$OTEL_SHELL_AUTO_INJECTED" = TRUE ] && \[ -n "$TRACEPARENT" ]; then
     _root_span_handle="$(otel_span_start INTERNAL "$(_otel_command_self)")"
   fi
   if \[ -n "$_root_span_handle" ]; then otel_span_activate "$_root_span_handle"; fi
