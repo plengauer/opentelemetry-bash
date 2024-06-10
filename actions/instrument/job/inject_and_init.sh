@@ -27,8 +27,8 @@ if [ -n "$action_tag_name" ]; then
   github repos/"$GITHUB_ACTION_REPOSITORY"/releases | { if [ "$action_tag_name" = main ]; then jq '.[0]'; else jq '.[] | select(.tag_name=="'"$action_tag_name"'")'; fi } | jq -r '.assets[] | .browser_download_url' | xargs wget -O "$debian_file"
   sudo -E apt-get install -y "$debian_file"
   rm "$debian_file"
-elif [ "$GITHUB_REPOSITORY" = "$GITHUB_ACTION_REPOSITORY" ] && [ -f package.deb ]; then
-  sudo -E apt-get install -y ./package.deb
+elif [ "$GITHUB_REPOSITORY" = "$GITHUB_ACTION_REPOSITORY" ]; then
+  dpkg -l | grep -q opentelemetry-shell
 else
   wget -O - https://raw.githubusercontent.com/"$GITHUB_ACTION_REPOSITORY"/main/INSTALL.sh | sh
 fi
