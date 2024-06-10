@@ -13,8 +13,7 @@ elif [ "$1" = 'configure' ]; then
   if type npm; then
     cache="$(npm config list -l | grep -E '^cache = ' | cut -d '=' -f 2- | tr -d '" ')"
     user="$(echo "$cache" | rev | cut -d / -f 2- | rev | xargs stat -c '%U')"
-    # ls -a | grep -vE ^.$ | grep -vE ^..$ | xargs stat -c '%U %N' | grep -vE '^'"$user" | cut -d ' ' -f 2- | tr -d "'" | xargs chown "$user"
-    ls -a "$cache" | grep -vE ^..$ | xargs chown "$user"
+    find "$cache" -exec chown "$user" {} '+'
     cache="$(runuser -l "$user" -c 'npm config list -l' | grep -E '^cache = ' | cut -d '=' -f 2- | tr -d '" ')"
     runuser -l "$user" -c 'npm config set cache="$1"' runuser "$(mktemp -d)"
     (cd /usr/share/opentelemetry_shell && npm install --package-lock=false)
