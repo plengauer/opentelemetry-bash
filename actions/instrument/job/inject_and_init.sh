@@ -21,17 +21,14 @@ export -f github_workflow
 echo "$GITHUB_ACTION" > /tmp/opentelemetry_shell_action_name
 
 if [ -z "$GITHUB_ACTION_REPOSITORY" ]; then export GITHUB_ACTION_REPOSITORY="$GITHUB_REPOSITORY"; fi
-echo "$GITHUB_REPOSITORY" >&2
-echo "$GITHUB_ACTION_REPOSITORY" >&2
-ls -la >&2
 action_tag_name="$(echo "$GITHUB_ACTION_REF" | cut -sd @ -f 2-)"
 if [ -n "$action_tag_name" ]; then
   debian_file="$(mktemp)"
   github repos/"$GITHUB_ACTION_REPOSITORY"/releases | { if [ "$action_tag_name" = main ]; then jq '.[0]'; else jq '.[] | select(.tag_name=="'"$action_tag_name"'")'; fi } | jq -r '.assets[] | .browser_download_url' | xargs wget -O "$debian_file"
   sudo -E apt-get install -y "$debian_file"
   rm "$debian_file"
-elif [ "$GITHUB_REPOSITORY" = "$GITHUB_ACTION_REPOSITORY" ] && [ -f package.deb ]; then
-  sudo -E apt-get install -y ./package.deb
+elif [ "$GITHUB_REPOSITORY" = "$GITHUB_ACTION_REPOSITORY" ]; then
+  dpkg -l | grep -q opentelemetry-shell
 else
   wget -O - https://raw.githubusercontent.com/"$GITHUB_ACTION_REPOSITORY"/main/INSTALL.sh | sh
 fi
