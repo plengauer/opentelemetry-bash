@@ -59,7 +59,7 @@ const options = {
 const req = https.request(options, (res) => {});
 req.end();
 " > "$directory"/index.js
-span="$(OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE node "$directory"/index.js >&2)"
+span="$(OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE node "$directory"/index.js 2>&1)"
 assert_equals 0 $?
 assert_equals "GET" $(\echo "$span" | jq -r '.name')
 assert_equals "SpanKind.CLIENT" $(\echo "$span" | jq -r '.kind')
@@ -86,7 +86,7 @@ const req = https.request(options, (res) => {});
 req.end();
 " > "$directory"/index.js
 (cd "$directory" && npm install @opentelemetry/api @opentelemetry/sdk-node @opentelemetry/sdk-trace-node @opentelemetry/auto-instrumentations-node)
-span="$(OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE node "$directory"/index.js >&2)"
+span="$(OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE node "$directory"/index.js 2>&1)"
 assert_equals 0 $?
 assert_equals "GET" $(\echo "$span" | jq -r '.name')
 assert_equals "SpanKind.CLIENT" $(\echo "$span" | jq -r '.kind')
