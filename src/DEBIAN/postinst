@@ -12,9 +12,11 @@ elif [ "$1" = 'configure' ]; then
   deactivate
   rm -rf /usr/share/opentelemetry_shell/node_modules 2> /dev/null || true
   export PATH="$PATH":/usr/local/bin
-  # if type npm; then (cd /usr/share/opentelemetry_shell && npm install --package-lock=false); else true; fi
-  # printenv >&2
-  if type npm; then (npm config list >&2 && cd /usr/share/opentelemetry_shell && npm install --package-lock=false --no-cache --cache="/tmp") else true; fi
+  if type npm; then
+    (cd /usr/share/opentelemetry_shell && runuser -l runner -c 'npm install --package-lock=false')
+  else
+    true
+  fi
 else
   exit 1
 fi
