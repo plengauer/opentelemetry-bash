@@ -12,7 +12,7 @@ _otel_propagate_wget() {
   _otel_pipe_wget_stderr < "$stderr_pipe" >&2 &
   local stderr_pid="$!"
   local exit_code=0
-  _otel_call "$@" --header="traceparent: $OTEL_TRACEPARENT" --header="tracestate: $OTEL_TRACESTATE" 2> "$stderr_pipe" || exit_code="$?"
+  _otel_call "$@" --header="traceparent: $TRACEPARENT" --header="tracestate: $TRACESTATE" 2> "$stderr_pipe" || exit_code="$?"
   \wait "$stderr_pid"
   \rm "$stderr_pipe"
   if \[ "$job_control" = 1 ]; then \set -m; fi

@@ -37,7 +37,7 @@ otel_init
 span_handle="$(otel_span_start CONSUMER "$GITHUB_WORKFLOW")"
 otel_span_activate "$span_handle"
 env_dir="$(mktemp -d)"
-printenv | grep '^OTEL_' | grep -v HEADERS > "$env_dir"/.env
+printenv | grep -E '^OTEL_|^TRACEPARENT=|^TRACESTATE=' | grep -v HEADERS > "$env_dir"/.env
 node upload_artifact.js opentelemetry "$env_dir"/.env
 rm -r "$env_dir"
 otel_span_deactivate "$span_handle"
