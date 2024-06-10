@@ -27,8 +27,8 @@ if [ -n "$action_tag_name" ]; then
   github repos/"$GITHUB_ACTION_REPOSITORY"/releases | { if [ "$action_tag_name" = main ]; then jq '.[0]'; else jq '.[] | select(.tag_name=="'"$action_tag_name"'")'; fi } | jq -r '.assets[] | .browser_download_url' | xargs wget -O "$debian_file"
   sudo -E apt-get install -y "$debian_file"
   rm "$debian_file"
-elif [ "$GITHUB_REPOSITORY" = "$GITHUB_ACTION_REPOSITORY" ] && [ -f package.deb ]; then
-  sudo -E apt-get install -y ./package.deb
+elif [ "$GITHUB_REPOSITORY" = "$GITHUB_ACTION_REPOSITORY" ]; then
+  dpkg -l | grep -q opentelemetry-shell
 else
   wget -O - https://raw.githubusercontent.com/"$GITHUB_ACTION_REPOSITORY"/main/INSTALL.sh | sh
 fi
@@ -89,7 +89,7 @@ root4job() {
   otel_init
   span_handle="$(otel_span_start CONSUMER "$GITHUB_WORKFLOW / $GITHUB_JOB")"
   otel_span_activate "$span_handle"
-  echo "$OTEL_TRACEPARENT" > "$traceparent_file"
+  echo "$TRACEPARENT" > "$traceparent_file"
   otel_span_deactivate "$span_handle"
   trap root4job_end SIGUSR1
   while true; do sleep 1; done
@@ -103,10 +103,10 @@ nohup bash -c 'root4job "$@"' bash "$traceparent_file" &> /dev/null &
 echo "$!" > "$(mktemp -u | rev | cut -d / -f 2- | rev)/opentelemetry_shell_$GITHUB_RUN_ID.pid"
 
 while ! [ -f "$traceparent_file" ]; do sleep 1; done
-export OTEL_TRACEPARENT="$(cat "$traceparent_file")"
+export TRACEPARENT="$(cat "$traceparent_file")"
 rm "$traceparent_file"
 
 export OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE
 export OTEL_SHELL_EXPERIMENTAL_OBSERVE_PIPES=TRUE
 
-printenv | grep '^OTEL_' >> "$GITHUB_ENV"
+printenv | grep -E '^OTEL_|^TRACEPARENT=|^TRACESTATE=' >> "$GITHUB_ENV"
