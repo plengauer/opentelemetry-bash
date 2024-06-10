@@ -14,7 +14,7 @@ elif [ "$1" = 'configure' ]; then
   # export PATH="$PATH":/usr/local/bin
   # if type npm; then (cd /usr/share/opentelemetry_shell && npm install --package-lock=false); else true; fi
   # printenv >&2
-  if type npm; then (cd /usr/share/opentelemetry_shell && cache="$(mktemp -d)" && env -i npm install --package-lock=false --cache="$cache" && rm -rf "$cache"); else true; fi
+  if type npm; then (cd /usr/share/opentelemetry_shell && cache="$(mktemp -d)" && npm config list && env -i npm install --package-lock=false --cache="$cache" && rm -rf "$cache"); else true; fi
 else
   exit 1
 fi
