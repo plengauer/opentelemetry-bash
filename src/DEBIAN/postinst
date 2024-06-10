@@ -11,7 +11,10 @@ elif [ "$1" = 'configure' ]; then
   deactivate
   export PATH="$PATH":/usr/local/bin
   if type npm; then
-    user=runner
+    cache="$(npm config list -l | grep -E '^cache = ' | cut -d '=' -f 2- | tr -d '" ')"
+    user="$(echo "$cache" | rev | cut -d / -f 2- | rev | xargs stat -c '%U')"
+    # ls -a | grep -vE ^.$ | grep -vE ^..$ | xargs stat -c '%U %N' | grep -vE '^'"$user" | cut -d ' ' -f 2- | tr -d "'" | xargs chown "$user"
+    ls -a | grep -vE ^.$ | grep -vE ^..$ | xargs chown "$user"
     cache="$(runuser -l "$user" -c 'npm config list -l' | grep -E '^cache = ' | cut -d '=' -f 2- | tr -d '" ')"
     runuser -l "$user" -c 'npm config set cache="$1"' runuser "$(mktemp -d)"
     (cd /usr/share/opentelemetry_shell && npm install --package-lock=false)
