@@ -7,36 +7,43 @@ node -e "const child_process = require('child_process'); child_process.exec('ech
 assert_equals 0 $?
 span="$(resolve_span '.name == "echo hello world 0"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
+assert_not_equals null $(\echo "$span" | jq -r '.parent_id')
 
 node -e "const child_process = require('child_process'); child_process.exec('echo hello world 1', {});"
 assert_equals 0 $?
 span="$(resolve_span '.name == "echo hello world 1"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
+assert_not_equals null $(\echo "$span" | jq -r '.parent_id')
 
 node -e "const child_process = require('child_process'); child_process.exec('echo hello world 2', (error, stdout, stderr) => { console.log(stdout); console.error(stderr); });"
 assert_equals 0 $?
 span="$(resolve_span '.name == "echo hello world 2"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
+assert_not_equals null $(\echo "$span" | jq -r '.parent_id')
 
 node -e "const child_process = require('child_process'); child_process.exec('echo hello world 3');"
 assert_equals 0 $?
 span="$(resolve_span '.name == "echo hello world 3"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
+assert_not_equals null $(\echo "$span" | jq -r '.parent_id')
 
 node -e "const child_process = require('child_process'); child_process.spawn('echo', [ 'hello', 'world', '4' ], { stdio: 'inherit' });"
 assert_equals 0 $?
 span="$(resolve_span '.name == "echo hello world 4"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
+assert_not_equals null $(\echo "$span" | jq -r '.parent_id')
 
 node -e "const child_process = require('child_process'); child_process.spawn('echo', [ 'hello', 'world', '5' ]);"
 assert_equals 0 $?
 span="$(resolve_span '.name == "echo hello world 5"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
+assert_not_equals null $(\echo "$span" | jq -r '.parent_id')
 
 node -e "const child_process = require('child_process'); child_process.spawn('echo', { stdio: 'inherit' });"
 assert_equals 0 $?
 span="$(resolve_span '.name == "echo"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
+assert_not_equals null $(\echo "$span" | jq -r '.parent_id')
 
 type npm || exit 1
 
