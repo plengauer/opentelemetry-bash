@@ -33,7 +33,7 @@ function wrapAndSetGlobalContextManager(setGlobalContextManager, context_manager
 }
 
 const _setGlobalContextManager = opentelemetry_api.context.setGlobalContextManager;
-opentelemetry_api.context.setGlobalContextManager = function(context_manager) { wrapAndSetGlobalContextManager(_setGlobalContextManager, context_manager); };
+opentelemetry_api.context.setGlobalContextManager = function(context_manager) { return wrapAndSetGlobalContextManager(_setGlobalContextManager, context_manager); };
 
 const module = require('module');
 const __load = Module._load;
@@ -41,7 +41,7 @@ module._load = function(request, parent, isMain) {
   const exports = __load.apply(this, arguments);
   if (request === '@opentelemetry/api') {
     const _setGlobalContextManager = exports.context.setGlobalContextManager;
-    exports.context.etGlobalContextManager = function(context_manager) { wrapAndSetGlobalContextManager(_setGlobalContextManager, context_manager); };
+    exports.context.setGlobalContextManager = function(context_manager) { return wrapAndSetGlobalContextManager(_setGlobalContextManager, context_manager); };
   }
   return exports;
 };
