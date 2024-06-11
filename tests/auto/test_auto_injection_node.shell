@@ -72,7 +72,8 @@ const { ConsoleSpanExporter } = require('@opentelemetry/sdk-trace-node');
 const { getNodeAutoInstrumentations } = require('@opentelemetry/auto-instrumentations-node');
 const sdk = new NodeSDK({
   traceExporter: new ConsoleSpanExporter(),
-  instrumentations: [getNodeAutoInstrumentations()]
+  instrumentations: [getNodeAutoInstrumentations()],
+  autoDetectResources: false
 });
 sdk.start();
 const https = require('https');
