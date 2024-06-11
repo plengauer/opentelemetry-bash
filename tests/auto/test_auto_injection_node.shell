@@ -76,7 +76,6 @@ const sdk = new NodeSDK({
   resourceDetectors: []
 });
 sdk.start();
-setTimeout(() => {
 const https = require('https');
 const options = {
   hostname: 'example.com',
@@ -86,7 +85,6 @@ const options = {
 };
 const req = https.request(options, (res) => {});
 req.end();
-}, 5000);
 " > "$directory"/index.js
 (cd "$directory" && npm install @opentelemetry/api @opentelemetry/sdk-node @opentelemetry/sdk-trace-node @opentelemetry/auto-instrumentations-node)
 span="$(OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE node "$directory"/index.js 2>&1)"
