@@ -73,7 +73,7 @@ const { getNodeAutoInstrumentations } = require('@opentelemetry/auto-instrumenta
 const sdk = new NodeSDK({
   traceExporter: new ConsoleSpanExporter(),
   instrumentations: [getNodeAutoInstrumentations()],
-  autoDetectResources: false
+  resourceDetectors: []
 });
 sdk.start();
 const https = require('https');
