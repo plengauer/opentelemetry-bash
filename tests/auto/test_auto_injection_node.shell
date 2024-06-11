@@ -75,7 +75,8 @@ const sdk = new NodeSDK({
   instrumentations: [getNodeAutoInstrumentations()],
   resourceDetectors: []
 });
-sdk.start();
+console.error(getNodeAutoInstrumentations());
+console.error(JSON.stringify(sdk.start());
 const https = require('https');
 const options = {
   hostname: 'example.com',
