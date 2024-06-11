@@ -80,6 +80,7 @@ jobs:
           OTEL_LOGS_EXPORTER: console
           OTEL_TRACES_EXPORTER: console
       - run: echo hello world # check if simple command fails
+      - run: sudo apt-get update
       - run: | # check if instrumentation happened
           [ "$(alias | grep '_otel_observe' | wc -l)" -gt 0 ]
       - run: | # check if traceparent is injected
