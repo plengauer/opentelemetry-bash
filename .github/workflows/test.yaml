@@ -83,7 +83,7 @@ jobs:
       - run: | # check if instrumentation happened
           [ "$(alias | grep '_otel_observe' | wc -l)" -gt 0 ]
       - run: | # check if traceparent is injected
-          [ -n "$OTEL_TRACEPARENT" ]
+          [ -n "$TRACEPARENT" ]
       - uses: actions/download-artifact@v4 # check if node action works
         with:
           name: package.deb
