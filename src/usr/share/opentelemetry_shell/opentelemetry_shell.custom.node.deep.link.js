@@ -26,8 +26,21 @@ class CustomRootContextManager {
   }
 }
 
-const _setGlobalContextManager = opentelemetry_api.context.setGlobalContextManager;
-opentelemetry_api.context.setGlobalContextManager = function(context_manager) {
+function wrapAndSetGlobalContextManager(setGlobalContextManager, context_manager) {
   const MY_ROOT_CONTEXT = new opentelemetry_sdk.core.W3CTraceContextPropagator().extract(opentelemetry_api.ROOT_CONTEXT, { traceparent: process.env.TRACEPARENT, tracestate: process.env.TRACESTATE }, opentelemetry_api.defaultTextMapGetter);
-  return _setGlobalContextManager(new CustomRootContextManager(context_manager, MY_ROOT_CONTEXT));
+  return setGlobalContextManager(new CustomRootContextManager(context_manager, MY_ROOT_CONTEXT));
 }
+
+const _setGlobalContextManager = opentelemetry_api.context.setGlobalContextManager;
+opentelemetry_api.context.setGlobalContextManager = function(context_manager) { return wrapAndSetGlobalContextManager(_setGlobalContextManager, context_manager); };
+
+const _module = require('module');
+const __load = _module._load;
+_module._load = function(request, parent, isMain) {
+  const exports = __load.apply(this, arguments);
+  if (request === '@opentelemetry/api') {
+    const _setGlobalContextManager = exports.context.setGlobalContextManager;
+    exports.context.setGlobalContextManager = function(context_manager) { return wrapAndSetGlobalContextManager(_setGlobalContextManager, context_manager); };
+  }
+  return exports;
+};

@@ -96,8 +96,9 @@ root4job() {
 }
 export -f root4job
 
-export OTEL_SHELL_SDK_OUTPUT_REDIRECT="$(mktemp -u)"
+export OTEL_SHELL_SDK_OUTPUT_REDIRECT=./sdk.pipe
 mkfifo "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"
+chmod 777 "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"
 traceparent_file="$(mktemp -u)"
 nohup bash -c 'root4job "$@"' bash "$traceparent_file" &> /dev/null &
 echo "$!" > "$(mktemp -u | rev | cut -d / -f 2- | rev)/opentelemetry_shell_$GITHUB_RUN_ID.pid"
