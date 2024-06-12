@@ -116,7 +116,8 @@ process.on('exit', () => sdk.shutdown());
 const child_process = require('node:child_process');
 const opentelemetry_api = require('@opentelemetry/api');
 opentelemetry_api.trace.getTracerProvider().getTracer('my-tracer').startActiveSpan('my-span', {}, opentelemetry_api.context.active(), span => {
-  child_process.exec('echo hello world 7', {}, (error, stdout, stderr) => span.end());
+  child_process.spawn('echo', [ 'hello', 'world', '7' ], { stdio: 'inherit' });
+  span.end();
 });
 " > "$directory"/index.js
 (cd "$directory" && npm install @opentelemetry/api @opentelemetry/sdk-node @opentelemetry/sdk-trace-node @opentelemetry/auto-instrumentations-node)
