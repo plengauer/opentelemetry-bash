@@ -89,7 +89,7 @@ req.end();
 " > "$directory"/index.js
 (cd "$directory" && npm install @opentelemetry/api @opentelemetry/sdk-node @opentelemetry/sdk-trace-node @opentelemetry/auto-instrumentations-node)
 span="$(OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE node "$directory"/index.js 2>&1)"
-# assert_equals 0 $?
+assert_equals 0 $?
 \echo "$span"
 assert_equals "GET" $(\echo "$span" | grep -E '^  name:' | cut -d ':' -f 2- | tr -d \''" ,')
 assert_not_equals undefined $(\echo "$span" | grep parentId | cut -d ':' -f 2- | tr -d \''" ,')
