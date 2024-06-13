@@ -93,13 +93,12 @@ function shell_propagator_inject(env) {
     env.TRACESTATE = carrier.tracestate ?? process.env.TRACESTATE ?? '';
     console.log('DEBUG DEBUG DEBUG TRACEPARENT ' + env.TRACEPARENT);
   } catch (err) {
-    if (err.code == 'MODULE_NOT_FOUND') {
-      console.log('DEBUG DEBUG DEBUG FALLBACK');
-      env.TRACEPARENT = process.env.TRACEPARENT ?? '';
-      env.TRACESTATE = process.env.TRACESTATE ?? '';      
-    } else {
+    if (err.code != 'MODULE_NOT_FOUND') {
       throw err;
     }
+    console.log('DEBUG DEBUG DEBUG FALLBACK');
+    env.TRACEPARENT = process.env.TRACEPARENT ?? '';
+    env.TRACESTATE = process.env.TRACESTATE ?? '';      
   }
 }
 
