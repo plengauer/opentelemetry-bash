@@ -40,7 +40,10 @@ function otel_spawn(command, args, options, original) {
     options.env['OTEL_SHELL_AUTO_INJECTED'] = 'FALSE'
     return original(options.shell, [ '-c', '. otel.sh\n' + command + ' "$@"', options.shell ].concat(args ?? []), { ... options, shell: false });
   } else {
-    console.error(JSON.stringify(options.env));
+    for (let key in options.env) {
+      if (!key.startsWith('OTEL_')) continue;
+      console.error(key + '=' + options.env[key]);
+    }
     return original('/bin/sh', [ '-c', '. otel.sh\n' + command + ' "$@"', 'node' ].concat(args ?? []), options);
   }
 }
