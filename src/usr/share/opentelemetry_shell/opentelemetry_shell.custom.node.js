@@ -93,6 +93,7 @@ function shell_propagator_inject(env) {
     env.TRACESTATE = carrier.tracestate ?? process.env.TRACESTATE ?? '';
     console.log('DEBUG DEBUG DEBUG TRACEPARENT ' + env.TRACEPARENT);
   } catch (err) {
+    console.error(err);
     if (err.code != 'MODULE_NOT_FOUND') {
       throw err;
     }
