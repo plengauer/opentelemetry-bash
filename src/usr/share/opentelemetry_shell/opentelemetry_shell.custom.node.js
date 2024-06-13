@@ -86,7 +86,7 @@ function shell_propagator_inject(env) {
   console.log('DEBUG DEBUG DEBUG');
   try {
     let opentelemetry_api = require('@opentelemetry/api');
-    let opentelemetry_sdk = require('@opentelemetry/sdk');
+    let opentelemetry_sdk = require('@opentelemetry/sdk-node');
     let carrier = {};
     new opentelemetry_sdk.core.W3CTraceContextPropagator().inject(opentelemetry_api.context.active(), carrier, opentelemetry_api.defaultTextMapSetter);
     env.TRACEPARENT = carrier.traceparent ?? process.env.TRACEPARENT ?? '';
