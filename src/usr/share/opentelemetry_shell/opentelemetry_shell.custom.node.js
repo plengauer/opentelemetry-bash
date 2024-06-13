@@ -83,7 +83,6 @@ child_process.execFile = function(file, args, options, callback) {
 */
 
 function shell_propagator_inject(env) {
-  console.log('DEBUG DEBUG DEBUG');
   try {
     let opentelemetry_api = require('@opentelemetry/api');
     let opentelemetry_sdk = require('@opentelemetry/sdk-node');
@@ -91,13 +90,10 @@ function shell_propagator_inject(env) {
     new opentelemetry_sdk.core.W3CTraceContextPropagator().inject(opentelemetry_api.context.active(), carrier, opentelemetry_api.defaultTextMapSetter);
     env.TRACEPARENT = carrier.traceparent ?? process.env.TRACEPARENT ?? '';
     env.TRACESTATE = carrier.tracestate ?? process.env.TRACESTATE ?? '';
-    console.log('DEBUG DEBUG DEBUG TRACEPARENT ' + env.TRACEPARENT);
   } catch (err) {
-    console.error(err);
     if (err.code != 'MODULE_NOT_FOUND') {
       throw err;
     }
-    console.log('DEBUG DEBUG DEBUG FALLBACK');
     env.TRACEPARENT = process.env.TRACEPARENT ?? '';
     env.TRACESTATE = process.env.TRACESTATE ?? '';      
   }
