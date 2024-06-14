@@ -123,7 +123,7 @@ if \[ "$_otel_shell" = bash ]; then
     local varname="${varname//-/_}"
     if \[ -n "${!varname}" ]; then \echo "${!varname}"; return 0; fi
     \export "$varname=$(_otel_resolve_package_version "$1")"
-    _otel_package_version "$package_name"
+    \echo "$varname"
   }
 else
   _otel_package_version() {
