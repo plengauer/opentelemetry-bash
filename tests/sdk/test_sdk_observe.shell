@@ -2,7 +2,7 @@
 . /usr/bin/opentelemetry_shell_api.sh
 
 if [ "$SHELL" = "bash" ]; then
-  shopt -s expand_aliases &> /dev/null
+  shopt -s expand_aliases
 fi
 alias my_echo=echo
 my_func() { echo "$*"; }
