@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 set -e
 export SHELL="$1"
 if [ "$SHELL" = "" ]; then
