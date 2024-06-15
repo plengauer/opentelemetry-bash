@@ -23,27 +23,25 @@ _otel_inject_node_args() {
       _otel_escape_arg "$1"; shift; if \[ "$#" -gt 0 ]; then \echo -n ' '; _otel_escape_arg "$1"; shift; fi; break
     elif \[ "$1" = -r ] || \[ "$1" = --require ]; then
       _otel_escape_arg "$1"; shift; if \[ "$#" -gt 0 ]; then \echo -n ' '; _otel_escape_arg "$1"; shift; fi
-    elif ( _otel_string_ends_with "$1" .js || _otel_string_ends_with "$1" .ts ) && \[ -f "$1" ]; then
+    elif _otel_string_starts_with "$1" -; then
+      _otel_escape_arg "$1"; shift
+    else
       if \[ "$OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP" = TRUE ] && \[ -d "/usr/share/opentelemetry_shell/node_modules" ]; then
-        local script="$1"
-        local dir="$(\echo "$script" | \rev | \cut -d / -f 2- | \rev)"
+        local dir="$(\echo "$1" | \rev | \cut -d / -f 2- | \rev)"
         while [ -n "$dir" ] && ! \[ -d "$dir"/node_modules ] && ! \[ -f "$dir"/package.json ] && ! \[ -f "$dir"/package-lock.json ]; do
           local dir="$(\echo "$dir" | \rev | \cut -d / -f 2- | \rev)"
         done
-        if \[ -z "$dir" ]; then local dir="$(\echo "$script" | \rev | \cut -d / -f 2- | \rev)"; fi
+        if \[ -z "$dir" ]; then local dir="$(\echo "$1" | \rev | \cut -d / -f 2- | \rev)"; fi
         if _otel_is_node_injected "$dir"; then
           _otel_escape_args --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.link.js "$1"; shift
         elif ( \[ "$OTEL_TRACES_EXPORTER" = console ] || \[ "$OTEL_TRACES_EXPORTER" = otlp ] ); then
           _otel_escape_args --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.instrument.js "$1"; shift
         else
           _otel_escape_arg "$1"; shift
-        fi        
+        fi
       else
-        break
+        _otel_escape_arg "$1"; shift
       fi
-    elif _otel_string_starts_with "$1" -; then
-      _otel_escape_arg "$1"; shift
-    else
       break
     fi
   done
