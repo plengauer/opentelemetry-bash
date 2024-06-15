@@ -32,6 +32,7 @@ function otel_spawn(command, args, options, original) {
       command = 'otel_observe ' + command;
     }
   }
+  shell_propagator_inject(options.env);
   if (options.shell) {
     if (typeof options.shell == 'boolean') options.shell = '/bin/sh';
     options.env['OTEL_SHELL_COMMANDLINE_OVERRIDE'] = options.shell + ' -c ' + command + ' ' + args.join(' ');
@@ -66,6 +67,7 @@ function otel_exec(command, options, callback, original) {
   }
   options = options ?? {};
   options.env = options.env ?? { ... process.env };
+  shell_propagator_inject(options.env);
   options.env['OTEL_SHELL_COMMANDLINE_OVERRIDE'] = (options.shell ?? '/bin/sh') + ' -c ' + command;
   options.env['OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE'] = process.pid;
   options.env['OTEL_SHELL_AUTO_INJECTED'] = 'FALSE'
@@ -79,3 +81,21 @@ child_process.execFile = function(file, args, options, callback) {
   return _execFile('/bin/sh', [ '-c', '. otel.sh\n' + file + ' "$@"', 'node' ].concat(args ?? []), options, callback);
 }
 */
+
+function shell_propagator_inject(env) {
+  try {
+    let opentelemetry_api = require('@opentelemetry/api');
+    let opentelemetry_sdk = require('@opentelemetry/sdk-node');
+    let carrier = {};
+    new opentelemetry_sdk.core.W3CTraceContextPropagator().inject(opentelemetry_api.context.active(), carrier, opentelemetry_api.defaultTextMapSetter);
+    env.TRACEPARENT = carrier.traceparent ?? process.env.TRACEPARENT ?? '';
+    env.TRACESTATE = carrier.tracestate ?? process.env.TRACESTATE ?? '';
+  } catch (err) {
+    if (err.code != 'MODULE_NOT_FOUND') {
+      throw err;
+    }
+    env.TRACEPARENT = process.env.TRACEPARENT ?? '';
+    env.TRACESTATE = process.env.TRACESTATE ?? '';      
+  }
+}
+

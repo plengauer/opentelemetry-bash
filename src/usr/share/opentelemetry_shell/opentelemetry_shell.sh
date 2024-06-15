@@ -31,7 +31,7 @@ if \[ "$_otel_is_interactive" = "TRUE" ] || \[ "$(\readlink -f "$(\which "$0")" 
 elif \[ -f "$0" ]; then
   _otel_shell_auto_instrumentation_hint="$0"
 else
-  _otel_shell_auto_instrumentation_hint="$(_otel_command_self)"
+  _otel_shell_auto_instrumentation_hint="$(_otel_resolve_command_self)"
 fi
 
 if \[ "$_otel_shell" = "bash" ]; then
