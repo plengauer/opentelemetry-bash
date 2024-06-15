@@ -26,7 +26,7 @@ _otel_is_docker_image_injectable() {
 _otel_is_docker_image_injected() {
   local executable="$1"
   local image="$2"
-  "$executable" run --rm --entrypoint which "$image" otel.sh &> /dev/null
+  "$executable" run --rm --entrypoint which "$image" otel.sh 1> /dev/null 2> /dev/null
 }
 
 _otel_inject_docker_args() {

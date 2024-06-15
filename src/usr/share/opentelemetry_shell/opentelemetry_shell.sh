@@ -43,7 +43,7 @@ _otel_source_line_resolver='$LINENO'
 _otel_source_func_resolver='$FUNCNAME'
 
 if \[ "$_otel_shell" = "bash" ]; then
-  shopt -s expand_aliases &> /dev/null
+  shopt -s expand_aliases 1> /dev/null 2> /dev/null
 fi
 
 _otel_auto_instrument() {
