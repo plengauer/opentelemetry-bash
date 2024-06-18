@@ -48,8 +48,8 @@ $arg'\'' parallel'"
 # evidence this doesnt work: parallel -v sh -c 'echo $0 A$1O' parallel ':::' c1 c2 c3
 
 _otel_inject_parallel_gnu_arguments() {
-  _otel_escape_arg "$1"
-  shift
+  _otel_escape_args "$1" "$2"
+  shift; shift
   local in_exec=0
   for arg in "$@"; do
     \echo -n ' '
