@@ -83,6 +83,7 @@ export -f root4job_end
 
 root4job() {
   rm /tmp/opentelemetry_shell.github.error 2> /dev/null
+  ( while true; do cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"; done >> "$OTEL_SHELL_SDK_LOG_FILE" ) 1> /dev/null 2> /dev/null &
   traceparent_file="$1"
   . otelapi.sh
   otel_init
@@ -95,6 +96,13 @@ root4job() {
 }
 export -f root4job
 
+tmp_dir="$(mktemp -d)"
+chmod 777 "$tmp_dir"
+export OTEL_SHELL_SDK_OUTPUT_REDIRECT="$(mktemp -u -p "$tmp_dir")"
+mkfifo "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"
+chmod 777 "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"
+export OTEL_SHELL_SDK_LOG_FILE="$(mktemp -u -p "$tmp_dir")"
+echo "log_file=$OTEL_SHELL_SDK_LOG_FILE" >> "$GITHUB_STATE"
 traceparent_file="$(mktemp -u)"
 nohup bash -c 'root4job "$@"' bash "$traceparent_file" &> /dev/null &
 echo "$!" > "$(mktemp -u | rev | cut -d / -f 2- | rev)/opentelemetry_shell_$GITHUB_RUN_ID.pid"
