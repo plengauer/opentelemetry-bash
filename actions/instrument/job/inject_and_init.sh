@@ -105,7 +105,7 @@ export OTEL_SHELL_SDK_LOG_FILE="$(mktemp -u -p "$tmp_dir")"
 echo "log_file=$OTEL_SHELL_SDK_LOG_FILE" >> "$GITHUB_STATE"
 traceparent_file="$(mktemp -u)"
 nohup bash -c 'root4job "$@"' bash "$traceparent_file" &> /dev/null &
-echo "$!" > "$(mktemp -u | rev | cut -d / -f 2- | rev)/opentelemetry_shell_$GITHUB_RUN_ID.pid"
+echo "pid=$!" >> "$GITHUB_STATE"
 
 while ! [ -f "$traceparent_file" ]; do sleep 1; done
 export TRACEPARENT="$(cat "$traceparent_file")"
