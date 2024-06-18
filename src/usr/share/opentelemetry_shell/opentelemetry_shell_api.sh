@@ -36,7 +36,7 @@ if \[ -p "$_otel_remote_sdk_pipe" ]; then
   }
 else
   otel_init() {
-    if \[ -e "/dev/stderr" ] && \[ -e "$(\readlink -f /dev/stderr)" ]; then local sdk_output=/dev/stderr; else local sdk_output=/dev/null; fi
+    if \[ -e /dev/stderr ] && \[ -e "$(\readlink -f /dev/stderr)" ]; then local sdk_output="$(\readlink -f /dev/stderr)"; else local sdk_output=/dev/null; fi
     local sdk_output="${OTEL_SHELL_SDK_OUTPUT_REDIRECT:-$sdk_output}"
     \mkfifo "$_otel_remote_sdk_pipe"
     _otel_package_version opentelemetry-shell > /dev/null # to build the cache outside a subshell
