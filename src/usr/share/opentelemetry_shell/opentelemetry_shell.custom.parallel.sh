@@ -86,7 +86,7 @@ _otel_inject_parallel_gnu_arguments() {
 }
 
 _otel_inject_parallel_arguments() {
-  if _otel_string_ends_with "$1" /perl then
+  if _otel_string_ends_with "$1" /perl; then
     _otel_inject_parallel_gnu_arguments "$@"
   else
     _otel_inject_parallel_moreutils_arguments "$@"
