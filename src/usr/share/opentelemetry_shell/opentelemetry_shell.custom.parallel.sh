@@ -48,8 +48,8 @@ $arg'\'' parallel'"
 # evidence this doesnt work: parallel -v sh -c 'echo $0 A$1O' parallel ':::' c1 c2 c3
 
 _otel_inject_parallel_gnu_arguments() {
-  if _otel_string_ends_with "/env"; then _otel_escape_arg "$1"; shift; fi
-  if _otel_string_ends_with "/perl"; then _otel_escape_arg "$1"; shift; fi
+  if _otel_string_ends_with "$1" "/env"; then _otel_escape_arg "$1"; shift; \echo -n ' '; fi
+  if _otel_string_ends_with "$1" "/perl" || \[ "$1" = perl ]; then _otel_escape_arg "$1"; shift; \echo -n ' '; fi
   _otel_escape_args "$1"; shift
   local in_exec=0
   for arg in "$@"; do
