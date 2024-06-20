@@ -153,7 +153,7 @@ jobs:
             cat "$file" | grep -v 'No such file or directory' | sort -n | head -n 1 | xargs echo "$version" >> "$type".list
           done
       - run: |
-          sudo apt-get install -y gnuplot-nox
+          sudo apt-get update && sudo apt-get install -y gnuplot-nox
           echo '
             set terminal pngcairo enhanced font "Verdana,10" size 1024,1024
             set output "performance.png"
