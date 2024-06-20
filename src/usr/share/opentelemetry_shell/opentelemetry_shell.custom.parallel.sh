@@ -97,8 +97,6 @@ _otel_inject_parallel_arguments() {
 _otel_inject_parallel() {
   local cmdline="$(_otel_dollar_star "$@")"
   local cmdline="${cmdline#\\}"
-  \echo "$@" >&2
-  _otel_inject_parallel_arguments "$@" >&2
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE \eval _otel_call "$(_otel_inject_parallel_arguments "$@")"
 }
 
