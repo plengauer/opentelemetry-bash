@@ -20,6 +20,9 @@ otel_observe false 1> /dev/null 2> /dev/null
 assert_not_equals 0 "$?"
 otel_observe false < /dev/null
 assert_not_equals 0 "$?"
+exit_code=0
+cat /dev/null | { otel_observe false || exit_code="$?"; } | cat > /dev/null
+assert_not_equals 0 "$exit_code"
 otel_shutdown
 
 span="$(resolve_span '.name == "cat"')"
