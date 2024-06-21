@@ -24,6 +24,8 @@ file="$(mktemp)"
 exit_code=0
 cat /dev/null | { otel_observe false || exit_code="$?"; echo "$exit_code" > "$file"; return "$exit_code"; } | cat > /dev/null
 assert_not_equals 0 "$(cat "$file")"
+echo '{"dependencies":{}}' | ! otel_observe jq '.version' 1> /dev/null 2> /dev/null
+assert_equals 0 "$?"
 otel_shutdown
 
 span="$(resolve_span '.name == "cat"')"
