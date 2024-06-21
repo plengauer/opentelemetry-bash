@@ -26,7 +26,7 @@ otel_observe false < /dev/null 1> /dev/null 2> /dev/null
 assert_not_equals 0 "$(cat "$file")"
 echo '{"dependencies":{}}' > "$file"
 if otel_observe jq '.version' "$file"; then _if=1; else _if=0; fi
-assert_equals 0 "$_if"
+assert_equals 1 "$_if"
 otel_shutdown
 
 span="$(resolve_span '.name == "cat"')"
