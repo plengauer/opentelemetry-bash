@@ -411,7 +411,7 @@ _otel_call_and_record_pipes() {
     \echo -n '' > "$stdin_lines"
     $call_command "$@" 1> "$stdout" 2> "$stderr" || local exit_code="$?"
   else
-    exit_code_file="$(mktemp)"
+    local exit_code_file="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.exit_code"
     \tee "$stdin_bytes" "$stdin_lines" 2> /dev/null | {
       local inner_exit_code=0
       $call_command "$@" || local inner_exit_code="$?"
