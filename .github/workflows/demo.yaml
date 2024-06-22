@@ -83,7 +83,7 @@ jobs:
             echo '´´´'
           } >> README.md
           
-          cat README.md
+          git diff README.md
       # open PR
       # auto merge
           
