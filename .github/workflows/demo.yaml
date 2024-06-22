@@ -53,11 +53,11 @@ jobs:
           }
 
           print_span_name_tree() {
-            span_id="$1"
-            indent="$2"
+            local span_id="$1"
+            local indent="$2"
             echo -n "$indent"; convert_span_id_to_name "$span_id"
-            get_child_span_ids "$span_id" | while read -r span_id; do
-              print_span_name_tree "$span_id" "$ident  "
+            get_child_span_ids "$span_id" | while read -r child_span_id; do
+              print_span_name_tree "$child_span_id" "$ident  "
             done
           }
 
