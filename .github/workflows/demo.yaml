@@ -21,14 +21,15 @@ jobs:
     strategy: 
       matrix: ${{ fromJSON(needs.demo-prepare.outputs.matrix) }}
     steps:
+      - run: wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh
       - uses: actions/checkout@v4
-      - run: |
+      - run: |          
           cd demos/${{ matrix.demo_directory }}
           export OTEL_SHELL_SDK_REDIRECT="$(mktemp)"
           bash -e ./demo.sh || true
           cat "$OTEL_SHELL_SDK_REDIRECT"
 
-          rm README.md
+          rm README.md || true
           echo '´´´json' >> README.md
           cat "$OTEL_SHELL_SDK_REDIRECT" >> README.md
           cat README.md
