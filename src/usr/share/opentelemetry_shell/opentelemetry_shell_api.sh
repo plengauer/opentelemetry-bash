@@ -36,7 +36,7 @@ if \[ -p "$_otel_remote_sdk_pipe" ]; then
   }
 else
   otel_init() {
-    if \[ -e "/dev/stderr" ] && \[ -e "$(\readlink -f /dev/stderr)" ]; then local sdk_output=/dev/stderr; else local sdk_output=/dev/null; fi
+    if \[ -e /dev/stderr ] && \[ -e "$(\readlink -f /dev/stderr)" ]; then local sdk_output="$(\readlink -f /dev/stderr)"; else local sdk_output=/dev/null; fi
     local sdk_output="${OTEL_SHELL_SDK_OUTPUT_REDIRECT:-$sdk_output}"
     \mkfifo "$_otel_remote_sdk_pipe"
     _otel_package_version opentelemetry-shell > /dev/null # to build the cache outside a subshell
@@ -123,7 +123,7 @@ if \[ "$_otel_shell" = bash ]; then
     local varname="${varname//-/_}"
     if \[ -n "${!varname}" ]; then \echo "${!varname}"; return 0; fi
     \export "$varname=$(_otel_resolve_package_version "$1")"
-    \echo "$varname"
+    \echo "${!varname}"
   }
 else
   _otel_package_version() {
@@ -406,19 +406,21 @@ _otel_call_and_record_pipes() {
   local stdout_pid="$!"
   \tee "$stderr_bytes" "$stderr_lines" < "$stderr" >&2 2> /dev/null &
   local stderr_pid="$!"
-  if \[ "$(\readlink -f /proc/self/fd/0)" = /dev/null ] || \[ "$(\readlink -f /proc/self/fd/0)" = "/proc/$$/fd/0" ] || \[ "$command_type" = builtin ] || \[ "$command_type" = 'function' ]; then
+  if \[ "$(\readlink -f /proc/self/fd/0)" = /dev/null ] || \[ "$(\readlink -f /proc/self/fd/0)" = "/proc/$$/fd/0" ] || \[ "$command_type" = builtin ] || \[ "$command_type" = 'function' ] || \[ "$command_type" = keyword ]; then
     \echo -n '' > "$stdin_bytes"
     \echo -n '' > "$stdin_lines"
     $call_command "$@" 1> "$stdout" 2> "$stderr" || local exit_code="$?"
   else
+    local exit_code_file="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.exit_code"
     \tee "$stdin_bytes" "$stdin_lines" 2> /dev/null | {
       local inner_exit_code=0
       $call_command "$@" || local inner_exit_code="$?"
-      # local stdin_pid="$(\ps -o 'pid,command' | \grep -F "tee $stdin_bytes $stdin_lines" | \grep -vF grep | \cut -d , -f1 | \tr -d ' ')"
       local stdin_pid="$(\ps -o 'pid,command' | \grep -F "tee $stdin_bytes $stdin_lines" | \grep -vF grep | \awk '{ print $1 }')"
       if \[ -n "$stdin_pid" ]; then \kill -2 "$stdin_pid" 2> /dev/null || true; fi
-      return "$inner_exit_code"
-    } 1> "$stdout" 2> "$stderr" || local exit_code="$?"
+      \echo -n "$inner_exit_code" > "$exit_code_file" # return "$inner_exit_code"
+    } 1> "$stdout" 2> "$stderr" # || local exit_code="$?"
+    local exit_code="$(\cat "$exit_code_file")"
+    \rm "$exit_code_file" 2> /dev/null
   fi
   \wait "$stdin_bytes_pid" "$stdin_lines_pid" "$stdout_bytes_pid" "$stdout_lines_pid" "$stderr_bytes_pid" "$stderr_lines_pid" "$stdout_pid" "$stderr_pid"
   \rm "$stdout" "$stderr" "$stdin_bytes" "$stdin_lines" "$stdout_bytes" "$stdout_lines" "$stderr_bytes" "$stderr_lines" 2> /dev/null
