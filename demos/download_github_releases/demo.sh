@@ -1,3 +1,4 @@
+. otel.sh
 repository=plengauer/opentelemetry-bash
 per_page=100
 url="https://api.github.com/repos/$repository/releases?per_page=$per_page"
