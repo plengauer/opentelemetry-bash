@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          cd demos && echo */ | jq -nR '{"include": [inputs | select(length > 0) | {demo_directory: .}]}' | tr -d '\n' | xargs -0 -I {} echo 'matrix={}' >> "$GITHUB_OUTPUT"
+          cd demos && echo */ | tr ' ' '\n' | jq -nR '{"include": [inputs | select(length > 0) | {demo_directory: .}]}' | tr -d '\n' | xargs -0 -I {} echo 'matrix={}' >> "$GITHUB_OUTPUT"
         id: demos
 
   demo-generate:
