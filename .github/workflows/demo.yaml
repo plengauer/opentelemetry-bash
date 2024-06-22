@@ -100,7 +100,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_ACTION_TOKEN }}
           commit-message: "Update demo"
-          branch: "demo"
+          branch: "demos/${{ matrix.demo_directory }}"
           title: "Update demo"
           body: |
             (this PR is automatically generated)
