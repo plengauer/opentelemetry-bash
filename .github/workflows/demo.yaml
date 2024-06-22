@@ -56,16 +56,13 @@ jobs:
 
           rm README.md || true
           echo '´´´' >> README.md
-          cat "$stdout"
+          cat "$stdout" >> README.md
           echo '´´´' >> README.md
           echo '´´´' >> README.md
-          cat "$stderr"
-          echo '´´´' >> README.md
-          echo '´´´json' >> README.md
-          print_span_name_tree "$(get_root_span_id)" ""
+          cat "$stderr" >> README.md
           echo '´´´' >> README.md
           echo '´´´json' >> README.md
-          print_span_name_tree "$(get_root_span_id)" ""
+          print_span_name_tree "$(get_root_span_id)" "" >> README.md
           echo '´´´' >> README.md
           echo '´´´json' >> README.md
           cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" >> README.md
