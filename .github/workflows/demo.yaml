@@ -64,15 +64,20 @@ jobs:
 
           rm README.md 2> /dev/stderr || true
           {
+            echo '# Demo Output'
+            echo '## Standard Out'
             echo '´´´'
             cat "$stdout"
             echo '´´´'
+            echo '## Standard Error'
             echo '´´´'
             cat "$stderr"
             echo '´´´'
-            echo '´´´json'
+            echo '## Trace Overview'
+            echo '´´´'
             print_span_name_tree "$(get_root_span_id)" ""
             echo '´´´'
+            echo '## Full OTLP Data'
             echo '´´´json'
             cat "$otlp"
             echo '´´´'
