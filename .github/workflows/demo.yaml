@@ -54,19 +54,21 @@ jobs:
             done
           }
 
-          rm README.md || true
-          echo '´´´' >> README.md
-          cat "$stdout" >> README.md
-          echo '´´´' >> README.md
-          echo '´´´' >> README.md
-          cat "$stderr" >> README.md
-          echo '´´´' >> README.md
-          echo '´´´json' >> README.md
-          print_span_name_tree "$(get_root_span_id)" "" >> README.md
-          echo '´´´' >> README.md
-          echo '´´´json' >> README.md
-          cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" >> README.md
-          echo '´´´' >> README.md
+          rm README.md 2> /dev/stderr || true
+          {
+            echo '´´´'
+            cat "$stdout"
+            echo '´´´'
+            echo '´´´'
+            cat "$stderr"
+            echo '´´´'
+            echo '´´´json'
+            print_span_name_tree "$(get_root_span_id)" ""
+            echo '´´´'
+            echo '´´´json'
+            cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"
+            echo '´´´'
+          } >> README.md
           
           cat README.md
       # open PR
