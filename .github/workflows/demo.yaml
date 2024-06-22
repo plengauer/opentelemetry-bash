@@ -28,13 +28,14 @@ jobs:
           export OTEL_METRICS_EXPORTER=console
           export OTEL_LOGS_EXPORTER=console
           export OTEL_TRACES_EXPORTER=console
-          export OTEL_SHELL_SDK_REDIRECT="$(mktemp)"
+          export OTEL_SHELL_SDK_OUTPUT_REDIRECT="$(mktemp)"
           bash -e ./demo.sh || true
-          cat "$OTEL_SHELL_SDK_REDIRECT"
+          cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"
 
           rm README.md || true
           echo '´´´json' >> README.md
-          cat "$OTEL_SHELL_SDK_REDIRECT" >> README.md
+          cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" >> README.md
+          echo '´´´' >> README.md
           cat README.md
       # open PR
       # auto merge
