@@ -25,24 +25,31 @@ jobs:
       - uses: actions/checkout@v4
       - run: |          
           cd demos/${{ matrix.demo_directory }}
+          
           export OTEL_METRICS_EXPORTER=console
           export OTEL_LOGS_EXPORTER=console
           export OTEL_TRACES_EXPORTER=console
-          export OTEL_SHELL_SDK_OUTPUT_REDIRECT="$(mktemp)"
+          export OTEL_SHELL_SDK_OUTPUT_REDIRECT="$(mktemp -u)"
+          otlp="$(mktemp)"
           stdout="$(mktemp)"
           stderr="$(mktemp)"
+          mkfifo "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"
+          while true; do cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" >> "$otlp"; done &
+          pid="$!"
           bash -e ./demo.sh 1> "$stdout" 2> "$stderr" || true
+          kill -9 "$pid"
+          wait
 
           convert_span_id_to_name() {
-            cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" | jq -r '. | select(.context.span_id == "'"$1"'") | .name'
+            cat "$otlp" | jq -r '. | select(.context.span_id == "'"$1"'") | .name'
           }
 
           get_root_span_id() {
-            cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" | jq -r '. | select(.parent_id == null) | .context.span_id'
+            cat "$otlp" | jq -r '. | select(.parent_id == null) | .context.span_id'
           }
 
           get_child_span_ids() {
-            cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" | jq -r '. | select(.parent_id == "'"$1"'") | .context.span_id'
+            cat "$otlp" | jq -r '. | select(.parent_id == "'"$1"'") | .context.span_id'
           }
 
           print_span_name_tree() {
@@ -66,7 +73,7 @@ jobs:
             print_span_name_tree "$(get_root_span_id)" ""
             echo '´´´'
             echo '´´´json'
-            cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"
+            cat "$otlp"
             echo '´´´'
           } >> README.md
           
