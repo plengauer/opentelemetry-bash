@@ -7,5 +7,5 @@ curl --no-progress-meter --fail --retry 16 --retry-all-errors --head -H "$auth_h
   | grep 'rel="last"' | cut -d ';' -f1 | cut -d '?' -f 2- | tr '&' '\n' \
   | grep '^page=' | cut -d = -f 2 \
   | xargs seq 1 | xargs parallel -q curl --no-progress-meter --fail --retry 16 --retry-all-errors -H "$auth_header" "$url"\&page={} ::: \
-  | jq '.[] | .assets[] | .browser_download_url' -r | (grep '.deb$' || true)
+  | jq '.[] | .assets[] | .browser_download_url' -r | (grep '.deb$' || true) \
   | xargs wget
