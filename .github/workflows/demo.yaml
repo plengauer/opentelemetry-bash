@@ -56,9 +56,8 @@ jobs:
             local span_id="$1"
             local indent="$2"
             printf '%s' "$indent"; convert_span_id_to_name "$span_id"
-            get_child_span_ids "$span_id" | xargs echo "$span_id =>" >&2 
             get_child_span_ids "$span_id" | while read -r child_span_id; do
-              print_span_name_tree "$child_span_id" "$ident  "
+              print_span_name_tree "$child_span_id" "$indent  "
             done
           }
 
