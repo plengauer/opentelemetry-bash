@@ -23,7 +23,8 @@ jobs:
     steps:
       - run: wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh
       - uses: actions/checkout@v4
-      - run: |          
+      - run: |
+          set +o pipefail
           cd demos/${{ matrix.demo_directory }}
           
           export OTEL_METRICS_EXPORTER=console
