@@ -25,6 +25,9 @@ jobs:
       - uses: actions/checkout@v4
       - run: |          
           cd demos/${{ matrix.demo_directory }}
+          export OTEL_METRICS_EXPORTER=console
+          export OTEL_LOGS_EXPORTER=console
+          export OTEL_TRACES_EXPORTER=console
           export OTEL_SHELL_SDK_REDIRECT="$(mktemp)"
           bash -e ./demo.sh || true
           cat "$OTEL_SHELL_SDK_REDIRECT"
