@@ -55,7 +55,7 @@ jobs:
           print_span_name_tree() {
             local span_id="$1"
             local indent="$2"
-            echo -n "$indent"; convert_span_id_to_name "$span_id"
+            printf '%s' "$indent"; convert_span_id_to_name "$span_id"
             get_child_span_ids "$span_id" | while read -r child_span_id; do
               print_span_name_tree "$child_span_id" "$ident  "
             done
