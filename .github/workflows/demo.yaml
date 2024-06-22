@@ -29,8 +29,9 @@ jobs:
           export OTEL_LOGS_EXPORTER=console
           export OTEL_TRACES_EXPORTER=console
           export OTEL_SHELL_SDK_OUTPUT_REDIRECT="$(mktemp)"
-          bash -e ./demo.sh || true
-          cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"
+          stdout="$(mktemp)"
+          stderr="$(mktemp)"
+          bash -e ./demo.sh 1> "$stdout" 2> "$stderr" || true
 
           convert_span_id_to_name() {
             cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" | jq -r '. | select(.context.span_id == "'"$1"'") | .name'
@@ -54,6 +55,15 @@ jobs:
           }
 
           rm README.md || true
+          echo '´´´' >> README.md
+          cat "$stdout"
+          echo '´´´' >> README.md
+          echo '´´´' >> README.md
+          cat "$stderr"
+          echo '´´´' >> README.md
+          echo '´´´json' >> README.md
+          print_span_name_tree "$(get_root_span_id)" ""
+          echo '´´´' >> README.md
           echo '´´´json' >> README.md
           print_span_name_tree "$(get_root_span_id)" ""
           echo '´´´' >> README.md
