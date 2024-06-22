@@ -32,10 +32,35 @@ jobs:
           bash -e ./demo.sh || true
           cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"
 
+          convert_span_id_to_name() {
+            cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" | jq -r '. | select(.context.span_id == '"$1"') | .name'
+          }
+
+          get_root_span_id() {
+            cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" | jq -r '. | select(.parent_id == null) | .context.span_id'
+          }
+
+          get_child_span_ids() {
+            cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" | jq -r '. | select(.parent_id == '"$1"') | .context.span_id'
+          }
+
+          print_span_name_tree() {
+            span_id="$1"
+            indent="$2"
+            echo -n "$indent"; convert_span_id_to_name "$span_id"
+            get_child_span_ids "$span_id" | while read -r span_id; do
+              print_span_name_tree "$span_id" "$ident  "
+            done
+          }
+
           rm README.md || true
+          echo '´´´json' >> README.md
+          print_span_name_tree "$(get_root_span_id)" ""
+          echo '´´´' >> README.md
           echo '´´´json' >> README.md
           cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" >> README.md
           echo '´´´' >> README.md
+          
           cat README.md
       # open PR
       # auto merge
