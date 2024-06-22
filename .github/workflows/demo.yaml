@@ -62,7 +62,6 @@ jobs:
             done
           }
 
-          rm README.md 2> /dev/stderr || true
           {
             echo '# Demo Output'
             echo '## Standard Out'
@@ -81,8 +80,9 @@ jobs:
             echo '´´´json'
             cat "$otlp"
             echo '´´´'
-          } >> README.md
+          } > README.md
           
+          git add README.md
           git diff README.md
       # open PR
       # auto merge
