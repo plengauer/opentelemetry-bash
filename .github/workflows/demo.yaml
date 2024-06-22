@@ -33,7 +33,7 @@ jobs:
           cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"
 
           convert_span_id_to_name() {
-            cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" | jq -r '. | select(.context.span_id == '"$1"') | .name'
+            cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" | jq -r '. | select(.context.span_id == "'"$1"'") | .name'
           }
 
           get_root_span_id() {
@@ -41,7 +41,7 @@ jobs:
           }
 
           get_child_span_ids() {
-            cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" | jq -r '. | select(.parent_id == '"$1"') | .context.span_id'
+            cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" | jq -r '. | select(.parent_id == "'"$1"'") | .context.span_id'
           }
 
           print_span_name_tree() {
