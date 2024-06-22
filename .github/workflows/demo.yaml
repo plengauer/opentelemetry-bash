@@ -21,6 +21,7 @@ jobs:
     strategy: 
       matrix: ${{ fromJSON(needs.demo-prepare.outputs.matrix) }}
     steps:
+      - uses: actions/checkout@v4
       - run: |
           cd demos/${{ matrix.demo_directory }}
           export OTEL_SHELL_SDK_REDIRECT="$(mktemp)"
