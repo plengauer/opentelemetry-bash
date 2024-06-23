@@ -98,7 +98,7 @@ jobs:
         id: open-pr
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.GITHUB_ACTION_TOKEN }}
+          token: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
           commit-message: "Update demo"
           branch: "demos/${{ matrix.demo_directory }}"
           title: "Update demo"
@@ -109,6 +109,6 @@ jobs:
       - uses: peter-evans/enable-pull-request-automerge@v3
         if: steps.open-pr.outputs.pull-request-number != null
         with:
-          token: ${{ secrets.GITHUB_ACTION_TOKEN }}
+          token: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
           pull-request-number: ${{ steps.open-pr.outputs.pull-request-number }}
           merge-method: squash
