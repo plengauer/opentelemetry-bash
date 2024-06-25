@@ -75,7 +75,7 @@ _otel_auto_instrument() {
   ## avoid piping directly into the loops, then it will be considered a subshell and aliases won't take effect here
   for cmd in $(_otel_list_path_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_hint "$hint" | \sort -u); do _otel_deshebangify "$cmd" || \true; done
   for otel_custom_file in $(_otel_list_special_auto_instrument_files); do \. "$otel_custom_file"; done
-  for cmd in $(_otel_list_aliased_commands | _otel_filter_commands_by_special | \sort -u); do _otel_dealiasify "$cmd" || \true; done
+  for cmd in $(_otel_list_alias_commands | _otel_filter_commands_by_special | \sort -u); do _otel_dealiasify "$cmd" || \true; done
   for cmd in $(_otel_list_all_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_instrumentation | _otel_filter_commands_by_mode | _otel_filter_commands_by_hint "$hint" | \sort -u); do otel_instrument "$cmd"; done
 
   # super special instrumentations
@@ -205,7 +205,6 @@ _otel_dealiasify() {
   # e.g., alias l=ls --color=auto
   # e.g., alias ls=ls --color=auto
   local cmd="$1" # e.g., "upgrade", "ai", "l"
-if \[ "$cmd" = docker-entrypoint.sh ]; then set -x; fi
   if ! _otel_has_alias "$cmd"; then return 1; fi
   local full_alias="$(_otel_resolve_alias "$cmd")"
   while _otel_string_starts_with "$full_alias" 'OTEL_'; do local full_alias="${full_alias#* }"; done
