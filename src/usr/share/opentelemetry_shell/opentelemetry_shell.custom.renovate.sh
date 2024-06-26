@@ -11,5 +11,4 @@ if \[ "$(_otel_command_self)" = '/bin/bash /usr/local/bin/renovate' ]; then # re
       export OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318
     fi
   fi
-  set -x
 fi
