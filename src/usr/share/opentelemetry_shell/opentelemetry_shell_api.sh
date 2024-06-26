@@ -101,9 +101,6 @@ _otel_resource_attributes() {
   \echo service.version="$OTEL_SERVICE_VERSION"
   \echo service.namespace="$OTEL_SERVICE_NAMESPACE"
   \echo service.instance.id="$OTEL_SERVICE_INSTANCE_ID"
-
-  \echo telemetry.sdk.debug.command_line="$(_otel_resolve_command_self)"
-  \echo telemetry.sdk.debug.aliases="$(\alias | \wc -l)"
 }
 
 _otel_command_self() {
