@@ -22,7 +22,8 @@ _otel_inject_inner_command_args() {
   # more options
   for arg in $more_args; do \echo -n " ";  _otel_escape_arg "$arg"; done
   # wrap command
-  \echo -n " $_otel_shell -c '. otel.sh
+  if _otel_string_contains "$command" dumb-init; then extra_flag=-x; fi
+  \echo -n " $_otel_shell $extra_flag -c '. otel.sh
 "
   while \[ "$#" -gt 0 ]; do \echo -n " "; no_quote=1 _otel_escape_arg "$(_otel_escape_arg "$1")"; shift; done
   \echo -n " "; no_quote=1 _otel_escape_arg '"$@"'
@@ -32,7 +33,6 @@ _otel_inject_inner_command_args() {
 _otel_inject_inner_command() {
   local cmdline="$(_otel_dollar_star "$@")"
   local cmdline="${cmdline#\\}"
-  if _otel_string_starts_with "$cmdline" dumb-init; then set -x; fi
   local command_string="$(_otel_inject_inner_command_args "$@")"
   unset OTEL_SHELL_INJECT_INNER_COMMAND_MORE_ARGS # unset it also here, not just in subshell above
   OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE \eval _otel_call "$command_string"
