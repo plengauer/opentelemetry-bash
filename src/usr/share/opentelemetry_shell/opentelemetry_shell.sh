@@ -17,8 +17,6 @@ unset OTEL_SHELL_CONSERVATIVE_EXEC
 \. /usr/share/opentelemetry_shell/opentelemetry_shell_api.sh
 _otel_package_version opentelemetry-shell > /dev/null # to build the cache outside a subshell
 
-if _otel_string_contains "$(_otel_resolve_command_self)" /usr/local/bin/renovate; then set -x; fi
-
 if \[ "$_otel_shell" = "bash" ] && \[ -n "$BASHPID" ] && \[ "$$" != "$BASHPID" ]; then
   \echo "WARNING The OpenTelemetry shell file for auto-instrumentation is sourced in a subshell, automatic instrumentation will only be active within that subshell!" >&2
 fi
