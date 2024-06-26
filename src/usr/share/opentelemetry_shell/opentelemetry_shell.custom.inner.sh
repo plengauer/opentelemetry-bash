@@ -22,8 +22,7 @@ _otel_inject_inner_command_args() {
   # more options
   for arg in $more_args; do \echo -n " ";  _otel_escape_arg "$arg"; done
   # wrap command
-  if _otel_string_contains "$command" dumb-init; then extra_flag=-x; fi
-  \echo -n " $_otel_shell $extra_flag -c '. otel.sh
+  \echo -n " $_otel_shell -c '. otel.sh
 "
   while \[ "$#" -gt 0 ]; do \echo -n " "; no_quote=1 _otel_escape_arg "$(_otel_escape_arg "$1")"; shift; done
   \echo -n " "; no_quote=1 _otel_escape_arg '"$@"'
