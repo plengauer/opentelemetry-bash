@@ -22,4 +22,4 @@ _otel_configure_renovate() {
   fi
 }
 
-_otel_alias_prepend renovate _otel_configure_renovate
+# _otel_alias_prepend renovate _otel_configure_renovate
