@@ -14,7 +14,12 @@ _otel_configure_renovate() {
       export OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318
     fi
   fi
-  _otel_call "$@"
+  if \[ "$1" = /bin/bash ] && \[ /bin/bash = "$(\which bash)" ]; then
+    shift
+    bash "$@"
+  else
+    _otel_call "$@"
+  fi
 }
 
 _otel_alias_prepend renovate _otel_configure_renovate
