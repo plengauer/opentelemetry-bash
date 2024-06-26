@@ -1,7 +1,7 @@
 . ./assert.sh
 . /usr/bin/opentelemetry_shell.sh
 
-dash -x -c 'echo hello world'
+dash -c 'echo hello world'
 assert_equals 0 $?
 span="$(resolve_span '.resource.attributes."process.command_line" == "dash -c echo hello world"')"
 assert_equals "echo hello world" "$(\echo "$span" | jq -r '.name')"
