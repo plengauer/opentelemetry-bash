@@ -4,12 +4,43 @@
 # netcat -l -p 8080 | read
 # netcat -l -p 8080 -e respond
 
-_otel_propagate_netcat_read() {
-  \cat # TODO
+_otel_propagate_netcat_write() {
+  read -r method path_and_query protocol
+  if ! _otel_string_starts_with "$protocol" HTTP/; then
+    \echo "$method" "$path" "$protocol"
+    \cat
+    return 0
+  fi
+  otel_span_attribute_typed "$span_handle" string network.protocol.name="$(\printf '%s' "$protocol" | \cut -d / -f 1)"
+  otel_span_attribute_typed "$span_handle" string network.protocol.version="$(\printf '%s' "$protocol" | \cut -d / -f 2-)"
+  # otel_span_attribute_typed "$span_handle" string url.full="$protocol://$host:$port$path_and_query" # TODO we do not know host and port here
+  otel_span_attribute_typed "$span_handle" string url.path="$(\printf '%s' "$path_and_query" | \cut -d ? -f 1)"
+  otel_span_attribute_typed "$span_handle" string url.query="$(\printf '%s' "$path_and_query" | \cut -sd ? -f 2-)"
+  otel_span_attribute_typed "$span_handle" string url.scheme="$(\printf '%s' "$protocol" | \cut -d / -f 1 | \tr '[:upper:]' '[:lower:]')"
+  otel_span_attribute_typed "$span_handle" string http.request.method="$method"
+  otel_span_attribute_typed "$span_handle" string user_agent.original=netcat
+  while read -r line && \[ -n "$line" ]; do
+    local key="$(\printf '%s' "$protocol" | \cut -d ' ' -f 1 | \tr -d : | \tr '[:upper:]' '[:lower:]')"
+    local value="$(\printf '%s' "$protocol" | \cut -d ' ' -f 2-)"
+    otel_span_attribute_typed "$span_handle" string[1] http.request.header."$key"="$value"
+    \echo "$line"
+  done
+  \echo ""
+  local body_size_pipe="$(\mktemp -u)"
+  local body_size_file="$(\mktemp -u)"
+  \mkfifo "$body_size_pipe"
+  \wc -c < "$body_size_pipe" > "$body_size_file" &
+  local pid="$!"
+  \tee "$body_size_pipe"
+  \wait "$pid"
+  otel_span_attribute_typed "$span_handle" int http.request.body.size="$(\cat "$body_size_file")"
+  \rm "$body_size_file" "$body_size_pipe" 2> /dev/null
 }
 
-_otel_propagate_netcat_write() {
-  \cat # TODO  
+_otel_propagate_netcat_read() {
+  # otel_span_attribute_typed "$span_handle" string network.protocol.name="$protocol"
+  # otel_span_attribute_typed "$span_handle" string network.protocol.version="$(\printf '%s' "$line" | \cut -d ' ' -f 4 | \cut -d / -f 2)"
+  \cat # TODO
 }
 
 _otel_propagate_netcat() {
@@ -30,8 +61,72 @@ _otel_propagate_netcat() {
 
 _otel_propagate_netcat_parse() {
   local span_handle="$1"
-  # TODO use -u and --udp to set type to udp not tcp
-  # TODO set bunch of default arguments
+  local transport=tcp
+  local host=""
+  local ip=""
+  local port=31337
+  local is_listening=0
+  while \[ "$#" -gt 0 ]; do
+    if \[ "$1" = -l ] || \[ "$1" = --listen ]; then
+      local is_listening=1
+    elif \[ "$1" = -u ] || \[ "$1" = --udp ]; then
+      local transport=udp
+    elif \[ "$1" = --sctp ]; then
+      local transport=sctp
+    elif _otel_string_starts_with "$1" - && \[ "$#" -gt 1 ] && _otel_is_netcat_arg_arg "$1"; then
+      shift
+    elif _otel_string_starts_with "$1" -; then
+      \true
+    else
+      if \[ "$1" -eq "$1" ]; then
+        local port="$1"
+      elif \false; then # TODO
+        local ip="$1"
+      else
+        local host="$1"
+      fi
+    fi
+    shift
+  done
+  otel_span_attribute_typed "$span_handle" string network.transport="$transport"
+  if \[ "$is_listening" = 0 ]; then
+    otel_span_attribute_typed "$span_handle" string network.peer.address="$ip"
+    otel_span_attribute_typed "$span_handle" int network.peer.port="$port"
+  fi
+  otel_span_attribute_typed "$span_handle" string server.address="$host"
+  otel_span_attribute_typed "$span_handle" int server.port="$port"
+}
+
+_otel_is_netcat_arg_arg() {
+  # https://man7.org/linux/man-pages/man1/ncat.1.html
+  case "$1" in
+    -i|--idle-timeout) return 0;;
+    -P) return 0;;
+    -T) return 0;;
+    -w|--wait) return 0;;
+    -x) return 0;;
+    -X) return 0;;
+    -L) return 0;;
+    -e|--exec) return 0;;
+    -c|--sh-exec) return 0;;
+    --lua-exec) return 0;;
+    -g) return 0;;
+    -G) return 0;;
+    -b) return 0;;
+    -q) return 0;;
+    -m|--max-conns) return 0;;
+    -I) return 0;;
+    -O) return 0;;
+    -S) return 0;;
+    -R) return 0;;
+    -d|--delay) return 0;;
+    -o|--output) return 0;;
+    -x|--hexdump) return 0;;
+    -p|--source-port) return 0;;
+    -s|--source; return 0;;
+    --proxy|--proxy-type|--proxy-auth|--proxy-dns) return 0;;
+     *) return 1;;
+  esac
 }
 
 _otel_args_contains() {
