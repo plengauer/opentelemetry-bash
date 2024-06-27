@@ -54,6 +54,8 @@ _otel_auto_instrument() {
   local IFS=' 
 '
 
+  if \[ "$(_otel_resolve_command)" = '/bin/bash /usr/local/bin/renovate' ]; then set -x; fi
+
   # cached?
   ## we really have three options for the cache key
   ## (1) using the hint - will not work when scripts are changing or called the same but very fast!
