@@ -7,5 +7,5 @@ export OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE
 RENOVATE_DRY_RUN=full RENOVATE_TOKEN="$GITHUB_TOKEN" RENOVATE_REPOSITORIES="$GITHUB_REPOSITORY" docker run --rm renovate/renovate
 
 assert_not_equals 0 "$?" # because no github token available
-span="$(resolve_span '.name | startswith("node ")')"
+span="$(resolve_span '. | select(.name == "/bin/bash /usr/local/bin/node /usr/local/renovate/dist/renovate.js")')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
