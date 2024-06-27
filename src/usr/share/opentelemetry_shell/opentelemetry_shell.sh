@@ -54,7 +54,7 @@ _otel_auto_instrument() {
   local IFS=' 
 '
 
-  if _otel_string_contains "$(_otel_resolve_command_self)" /usr/local/bin/renovate; then set -x; fi
+  # if _otel_string_contains "$(_otel_resolve_command_self)" /usr/local/bin/renovate; then set -x; fi
 
   # cached?
   ## we really have three options for the cache key
