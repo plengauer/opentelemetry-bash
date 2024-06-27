@@ -15,7 +15,7 @@ _otel_is_node_injected() {
 
 _otel_inject_node_args() {
   while ! \[ "$1" = node ] && ! \[ "$1" = "\\node" ] && ! _otel_string_ends_with "$1" /node; do _otel_escape_arg "$1"; shift; \echo -n ' '; done
-  _otel_escape_arg "$1" # _otel_escape_args "\\${1#\\}"
+  _otel_escape_arg "$1"
   shift
   \echo -n ' '; _otel_escape_args --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.js
   while \[ "$#" -gt 0 ]; do
