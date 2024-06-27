@@ -241,8 +241,6 @@ _otel_alias_prepend() {
   local original_command="$1"
   local prepend_command="$2"
 
-  if \[ "$original_command" = node ]; then set -x; fi
-
   if ! _otel_has_alias "$original_command"; then # fastpath
     local new_command="$(\printf '%s' "OTEL_SHELL_COMMAND_TYPE_OVERRIDE=$(_otel_command_type "$original_command") $prepend_command '\\$original_command'")" # need to use printf to handle backslashes consistently across shells
   else
@@ -268,8 +266,6 @@ _otel_alias_prepend() {
   fi
 
   \alias "$original_command"='OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE="code.filepath='$_otel_source_file_resolver',code.lineno='$_otel_source_line_resolver',code.function='$_otel_source_func_resolver'" '"$new_command"
-
-  set +x
 }
 
 _otel_unquote() {
