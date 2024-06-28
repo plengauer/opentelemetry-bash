@@ -70,13 +70,14 @@ _otel_propagate_netcat_write() {
 
 _otel_propagate_netcat_read() {
   local span_handle_file="$1"
-  if \[ -f "$span_handle_file" ]; then
+  if \[ -p "$span_handle_file" ]; then
     local span_handle="$(\cat "$span_handle_file")"
-  else
+  fi
+  read -r protocol response_code response_message
+  if \[ -z "$span_handle" ]
     local span_handle="$(otel_span_start CONSUMER receive)"
     _otel_propagate_netcat_parse "$span_handle" "$@" > /dev/null
   fi
-  read -r protocol response_code response_message
   \echo "$protocol" "$response_code" "$response_message"
   if ! _otel_string_starts_with "$protocol" HTTP/; then
     \cat
