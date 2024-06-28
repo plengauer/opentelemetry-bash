@@ -22,19 +22,23 @@ assert_not_equals null "$(\echo "$span" | jq -r '.attributes."http.response.head
 assert_not_equals null "$(\echo "$span" | jq -r '.attributes."network.peer.port"')"
 
 port=12345
+
+rm "$OTEL_EXPORT_LOCATION"
 response_file="$(mktemp)"
 netcat -l "$port" > "$response_file" &
 echo hello world | netcat -N 127.0.0.1 "$port"
 assert_equals "hello world" "$(cat "$response file")"
-span="$(resolve_span '.name == "send/receive"')"
-assert_equals "SpanKind.CLIENT" $(\echo "$span" | jq -r '.kind')
-span="$(resolve_span '.name == "receive"')"
-assert_equals "SpanKind.CONSUMER" $(\echo "$span" | jq -r '.kind')
+span="$(resolve_span '.kind == "SpanKind.CLIENT"')"
+assert_equals "send/receive" $(\echo "$span" | jq -r '.name')
+span="$(resolve_span '.kind == "SpanKind.SERVER"')"
+assert_equals "send/receive" $(\echo "$span" | jq -r '.name')
 
 if [ -x "$(which ncat)" ]; then
+  rm "$OTEL_EXPORT_LOCATION"
   ncat -l -e cat "$port" &
   assert_equals "hello world" "$(echo hello world | netcat -N 127.0.0.1 "$port")"
-  span="$(resolve_span '.name == "send/receive"')"
-  assert_equals "SpanKind.CLIENT" $(\echo "$span" | jq -r '.kind')
-  # TODO assert on server side span
+  span="$(resolve_span '.kind == "SpanKind.CLIENT"')"
+  assert_equals "send/receive" $(\echo "$span" | jq -r '.name')
+  span="$(resolve_span '.kind == "SpanKind.SERVER"')"
+  assert_equals "send/receive" $(\echo "$span" | jq -r '.name')
 fi
