@@ -6,7 +6,7 @@
 
 _otel_propagate_netcat() {
   if _otel_args_contains -l "$@" || _otel_args_contains --listen "$@"; then
-    # TODO
+    _otel_call "$@" # TODO ? do we wanna inject here?
   else
     local span_handle_file="$(\mktemp -u)"
     \mkfifo "$span_handle_file"
