@@ -13,7 +13,7 @@ _otel_inject_netcat() {
       \mkfifo "$span_handle_file"
       local exit_code_file="$(\mktemp)"
       \echo 0 > "$exit_code_file"
-      { _otel_call "$@" || \echo "$?" > "$exit_code_file"; } | _otel_netcat_parse_request 1 "$span_handle_file" "$@" | { otel_span_end "$(\cat "$span_handle_file")"; \cat; }
+      { _otel_call "$@" || \echo "$?" > "$exit_code_file"; } | _otel_netcat_parse_request 1 "$span_handle_file" "$@" | { local span_handle="$(\cat "$span_handle_file")"; \cat; otel_span_end "$span_handle";  }
       return "$(\cat "$exit_code_file")"
     fi
   else
