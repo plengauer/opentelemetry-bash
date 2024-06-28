@@ -47,8 +47,8 @@ _otel_propagate_netcat_write() {
   otel_span_attribute_typed "$span_handle" string user_agent.original=netcat
   \echo "$method" "$path_and_query" "$protocol"
   while read -r line && \[ -n "$line" ]; do
-    local key="$(\printf '%s' "$protocol" | \cut -d ' ' -f 1 | \tr -d : | \tr '[:upper:]' '[:lower:]')"
-    local value="$(\printf '%s' "$protocol" | \cut -d ' ' -f 2-)"
+    local key="$(\printf '%s' "$line" | \cut -d ' ' -f 1 | \tr -d : | \tr '[:upper:]' '[:lower:]')"
+    local value="$(\printf '%s' "$line" | \cut -d ' ' -f 2-)"
     otel_span_attribute_typed "$span_handle" string[1] http.request.header."$key"="$value"
     \echo "$line"
   done
@@ -86,8 +86,8 @@ _otel_propagate_netcat_read() {
   fi
   otel_span_attribute_typed "$span_handle" int http.response.status_code="$response_code"
   while read -r line && \[ -n "$line" ]; do
-    local key="$(\printf '%s' "$protocol" | \cut -d ' ' -f 1 | \tr -d : | \tr '[:upper:]' '[:lower:]')"
-    local value="$(\printf '%s' "$protocol" | \cut -d ' ' -f 2-)"
+    local key="$(\printf '%s' "$line" | \cut -d ' ' -f 1 | \tr -d : | \tr '[:upper:]' '[:lower:]')"
+    local value="$(\printf '%s' "$line" | \cut -d ' ' -f 2-)"
     otel_span_attribute_typed "$span_handle" string[1] http.response.header."$key"="$value"
     \echo "$line"
   done
