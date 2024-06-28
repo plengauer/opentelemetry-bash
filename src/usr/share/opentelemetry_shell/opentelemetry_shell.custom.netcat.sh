@@ -46,17 +46,17 @@ _otel_propagate_netcat_write() {
   otel_span_attribute_typed "$span_handle" string http.request.method="$method"
   otel_span_attribute_typed "$span_handle" string user_agent.original=netcat
   \echo "$method" "$path_and_query" "$protocol"
-  while read -r line && \[ -n "$line" ]; do
-    local key="$(\printf '%s' "$line" | \cut -d ' ' -f 1 | \tr -d : | \tr '[:upper:]' '[:lower:]')"
-    local value="$(\printf '%s' "$line" | \cut -d ' ' -f 2-)"
-    otel_span_attribute_typed "$span_handle" string[1] http.request.header."$key"="$value"
-    \echo "$line"
-  done
   otel_span_activate "$span_handle"
   \echo traceparent: "$TRACEPARENT"
   \echo tracestate: "$TRACESTATE"
   otel_span_deactivate "$span_handle"
-  \echo ""
+  while read -r line; do
+    \echo "$line"
+    if \[ "$line" = "" ]; then break; fi
+    local key="$(\printf '%s' "$line" | \cut -d ' ' -f 1 | \tr -d : | \tr '[:upper:]' '[:lower:]')"
+    local value="$(\printf '%s' "$line" | \cut -d ' ' -f 2-)"
+    otel_span_attribute_typed "$span_handle" string[1] http.request.header."$key"="$value"
+  done
   local body_size_pipe="$(\mktemp -u)"
   local body_size_file="$(\mktemp)"
   \mkfifo "$body_size_pipe"
@@ -85,13 +85,13 @@ _otel_propagate_netcat_read() {
     return 0
   fi
   otel_span_attribute_typed "$span_handle" int http.response.status_code="$response_code"
-  while read -r line && \[ -n "$line" ]; do
+  while read -r line; do
+    \echo "$line"
+    if \[ "$line" = "" ]; then break; fi
     local key="$(\printf '%s' "$line" | \cut -d ' ' -f 1 | \tr -d : | \tr '[:upper:]' '[:lower:]')"
     local value="$(\printf '%s' "$line" | \cut -d ' ' -f 2-)"
     otel_span_attribute_typed "$span_handle" string[1] http.response.header."$key"="$value"
-    \echo "$line"
   done
-  \echo ""
   local body_size_pipe="$(\mktemp -u)"
   local body_size_file="$(\mktemp)"
   \mkfifo "$body_size_pipe"
