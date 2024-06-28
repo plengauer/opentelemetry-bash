@@ -4,14 +4,14 @@
 # netcat -l -p 8080 | read
 # netcat -l -p 8080 -e respond
 
-_otel_propagate_netcat() {
+_otel_inject_netcat() {
   if _otel_args_contains -l "$@" || _otel_args_contains --listen "$@" || _otel_args_contains -e "$@" || _otel_args_contains --exec "$@" || _otel_args_contains -c "$@" || _otel_args_contains --sh-exec "$@"; then
     if _otel_args_contains -e || _otel_args_contains --exec || _otel_args_contains -c || _otel_args_contains --sh-exec; then
-      _otel_call "$@"
+      \eval _otel_call "$(_otel_inject_netcat_listen_and_respond_args "$@")"
     else
       local exit_code_file="$(\mktemp)"
       \echo 0 > "$exit_code_file"
-      { _otel_call "$@" || \echo "$?" > "$exit_code_file"; } | _otel_propagate_netcat_read "" "$@"
+      { _otel_call "$@" || \echo "$?" > "$exit_code_file"; } | _otel_netcat_parse_response "" "$@"
       return "$(\cat "$exit_code_file")"
     fi
   else
@@ -19,25 +19,48 @@ _otel_propagate_netcat() {
     \mkfifo "$span_handle_file"
     local exit_code_file="$(\mktemp)"
     \echo 0 > "$exit_code_file"
-    _otel_propagate_netcat_write "$span_handle_file" "$@" | { _otel_call "$@" || \echo "$?" > "$exit_code_file"; } | _otel_propagate_netcat_read "$span_handle_file" "$@"
+    _otel_netcat_parse_request "$span_handle_file" "$@" | { _otel_call "$@" || \echo "$?" > "$exit_code_file"; } | _otel_netcat_parse_response "$span_handle_file" "$@"
     return "$(\cat "$exit_code_file")"
   fi
 }
 
-_otel_propagate_netcat_write() {
+_otel_inject_netcat_listen_and_respond_args() {
+  _otel_escape_arg "$1"
+  shift
+  while \[ "$#" -gt 0 ]; do
+    \echo -n ' '
+    if (\[ "$1" = -e ] || \[ "$1" = --exec ] || \[ "$1" = -c ] || \[ "$1" = --sh-exec ]) && \[ "$#" -gt 1 ]; then
+      local command="$2"; shift; shift
+      local span_handle_file="$(\mktemp -u)"
+      local span_handle_file_inner="$(\mktemp -u)"
+      (\tee "$span_handle_file_inner" > "$span_handle_file" &)
+      # TODO the following injection doesnt maintain the exit code, does it matter though? is it important for netcat?
+      _otel_escape_args -c "OTEL_SHELL_AUTO_INJECTED=FALSE
+. otel.sh
+\mkfifo '$span_handle_file' '$span_handle_file_inner'
+(\tee '$span_handle_file_inner' > '$span_handle_file' &)
+_otel_netcat_parse_request '$span_handle_file' $(_otel_escape_args "$@") | { otel_span_activate \$(\cat $span_handle_file_inner); $command; } | _otel_propagate_netcat_read '$span_handle_file' $(_otel_escape_args "$@")
+\rm '$span_handle_file' '$span_handle_file_inner' 2> /dev null"
+    else
+      _otel_escape_arg "$1"; shift
+    fi
+  done
+}
+
+_otel_netcat_parse_request() {
   local span_handle_file="$1"; shift
   read -r method path_and_query protocol
   if ! _otel_string_starts_with "$protocol" HTTP/; then
     local span_handle="$(otel_span_start CLIENT send/receive)"
     \echo "$span_handle" > "$span_handle_file"
-    _otel_propagate_netcat_parse "$span_handle" "$@" > /dev/null
+    _otel_netcat_parse_args "$span_handle" "$@" > /dev/null
     \echo "$method" "$path_and_query" "$protocol"
     \cat
     return 0
   fi
   local span_handle="$(otel_span_start CLIENT "$method")"
   \echo "$span_handle" > "$span_handle_file"
-  local host_and_port="$(_otel_propagate_netcat_parse "$span_handle" "$@")"
+  local host_and_port="$(_otel_netcat_parse_args "$span_handle" "$@")"
   otel_span_attribute_typed "$span_handle" string network.protocol.name="$(\printf '%s' "$protocol" | \cut -d / -f 1 | \tr '[:upper:]' '[:lower:]')"
   otel_span_attribute_typed "$span_handle" string network.protocol.version="$(\printf '%s' "$protocol" | \cut -d / -f 2-)"
   otel_span_attribute_typed "$span_handle" string url.full=""$(\printf '%s' "$protocol" | \cut -d / -f 1 | \tr '[:upper:]' '[:lower:]')"://$host_and_port$path_and_query"
@@ -47,7 +70,7 @@ _otel_propagate_netcat_write() {
   otel_span_attribute_typed "$span_handle" string http.request.method="$method"
   otel_span_attribute_typed "$span_handle" string user_agent.original=netcat
   \echo "$method" "$path_and_query" "$protocol"
-  otel_span_activate "$span_handle"
+  otel_span_activate "$span_handle"  
   \echo traceparent: "$TRACEPARENT"
   \echo tracestate: "$TRACESTATE"
   otel_span_deactivate "$span_handle"
@@ -69,7 +92,7 @@ _otel_propagate_netcat_write() {
   \rm "$body_size_file" "$body_size_pipe" 2> /dev/null
 }
 
-_otel_propagate_netcat_read() {
+_otel_netcat_parse_response() {
   local span_handle_file="$1"
   if \[ -p "$span_handle_file" ]; then
     local span_handle="$(\cat "$span_handle_file")"
@@ -77,7 +100,7 @@ _otel_propagate_netcat_read() {
   read -r protocol response_code response_message
   if \[ -z "$span_handle" ]; then
     local span_handle="$(otel_span_start CONSUMER receive)"
-    _otel_propagate_netcat_parse "$span_handle" "$@" > /dev/null
+    _otel_netcat_parse_args "$span_handle" "$@" > /dev/null
   fi
   \echo "$protocol" "$response_code" "$response_message"
   if ! _otel_string_starts_with "$protocol" HTTP/; then
@@ -107,7 +130,7 @@ _otel_propagate_netcat_read() {
   otel_span_end "$span_handle"
 }
 
-_otel_propagate_netcat_parse() {
+_otel_netcat_parse_args() {
   local span_handle="$1"; shift
   local transport=tcp
   local host=""
@@ -208,6 +231,6 @@ _otel_args_contains() {
   return 1
 }
 
-_otel_alias_prepend nc _otel_propagate_netcat
-_otel_alias_prepend ncat _otel_propagate_netcat
-_otel_alias_prepend netcat _otel_propagate_netcat
+_otel_alias_prepend nc _otel_inject_netcat
+_otel_alias_prepend ncat _otel_inject_netcat
+_otel_alias_prepend netcat _otel_inject_netcat
