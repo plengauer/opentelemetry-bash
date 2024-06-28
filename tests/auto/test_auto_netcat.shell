@@ -26,7 +26,7 @@ port=12345
 response_file="$(mktemp)"
 netcat -l "$port" > "$response_file" &
 echo hello world | netcat -N 127.0.0.1 "$port"
-assert_equals "hello world" "$(cat "$response file")"
+assert_equals "hello world" "$(cat "$response_file")"
 span="$(resolve_span '.kind == "SpanKind.CLIENT"')"
 assert_equals "send/receive" $(\echo "$span" | jq -r '.name')
 span="$(resolve_span '.kind == "SpanKind.SERVER"')"
