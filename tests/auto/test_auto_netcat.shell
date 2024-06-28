@@ -22,8 +22,20 @@ assert_not_equals null "$(\echo "$span" | jq -r '.attributes."http.response.head
 assert_not_equals null "$(\echo "$span" | jq -r '.attributes."network.peer.port"')"
 
 port=12345
-netcat -l "$port" -e cat
-assert_equals "hello world" "$(echo hello world | netcat -N "$port")"
+response_file="$(mktemp)"
+netcat -l "$port" > "$response_file" &
+echo hello world | netcat -N "$port"
+assert_equals "hello world" "$(cat "$response file")"
 span="$(resolve_span '.name == "send/receive"')"
 assert_equals "SpanKind.CLIENT" $(\echo "$span" | jq -r '.kind')
-# TODO assert on server side span
+span="$(resolve_span '.name == "receive"')"
+assert_equals "SpanKind.CONSUMER" $(\echo "$span" | jq -r '.kind')
+
+sudo apt-get install ncat || true
+if [ -x "$(which ncat)" ]; then
+  ncat -l "$port" -e cat &
+  assert_equals "hello world" "$(echo hello world | netcat -N "$port")"
+  span="$(resolve_span '.name == "send/receive"')"
+  assert_equals "SpanKind.CLIENT" $(\echo "$span" | jq -r '.kind')
+  # TODO assert on server side span
+fi
