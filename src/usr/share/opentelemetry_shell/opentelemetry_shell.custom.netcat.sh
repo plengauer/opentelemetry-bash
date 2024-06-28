@@ -11,7 +11,7 @@ _otel_inject_netcat() {
     else
       local exit_code_file="$(\mktemp)"
       \echo 0 > "$exit_code_file"
-      { _otel_call "$@" || \echo "$?" > "$exit_code_file"; } | _otel_netcat_parse_response "" "$@"
+      { _otel_call "$@" || \echo "$?" > "$exit_code_file"; } | _otel_netcat_parse_request "" "$@"
       return "$(\cat "$exit_code_file")"
     fi
   else
