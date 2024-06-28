@@ -4,30 +4,54 @@
 # netcat -l -p 8080 | read
 # netcat -l -p 8080 -e respond
 
+_otel_propagate_netcat() {
+  if _otel_args_contains -l "$@" || _otel_args_contains --listen "$@"; then
+    # TODO
+  else
+    local span_handle_file="$(\mktemp -u)"
+    \mkfifo "$span_handle_file"
+    local exit_code_file="$(\mktemp)"
+    _otel_propagate_netcat_write "$span_handle_file" "$@" | { _otel_call "$@" || \echo "$?" > "$exit_code_file"; } | _otel_propagate_netcat_read "$span_handle_file"
+    return "$(\cat "$exit_code_file")"
+  fi
+}
+
 _otel_propagate_netcat_write() {
+  local span_handle_file="$1"; shift
   read -r method path_and_query protocol
   if ! _otel_string_starts_with "$protocol" HTTP/; then
-    \echo "$method" "$path" "$protocol"
+    local span_handle="$(otel_span_start CLIENT send/receive)"
+    \echo "$span_handle" > "$span_handle_file"
+    _otel_propagate_netcat_parse "$span_handle" "$@" > /dev/null
+    \echo "$method" "$path_and_query" "$protocol"
     \cat
     return 0
   fi
+  local span_handle="$(otel_span_start CLIENT "$method")"
+  \echo "$span_handle" > "$span_handle_file"
+  local host_and_port="$(_otel_propagate_netcat_parse "$span_handle" "$@")"
   otel_span_attribute_typed "$span_handle" string network.protocol.name="$(\printf '%s' "$protocol" | \cut -d / -f 1)"
   otel_span_attribute_typed "$span_handle" string network.protocol.version="$(\printf '%s' "$protocol" | \cut -d / -f 2-)"
-  # otel_span_attribute_typed "$span_handle" string url.full="$protocol://$host:$port$path_and_query" # TODO we do not know host and port here
+  otel_span_attribute_typed "$span_handle" string url.full=""$(\printf '%s' "$protocol" | \cut -d / -f 1 | \tr '[:upper:]' '[:lower:]')"://$host_and_port$path_and_query"
   otel_span_attribute_typed "$span_handle" string url.path="$(\printf '%s' "$path_and_query" | \cut -d ? -f 1)"
   otel_span_attribute_typed "$span_handle" string url.query="$(\printf '%s' "$path_and_query" | \cut -sd ? -f 2-)"
   otel_span_attribute_typed "$span_handle" string url.scheme="$(\printf '%s' "$protocol" | \cut -d / -f 1 | \tr '[:upper:]' '[:lower:]')"
   otel_span_attribute_typed "$span_handle" string http.request.method="$method"
   otel_span_attribute_typed "$span_handle" string user_agent.original=netcat
+  \echo "$method" "$path_and_query" "$protocol"
   while read -r line && \[ -n "$line" ]; do
     local key="$(\printf '%s' "$protocol" | \cut -d ' ' -f 1 | \tr -d : | \tr '[:upper:]' '[:lower:]')"
     local value="$(\printf '%s' "$protocol" | \cut -d ' ' -f 2-)"
     otel_span_attribute_typed "$span_handle" string[1] http.request.header."$key"="$value"
     \echo "$line"
   done
+  otel_span_activate "$span_handle"
+  \echo traceparent: "$TRACEPARENT"
+  \echo tracestate: "$TRACESTATE"
+  otel_span_deactivate "$span_handle"
   \echo ""
   local body_size_pipe="$(\mktemp -u)"
-  local body_size_file="$(\mktemp -u)"
+  local body_size_file="$(\mktemp)"
   \mkfifo "$body_size_pipe"
   \wc -c < "$body_size_pipe" > "$body_size_file" &
   local pid="$!"
@@ -38,25 +62,33 @@ _otel_propagate_netcat_write() {
 }
 
 _otel_propagate_netcat_read() {
-  # otel_span_attribute_typed "$span_handle" string network.protocol.name="$protocol"
-  # otel_span_attribute_typed "$span_handle" string network.protocol.version="$(\printf '%s' "$line" | \cut -d ' ' -f 4 | \cut -d / -f 2)"
-  \cat # TODO
-}
-
-_otel_propagate_netcat() {
-  if _otel_args_contains -l "$@" || _otel_args_contains --listen "$@"; then
-    # TODO
-  else
-    local exit_code_file="$(\mktemp)"
-    \echo 0 > "$exit_code_file"
-    local span_handle="$(otel_span_start CLIENT send/receive)"
-    _otel_propagate_netcat_parse "$span_handle" "$@"
-    otel_span_activate "$span_handle"
-    _otel_propagate_netcat_write "$span_handle" | { _otel_call "$@" || \echo "$?" > "$exit_code_file"; } | _otel_propagate_netcat_read "$span_handle"
-    otel_span_deactivate "$span_handle"
+  local span_handle_file="$1"
+  local span_handle="$(\cat "$span_handle_file")"
+  read -r protocol response_code response_message
+  \echo "$protocol" "$response_code" "$response_message"
+  if ! _otel_string_starts_with "$protocol" HTTP/; then
+    \cat
     otel_span_end "$span_handle"
-    return "$(\cat "$exit_code_file")"
+    return 0
   fi
+  otel_span_attribute_typed "$span_handle" int http.response.status_code="$response_code"
+  while read -r line && \[ -n "$line" ]; do
+    local key="$(\printf '%s' "$protocol" | \cut -d ' ' -f 1 | \tr -d : | \tr '[:upper:]' '[:lower:]')"
+    local value="$(\printf '%s' "$protocol" | \cut -d ' ' -f 2-)"
+    otel_span_attribute_typed "$span_handle" string[1] http.response.header."$key"="$value"
+    \echo "$line"
+  done
+  \echo ""
+  local body_size_pipe="$(\mktemp -u)"
+  local body_size_file="$(\mktemp)"
+  \mkfifo "$body_size_pipe"
+  \wc -c < "$body_size_pipe" > "$body_size_file" &
+  local pid="$!"
+  \tee "$body_size_pipe"
+  \wait "$pid"
+  otel_span_attribute_typed "$span_handle" int http.response.body.size="$(\cat "$body_size_file")"
+  \rm "$body_size_file" "$body_size_pipe" 2> /dev/null
+  otel_span_end "$span_handle"
 }
 
 _otel_propagate_netcat_parse() {
@@ -80,8 +112,9 @@ _otel_propagate_netcat_parse() {
     else
       if \[ "$1" -eq "$1" ]; then
         local port="$1"
-      elif \false; then # TODO
+      elif _otel_is_ip "$1"; then
         local ip="$1"
+        local host="$1"
       else
         local host="$1"
       fi
@@ -95,6 +128,27 @@ _otel_propagate_netcat_parse() {
   fi
   otel_span_attribute_typed "$span_handle" string server.address="$host"
   otel_span_attribute_typed "$span_handle" int server.port="$port"
+  \echo "$host:$port"
+}
+
+_otel_is_ip() {
+  case "$1" in
+    *.*.*.*)
+      for part in $(echo "$1" | tr '.' ' '); do
+        case "$part" in
+          ""|*[!0-9]*) return 1;;
+        esac
+      done
+      return 0;;
+    *:*:*:*:*:*:*:*)
+      for part in $(echo "$1" | tr ':' ' '); do
+        case "$part" in
+          ""|*[!0-9a-fA-F]*) return 1;;
+        esac
+      done
+      return 0;;
+  esac
+  return 1
 }
 
 _otel_is_netcat_arg_arg() {
