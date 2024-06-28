@@ -39,7 +39,7 @@ _otel_inject_netcat_listen_and_respond_args() {
 . otel.sh
 \mkfifo '$span_handle_file' '$span_handle_file_inner'
 (\tee '$span_handle_file_inner' > '$span_handle_file' &)
-_otel_netcat_parse_request 1 '$span_handle_file' $(_otel_escape_args "$@") | { otel_span_activate \$(\cat $span_handle_file_inner); $command; } | _otel_netcat_parse_response 1 '$span_handle_file' $(_otel_escape_args "$@")
+_otel_netcat_parse_request 1 '$span_handle_file' $(_otel_escape_args "$@") | { otel_span_activate \$(\cat '$span_handle_file_inner'); $command; } | _otel_netcat_parse_response 1 '$span_handle_file' $(_otel_escape_args "$@")
 \rm '$span_handle_file' '$span_handle_file_inner' 2> /dev null"
     else
       _otel_escape_arg "$1"; shift
