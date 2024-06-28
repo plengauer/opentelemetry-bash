@@ -9,9 +9,11 @@ _otel_inject_netcat() {
     if _otel_args_contains -e || _otel_args_contains --exec || _otel_args_contains -c || _otel_args_contains --sh-exec; then
       \eval _otel_call "$(_otel_inject_netcat_listen_and_respond_args "$@")"
     else
+      local span_handle_file="$(\mktemp -u)"
+      \mkfifo "$span_handle_file"
       local exit_code_file="$(\mktemp)"
       \echo 0 > "$exit_code_file"
-      { _otel_call "$@" || \echo "$?" > "$exit_code_file"; } | _otel_netcat_parse_request 1 "" "$@"
+      { _otel_call "$@" || \echo "$?" > "$exit_code_file"; } | _otel_netcat_parse_request 1 "$span_handle_file" "$@" | { otel_span_end "$(\cat "$span_handle_file")"; \cat; }
       return "$(\cat "$exit_code_file")"
     fi
   else
@@ -53,14 +55,14 @@ _otel_netcat_parse_request() {
   read -r method path_and_query protocol
   if ! _otel_string_starts_with "$protocol" HTTP/; then
     if \[ "$is_server_side" = 1 ]; then local span_handle="$(otel_span_start SERVER send/receive)"; else local span_handle="$(otel_span_start CLIENT send/receive)"; fi
-    if \[ -p "$span_handle_file" ]; then \echo "$span_handle" > "$span_handle_file"; fi
+    \echo "$span_handle" > "$span_handle_file"
     _otel_netcat_parse_args "$span_handle" "$@" > /dev/null
     \echo "$method" "$path_and_query" "$protocol"
     \cat
     return 0
   fi
   if \[ "$is_server_side" = 1 ]; then local span_handle="$(otel_span_start SERVER "$method")"; else local span_handle="$(otel_span_start CLIENT "$method")"; fi
-  if \[ -p "$span_handle_file" ]; then \echo "$span_handle" > "$span_handle_file"; fi
+  \echo "$span_handle" > "$span_handle_file"
   local host_and_port="$(_otel_netcat_parse_args "$span_handle" "$@")"
   otel_span_attribute_typed "$span_handle" string network.protocol.name="$(\printf '%s' "$protocol" | \cut -d / -f 1 | \tr '[:upper:]' '[:lower:]')"
   otel_span_attribute_typed "$span_handle" string network.protocol.version="$(\printf '%s' "$protocol" | \cut -d / -f 2-)"
