@@ -74,7 +74,7 @@ _otel_propagate_netcat_read() {
     local span_handle="$(\cat "$span_handle_file")"
   fi
   read -r protocol response_code response_message
-  if \[ -z "$span_handle" ]
+  if \[ -z "$span_handle" ]; then
     local span_handle="$(otel_span_start CONSUMER receive)"
     _otel_propagate_netcat_parse "$span_handle" "$@" > /dev/null
   fi
