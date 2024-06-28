@@ -105,12 +105,13 @@ _otel_propagate_netcat_read() {
 }
 
 _otel_propagate_netcat_parse() {
-  local span_handle="$1"
+  local span_handle="$1"; shift
   local transport=tcp
   local host=""
   local ip=""
   local port=31337
   local is_listening=0
+  shift
   while \[ "$#" -gt 0 ]; do
     if \[ "$1" = -l ] || \[ "$1" = --listen ]; then
       local is_listening=1
@@ -123,7 +124,7 @@ _otel_propagate_netcat_parse() {
     elif _otel_string_starts_with "$1" -; then
       \true
     else
-      if \[ "$1" -eq "$1" ]; then
+      if \[ "$1" -eq "$1" ] 2> /dev/null; then
         local port="$1"
       elif _otel_is_ip "$1"; then
         local ip="$1"
