@@ -31,7 +31,6 @@ assert_equals "SpanKind.CLIENT" $(\echo "$span" | jq -r '.kind')
 span="$(resolve_span '.name == "receive"')"
 assert_equals "SpanKind.CONSUMER" $(\echo "$span" | jq -r '.kind')
 
-sudo apt-get install ncat || true
 if [ -x "$(which ncat)" ]; then
   ncat -l "$port" -e cat &
   assert_equals "hello world" "$(echo hello world | netcat -N "$port")"
