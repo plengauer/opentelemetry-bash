@@ -52,7 +52,7 @@ _otel_propagate_netcat_write() {
   otel_span_deactivate "$span_handle"
   while read -r line; do
     \echo "$line"
-    if \[ "$line" = "" ]; then break; fi
+    if \[ "${#line}" = 2 ]; then break; fi
     local key="$(\printf '%s' "$line" | \cut -d ' ' -f 1 | \tr -d : | \tr '[:upper:]' '[:lower:]')"
     local value="$(\printf '%s' "$line" | \cut -d ' ' -f 2-)"
     otel_span_attribute_typed "$span_handle" string[1] http.request.header."$key"="$value"
@@ -87,8 +87,7 @@ _otel_propagate_netcat_read() {
   otel_span_attribute_typed "$span_handle" int http.response.status_code="$response_code"
   while read -r line; do
     \echo "$line"
-    \echo "$line" | \wc -c
-    if \[ "$line" = "" ]; then break; fi
+    if \[ "${#line}" = 2 ]; then break; fi
     local key="$(\printf '%s' "$line" | \cut -d ' ' -f 1 | \tr -d : | \tr '[:upper:]' '[:lower:]')"
     local value="$(\printf '%s' "$line" | \cut -d ' ' -f 2-)"
     otel_span_attribute_typed "$span_handle" string[1] http.response.header."$key"="$value"
