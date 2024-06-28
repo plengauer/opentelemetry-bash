@@ -5,11 +5,12 @@
 # netcat -l -p 8080 -e respond
 
 _otel_propagate_netcat() {
-  if _otel_args_contains -l "$@" || _otel_args_contains --listen "$@"; then
+  if _otel_args_contains -l "$@" || _otel_args_contains --listen "$@" || _otel_args_contains -e "$@" || _otel_args_contains --exec "$@" || _otel_args_contains -c "$@" || _otel_args_contains --sh-exec "$@"; then
     if _otel_args_contains -e || _otel_args_contains --exec || _otel_args_contains -c || _otel_args_contains --sh-exec; then
       _otel_call "$@"
     else
       local exit_code_file="$(\mktemp)"
+      \echo 0 > "$exit_code_file"
       { _otel_call "$@" || \echo "$?" > "$exit_code_file"; } | _otel_propagate_netcat_read "" "$@"
       return "$(\cat "$exit_code_file")"
     fi
