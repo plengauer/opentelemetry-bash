@@ -11,7 +11,7 @@ _otel_inject_netcat() {
     else
       local exit_code_file="$(\mktemp)"
       \echo 0 > "$exit_code_file"
-      { _otel_call "$@" || \echo "$?" > "$exit_code_file"; } | _otel_netcat_parse_request "" "$@"
+      { _otel_call "$@" || \echo "$?" > "$exit_code_file"; } | _otel_netcat_parse_request 1 "" "$@"
       return "$(\cat "$exit_code_file")"
     fi
   else
@@ -19,7 +19,7 @@ _otel_inject_netcat() {
     \mkfifo "$span_handle_file"
     local exit_code_file="$(\mktemp)"
     \echo 0 > "$exit_code_file"
-    _otel_netcat_parse_request "$span_handle_file" "$@" | { _otel_call "$@" || \echo "$?" > "$exit_code_file"; } | _otel_netcat_parse_response "$span_handle_file" "$@"
+    _otel_netcat_parse_request 0 "$span_handle_file" "$@" | { _otel_call "$@" || \echo "$?" > "$exit_code_file"; } | _otel_netcat_parse_response 0 "$span_handle_file" "$@"
     return "$(\cat "$exit_code_file")"
   fi
 }
@@ -39,7 +39,7 @@ _otel_inject_netcat_listen_and_respond_args() {
 . otel.sh
 \mkfifo '$span_handle_file' '$span_handle_file_inner'
 (\tee '$span_handle_file_inner' > '$span_handle_file' &)
-_otel_netcat_parse_request '$span_handle_file' $(_otel_escape_args "$@") | { otel_span_activate \$(\cat $span_handle_file_inner); $command; } | _otel_propagate_netcat_read '$span_handle_file' $(_otel_escape_args "$@")
+_otel_netcat_parse_request 1 '$span_handle_file' $(_otel_escape_args "$@") | { otel_span_activate \$(\cat $span_handle_file_inner); $command; } | _otel_netcat_parse_response 1 '$span_handle_file' $(_otel_escape_args "$@")
 \rm '$span_handle_file' '$span_handle_file_inner' 2> /dev null"
     else
       _otel_escape_arg "$1"; shift
@@ -48,18 +48,19 @@ _otel_netcat_parse_request '$span_handle_file' $(_otel_escape_args "$@") | { ote
 }
 
 _otel_netcat_parse_request() {
+  local is_server_side="$1"; shift
   local span_handle_file="$1"; shift
   read -r method path_and_query protocol
   if ! _otel_string_starts_with "$protocol" HTTP/; then
-    local span_handle="$(otel_span_start CLIENT send/receive)"
-    \echo "$span_handle" > "$span_handle_file"
+    if \[ "$is_server_side" = 1 ]; then local span_handle="$(otel_span_start SERVER send/receive)"; else local span_handle="$(otel_span_start CLIENT send/receive)"; fi
+    if \[ -p "$span_handle_file" ]; then \echo "$span_handle" > "$span_handle_file"; fi
     _otel_netcat_parse_args "$span_handle" "$@" > /dev/null
     \echo "$method" "$path_and_query" "$protocol"
     \cat
     return 0
   fi
-  local span_handle="$(otel_span_start CLIENT "$method")"
-  \echo "$span_handle" > "$span_handle_file"
+  if \[ "$is_server_side" = 1 ]; then local span_handle="$(otel_span_start SERVER "$method")"; else local span_handle="$(otel_span_start CLIENT "$method")"; fi
+  if \[ -p "$span_handle_file" ]; then \echo "$span_handle" > "$span_handle_file"; fi
   local host_and_port="$(_otel_netcat_parse_args "$span_handle" "$@")"
   otel_span_attribute_typed "$span_handle" string network.protocol.name="$(\printf '%s' "$protocol" | \cut -d / -f 1 | \tr '[:upper:]' '[:lower:]')"
   otel_span_attribute_typed "$span_handle" string network.protocol.version="$(\printf '%s' "$protocol" | \cut -d / -f 2-)"
@@ -93,15 +94,10 @@ _otel_netcat_parse_request() {
 }
 
 _otel_netcat_parse_response() {
-  local span_handle_file="$1"
-  if \[ -p "$span_handle_file" ]; then
-    local span_handle="$(\cat "$span_handle_file")"
-  fi
+  local is_server_side="$1"; shift
+  local span_handle_file="$1"; shift
+  local span_handle="$(\cat "$span_handle_file")"
   read -r protocol response_code response_message
-  if \[ -z "$span_handle" ]; then
-    local span_handle="$(otel_span_start CONSUMER receive)"
-    _otel_netcat_parse_args "$span_handle" "$@" > /dev/null
-  fi
   \echo "$protocol" "$response_code" "$response_message"
   if ! _otel_string_starts_with "$protocol" HTTP/; then
     \cat
@@ -109,8 +105,8 @@ _otel_netcat_parse_response() {
     return 0
   fi
   otel_span_attribute_typed "$span_handle" int http.response.status_code="$response_code"
-  if \[ -p "$span_handle_file" ] && \[ "$response_code" -ge 400 ]; then otel_span_error "$span_handle"; fi
-  if ! \[ -p "$span_handle_file" ] && \[ "$response_code" -ge 500 ]; then otel_span_error "$span_handle"; fi
+  if \[ "$is_server_side" = 0 ] && \[ "$response_code" -ge 400 ]; then otel_span_error "$span_handle"; fi
+  if \[ "$is_server_side" = 1 ] && \[ "$response_code" -ge 500 ]; then otel_span_error "$span_handle"; fi
   while read -r line; do
     \echo "$line"
     if \[ "${#line}" = 1 ]; then break; fi
