@@ -6,12 +6,19 @@
 
 _otel_propagate_netcat() {
   if _otel_args_contains -l "$@" || _otel_args_contains --listen "$@"; then
-    _otel_call "$@" # TODO ? do we wanna inject here?
+    if _otel_args_contains -e || _otel_args_contains --exec || _otel_args_contains -c || _otel_args_contains --sh-exec; then
+      _otel_call "$@"
+    else
+      local exit_code_file="$(\mktemp)"
+      { _otel_call "$@" || \echo "$?" > "$exit_code_file"; } | _otel_propagate_netcat_read "" "$@"
+      return "$(\cat "$exit_code_file")"
+    fi
   else
     local span_handle_file="$(\mktemp -u)"
     \mkfifo "$span_handle_file"
     local exit_code_file="$(\mktemp)"
-    _otel_propagate_netcat_write "$span_handle_file" "$@" | { _otel_call "$@" || \echo "$?" > "$exit_code_file"; } | _otel_propagate_netcat_read "$span_handle_file"
+    \echo 0 > "$exit_code_file"
+    _otel_propagate_netcat_write "$span_handle_file" "$@" | { _otel_call "$@" || \echo "$?" > "$exit_code_file"; } | _otel_propagate_netcat_read "$span_handle_file" "$@"
     return "$(\cat "$exit_code_file")"
   fi
 }
@@ -63,7 +70,12 @@ _otel_propagate_netcat_write() {
 
 _otel_propagate_netcat_read() {
   local span_handle_file="$1"
-  local span_handle="$(\cat "$span_handle_file")"
+  if \[ -f "$span_handle_file" ]; then
+    local span_handle="$(\cat "$span_handle_file")"
+  else
+    local span_handle="$(otel_span_start CONSUMER receive)"
+    _otel_propagate_netcat_parse "$span_handle" "$@" > /dev/null
+  fi
   read -r protocol response_code response_message
   \echo "$protocol" "$response_code" "$response_message"
   if ! _otel_string_starts_with "$protocol" HTTP/; then
