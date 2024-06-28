@@ -25,7 +25,7 @@ port=12345
 
 response_file="$(mktemp)"
 netcat -l "$port" > "$response_file" &
-echo hello world | netcat -N 127.0.0.1 "$port"
+echo -n hello world | netcat -N 127.0.0.1 "$port"
 assert_equals "hello world" "$(cat "$response_file")"
 span="$(resolve_span '.kind == "SpanKind.CLIENT"')"
 assert_equals "send/receive" $(\echo "$span" | jq -r '.name')
@@ -34,7 +34,7 @@ assert_equals "send/receive" $(\echo "$span" | jq -r '.name')
 
 if [ -x "$(which ncat)" ]; then
   ncat -l -e /bin/cat "$port" &
-  assert_equals "hello world" "$(echo hello world | netcat -N 127.0.0.1 "$port")"
+  assert_equals "hello world" "$(echo -n hello world | netcat -N 127.0.0.1 "$port")"
   span="$(resolve_span '.kind == "SpanKind.CLIENT"')"
   assert_equals "send/receive" $(\echo "$span" | jq -r '.name')
   span="$(resolve_span '.kind == "SpanKind.SERVER"')"
