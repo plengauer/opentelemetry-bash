@@ -33,7 +33,7 @@ span="$(resolve_span '.kind == "SpanKind.SERVER"')"
 assert_equals "send/receive" $(\echo "$span" | jq -r '.name')
 
 if [ -x "$(which ncat)" ]; then
-  ncat -l -e cat "$port" &
+  ncat -l -e /bin/cat "$port" &
   assert_equals "hello world" "$(echo hello world | netcat -N 127.0.0.1 "$port")"
   span="$(resolve_span '.kind == "SpanKind.CLIENT"')"
   assert_equals "send/receive" $(\echo "$span" | jq -r '.name')
