@@ -85,6 +85,8 @@ _otel_propagate_netcat_read() {
     return 0
   fi
   otel_span_attribute_typed "$span_handle" int http.response.status_code="$response_code"
+  if \[ -p "$span_handle_file" ] && \[ "$response_code" -ge 400 ]; then otel_span_error "$span_handle"; fi
+  elif ! \[ -p "$span_handle_file" ] && \[ "$response_code" -ge 500 ]; then otel_span_error "$span_handle"; fi
   while read -r line; do
     \echo "$line"
     if \[ "${#line}" = 1 ]; then break; fi
