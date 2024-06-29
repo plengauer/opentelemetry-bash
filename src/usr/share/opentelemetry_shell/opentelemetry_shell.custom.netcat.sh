@@ -102,7 +102,7 @@ _otel_netcat_parse_response() {
   local is_server_side="$1"; shift
   local span_handle_file="$1"; shift
   local span_handle="$(\cat "$span_handle_file")"
-  read -r protocol response_code response_message
+  read -r line
   local protocol="$(\printf '%s' "$line" | \cut -sd ' ' -f 1)"
   if ! _otel_string_starts_with "$protocol" HTTP/; then
     \echo "$line"
