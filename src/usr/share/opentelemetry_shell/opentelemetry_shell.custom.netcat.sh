@@ -52,15 +52,18 @@ _otel_netcat_parse_request 1 '$span_handle_file' $(_otel_escape_args "$@") | { o
 _otel_netcat_parse_request() {
   local is_server_side="$1"; shift
   local span_handle_file="$1"; shift
-  read -r method path_and_query protocol
+  read -r line
+  local protocol="$(\printf '%s' "$line" | \cut -sd ' ' -f 3)"
   if ! _otel_string_starts_with "$protocol" HTTP/; then
     if \[ "$is_server_side" = 1 ]; then local span_handle="$(otel_span_start SERVER send/receive)"; else local span_handle="$(otel_span_start CLIENT send/receive)"; fi
     \echo "$span_handle" > "$span_handle_file"
     _otel_netcat_parse_args "$span_handle" "$@" > /dev/null
-    \echo "$method" "$path_and_query" "$protocol"
+    \echo "$line"
     \cat
     return 0
   fi
+  local method="$(\printf '%s' "$line" | \cut -sd ' ' -f 1)"
+  local path_and_query="$(\printf '%s' "$line" | \cut -sd ' ' -f 2)"
   if \[ "$is_server_side" = 1 ]; then local span_handle="$(otel_span_start SERVER "$method")"; else local span_handle="$(otel_span_start CLIENT "$method")"; fi
   \echo "$span_handle" > "$span_handle_file"
   local host_and_port="$(_otel_netcat_parse_args "$span_handle" "$@")"
@@ -100,15 +103,18 @@ _otel_netcat_parse_response() {
   local span_handle_file="$1"; shift
   local span_handle="$(\cat "$span_handle_file")"
   read -r protocol response_code response_message
-  \echo "$protocol" "$response_code" "$response_message"
+  local protocol="$(\printf '%s' "$line" | \cut -sd ' ' -f 1)"
   if ! _otel_string_starts_with "$protocol" HTTP/; then
+    \echo "$line"
     \cat
     otel_span_end "$span_handle"
     return 0
   fi
+  local response_code="$(\printf '%s' "$line" | \cut -sd ' ' -f 2)"
   otel_span_attribute_typed "$span_handle" int http.response.status_code="$response_code"
   if \[ "$is_server_side" = 0 ] && \[ "$response_code" -ge 400 ]; then otel_span_error "$span_handle"; fi
   if \[ "$is_server_side" = 1 ] && \[ "$response_code" -ge 500 ]; then otel_span_error "$span_handle"; fi
+  \echo "$line"
   while read -r line; do
     \echo "$line"
     if \[ "${#line}" = 1 ]; then break; fi
