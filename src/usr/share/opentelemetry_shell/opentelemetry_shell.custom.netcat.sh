@@ -240,9 +240,3 @@ _otel_args_contains() {
 _otel_alias_prepend nc _otel_inject_netcat
 _otel_alias_prepend ncat _otel_inject_netcat
 _otel_alias_prepend netcat _otel_inject_netcat
-
-# if \[ "$OTEL_SHELL_NETCAT_LISTEN" != TRUE ] && \[ "$PPID" != 0 ] && \[ "$(\cat /proc/$PPID/cmdline | \tr '\000-\037' ' ' | \cut -d ' ' -f 1 | \rev | \cut -d / -f 1 | \rev)" = "ncat" ]; then # TODO and is actually listening and using -e or --exec or or -c
-#  \eval '"exec"' "$(\cat /proc/$$/cmdline | \xargs -0 sh -c '. otelapi.sh; _otel_escape_args "$@"' sh)" # TODO change commandline
-#fi
-# if parent is netcat und netcat is not injected
-## take commandline and inject directly by calling _otel_inject and exec
