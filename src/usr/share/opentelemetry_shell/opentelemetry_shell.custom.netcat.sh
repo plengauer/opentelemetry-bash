@@ -76,10 +76,12 @@ _otel_netcat_parse_request() {
   otel_span_attribute_typed "$span_handle" string http.request.method="$method"
   otel_span_attribute_typed "$span_handle" string user_agent.original=netcat
   \echo "$method" "$path_and_query" "$protocol"
-  otel_span_activate "$span_handle"  
-  \echo traceparent: "$TRACEPARENT"
-  \echo tracestate: "$TRACESTATE"
-  otel_span_deactivate "$span_handle"
+  if \[ "$_is_server_side" = 0 ]; then
+    otel_span_activate "$span_handle"
+    \echo traceparent: "$TRACEPARENT"
+    \echo tracestate: "$TRACESTATE"
+    otel_span_deactivate "$span_handle"
+  fi
   while read -r line; do
     \echo "$line"
     if \[ "${#line}" = 1 ]; then break; fi
