@@ -27,16 +27,16 @@ response_file="$(mktemp)"
 netcat -l "$port" > "$response_file" &
 echo -n hello world | netcat -N 127.0.0.1 "$port"
 assert_equals "hello world" "$(cat "$response_file")"
-span="$(resolve_span '.kind == "SpanKind.CLIENT" && .name == "send/receive"')"
+span="$(resolve_span '.kind == "SpanKind.CLIENT") | select(.name == "send/receive"')"
 assert_equals "send/receive" $(\echo "$span" | jq -r '.name')
-span="$(resolve_span '.kind == "SpanKind.SERVER" && .name == "send/receive"')"
+span="$(resolve_span '.kind == "SpanKind.SERVER") | select(.name == "send/receive"')"
 assert_equals "send/receive" $(\echo "$span" | jq -r '.name')
 
 if [ -x "$(which ncat)" ]; then
   ncat -l -e /bin/cat "$port" &
   assert_equals "hello world" "$(echo -n hello world | netcat -N 127.0.0.1 "$port")"
-  span="$(resolve_span '.kind == "SpanKind.CLIENT" && .name == "send/receive"')"
+  span="$(resolve_span '.kind == "SpanKind.CLIENT") | select(.name == "send/receive"')"
   assert_equals "send/receive" $(\echo "$span" | jq -r '.name')
-  span="$(resolve_span '.kind == "SpanKind.SERVER" && .name == "send/receive"')"
+  span="$(resolve_span '.kind == "SpanKind.SERVER") | select(.name == "send/receive"')"
   assert_equals "send/receive" $(\echo "$span" | jq -r '.name')
 fi
