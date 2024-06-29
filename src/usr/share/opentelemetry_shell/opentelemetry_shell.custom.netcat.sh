@@ -7,7 +7,7 @@
 _otel_inject_netcat() {
   if _otel_args_contains -l "$@" || _otel_args_contains --listen "$@" || _otel_args_contains -e "$@" || _otel_args_contains --exec "$@" || _otel_args_contains -c "$@" || _otel_args_contains --sh-exec "$@"; then
     if _otel_args_contains -e || _otel_args_contains --exec || _otel_args_contains -c || _otel_args_contains --sh-exec; then
-      \eval _otel_call "$(_otel_inject_netcat_listen_and_respond_args "$@")"
+      OTEL_SHELL_NETCAT_LISTEN=TRUE \eval _otel_call "$(_otel_inject_netcat_listen_and_respond_args "$@")"
     else
       local span_handle_file="$(\mktemp -u)"
       \mkfifo "$span_handle_file"
@@ -240,3 +240,9 @@ _otel_args_contains() {
 _otel_alias_prepend nc _otel_inject_netcat
 _otel_alias_prepend ncat _otel_inject_netcat
 _otel_alias_prepend netcat _otel_inject_netcat
+
+# if \[ "$OTEL_SHELL_NETCAT_LISTEN" != TRUE ] && \[ "$PPID" != 0 ] && \[ "$(\cat /proc/$PPID/cmdline | \tr '\000-\037' ' ' | \cut -d ' ' -f 1 | \rev | \cut -d / -f 1 | \rev)" = "ncat" ]; then # TODO and is actually listening and using -e or --exec or or -c
+#  \eval '"exec"' "$(\cat /proc/$$/cmdline | \xargs -0 sh -c '. otelapi.sh; _otel_escape_args "$@"' sh)" # TODO change commandline
+#fi
+# if parent is netcat und netcat is not injected
+## take commandline and inject directly by calling _otel_inject and exec
