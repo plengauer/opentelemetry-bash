@@ -24,7 +24,7 @@ assert_not_equals null "$(\echo "$span" | jq -r '.attributes."network.peer.port"
 port=12345
 
 response_file="$(mktemp)"
-netcat -l "$port" > "$response_file" &
+netcat -v -l "$port" > "$response_file" &
 echo -n hello world | netcat -w 30 127.0.0.1 "$port"
 assert_equals "hello world" "$(cat "$response_file")"
 span="$(resolve_span '.kind == "SpanKind.CLIENT") | select(.name == "send/receive"')"
