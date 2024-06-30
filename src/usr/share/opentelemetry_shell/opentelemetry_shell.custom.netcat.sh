@@ -62,6 +62,17 @@ _otel_netcat_parse_request() {
     \cat
     return 0
   fi
+  local headers="$(\mktemp)"
+  while read -r line; do
+    if \[ "${#line}" = 1 ]; then break; fi
+    \echo "$line" >> "$headers"
+    if \[ "$_is_server_side" = 1 ]; then
+      local key="$(\printf '%s' "$line" | \cut -d ' ' -f 1 | \tr -d : | \tr '[:upper:]' '[:lower:]')"
+      local value="$(\printf '%s' "$line" | \cut -d ' ' -f 2-)"
+      if \[ "$key" = traceparent ]; then export TRACEPARENT="$value"; fi
+      if \[ "$key" = tracestate ]; then export TRACESTATE="$value"; fi
+    fi
+  done
   local method="$(\printf '%s' "$line" | \cut -sd ' ' -f 1)"
   local path_and_query="$(\printf '%s' "$line" | \cut -sd ' ' -f 2)"
   if \[ "$is_server_side" = 1 ]; then local span_handle="$(otel_span_start SERVER "$method")"; else local span_handle="$(otel_span_start CLIENT "$method")"; fi
@@ -84,11 +95,11 @@ _otel_netcat_parse_request() {
   fi
   while read -r line; do
     \echo "$line"
-    if \[ "${#line}" = 1 ]; then break; fi
     local key="$(\printf '%s' "$line" | \cut -d ' ' -f 1 | \tr -d : | \tr '[:upper:]' '[:lower:]')"
     local value="$(\printf '%s' "$line" | \cut -d ' ' -f 2-)"
     otel_span_attribute_typed "$span_handle" string[1] http.request.header."$key"="$value"
-  done
+  done < "$headers"
+  \echo ''
   local body_size_pipe="$(\mktemp -u)"
   local body_size_file="$(\mktemp)"
   \mkfifo "$body_size_pipe"
