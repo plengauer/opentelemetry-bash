@@ -108,7 +108,7 @@ _otel_netcat_parse_request() {
   \tee "$body_size_pipe"
   \wait "$pid"
   otel_span_attribute_typed "$span_handle" int http.request.body.size="$(\cat "$body_size_file")"
-  \rm "$body_size_file" "$body_size_pipe" 2> /dev/null
+  \rm "$headers" "$body_size_file" "$body_size_pipe" 2> /dev/null
 }
 
 _otel_netcat_parse_response() {
