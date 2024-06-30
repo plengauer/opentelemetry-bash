@@ -62,6 +62,8 @@ _otel_netcat_parse_request() {
     \cat
     return 0
   fi
+  local method="$(\printf '%s' "$line" | \cut -sd ' ' -f 1)"
+  local path_and_query="$(\printf '%s' "$line" | \cut -sd ' ' -f 2)"
   local headers="$(\mktemp)"
   while read -r line; do
     if \[ "${#line}" = 1 ]; then break; fi
@@ -73,8 +75,6 @@ _otel_netcat_parse_request() {
       if \[ "$key" = tracestate ]; then export TRACESTATE="$value"; fi
     fi
   done
-  local method="$(\printf '%s' "$line" | \cut -sd ' ' -f 1)"
-  local path_and_query="$(\printf '%s' "$line" | \cut -sd ' ' -f 2)"
   if \[ "$is_server_side" = 1 ]; then local span_handle="$(otel_span_start SERVER "$method")"; else local span_handle="$(otel_span_start CLIENT "$method")"; fi
   \echo "$span_handle" > "$span_handle_file"
   local host_and_port="$(_otel_netcat_parse_args "$span_handle" "$@")"
