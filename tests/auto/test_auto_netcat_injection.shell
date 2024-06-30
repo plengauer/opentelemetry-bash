@@ -2,7 +2,7 @@ if ! [ -x "$(which ncat)" ]; then exit 0; fi
 set -e
 . ./assert.sh
 
-port=12345
+port=12346
 
 otel4netcat ncat -v -l -p "$port" -c cat &
 assert_equals "hello world" "$(echo -n hello world | netcat -w 30 127.0.0.1 "$port")"
