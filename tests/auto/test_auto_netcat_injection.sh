@@ -2,6 +2,8 @@ if ! [ -x "$(which ncat)" ]; then exit 0; fi
 set -e
 . ./assert.sh
 
+port=12345
+
 otel4netcat ncat -l -c cat "$port" &
 assert_equals "hello world" "$(echo -n hello world | netcat -w 30 127.0.0.1 "$port")"
 span="$(resolve_span '.kind == "SpanKind.SERVER"')"
