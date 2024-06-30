@@ -99,7 +99,7 @@ _otel_netcat_parse_request() {
     local value="$(\printf '%s' "$line" | \cut -d ' ' -f 2-)"
     otel_span_attribute_typed "$span_handle" string[1] http.request.header."$key"="$value"
   done < "$headers"
-  \echo ''
+  \echo '\r'
   local body_size_pipe="$(\mktemp -u)"
   local body_size_file="$(\mktemp)"
   \mkfifo "$body_size_pipe"
