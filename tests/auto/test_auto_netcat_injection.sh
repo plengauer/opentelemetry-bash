@@ -4,7 +4,7 @@ set -e
 
 port=12345
 
-otel4netcat ncat -l -p "$port" -c cat &
+otel4netcat ncat -v -l -p "$port" -c cat &
 assert_equals "hello world" "$(echo -n hello world | netcat -w 30 127.0.0.1 "$port")"
 span="$(resolve_span '.kind == "SpanKind.SERVER"')"
 assert_equals "send/receive" $(\echo "$span" | jq -r '.name')
