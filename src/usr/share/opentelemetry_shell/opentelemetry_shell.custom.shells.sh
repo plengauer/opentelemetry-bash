@@ -28,10 +28,11 @@ _otel_inject_shell_args_with_copy() {
     fi
     shift
   done
+  # abort in case its interactive or invalid aguments
+  if \[ "$found_inner" -eq 0 ]; then return 0; fi
+  # save command
   local command="$1"
   shift
-  # abort in case its interactive or invalid aguments
-  if \[ "$found_inner" -eq 0 ]; then return 0; fi 
   # finish command
   _otel_escape_arg "-c"
   \echo -n " "
