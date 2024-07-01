@@ -43,3 +43,4 @@ http_body() {
 echo -e 'GET /index.html HTTP/1.1\r\nUser-agent: netcat/1.0\r\nAccept: */*\r\nHost: www.example.com\r\n\r\n' | \netcat -w 5 www.example.com 80 | http_body > "$expected"
 echo -e 'GET /index.html HTTP/1.1\r\nUser-agent: netcat/1.0\r\nAccept: */*\r\nHost: www.example.com\r\n\r\n' |  netcat -w 5 www.example.com 80 | http_body >   "$actual"
 assert_equals "$(cat "$expected")" "$(cat "$actual")"
+assert_equals "$(curl http://www.example.com)" "$(cat "$actual")"
