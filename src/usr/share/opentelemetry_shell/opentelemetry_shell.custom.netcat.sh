@@ -53,8 +53,7 @@ _otel_netcat_parse_request() {
   local is_server_side="$1"; shift
   local span_handle_file="$1"; shift
   read -r line
-  local protocol="$(\printf '%s' "$line" | \cut -sd ' ' -f 3)"
-  if ! _otel_string_starts_with "$protocol" HTTP/; then
+  if ! _otel_string_starts_with "$(\printf '%s' "$line" | \cut -sd ' ' -f 3)" HTTP/; then
     if \[ "$is_server_side" = 1 ]; then local span_handle="$(otel_span_start SERVER send/receive)"; else local span_handle="$(otel_span_start CLIENT send/receive)"; fi
     \echo "$span_handle" > "$span_handle_file"
     _otel_netcat_parse_args "$span_handle" "$@" > /dev/null
@@ -62,11 +61,14 @@ _otel_netcat_parse_request() {
     \cat
     return 0
   fi
+  local line="$(\printf '%s' "$line" | \tr -d '\r')"
+  local protocol="$(\printf '%s' "$line" | \cut -sd ' ' -f 3)"
   local method="$(\printf '%s' "$line" | \cut -sd ' ' -f 1)"
   local path_and_query="$(\printf '%s' "$line" | \cut -sd ' ' -f 2)"
   local headers="$(\mktemp)"
   while read -r line; do
-    if \[ "${#line}" = 1 ]; then break; fi
+    local line="$(\printf '%s' "$line" | \tr -d '\r')"
+    if \[ "${#line}" = 0 ]; then break; fi
     \echo "$line" >> "$headers"
     if \[ "$_is_server_side" = 1 ]; then
       local key="$(\printf '%s' "$line" | \cut -d ' ' -f 1 | \tr -d : | \tr '[:upper:]' '[:lower:]')"
@@ -86,20 +88,20 @@ _otel_netcat_parse_request() {
   otel_span_attribute_typed "$span_handle" string url.scheme="$(\printf '%s' "$protocol" | \cut -d / -f 1 | \tr '[:upper:]' '[:lower:]')"
   otel_span_attribute_typed "$span_handle" string http.request.method="$method"
   otel_span_attribute_typed "$span_handle" string user_agent.original=netcat
-  \echo "$method" "$path_and_query" "$protocol"
+  \echo -e "$method $path_and_query $protocol\r"
   if \[ "$_is_server_side" = 0 ]; then
     otel_span_activate "$span_handle"
-    \echo traceparent: "$TRACEPARENT"
-    \echo tracestate: "$TRACESTATE"
+    \echo -e "traceparent: $TRACEPARENT\r"
+    \echo -e "tracestate: $TRACESTATE\r"
     otel_span_deactivate "$span_handle"
   fi
   while read -r line; do
-    \echo "$line"
+    \echo -e "$line\r"
     local key="$(\printf '%s' "$line" | \cut -d ' ' -f 1 | \tr -d : | \tr '[:upper:]' '[:lower:]')"
     local value="$(\printf '%s' "$line" | \cut -d ' ' -f 2-)"
     otel_span_attribute_typed "$span_handle" string[1] http.request.header."$key"="$value"
   done < "$headers"
-  \echo '\r'
+  \echo -e '\r'
   local body_size_pipe="$(\mktemp -u)"
   local body_size_file="$(\mktemp)"
   \mkfifo "$body_size_pipe"
@@ -116,21 +118,23 @@ _otel_netcat_parse_response() {
   local span_handle_file="$1"; shift
   local span_handle="$(\cat "$span_handle_file")"
   read -r line
-  local protocol="$(\printf '%s' "$line" | \cut -sd ' ' -f 1)"
-  if ! _otel_string_starts_with "$protocol" HTTP/; then
+  if ! _otel_string_starts_with "$line" HTTP/; then
     \echo "$line"
     \cat
     otel_span_end "$span_handle"
     return 0
   fi
+  local line="$(\printf '%s' "$line" | \tr -d '\r')"
+  local protocol="$(\printf '%s' "$line" | \cut -sd ' ' -f 1)"
   local response_code="$(\printf '%s' "$line" | \cut -sd ' ' -f 2)"
   otel_span_attribute_typed "$span_handle" int http.response.status_code="$response_code"
   if \[ "$is_server_side" = 0 ] && \[ "$response_code" -ge 400 ]; then otel_span_error "$span_handle"; fi
   if \[ "$is_server_side" = 1 ] && \[ "$response_code" -ge 500 ]; then otel_span_error "$span_handle"; fi
-  \echo "$line"
+  \echo -e "$line\r"
   while read -r line; do
-    \echo "$line"
-    if \[ "${#line}" = 1 ]; then break; fi
+    local line="$(\printf '%s' "$line" | \tr -d '\r')"
+    \echo "$line\r"
+    if \[ "${#line}" = 0 ]; then break; fi
     local key="$(\printf '%s' "$line" | \cut -d ' ' -f 1 | \tr -d : | \tr '[:upper:]' '[:lower:]')"
     local value="$(\printf '%s' "$line" | \cut -d ' ' -f 2-)"
     otel_span_attribute_typed "$span_handle" string[1] http.response.header."$key"="$value"
