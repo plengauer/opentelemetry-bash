@@ -4,7 +4,7 @@ if ! [ -x "$(which docker)" ]; then exit 0; fi
 . /usr/bin/opentelemetry_shell.sh
 export OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE
 
-docker run --rm --env RENOVATE_DRY_RUN=full RENOVATE_TOKEN="$GITHUB_TOKEN" RENOVATE_REPOSITORIES="$GITHUB_REPOSITORY" renovate/renovate
+docker run --rm --env RENOVATE_DRY_RUN=full --env RENOVATE_TOKEN="$GITHUB_TOKEN" --env RENOVATE_REPOSITORIES="$GITHUB_REPOSITORY" renovate/renovate
 
 assert_not_equals 0 "$?" # because no github token available
 span="$(resolve_span '. | select(.name == "/bin/bash /usr/local/bin/node /usr/local/renovate/dist/renovate.js")')"
