@@ -40,16 +40,6 @@ http_body() {
   done
   cat
 }
-echo 'GET /index.html HTTP/1.1
-User-agent: netcat/1.0
-Accept: */*
-Host: www.example.com
-
-' | unix2dos | \netcat -w 5 www.example.com 80 | http_body > "$expected"
-echo 'GET /index.html HTTP/1.1
-User-agent: netcat/1.0
-Accept: */*
-Host: www.example.com
-
-' | unix2dos | netcat -w 5 www.example.com 80 | http_body > "$actual"
+echo -e 'GET /index.html HTTP/1.1\r\nUser-agent: netcat/1.0\r\nAccept: */*\r\nHost: www.example.com\r\n\r\n' | \netcat -w 5 www.example.com 80 | http_body > "$expected"
+echo -e 'GET /index.html HTTP/1.1\r\nUser-agent: netcat/1.0\r\nAccept: */*\r\nHost: www.example.com\r\n\r\n' |  netcat -w 5 www.example.com 80 | http_body >   "$actual"
 assert_equals "$(cat "$expected")" "$(cat "$actual")"
