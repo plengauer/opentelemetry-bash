@@ -42,7 +42,7 @@ jobs:
       - run: sudo -E apt-get -y install ./package.deb
       - run: bash -c "cd tests && sudo bash run_tests.sh bash"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ACTIONS_GITHUB_TOKEN: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
 
   os-shell:
     needs: smoke
