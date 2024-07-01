@@ -133,7 +133,7 @@ _otel_netcat_parse_response() {
   \echo -e "$line\r"
   while read -r line; do
     local line="$(\printf '%s' "$line" | \tr -d '\r')"
-    \echo "$line\r"
+    \echo -e "$line\r"
     if \[ "${#line}" = 0 ]; then break; fi
     local key="$(\printf '%s' "$line" | \cut -d ' ' -f 1 | \tr -d : | \tr '[:upper:]' '[:lower:]')"
     local value="$(\printf '%s' "$line" | \cut -d ' ' -f 2-)"
