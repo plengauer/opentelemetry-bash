@@ -34,26 +34,22 @@ assert_equals "send/receive" $(\echo "$span" | jq -r '.name')
 
 expected="$(mktemp)"
 actual="$(mktemp)"
+http_body() {
+  while read -r line; do
+    if [ "${#line}" = 1 ]; then break; fi
+  done
+  cat
+}
 echo 'GET /index.html HTTP/1.1
 User-agent: netcat/1.0
 Accept: */*
 Host: www.example.com
 
-' | unix2dos | \netcat -w 5 www.example.com 80 | { 
-  while read -r line; do
-    if [ "${#line}" = 1 ]; then break; fi
-  done
-  cat
-} > "$expected"
+' | unix2dos | \netcat -w 5 www.example.com 80 | http_body > "$expected"
 echo 'GET /index.html HTTP/1.1
 User-agent: netcat/1.0
 Accept: */*
 Host: www.example.com
 
-' | unix2dos | netcat -w 5 www.example.com 80 | { 
-  while read -r line; do
-    if [ "${#line}" = 1 ]; then break; fi
-  done
-  cat
-} > "$actual"
+' | unix2dos | netcat -w 5 www.example.com 80 | http_body > "$actual"
 assert_equals "$(cat "$expected")" "$(cat "$actual")"
