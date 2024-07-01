@@ -31,3 +31,29 @@ span="$(resolve_span '.kind == "SpanKind.CLIENT") | select(.name == "send/receiv
 assert_equals "send/receive" $(\echo "$span" | jq -r '.name')
 span="$(resolve_span '.kind == "SpanKind.SERVER") | select(.name == "send/receive"')"
 assert_equals "send/receive" $(\echo "$span" | jq -r '.name')
+
+expected="$(mktemp)"
+actual="$(mktemp)"
+echo 'GET /index.html HTTP/1.1
+User-agent: netcat/1.0
+Accept: */*
+Host: www.example.com
+
+' | unix2dos | \netcat -w 5 www.example.com 80 | { 
+  while read -r line; do
+    if [ "${#line}" = 1 ]; then break; fi
+  done
+  cat
+} > "$expected"
+echo 'GET /index.html HTTP/1.1
+User-agent: netcat/1.0
+Accept: */*
+Host: www.example.com
+
+' | unix2dos | netcat -w 5 www.example.com 80 | { 
+  while read -r line; do
+    if [ "${#line}" = 1 ]; then break; fi
+  done
+  cat
+} > "$actual"
+assert_equals "$(cat "$expected")" "$(cat "$actual")"
