@@ -32,8 +32,6 @@ jobs:
     needs: install
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    permissions:
-      contents: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
