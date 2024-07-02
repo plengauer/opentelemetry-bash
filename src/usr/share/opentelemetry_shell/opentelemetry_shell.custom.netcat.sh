@@ -198,14 +198,14 @@ _otel_netcat_parse_args() {
 _otel_is_ip() {
   case "$1" in
     *.*.*.*)
-      for part in $(echo "$1" | tr '.' ' '); do
+      for part in $(\echo "$1" | \tr '.' ' '); do
         case "$part" in
           ""|*[!0-9]*) return 1;;
         esac
       done
       return 0;;
     *:*:*:*:*:*:*:*)
-      for part in $(echo "$1" | tr ':' ' '); do
+      for part in $(\echo "$1" | \tr ':' ' '); do
         case "$part" in
           ""|*[!0-9a-fA-F]*) return 1;;
         esac
