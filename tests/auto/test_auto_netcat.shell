@@ -21,9 +21,8 @@ assert_equals "200" "$(\echo "$span" | jq -r '.attributes."http.response.status_
 assert_not_equals null "$(\echo "$span" | jq -r '.attributes."http.response.header.content-type"')"
 assert_not_equals null "$(\echo "$span" | jq -r '.attributes."network.peer.port"')"
 
-port=12345
-
 # check simple string request+response
+port=12345
 response_file="$(mktemp)"
 netcat -l "$port" > "$response_file" &
 echo -n hello world | netcat -w 30 127.0.0.1 "$port"
@@ -57,14 +56,27 @@ assert_equals "$(cat "$expected")" "$(cat "$actual")"
 # check large binary data
 port=$((port + 1))
 cat /dev/urandom | head -c $((1024 * 1024 * 10)) > "$expected"
-cat "$binary_expected" | netcat -l "$port" &
-netcat 127.0.0.1 "$port" > "$actual"
+netcat -l "$port" > "$actual" &
+pid="$?"
+cat "$expected" | netcat -w 3 127.0.0.1 "$port"
+wait "$pid"
 assert_equals "$(cat "$expected")" "$(cat "$actual")"
 
 # check binary data without linefeed (linefeed has an internal meaning)
 port=$((port + 1))
-cat "$binary_expected" | tr -d '\n' | netcat -l "$port" &
-netcat 127.0.0.1 "$port" > "$actual"
-assert_equals "$(cat "$expected" | tr -d '\n')" "$(cat "$actual")"
+cat /dev/urandom | tr -d '\n' | head -c $((1024 * 1024 * 10)) > "$expected"
+netcat -l "$port" > "$actual" &
+pid="$?"
+cat "$expected" | netcat -w 3 127.0.0.1 "$port"
+wait "$pid"
+assert_equals "$(cat "$expected")" "$(cat "$actual")"
 
-# TODO echo line by line in a circle without linefeeds. this will probably cause a deadlock
+# check binary data without linefeed (linefeed has an internal meaning)
+# TODO this is a current limitation, as the implementation assumes one line be written client to server first before the client data is actually read
+port=$((port + 1))
+cat /dev/urandom | tr -d '\n' | head -c $((1024 * 1024 * 10)) > "$expected"
+cat "$expected" | netcat -l "$port" &
+pid="$?"
+netcat -w 3 127.0.0.1 "$port" > "$actual"
+wait "$pid"
+assert_equals "$(cat "$expected")" "$(cat "$actual")"
