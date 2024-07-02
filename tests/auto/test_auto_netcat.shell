@@ -3,29 +3,29 @@ set -e
 . otel.sh
 
 # check simple HTTP request
-echo 'GET / HTTP/1.1
+\echo 'GET / HTTP/1.1
 ' | netcat -w 30 www.google.com 80
 assert_equals 0 "$?"
 span="$(resolve_span '.name == "GET"')"
-assert_equals "SpanKind.CLIENT" $(\echo "$span" | jq -r '.kind')
-assert_not_equals "null" $(\echo "$span" | jq -r '.parent_id')
-assert_equals "UNSET" $(\echo "$span" | jq -r '.status.status_code')
-assert_equals "http" "$(\echo "$span" | jq -r '.attributes."network.protocol.name"')"
-assert_equals "tcp" "$(\echo "$span" | jq -r '.attributes."network.transport"')"
-assert_equals "http://www.google.com:80/" "$(\echo "$span" | jq -r '.attributes."url.full"')"
-assert_equals "http" "$(\echo "$span" | jq -r '.attributes."url.scheme"')"
-assert_equals "/" "$(\echo "$span" | jq -r '.attributes."url.path"')"
-assert_equals "null" "$(\echo "$span" | jq -r '.attributes."url.query"')"
-assert_not_equals "null" "$(\echo "$span" | jq -r '.attributes."user_agent.original"')"
-assert_equals "200" "$(\echo "$span" | jq -r '.attributes."http.response.status_code"')"
-assert_not_equals null "$(\echo "$span" | jq -r '.attributes."http.response.header.content-type"')"
-assert_not_equals null "$(\echo "$span" | jq -r '.attributes."network.peer.port"')"
+assert_equals "SpanKind.CLIENT" $(\echo "$span" | \jq -r '.kind')
+assert_not_equals "null" $(\echo "$span" | \jq -r '.parent_id')
+assert_equals "UNSET" $(\echo "$span" | \jq -r '.status.status_code')
+assert_equals "http" "$(\echo "$span" | \jq -r '.attributes."network.protocol.name"')"
+assert_equals "tcp" "$(\echo "$span" | \jq -r '.attributes."network.transport"')"
+assert_equals "http://www.google.com:80/" "$(\echo "$span" | \jq -r '.attributes."url.full"')"
+assert_equals "http" "$(\echo "$span" | \jq -r '.attributes."url.scheme"')"
+assert_equals "/" "$(\echo "$span" | \jq -r '.attributes."url.path"')"
+assert_equals "null" "$(\echo "$span" | \jq -r '.attributes."url.query"')"
+assert_not_equals "null" "$(\echo "$span" | \jq -r '.attributes."user_agent.original"')"
+assert_equals "200" "$(\echo "$span" | \jq -r '.attributes."http.response.status_code"')"
+assert_not_equals null "$(\echo "$span" | \jq -r '.attributes."http.response.header.content-type"')"
+assert_not_equals null "$(\echo "$span" | \jq -r '.attributes."network.peer.port"')"
 
 # check simple string request+response
 port=12345
-response_file="$(mktemp)"
+response_file="$(\mktemp)"
 netcat -l "$port" > "$response_file" &
-echo -n hello world | netcat -w 30 127.0.0.1 "$port"
+\echo -n hello world | netcat -w 30 127.0.0.1 "$port"
 assert_equals "hello world" "$(cat "$response_file")"
 span="$(resolve_span '.kind == "SpanKind.CLIENT") | select(.name == "send/receive"')"
 assert_equals "send/receive" $(\echo "$span" | jq -r '.name')
@@ -33,29 +33,29 @@ span="$(resolve_span '.kind == "SpanKind.SERVER") | select(.name == "send/receiv
 assert_equals "send/receive" $(\echo "$span" | jq -r '.name')
 
 # check HTTP client with real HTTP server
-expected="$(mktemp)"
-actual="$(mktemp)"
+expected="$(\mktemp)"
+actual="$(\mktemp)"
 http_body() {
   while read -r line; do
-    if [ "${#line}" = 1 ]; then break; fi
+    if \[ "${#line}" = 1 ]; then break; fi
   done
-  cat
+  \cat
 }
-echo -e 'GET /index.html HTTP/1.1\r\nUser-agent: netcat/1.0\r\nAccept: */*\r\nHost: www.example.com\r\n\r\n' | \netcat -w 5 www.example.com 80 | http_body > "$expected"
-echo -e 'GET /index.html HTTP/1.1\r\nUser-agent: netcat/1.0\r\nAccept: */*\r\nHost: www.example.com\r\n\r\n' |  netcat -w 5 www.example.com 80 | http_body >   "$actual"
-assert_equals "$(cat "$expected")" "$(cat "$actual")"
-assert_equals "$(curl http://www.example.com)" "$(cat "$actual")"
+\echo -e 'GET /index.html HTTP/1.1\r\nUser-agent: netcat/1.0\r\nAccept: */*\r\nHost: www.example.com\r\n\r\n' | \netcat -w 5 www.example.com 80 | http_body > "$expected"
+\echo -e 'GET /index.html HTTP/1.1\r\nUser-agent: netcat/1.0\r\nAccept: */*\r\nHost: www.example.com\r\n\r\n' |  netcat -w 5 www.example.com 80 | http_body >   "$actual"
+assert_equals "$(\cat "$expected")" "$(\cat "$actual")"
+assert_equals "$(curl http://www.example.com)" "$(\cat "$actual")"
 
 # check real HTTP client with HTTP server with binary data
 port=$((port + 1))
-cat /dev/urandom | head -c $((1024 * 1024 * 10)) > "$expected"
+\cat /dev/urandom | \head -c $((1024 * 1024 * 10)) > "$expected"
 { echo -e 'HTTP/1.1 200 OK\r\nFoo: Bar\r\n\r\n' && cat "$expected"; } | netcat -l "$port" &
 wget -O "$actual" http://127.0.0.1/
 assert_equals "$(cat "$expected")" "$(cat "$actual")"
 
 # check large binary data
 port=$((port + 1))
-cat /dev/urandom | head -c $((1024 * 1024 * 10)) > "$expected"
+\cat /dev/urandom | \head -c $((1024 * 1024 * 10)) > "$expected"
 netcat -l "$port" > "$actual" &
 pid="$?"
 cat "$expected" | netcat -w 3 127.0.0.1 "$port"
@@ -64,19 +64,19 @@ assert_equals "$(cat "$expected")" "$(cat "$actual")"
 
 # check binary data without linefeed (linefeed has an internal meaning)
 port=$((port + 1))
-cat /dev/urandom | tr -d '\n' | head -c $((1024 * 1024 * 10)) > "$expected"
+\cat /dev/urandom | \tr -d '\n' | \head -c $((1024 * 1024 * 10)) > "$expected"
 netcat -l "$port" > "$actual" &
 pid="$?"
 cat "$expected" | netcat -w 3 127.0.0.1 "$port"
 wait "$pid"
-assert_equals "$(cat "$expected")" "$(cat "$actual")"
+assert_equals "$(\cat "$expected")" "$(\cat "$actual")"
 
-# check binary data without linefeed (linefeed has an internal meaning)
+# check response only, no request
 # TODO this is a current limitation, as the implementation assumes one line be written client to server first before the client data is actually read
 port=$((port + 1))
-cat /dev/urandom | tr -d '\n' | head -c $((1024 * 1024 * 10)) > "$expected"
-cat "$expected" | netcat -l "$port" &
+\cat /dev/urandom | \head -c $((1024 * 1024 * 10)) > "$expected"
+\cat "$expected" | netcat -l "$port" &
 pid="$?"
 netcat -w 3 127.0.0.1 "$port" > "$actual"
 wait "$pid"
-assert_equals "$(cat "$expected")" "$(cat "$actual")"
+assert_equals "$(\cat "$expected")" "$(\cat "$actual")"
