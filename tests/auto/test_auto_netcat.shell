@@ -3,6 +3,7 @@ set -e
 . otel.sh
 
 # check simple HTTP request
+\echo "TEST 0" >&2
 \echo 'GET / HTTP/1.1
 ' | netcat -w 30 www.google.com 80
 assert_equals 0 "$?"
@@ -22,6 +23,7 @@ assert_not_equals null "$(\echo "$span" | \jq -r '.attributes."http.response.hea
 assert_not_equals null "$(\echo "$span" | \jq -r '.attributes."network.peer.port"')"
 
 # check simple string request+response
+\echo "TEST 1" >&2
 port=12345
 response_file="$(\mktemp)"
 netcat -l "$port" > "$response_file" &
@@ -33,6 +35,7 @@ span="$(resolve_span '.kind == "SpanKind.SERVER") | select(.name == "send/receiv
 assert_equals "send/receive" $(\echo "$span" | jq -r '.name')
 
 # check HTTP client with real HTTP server
+\echo "TEST 2" >&2
 expected="$(\mktemp)"
 actual="$(\mktemp)"
 http_body() {
@@ -47,6 +50,7 @@ assert_equals "$(\cat "$expected")" "$(\cat "$actual")"
 assert_equals "$(curl http://www.example.com)" "$(\cat "$actual")"
 
 # check real HTTP client with HTTP server with binary data
+\echo "TEST 3" >&2
 port=$((port + 1))
 \cat /dev/urandom | \head -c $((1024 * 1024 * 10)) > "$expected"
 { echo -e 'HTTP/1.1 200 OK\r\nFoo: Bar\r\n\r\n' && cat "$expected"; } | netcat -l "$port" &
@@ -54,6 +58,7 @@ wget -O "$actual" http://127.0.0.1/
 assert_equals "$(cat "$expected")" "$(cat "$actual")"
 
 # check large binary data
+\echo "TEST 4" >&2
 port=$((port + 1))
 \cat /dev/urandom | \head -c $((1024 * 1024 * 10)) > "$expected"
 netcat -l "$port" > "$actual" &
@@ -63,6 +68,7 @@ wait "$pid"
 assert_equals "$(cat "$expected")" "$(cat "$actual")"
 
 # check binary data without linefeed (linefeed has an internal meaning)
+\echo "TEST 5" >&2
 port=$((port + 1))
 \cat /dev/urandom | \tr -d '\n' | \head -c $((1024 * 1024 * 10)) > "$expected"
 netcat -l "$port" > "$actual" &
@@ -73,6 +79,7 @@ assert_equals "$(\cat "$expected")" "$(\cat "$actual")"
 
 # check response only, no request
 # TODO this is a current limitation, as the implementation assumes one line be written client to server first before the client data is actually read
+\echo "TEST 6" >&2
 port=$((port + 1))
 \cat /dev/urandom | \head -c $((1024 * 1024 * 10)) > "$expected"
 \cat "$expected" | netcat -l "$port" &
