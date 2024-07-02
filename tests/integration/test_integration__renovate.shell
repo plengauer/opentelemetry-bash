@@ -16,3 +16,4 @@ docker run --rm --env RENOVATE_DRY_RUN=full --env RENOVATE_TOKEN=abc"$ACTIONS_GI
 
 # \cat "$log_file" | \grep parentId
 # \cat "$log_file" | \grep parentId | \grep "$span_id"
+exit 0
