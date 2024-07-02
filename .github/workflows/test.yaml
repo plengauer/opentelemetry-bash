@@ -107,6 +107,10 @@ jobs:
           context: ./tests/
           tags: test
           push: false
+          build-args: |
+           image=ubuntu:latest
+           update=TRUE
+           shell=bash
 
   performance-prepare:
     runs-on: ubuntu-latest
