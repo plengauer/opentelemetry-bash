@@ -82,7 +82,7 @@ eval "$(_otel_escape_args "$@")"' sh
     \echo -n ' '; if \[ -n "$entrypoint_override" ]; then \echo "$entrypoint_override" | _otel_line_split; else "$executable" inspect "$image" | \jq -r '.[0].Config.Entrypoint[]?'; fi | _otel_escape_stdin
     if \[ "$#" = 0 ]; then \echo -n ' '; "$executable" inspect "$image" | \jq -r '.[0].Config.Cmd[]?' | _otel_escape_stdin; fi
   else
-    \echo -n ' '; _otel_escape_args --env OTEL_TRACEPARENT="$OTEL_TRACEPARENT"
+    \echo -n ' '; _otel_escape_args --env TRACEPARENT="$TRACEPARENT" --env TRACESTATE="$TRACESTATE"
     \echo -n ' '; _otel_escape_arg "$1"; shift
   fi
   # just skip the rest
