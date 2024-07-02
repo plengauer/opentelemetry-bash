@@ -11,7 +11,8 @@ docker run --rm --env RENOVATE_DRY_RUN=full --env RENOVATE_TOKEN=abc"$ACTIONS_GI
 # assert_equals "SpanKind.INTERNAL" $(\echo "$span" | \jq -r '.kind')
 # span_id="$(\echo "$span" | \jq -r '.context.span_id')"
 
-# \cat "$log_file"
+\echo "DEBUG DEBUG DEBUG 0"
+\cat "$log_file"
 # \cat "$OTEL_EXPORT_LOCATION"
 
 # \cat "$log_file" | \grep parentId
