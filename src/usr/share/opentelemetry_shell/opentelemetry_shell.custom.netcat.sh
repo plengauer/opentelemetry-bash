@@ -167,7 +167,7 @@ _otel_netcat_parse_args() {
     elif \[ "$1" = --sctp ]; then
       local transport=sctp
     elif \[ "$1" = -p ] && \[ "$#" -ge 2 ]; then
-      port="$2"
+      local port="$2"
       shift
     elif _otel_string_starts_with "$1" - && \[ "$#" -gt 1 ] && _otel_is_netcat_arg_arg "$1"; then
       shift
