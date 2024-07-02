@@ -50,7 +50,7 @@ assert_equals "$(curl http://www.example.com)" "$(cat "$actual")"
 # check real HTTP client with HTTP server with binary data
 port=$((port + 1))
 cat /dev/urandom | head -c $((1024 * 1024 * 10)) > "$expected"
-{ echo -e 'HTTP/1.1 200 OK\r\nFoo: Bar\r\n\r\n && cat "$expected"; } | netcat -l "$port" &
+{ echo -e 'HTTP/1.1 200 OK\r\nFoo: Bar\r\n\r\n' && cat "$expected"; } | netcat -l "$port" &
 wget -O "$actual" http://127.0.0.1/
 assert_equals "$(cat "$expected")" "$(cat "$actual")"
 
