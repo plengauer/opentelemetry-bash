@@ -5,12 +5,10 @@ if ! [ -x "$(which docker)" ]; then exit 0; fi
 export OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE
 
 log_file="$(\mktemp)"
-docker run --rm --env RENOVATE_DRY_RUN=full --env RENOVATE_TOKEN=abc"$ACTIONS_GITHUB_TOKEN" --env RENOVATE_REPOSITORIES="plengauer/opentelemetry-bash" renovate/renovate > "$log_file"
-# assert_not_equals 0 "$?" # because no github token available
+docker run --rm --env RENOVATE_DRY_RUN=full --env RENOVATE_TOKEN=abc --env RENOVATE_REPOSITORIES="plengauer/opentelemetry-bash" renovate/renovate > "$log_file"
+assert_not_equals 0 "$?" # because no github token available
 span="$(resolve_span '. | select(.name == "/bin/bash /usr/local/bin/node /usr/local/renovate/dist/renovate.js")')"
-# assert_equals "SpanKind.INTERNAL" $(\echo "$span" | \jq -r '.kind')
+assert_equals "SpanKind.INTERNAL" $(\echo "$span" | \jq -r '.kind')
 span_id="$(\echo "$span" | \jq -r '.context.span_id')"
 
-\cat "$log_file" | \grep parentId
-\echo "$span_id"
 \cat "$log_file" | \grep parentId | \grep "${span_id:2}" || exit 1
