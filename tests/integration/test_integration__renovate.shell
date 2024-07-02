@@ -7,14 +7,16 @@ export OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE
 log_file="$(\mktemp)"
 docker run --rm --env RENOVATE_DRY_RUN=full --env RENOVATE_TOKEN=abc"$ACTIONS_GITHUB_TOKEN" --env RENOVATE_REPOSITORIES="plengauer/opentelemetry-bash" renovate/renovate > "$log_file"
 # assert_not_equals 0 "$?" # because no github token available
-# span="$(resolve_span '. | select(.name == "/bin/bash /usr/local/bin/node /usr/local/renovate/dist/renovate.js")')"
+span="$(resolve_span '. | select(.name == "/bin/bash /usr/local/bin/node /usr/local/renovate/dist/renovate.js")')"
 # assert_equals "SpanKind.INTERNAL" $(\echo "$span" | \jq -r '.kind')
-# span_id="$(\echo "$span" | \jq -r '.context.span_id')"
+span_id="$(\echo "$span" | \jq -r '.context.span_id')"
 
 \echo "DEBUG DEBUG DEBUG 0"
 \cat "$log_file"
 # \cat "$OTEL_EXPORT_LOCATION"
 
-# \cat "$log_file" | \grep parentId
-# \cat "$log_file" | \grep parentId | \grep "$span_id"
+\echo "DEBUG DEBUG DEBUG 1"
+\cat "$log_file" | \grep parentId
+\echo "DEBUG DEBUG DEBUG 2"
+\cat "$log_file" | \grep parentId | \grep "$span_id"
 exit 0
