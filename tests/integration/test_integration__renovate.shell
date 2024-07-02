@@ -11,13 +11,6 @@ span="$(resolve_span '. | select(.name == "/bin/bash /usr/local/bin/node /usr/lo
 # assert_equals "SpanKind.INTERNAL" $(\echo "$span" | \jq -r '.kind')
 span_id="$(\echo "$span" | \jq -r '.context.span_id')"
 
-\echo "DEBUG DEBUG DEBUG 0"
-\cat "$log_file"
-# \cat "$OTEL_EXPORT_LOCATION"
-
-\echo "DEBUG DEBUG DEBUG 1"
 \cat "$log_file" | \grep parentId
-\echo "DEBUG DEBUG DEBUG 2"
 \echo "$span_id"
-# \cat "$log_file" | \grep parentId | \grep "$span_id"
-exit 0
+\cat "$log_file" | \grep parentId | \grep "${span_id:2}" || exit 1
