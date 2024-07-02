@@ -40,7 +40,7 @@ jobs:
         with:
           name: package.deb
       - run: sudo -E apt-get -y install ./package.deb
-      - run: echo "<<<$BLUBB>>>"
+      - run: echo "<<<${#BLUBB}>>>"
         env:
           BLUBB: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
       - run: bash -c "cd tests && sudo -E bash run_tests.sh bash"
