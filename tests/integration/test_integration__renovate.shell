@@ -18,5 +18,6 @@ span_id="$(\echo "$span" | \jq -r '.context.span_id')"
 \echo "DEBUG DEBUG DEBUG 1"
 \cat "$log_file" | \grep parentId
 \echo "DEBUG DEBUG DEBUG 2"
-\cat "$log_file" | \grep parentId | \grep "$span_id"
+\echo "$span_id"
+# \cat "$log_file" | \grep parentId | \grep "$span_id"
 exit 0
