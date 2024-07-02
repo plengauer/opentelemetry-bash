@@ -5,7 +5,7 @@ if ! [ -x "$(which docker)" ]; then exit 0; fi
 export OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE
 
 log_file="$(\mktemp)"
-docker run --rm --env RENOVATE_DRY_RUN=full --env RENOVATE_TOKEN=abc"$ACTIONS_GITHUB_TOKEN" --env RENOVATE_REPOSITORIES="plengauer/opentelemetry-bash" renovate/renovate 2> "$log_file"
+docker run --rm --env RENOVATE_DRY_RUN=full --env RENOVATE_TOKEN=abc"$ACTIONS_GITHUB_TOKEN" --env RENOVATE_REPOSITORIES="plengauer/opentelemetry-bash" renovate/renovate > "$log_file"
 \cat "$log_file"
 \cat "$OTEL_EXPORT_LOCATION"
 
