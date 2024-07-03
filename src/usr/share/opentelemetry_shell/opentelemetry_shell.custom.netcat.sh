@@ -46,8 +46,6 @@ _otel_inject_netcat() {
   fi
 }
 
-_otel_compute_name 
-
 _otel_inject_netcat_listen_and_respond_args() {
   _otel_escape_arg "$1"
   shift
