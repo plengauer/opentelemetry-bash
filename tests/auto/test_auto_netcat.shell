@@ -4,9 +4,15 @@ set -e
 
 # check simple HTTP request
 \echo "TEST 0" >&2
-\echo 'GET / HTTP/1.1
-' | netcat -w 5 www.google.com 80
+\echo -e 'GET / HTTP/1.1\r\n\r\n' | netcat -w 5 www.google.com 80
 assert_equals 0 "$?"
+span="$(resolve_span '.name == "netcat -w 5 www.google.com 80"')"
+assert_equals "SpanKind.INTERNAL" $(\echo "$span" | \jq -r '.kind')
+span_id=$(\echo "$span" | \jq -r '.context.span_id')
+span="$(resolve_span '.name == "send/receive"')"
+assert_equals "SpanKind.PRODUCER" $(\echo "$span" | \jq -r '.kind')
+assert_equals "$span_id" $(\echo "$span" | \jq -r '.parent_id')
+span_id=$(\echo "$span" | \jq -r '.context.span_id')
 span="$(resolve_span '.name == "GET"')"
 assert_equals "SpanKind.CLIENT" $(\echo "$span" | \jq -r '.kind')
 assert_not_equals "null" $(\echo "$span" | \jq -r '.parent_id')
@@ -21,20 +27,21 @@ assert_not_equals "null" "$(\echo "$span" | \jq -r '.attributes."user_agent.orig
 assert_equals "200" "$(\echo "$span" | \jq -r '.attributes."http.response.status_code"')"
 assert_not_equals null "$(\echo "$span" | \jq -r '.attributes."http.response.header.content-type"')"
 assert_not_equals null "$(\echo "$span" | \jq -r '.attributes."network.peer.port"')"
+assert_equals "$span_id" $(\echo "$span" | \jq -r '.parent_id')
 
 # check simple string request+response
 \echo "TEST 1" >&2
 port=12345
 response_file="$(\mktemp)"
-netcat -l "$port" > "$response_file" &
+netcat -l "$port" < /dev/null > "$response_file" &
 pid="$!"
 \echo -n hello world | netcat -w 1 127.0.0.1 "$port" > /dev/null
 \wait "$pid"
 assert_equals "hello world" "$(\cat "$response_file")"
-span="$(resolve_span '.kind == "SpanKind.PRODUCER") | select(.name == "send"')"
-assert_equals "send/receive" $(\echo "$span" | \jq -r '.name')
-span="$(resolve_span '.kind == "SpanKind.CONSUMER") | select(.name == "receive"')"
-assert_equals "send/receive" $(\echo "$span" | \jq -r '.name')
+span="$(resolve_span '.name == "send"')"
+assert_equals "SpanKind.PRODUCER" $(\echo "$span" | \jq -r '.kind')
+span="$(resolve_span '.name == "receive"')"
+assert_equals "SpanKind.CONSUMER" $(\echo "$span" | \jq -r '.kind')
 
 # check HTTP client with real HTTP server
 \echo "TEST 2" >&2
