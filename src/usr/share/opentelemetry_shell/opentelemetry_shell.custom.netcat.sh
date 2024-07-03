@@ -19,24 +19,28 @@ _otel_inject_netcat() {
     if _otel_args_contains -e || _otel_args_contains --exec || _otel_args_contains -c || _otel_args_contains --sh-exec; then
       \eval _otel_call "$(_otel_inject_netcat_listen_and_respond_args "$@")"
     else
-      local span_handle="$(otel_span_start CONSUMER "$name")"
-      _otel_netcat_parse_args "$span_handle" "$@" > /dev/null
       local span_handle_file="$(\mktemp)"
       local exit_code_file="$(\mktemp)"
       \echo 0 > "$exit_code_file"
+      local span_handle="$(otel_span_start CONSUMER "$name")"
+      otel_span_activate "$span_handle"
+      _otel_netcat_parse_args "$span_handle" "$@" > /dev/null
       _otel_netcat_parse_response 1 "$span_handle_file" | { _otel_call "$@" || \echo "$?" > "$exit_code_file"; } | _otel_netcat_parse_request 1 "$span_handle_file" "$@"
+      otel_span_deactivate "$span_handle"
       otel_span_end "$span_handle"
       local exit_code="$(\cat "$exit_code_file")"
       \rm "$span_handle_file" "$exit_code_file" 2> /dev/null
       return "$exit_code"
     fi
   else
-    local span_handle="$(otel_span_start PRODUCER "$name")"
-    _otel_netcat_parse_args "$span_handle" "$@" > /dev/null
     local span_handle_file="$(\mktemp)"
     local exit_code_file="$(\mktemp)"
     \echo 0 > "$exit_code_file"
+    local span_handle="$(otel_span_start PRODUCER "$name")"
+    otel_span_activate "$span_handle"
+    _otel_netcat_parse_args "$span_handle" "$@" > /dev/null
     _otel_netcat_parse_request 0 "$span_handle_file" "$@" | { _otel_call "$@" || \echo "$?" > "$exit_code_file"; } | _otel_netcat_parse_response 0 "$span_handle_file"
+    otel_span_deactivate "$span_handle"
     otel_span_end "$span_handle"
     local exit_code="$(\cat "$exit_code_file")"
     \rm "$span_handle_file" "$exit_code_file" 2> /dev/null
