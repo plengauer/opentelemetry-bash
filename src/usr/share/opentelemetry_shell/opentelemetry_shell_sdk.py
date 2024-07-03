@@ -252,6 +252,12 @@ def handle(scope, version, command, arguments):
                     return
     elif command == 'SPAN_AUTO_END':
         auto_end = True
+    elif command == 'SPAN_NAME':
+        tokens = arguments.split(' ', 2)
+        span_id = tokens[0]
+        name = tokens[1]
+        span : Span = spans[arguments]
+        span.update_name(name)
     elif command == 'SPAN_ERROR':
         span : Span = spans[arguments]
         span.set_status(StatusCode.ERROR)
