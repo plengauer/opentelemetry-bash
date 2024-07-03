@@ -8,6 +8,8 @@
 # *) first line will be buffered on both request and response, so if there is a prompt/challenge like protocol that works on single byte sequences without linefeed, that case will deadlock
 # *) as soon as a request or response (individually) looks like HTTP, the instrumentation assumes its valid HTTP exchange and may deadlock if its not. meaning, lets imagine that there is netcat that always response with a valid HTTP response without actually receiving an HTTP request, or not respecting the protocol.
 
+# TODO using pipes instead means that a sincle charafcter has to be sent before response will actually be piped. so response-only scenarios will not work. using single files means HTTP requests that start before HTTP intro (status line + headers) is sent will not connect
+
 _otel_inject_netcat() {
   local name=send/receive
   # if \[ "$(\readlink -f /proc/$$/fd/0)" != /dev/null ]; then local is_reading=1; else local is_reading=0; fi # TODO this check the stdin of the shell process, not the current context
@@ -21,6 +23,7 @@ _otel_inject_netcat() {
       \eval _otel_call "$(_otel_inject_netcat_listen_and_respond_args "$@")"
     else
       local span_handle_file="$(\mktemp)"
+      \echo -1 > "$span_handle_file"
       local exit_code_file="$(\mktemp)"
       \echo 0 > "$exit_code_file"
       local span_handle="$(otel_span_start CONSUMER "$name")"
@@ -35,6 +38,7 @@ _otel_inject_netcat() {
     fi
   else
     local span_handle_file="$(\mktemp)"
+    \echo -1 > "$span_handle_file"
     local exit_code_file="$(\mktemp)"
     \echo 0 > "$exit_code_file"
     local span_handle="$(otel_span_start PRODUCER "$name")"
@@ -57,6 +61,7 @@ _otel_inject_netcat_listen_and_respond_args() {
     if (\[ "$1" = -e ] || \[ "$1" = --exec ] || \[ "$1" = -c ] || \[ "$1" = --sh-exec ]) && \[ "$#" -gt 1 ]; then
       local command="$2"; shift; shift
       # TODO the following injection doesnt maintain the exit code, does it matter though? is it important for netcat?
+      # TODO using pipes for passing the handle means a single line has to be sent before responses will be streamed
       _otel_escape_args -c "OTEL_SHELL_AUTO_INJECTED=FALSE
 span_handle_file=\"\$(mktemp)\"
 span_handle_file_1=\"\$(mktemp -u)\"
