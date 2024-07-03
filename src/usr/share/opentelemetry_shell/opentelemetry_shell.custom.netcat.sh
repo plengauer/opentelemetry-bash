@@ -11,8 +11,8 @@
 _otel_inject_netcat() {
   local stdin="$(\readlink -f /dev/stdin)"
   local stdout="$(\readlink -f /dev/stdout)"
-  if \[ "$stdin" != /dev/null ] && \[ -e "$stdin" ]; then local is_reading=1; fi
-  if \[ "$stdout" != /dev/null ] && \[ -e "$stdout" ]; then local is_writing=1; fi
+  if \[ "$stdin" != /dev/null ] && \[ -e "$stdin" ]; then local is_reading=1; else local is_reading=0; fi
+  if \[ "$stdout" != /dev/null ] && \[ -e "$stdout" ]; then local is_writing=1; else local is_writing=0; fi
   if \[ "$is_reading" = 0 ] && \[ "$is_writing" = 0 ]; then local name=connect; fi
   if \[ "$is_reading" = 0 ] && \[ "$is_writing" = 1]; then local name=send; fi
   if \[ "$is_reading" = 1 ] && \[ "$is_writing" = 0]; then local name=receive; fi
