@@ -2,8 +2,22 @@ set -e
 . ./assert.sh
 . otel.sh
 
-# check simple HTTP request
+# check simple string request
 \echo "TEST 0" >&2
+port=12345
+response_file="$(\mktemp)"
+netcat -l "$port" < /dev/null > "$response_file" &
+pid="$!"
+\echo -n hello world | netcat -w 1 127.0.0.1 "$port" > /dev/null
+\wait "$pid"
+assert_equals "hello world" "$(\cat "$response_file")"
+span="$(resolve_span '.kind == "SpanKind.PRODUCER"')"
+assert_equals "send/receive" $(\echo "$span" | \jq -r '.name')
+span="$(resolve_span '.kind == "SpanKind.CONSUMER"')"
+assert_equals "send/receive" $(\echo "$span" | \jq -r '.name')
+
+# check HTTP client with real HTTP server (check spans and structure)
+\echo "TEST 1" >&2
 \echo -e 'GET / HTTP/1.1\r\n\r\n' | netcat -w 5 www.google.com 80
 assert_equals 0 "$?"
 span="$(resolve_span '.name == "netcat -w 5 www.google.com 80"')"
@@ -29,21 +43,7 @@ assert_not_equals null "$(\echo "$span" | \jq -r '.attributes."http.response.hea
 assert_not_equals null "$(\echo "$span" | \jq -r '.attributes."network.peer.port"')"
 assert_equals "$span_id" $(\echo "$span" | \jq -r '.parent_id')
 
-# check simple string request+response
-\echo "TEST 1" >&2
-port=12345
-response_file="$(\mktemp)"
-netcat -l "$port" < /dev/null > "$response_file" &
-pid="$!"
-\echo -n hello world | netcat -w 1 127.0.0.1 "$port" > /dev/null
-\wait "$pid"
-assert_equals "hello world" "$(\cat "$response_file")"
-span="$(resolve_span '.name == "send"')"
-assert_equals "SpanKind.PRODUCER" $(\echo "$span" | \jq -r '.kind')
-span="$(resolve_span '.name == "receive"')"
-assert_equals "SpanKind.CONSUMER" $(\echo "$span" | \jq -r '.kind')
-
-# check HTTP client with real HTTP server
+# check HTTP client with real HTTP server (compare instrumented vs non-instrumented)
 \echo "TEST 2" >&2
 expected="$(\mktemp)"
 actual="$(\mktemp)"
@@ -66,7 +66,7 @@ port=$((port + 1))
 wget -O "$actual" http://127.0.0.1/
 assert_equals "$(\cat "$expected")" "$(\cat "$actual")"
 
-# check large binary data
+# check large binary data integrety
 \echo "TEST 4" >&2
 port=$((port + 1))
 \cat /dev/urandom | \head -c $((1024 * 1024 * 10)) > "$expected"
@@ -86,8 +86,7 @@ pid="$!"
 \wait "$pid"
 assert_equals "$(\cat "$expected")" "$(\cat "$actual")"
 
-# check response only, no request
-# TODO this is a current limitation, as the implementation assumes one line be written client to server first before the client data is actually read
+# check simple binary response only
 \echo "TEST 6" >&2
 port=$((port + 1))
 \cat /dev/urandom | \head -c $((1024 * 1024 * 10)) > "$expected"
