@@ -6,6 +6,7 @@
 
 # Limitations:
 # *) first line will be buffered on both request and response, so if there is a prompt/challenge like protocol that works on single byte sequences without linefeed, that case will deadlock
+# *) as soon as a request or response (individually) looks like HTTP, the instrumentation assumes its valid HTTP exchange and may deadlock if its not. meaning, lets imagine that there is netcat that always response with a valid HTTP response without actually receiving an HTTP request, or not respecting the protocol.
 
 _otel_inject_netcat() {
   if _otel_args_contains -l "$@" || _otel_args_contains --listen "$@" || _otel_args_contains -e "$@" || _otel_args_contains --exec "$@" || _otel_args_contains -c "$@" || _otel_args_contains --sh-exec "$@"; then
