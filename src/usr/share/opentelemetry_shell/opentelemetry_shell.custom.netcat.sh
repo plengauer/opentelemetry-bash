@@ -74,7 +74,6 @@ otel_span_end \"\$span_handle\"
 _otel_netcat_parse_request() {
   local is_server_side="$1"; shift
   local span_handle_file="$1"; shift
-  if \[ "$is_server_side" = 0 ]; then set -x; fi
   if ! read -r line; then
     \echo -1 > "$span_handle_file"
     \echo -n "$line"
