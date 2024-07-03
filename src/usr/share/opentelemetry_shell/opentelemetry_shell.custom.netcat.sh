@@ -9,13 +9,13 @@
 # *) as soon as a request or response (individually) looks like HTTP, the instrumentation assumes its valid HTTP exchange and may deadlock if its not. meaning, lets imagine that there is netcat that always response with a valid HTTP response without actually receiving an HTTP request, or not respecting the protocol.
 
 _otel_inject_netcat() {
-  \echo "$@": "$(\readlink -f /proc/$$/fd/0)" '->' "$(\readlink -f /proc/$$/fd/1)" >&2
-  if \[ "$(\readlink -f /proc/$$/fd/0)" != /dev/null ]; then local is_reading=1; else local is_reading=0; fi
-  if \[ "$(\readlink -f /proc/$$/fd/1)" != /dev/null ]; then local is_writing=1; else local is_writing=0; fi
-  if \[ "$is_reading" = 0 ] && \[ "$is_writing" = 0 ]; then local name=connect; fi
-  if \[ "$is_reading" = 0 ] && \[ "$is_writing" = 1 ]; then local name=receive; fi
-  if \[ "$is_reading" = 1 ] && \[ "$is_writing" = 0 ]; then local name=send; fi
-  if \[ "$is_reading" = 1 ] && \[ "$is_writing" = 1 ]; then local name=send/receive; fi
+  local name=send/receive
+  # if \[ "$(\readlink -f /proc/$$/fd/0)" != /dev/null ]; then local is_reading=1; else local is_reading=0; fi # TODO this check the stdin of the shell process, not the current context
+  # if \[ "$(\readlink -f /proc/$$/fd/1)" != /dev/null ]; then local is_writing=1; else local is_writing=0; fi # TODO this check the stdout of the shell process, not the current context
+  # if \[ "$is_reading" = 0 ] && \[ "$is_writing" = 0 ]; then local name=connect; fi
+  # if \[ "$is_reading" = 0 ] && \[ "$is_writing" = 1 ]; then local name=receive; fi
+  # if \[ "$is_reading" = 1 ] && \[ "$is_writing" = 0 ]; then local name=send; fi
+  # if \[ "$is_reading" = 1 ] && \[ "$is_writing" = 1 ]; then local name=send/receive; fi
   if _otel_args_contains -l "$@" || _otel_args_contains --listen "$@" || _otel_args_contains -e "$@" || _otel_args_contains --exec "$@" || _otel_args_contains -c "$@" || _otel_args_contains --sh-exec "$@"; then
     if _otel_args_contains -e || _otel_args_contains --exec || _otel_args_contains -c || _otel_args_contains --sh-exec; then
       \eval _otel_call "$(_otel_inject_netcat_listen_and_respond_args "$@")"
@@ -100,12 +100,14 @@ _otel_netcat_parse_request() {
     if \[ "$_is_server_side" = 1 ]; then
       local key="$(\printf '%s' "$line" | \cut -d ' ' -f 1 | \tr -d : | \tr '[:upper:]' '[:lower:]')"
       local value="$(\printf '%s' "$line" | \cut -d ' ' -f 2-)"
+      # TODO save old traceparent and tracestate
       if \[ "$key" = traceparent ]; then export TRACEPARENT="$value"; fi
       if \[ "$key" = tracestate ]; then export TRACESTATE="$value"; fi
     fi
   done
   if \[ "$is_server_side" = 1 ]; then local span_handle="$(otel_span_start SERVER "$method")"; else local span_handle="$(otel_span_start CLIENT "$method")"; fi
   \echo "$span_handle" > "$span_handle_file"
+  # TODO add span link with old traceparent and tracestate
   local host_and_port="$(_otel_netcat_parse_args "$span_handle" "$@")"
   otel_span_attribute_typed "$span_handle" string network.protocol.name="$(\printf '%s' "$protocol" | \cut -d / -f 1 | \tr '[:upper:]' '[:lower:]')"
   otel_span_attribute_typed "$span_handle" string network.protocol.version="$(\printf '%s' "$protocol" | \cut -d / -f 2-)"
