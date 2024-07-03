@@ -51,6 +51,7 @@ http_body() {
   while read -r line; do
     if \[ "${#line}" = 1 ]; then break; fi
   done
+  \echo -n "$line"
   \cat
 }
 \echo -e 'GET /index.html HTTP/1.1\r\nUser-agent: netcat/1.0\r\nAccept: */*\r\nHost: www.example.com\r\n\r\n' | \netcat -w 5 www.example.com 80 | http_body > "$expected"
