@@ -10,6 +10,8 @@
 
 _otel_inject_netcat() {
   \echo "$@": "$(\readlink -f /dev/stdin)" '->' "$(\readlink -f /dev/stdout)" >&2
+  \ls -la "$(\readlink -f /dev/stdout)" >&2
+  \ls -la "$(\readlink -f /dev/stdout | cut -d : -f 1)" >&2
   if \[ "$(\readlink -f /dev/stdin)" != /dev/null ]; then local is_reading=1; else local is_reading=0; fi
   if \[ "$(\readlink -f /dev/stdout)" != /dev/null ]; then local is_writing=1; else local is_writing=0; fi
   if \[ "$is_reading" = 0 ] && \[ "$is_writing" = 0 ]; then local name=connect; fi
