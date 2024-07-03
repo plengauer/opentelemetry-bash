@@ -28,7 +28,7 @@ port=12345
 response_file="$(\mktemp)"
 netcat -l "$port" > "$response_file" &
 \echo -n hello world | netcat -w 30 127.0.0.1 "$port"
-assert_equals "hello world" "$(cat "$response_file")"
+assert_equals "hello world" "$(\cat "$response_file")"
 span="$(resolve_span '.kind == "SpanKind.CLIENT") | select(.name == "send/receive"')"
 assert_equals "send/receive" $(\echo "$span" | \jq -r '.name')
 span="$(resolve_span '.kind == "SpanKind.SERVER") | select(.name == "send/receive"')"
@@ -53,7 +53,7 @@ assert_equals "$(curl http://www.example.com)" "$(\cat "$actual")"
 \echo "TEST 3" >&2
 port=$((port + 1))
 \cat /dev/urandom | \head -c $((1024 * 1024 * 10)) > "$expected"
-{ echo -e 'HTTP/1.1 200 OK\r\nFoo: Bar\r\n\r\n' && cat "$expected"; } | netcat -l "$port" &
+{ \echo -e 'HTTP/1.1 200 OK\r\nFoo: Bar\r\n\r\n' && \cat "$expected"; } | netcat -l "$port" &
 wget -O "$actual" http://127.0.0.1/
 assert_equals "$(\cat "$expected")" "$(\cat "$actual")"
 
