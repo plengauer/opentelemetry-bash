@@ -64,7 +64,7 @@ assert_equals "$(\cat "$expected")" "$(\cat "$actual")"
 port=$((port + 1))
 \cat /dev/urandom | \head -c $((1024 * 1024 * 10)) > "$expected"
 netcat -l "$port" > "$actual" &
-pid="$?"
+pid="$!"
 \cat "$expected" | netcat -w 3 127.0.0.1 "$port"
 wait "$pid"
 assert_equals "$(\cat "$expected")" "$(\cat "$actual")"
@@ -74,7 +74,7 @@ assert_equals "$(\cat "$expected")" "$(\cat "$actual")"
 port=$((port + 1))
 \cat /dev/urandom | \tr -d '\n' | \head -c $((1024 * 1024 * 10)) > "$expected"
 netcat -l "$port" > "$actual" &
-pid="$?"
+pid="$!"
 \cat "$expected" | netcat -w 3 127.0.0.1 "$port"
 wait "$pid"
 assert_equals "$(\cat "$expected")" "$(\cat "$actual")"
@@ -85,7 +85,7 @@ assert_equals "$(\cat "$expected")" "$(\cat "$actual")"
 port=$((port + 1))
 \cat /dev/urandom | \head -c $((1024 * 1024 * 10)) > "$expected"
 \cat "$expected" | netcat -l "$port" &
-pid="$?"
+pid="$!"
 netcat -w 3 127.0.0.1 "$port" > "$actual"
 wait "$pid"
 assert_equals "$(\cat "$expected")" "$(\cat "$actual")"
