@@ -29,7 +29,7 @@ response_file="$(\mktemp)"
 netcat -l "$port" > "$response_file" &
 pid="$!"
 \echo -n hello world | netcat -w 30 127.0.0.1 "$port"
-wait "$pid"
+\wait "$pid"
 assert_equals "hello world" "$(\cat "$response_file")"
 span="$(resolve_span '.kind == "SpanKind.CLIENT") | select(.name == "send/receive"')"
 assert_equals "send/receive" $(\echo "$span" | \jq -r '.name')
@@ -66,7 +66,7 @@ port=$((port + 1))
 netcat -l "$port" > "$actual" &
 pid="$!"
 \cat "$expected" | netcat -w 3 127.0.0.1 "$port"
-wait "$pid"
+\wait "$pid"
 assert_equals "$(\cat "$expected")" "$(\cat "$actual")"
 
 # check binary data without linefeed (linefeed has an internal meaning)
@@ -76,7 +76,7 @@ port=$((port + 1))
 netcat -l "$port" > "$actual" &
 pid="$!"
 \cat "$expected" | netcat -w 3 127.0.0.1 "$port"
-wait "$pid"
+\wait "$pid"
 assert_equals "$(\cat "$expected")" "$(\cat "$actual")"
 
 # check response only, no request
@@ -87,5 +87,5 @@ port=$((port + 1))
 \cat "$expected" | netcat -l "$port" &
 pid="$!"
 netcat -w 3 127.0.0.1 "$port" > "$actual"
-wait "$pid"
+\wait "$pid"
 assert_equals "$(\cat "$expected")" "$(\cat "$actual")"
