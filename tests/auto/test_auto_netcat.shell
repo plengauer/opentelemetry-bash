@@ -63,7 +63,7 @@ assert_equals "$(curl http://www.example.com)" "$(\cat "$actual")"
 port=$((port + 1))
 \cat /dev/urandom | \head -c $((1024 * 1024 * 10)) > "$expected"
 { \echo -e 'HTTP/1.1 200 OK\r\nFoo: Bar\r\n\r\n' && \cat "$expected"; } | netcat -l "$port" &
-wget -O "$actual" http://127.0.0.1/
+wget -O "$actual" http://127.0.0.1:$port/
 assert_equals "$(\cat "$expected")" "$(\cat "$actual")"
 
 # check large binary data integrety
