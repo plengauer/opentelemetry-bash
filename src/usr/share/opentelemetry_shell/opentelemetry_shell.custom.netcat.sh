@@ -9,19 +9,23 @@ _otel_inject_netcat() {
     if _otel_args_contains -e || _otel_args_contains --exec || _otel_args_contains -c || _otel_args_contains --sh-exec; then
       \eval _otel_call "$(_otel_inject_netcat_listen_and_respond_args "$@")"
     else
-      local span_handle_file="$(\mktemp -u)"
-      \mkfifo "$span_handle_file"
+      local span_handle="$(otel_span_start CONSUMER send/receive)"
+      _otel_netcat_parse_args "$span_handle" "$@" > /dev/null
+      local span_handle_file="$(\mktemp)"
       local exit_code_file="$(\mktemp)"
       \echo 0 > "$exit_code_file"
-      { _otel_call "$@" || \echo "$?" > "$exit_code_file"; } | _otel_netcat_parse_request 1 "$span_handle_file" "$@" | { local span_handle="$(\cat "$span_handle_file")"; \cat; otel_span_end "$span_handle"; } # TODO in theory we could parse the response from stdin, but then ending the span is not so easy anymore
+      _otel_netcat_parse_response 1 "$span_handle_file" | { _otel_call "$@" || \echo "$?" > "$exit_code_file"; } | _otel_netcat_parse_request 1 "$span_handle_file" "$@"
+      otel_span_end "$span_handle"
       return "$(\cat "$exit_code_file")"
     fi
   else
-    local span_handle_file="$(\mktemp -u)"
-    \mkfifo "$span_handle_file"
+    local span_handle="$(otel_span_start PRODUCER send/receive)"
+    _otel_netcat_parse_args "$span_handle" "$@" > /dev/null
+    local span_handle_file="$(\mktemp)"
     local exit_code_file="$(\mktemp)"
     \echo 0 > "$exit_code_file"
     _otel_netcat_parse_request 0 "$span_handle_file" "$@" | { _otel_call "$@" || \echo "$?" > "$exit_code_file"; } | _otel_netcat_parse_response 0 "$span_handle_file"
+    otel_span_end "$span_handle"
     return "$(\cat "$exit_code_file")"
   fi
 }
@@ -33,15 +37,16 @@ _otel_inject_netcat_listen_and_respond_args() {
     \echo -n ' '
     if (\[ "$1" = -e ] || \[ "$1" = --exec ] || \[ "$1" = -c ] || \[ "$1" = --sh-exec ]) && \[ "$#" -gt 1 ]; then
       local command="$2"; shift; shift
-      local span_handle_file="$(\mktemp -u)"
+      local span_handle_file="$(\mktemp)"
       local span_handle_file_inner="$(\mktemp -u)"
       (\tee "$span_handle_file_inner" > "$span_handle_file" &)
       # TODO the following injection doesnt maintain the exit code, does it matter though? is it important for netcat?
       _otel_escape_args -c "OTEL_SHELL_AUTO_INJECTED=FALSE
 . otel.sh
-\mkfifo '$span_handle_file' '$span_handle_file_inner'
+# TODO create span like above, also reconsider how span activation should work here
+\mkfifo '$span_handle_file_inner'
 (\tee '$span_handle_file_inner' > '$span_handle_file' &)
-_otel_netcat_parse_request 1 '$span_handle_file' $(_otel_escape_args "$@") | { otel_span_activate \$(\cat '$span_handle_file_inner'); $command; } | _otel_netcat_parse_response 1 '$span_handle_file'
+_otel_netcat_parse_request 1 '$span_handle_file' $(_otel_escape_args "$@") | { local span_handle=\$(\cat '$span_handle_file_inner'); if \[ \$span_handle -ge 0 ]; then otel_span_activate \$span_handle; fi; $command; } | _otel_netcat_parse_response 1 '$span_handle_file'
 \rm '$span_handle_file' '$span_handle_file_inner' 2> /dev null"
     else
       _otel_escape_arg "$1"; shift
@@ -53,15 +58,11 @@ _otel_netcat_parse_request() {
   local is_server_side="$1"; shift
   local span_handle_file="$1"; shift
   if ! read -r line; then
-    if \[ "$is_server_side" = 1 ]; then local span_handle="$(otel_span_start SERVER send/receive)"; else local span_handle="$(otel_span_start CLIENT send/receive)"; fi
-    _otel_netcat_parse_args "$span_handle" "$@" > /dev/null
-    \echo "$span_handle" > "$span_handle_file"
+    \echo "-1" > "$span_handle_file"
     return 0
   fi
   if ! _otel_string_starts_with "$(\printf '%s' "$line" | \cut -sd ' ' -f 3)" HTTP/; then
-    if \[ "$is_server_side" = 1 ]; then local span_handle="$(otel_span_start SERVER send/receive)"; else local span_handle="$(otel_span_start CLIENT send/receive)"; fi
-    _otel_netcat_parse_args "$span_handle" "$@" > /dev/null
-    \echo "$span_handle" > "$span_handle_file"
+    \echo "-1" > "$span_handle_file"
     \echo "$line"
     \cat
     return 0
@@ -121,14 +122,15 @@ _otel_netcat_parse_request() {
 _otel_netcat_parse_response() {
   local is_server_side="$1"; shift
   local span_handle_file="$1"; shift
-  local span_handle="$(\cat "$span_handle_file")"
-  read -r line
+  if ! read -r line; then
+    return 0
+  fi
   if ! _otel_string_starts_with "$line" HTTP/; then
     \echo "$line"
     \cat
-    otel_span_end "$span_handle"
     return 0
   fi
+  local span_handle="$(\cat "$span_handle_file")"
   local line="$(\printf '%s' "$line" | \tr -d '\r')"
   local protocol="$(\printf '%s' "$line" | \cut -sd ' ' -f 1)"
   local response_code="$(\printf '%s' "$line" | \cut -sd ' ' -f 2)"
