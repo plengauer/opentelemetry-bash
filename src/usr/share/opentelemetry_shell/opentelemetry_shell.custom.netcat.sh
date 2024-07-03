@@ -52,11 +52,16 @@ _otel_netcat_parse_request 1 '$span_handle_file' $(_otel_escape_args "$@") | { o
 _otel_netcat_parse_request() {
   local is_server_side="$1"; shift
   local span_handle_file="$1"; shift
-  read -r line
+  if ! read -r line; then
+    if \[ "$is_server_side" = 1 ]; then local span_handle="$(otel_span_start SERVER send/receive)"; else local span_handle="$(otel_span_start CLIENT send/receive)"; fi
+    _otel_netcat_parse_args "$span_handle" "$@" > /dev/null
+    \echo "$span_handle" > "$span_handle_file"
+    return 0
+  fi
   if ! _otel_string_starts_with "$(\printf '%s' "$line" | \cut -sd ' ' -f 3)" HTTP/; then
     if \[ "$is_server_side" = 1 ]; then local span_handle="$(otel_span_start SERVER send/receive)"; else local span_handle="$(otel_span_start CLIENT send/receive)"; fi
-    \echo "$span_handle" > "$span_handle_file"
     _otel_netcat_parse_args "$span_handle" "$@" > /dev/null
+    \echo "$span_handle" > "$span_handle_file"
     \echo "$line"
     \cat
     return 0
