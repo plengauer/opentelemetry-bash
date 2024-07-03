@@ -9,11 +9,19 @@
 # *) as soon as a request or response (individually) looks like HTTP, the instrumentation assumes its valid HTTP exchange and may deadlock if its not. meaning, lets imagine that there is netcat that always response with a valid HTTP response without actually receiving an HTTP request, or not respecting the protocol.
 
 _otel_inject_netcat() {
+  local stdin="$(\readlink -f /dev/stdin)"
+  local stdout="$(\readlink -f /dev/stdout)"
+  if \[ "$stdin" != /dev/null ] && \[ -e "$stdin" ]; then local is_reading=1; fi
+  if \[ "$stdout" != /dev/null ] && \[ -e "$stdout" ]; then local is_writing=1; fi
+  if \[ "$is_reading" = 0 ] && \[ "$is_writing" = 0 ]; then local name=connect; fi
+  if \[ "$is_reading" = 0 ] && \[ "$is_writing" = 1]; then local name=send; fi
+  if \[ "$is_reading" = 1 ] && \[ "$is_writing" = 0]; then local name=receive; fi
+  if \[ "$is_reading" = 1 ] && \[ "$is_writing" = 1]; then local name=send/receive; fi
   if _otel_args_contains -l "$@" || _otel_args_contains --listen "$@" || _otel_args_contains -e "$@" || _otel_args_contains --exec "$@" || _otel_args_contains -c "$@" || _otel_args_contains --sh-exec "$@"; then
     if _otel_args_contains -e || _otel_args_contains --exec || _otel_args_contains -c || _otel_args_contains --sh-exec; then
       \eval _otel_call "$(_otel_inject_netcat_listen_and_respond_args "$@")"
     else
-      local span_handle="$(otel_span_start CONSUMER send/receive)"
+      local span_handle="$(otel_span_start CONSUMER "$name")"
       _otel_netcat_parse_args "$span_handle" "$@" > /dev/null
       local span_handle_file="$(\mktemp)"
       local exit_code_file="$(\mktemp)"
@@ -25,7 +33,7 @@ _otel_inject_netcat() {
       return "$exit_code"
     fi
   else
-    local span_handle="$(otel_span_start PRODUCER send/receive)"
+    local span_handle="$(otel_span_start PRODUCER "$name")"
     _otel_netcat_parse_args "$span_handle" "$@" > /dev/null
     local span_handle_file="$(\mktemp)"
     local exit_code_file="$(\mktemp)"
@@ -37,6 +45,8 @@ _otel_inject_netcat() {
     return "$exit_code"
   fi
 }
+
+_otel_compute_name 
 
 _otel_inject_netcat_listen_and_respond_args() {
   _otel_escape_arg "$1"
