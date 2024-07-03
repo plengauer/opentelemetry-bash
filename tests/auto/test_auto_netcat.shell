@@ -31,9 +31,9 @@ pid="$!"
 \echo -n hello world | netcat -w 30 127.0.0.1 "$port"
 \wait "$pid"
 assert_equals "hello world" "$(\cat "$response_file")"
-span="$(resolve_span '.kind == "SpanKind.CLIENT") | select(.name == "send/receive"')"
+span="$(resolve_span '.kind == "SpanKind.CLIENT") | select(.name == "send"')"
 assert_equals "send/receive" $(\echo "$span" | \jq -r '.name')
-span="$(resolve_span '.kind == "SpanKind.SERVER") | select(.name == "send/receive"')"
+span="$(resolve_span '.kind == "SpanKind.SERVER") | select(.name == "receive"')"
 assert_equals "send/receive" $(\echo "$span" | \jq -r '.name')
 
 # check HTTP client with real HTTP server
