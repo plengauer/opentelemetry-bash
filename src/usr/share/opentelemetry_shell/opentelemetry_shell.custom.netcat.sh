@@ -20,7 +20,9 @@ _otel_inject_netcat() {
       \echo 0 > "$exit_code_file"
       _otel_netcat_parse_response 1 "$span_handle_file" | { _otel_call "$@" || \echo "$?" > "$exit_code_file"; } | _otel_netcat_parse_request 1 "$span_handle_file" "$@"
       otel_span_end "$span_handle"
-      return "$(\cat "$exit_code_file")"
+      local exit_code="$(\cat "$exit_code_file")"
+      \rm "$span_handle_file" "$exit_code_file" 2> /dev/null
+      return "$exit_code"
     fi
   else
     local span_handle="$(otel_span_start PRODUCER send/receive)"
@@ -30,7 +32,9 @@ _otel_inject_netcat() {
     \echo 0 > "$exit_code_file"
     _otel_netcat_parse_request 0 "$span_handle_file" "$@" | { _otel_call "$@" || \echo "$?" > "$exit_code_file"; } | _otel_netcat_parse_response 0 "$span_handle_file"
     otel_span_end "$span_handle"
-    return "$(\cat "$exit_code_file")"
+    local exit_code="$(\cat "$exit_code_file")"
+    \rm "$span_handle_file" "$exit_code_file" 2> /dev/null
+    return "$exit_code"
   fi
 }
 
@@ -41,19 +45,18 @@ _otel_inject_netcat_listen_and_respond_args() {
     \echo -n ' '
     if (\[ "$1" = -e ] || \[ "$1" = --exec ] || \[ "$1" = -c ] || \[ "$1" = --sh-exec ]) && \[ "$#" -gt 1 ]; then
       local command="$2"; shift; shift
-      local span_handle_file="$(\mktemp)"
-      local span_handle_file_inner="$(\mktemp -u)"
-      (\tee "$span_handle_file_inner" > "$span_handle_file" &)
       # TODO the following injection doesnt maintain the exit code, does it matter though? is it important for netcat?
       _otel_escape_args -c "OTEL_SHELL_AUTO_INJECTED=FALSE
+span_handle_file=\"\$(mktemp)\"
+span_handle_file_inner=\"\$(mktemp -u)\"
+mkfifo \"\$span_handle_file_inner\"
+(tee \"\$span_handle_file_inner\" > \"\$span_handle_file\" &)
 . otel.sh
-\mkfifo '$span_handle_file_inner'
-(\tee '$span_handle_file_inner' > '$span_handle_file' &)
-span_handle=\$(otel_span_start CONSUMER send/receive)
-_otel_netcat_parse_args \$span_handle $(_otel_escape_args "$@") > /dev/null
-_otel_netcat_parse_request 1 '$span_handle_file' $(_otel_escape_args "$@") | { local span_handle=\$(\cat '$span_handle_file_inner'); if \[ \$span_handle -ge 0 ]; then otel_span_activate \$span_handle; fi; $command; } | _otel_netcat_parse_response 1 '$span_handle_file'
-otel_span_end \$span_handle
-\rm '$span_handle_file' '$span_handle_file_inner' 2> /dev null"
+span_handle=\"\$(otel_span_start CONSUMER send/receive)\"
+_otel_netcat_parse_args \"\$span_handle\" $(_otel_escape_args "$@") > /dev/null
+_otel_netcat_parse_request 1 \"\$span_handle_file\" $(_otel_escape_args "$@") | { local span_handle=\"\$(\cat \"\$span_handle_file_inner\")\"; if \[ \"\$span_handle\" -ge 0 ]; then otel_span_activate \"\$span_handle\"; fi; $command; } | _otel_netcat_parse_response 1 \"\$span_handle_file\"
+otel_span_end \"\$span_handle\"
+\rm \"\$span_handle_file\" \"\$span_handle_file_inner\" 2> /dev null"
     else
       _otel_escape_arg "$1"; shift
     fi
