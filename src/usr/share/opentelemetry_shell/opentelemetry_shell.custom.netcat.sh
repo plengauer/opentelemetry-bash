@@ -76,11 +76,11 @@ _otel_netcat_parse_request() {
   local span_handle_file="$1"; shift
   if \[ "$is_server_side" = 0 ]; then set -x; fi
   if ! read -r line; then
-    \echo "-1" > "$span_handle_file"
+    \echo -1 > "$span_handle_file"
     return 0
   fi
   if ! _otel_string_starts_with "$(\printf '%s' "$line" | \cut -sd ' ' -f 3)" HTTP/; then
-    \echo "-1" > "$span_handle_file"
+    \echo -1 > "$span_handle_file"
     \echo "$line"
     \cat
     return 0
