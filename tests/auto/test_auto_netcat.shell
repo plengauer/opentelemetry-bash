@@ -55,7 +55,7 @@ port=$((port + 1))
 \cat /dev/urandom | \head -c $((1024 * 1024 * 10)) > "$expected"
 { echo -e 'HTTP/1.1 200 OK\r\nFoo: Bar\r\n\r\n' && cat "$expected"; } | netcat -l "$port" &
 wget -O "$actual" http://127.0.0.1/
-assert_equals "$(cat "$expected")" "$(cat "$actual")"
+assert_equals "$(\cat "$expected")" "$(\cat "$actual")"
 
 # check large binary data
 \echo "TEST 4" >&2
@@ -63,9 +63,9 @@ port=$((port + 1))
 \cat /dev/urandom | \head -c $((1024 * 1024 * 10)) > "$expected"
 netcat -l "$port" > "$actual" &
 pid="$?"
-cat "$expected" | netcat -w 3 127.0.0.1 "$port"
+\cat "$expected" | netcat -w 3 127.0.0.1 "$port"
 wait "$pid"
-assert_equals "$(cat "$expected")" "$(cat "$actual")"
+assert_equals "$(\cat "$expected")" "$(\cat "$actual")"
 
 # check binary data without linefeed (linefeed has an internal meaning)
 \echo "TEST 5" >&2
@@ -73,7 +73,7 @@ port=$((port + 1))
 \cat /dev/urandom | \tr -d '\n' | \head -c $((1024 * 1024 * 10)) > "$expected"
 netcat -l "$port" > "$actual" &
 pid="$?"
-cat "$expected" | netcat -w 3 127.0.0.1 "$port"
+\cat "$expected" | netcat -w 3 127.0.0.1 "$port"
 wait "$pid"
 assert_equals "$(\cat "$expected")" "$(\cat "$actual")"
 
