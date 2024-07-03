@@ -14,9 +14,9 @@ _otel_inject_netcat() {
   if \[ "$stdin" != /dev/null ] && \[ -e "$stdin" ]; then local is_reading=1; else local is_reading=0; fi
   if \[ "$stdout" != /dev/null ] && \[ -e "$stdout" ]; then local is_writing=1; else local is_writing=0; fi
   if \[ "$is_reading" = 0 ] && \[ "$is_writing" = 0 ]; then local name=connect; fi
-  if \[ "$is_reading" = 0 ] && \[ "$is_writing" = 1]; then local name=send; fi
-  if \[ "$is_reading" = 1 ] && \[ "$is_writing" = 0]; then local name=receive; fi
-  if \[ "$is_reading" = 1 ] && \[ "$is_writing" = 1]; then local name=send/receive; fi
+  if \[ "$is_reading" = 0 ] && \[ "$is_writing" = 1 ]; then local name=send; fi
+  if \[ "$is_reading" = 1 ] && \[ "$is_writing" = 0 ]; then local name=receive; fi
+  if \[ "$is_reading" = 1 ] && \[ "$is_writing" = 1 ]; then local name=send/receive; fi
   if _otel_args_contains -l "$@" || _otel_args_contains --listen "$@" || _otel_args_contains -e "$@" || _otel_args_contains --exec "$@" || _otel_args_contains -c "$@" || _otel_args_contains --sh-exec "$@"; then
     if _otel_args_contains -e || _otel_args_contains --exec || _otel_args_contains -c || _otel_args_contains --sh-exec; then
       \eval _otel_call "$(_otel_inject_netcat_listen_and_respond_args "$@")"
