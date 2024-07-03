@@ -9,11 +9,8 @@
 # *) as soon as a request or response (individually) looks like HTTP, the instrumentation assumes its valid HTTP exchange and may deadlock if its not. meaning, lets imagine that there is netcat that always response with a valid HTTP response without actually receiving an HTTP request, or not respecting the protocol.
 
 _otel_inject_netcat() {
-  local stdin="$(\readlink -f /dev/stdin)"
-  local stdout="$(\readlink -f /dev/stdout)"
-  \echo "$stdin" "$stdout" >&2
-  if \[ "$stdin" != /dev/null ] && \[ -e "$stdin" ]; then local is_reading=1; else local is_reading=0; fi
-  if \[ "$stdout" != /dev/null ] && \[ -e "$stdout" ]; then local is_writing=1; else local is_writing=0; fi
+  if \[ "$(\readlink -f /dev/stdin)" != /dev/null ]; then local is_reading=1; else local is_reading=0; fi
+  if \[ "$(\readlink -f /dev/stdout)" != /dev/null ]; then local is_writing=1; else local is_writing=0; fi
   if \[ "$is_reading" = 0 ] && \[ "$is_writing" = 0 ]; then local name=connect; fi
   if \[ "$is_reading" = 0 ] && \[ "$is_writing" = 1 ]; then local name=send; fi
   if \[ "$is_reading" = 1 ] && \[ "$is_writing" = 0 ]; then local name=receive; fi
