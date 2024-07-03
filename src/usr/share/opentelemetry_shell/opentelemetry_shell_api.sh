@@ -158,6 +158,12 @@ otel_span_end() {
   _otel_sdk_communicate "SPAN_END" "$span_handle"
 }
 
+otel_span_name() {
+  local span_handle="$1"
+  local span_name="$2"
+  _otel_sdk_communicate "SPAN_NAME" "$span_handle" "$span_name"
+}
+
 otel_span_error() {
   local span_handle="$1"
   _otel_sdk_communicate "SPAN_ERROR" "$span_handle"
