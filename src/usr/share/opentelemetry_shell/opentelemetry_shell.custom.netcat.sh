@@ -20,7 +20,7 @@ _otel_inject_netcat() {
     if _otel_args_contains -e || _otel_args_contains --exec || _otel_args_contains -c || _otel_args_contains --sh-exec; then
       \eval _otel_call "$(_otel_inject_netcat_listen_and_respond_args "$@")"
     else
-      local span_handle_file="$(\mktemp -u)"
+      local span_handle_file="$(\mktemp)"
       local exit_code_file="$(\mktemp)"
       \echo 0 > "$exit_code_file"
       local span_handle="$(otel_span_start CONSUMER "$name")"
@@ -34,7 +34,7 @@ _otel_inject_netcat() {
       return "$exit_code"
     fi
   else
-    local span_handle_file="$(\mktemp -u)"
+    local span_handle_file="$(\mktemp)"
     local exit_code_file="$(\mktemp)"
     \echo 0 > "$exit_code_file"
     local span_handle="$(otel_span_start PRODUCER "$name")"
