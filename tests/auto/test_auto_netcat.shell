@@ -20,13 +20,6 @@ assert_equals "send/receive" $(\echo "$span" | \jq -r '.name')
 \echo "TEST 1" >&2
 \echo -e 'GET / HTTP/1.1\r\n\r\n' | netcat -w 5 www.google.com 80
 assert_equals 0 "$?"
-span="$(resolve_span '.name == "netcat -w 5 www.google.com 80"')"
-assert_equals "SpanKind.INTERNAL" $(\echo "$span" | \jq -r '.kind')
-span_id=$(\echo "$span" | \jq -r '.context.span_id')
-span="$(resolve_span '.name == "send/receive"')"
-assert_equals "SpanKind.PRODUCER" $(\echo "$span" | \jq -r '.kind')
-assert_equals "$span_id" $(\echo "$span" | \jq -r '.parent_id')
-span_id=$(\echo "$span" | \jq -r '.context.span_id')
 span="$(resolve_span '.name == "GET"')"
 assert_equals "SpanKind.CLIENT" $(\echo "$span" | \jq -r '.kind')
 assert_not_equals "null" $(\echo "$span" | \jq -r '.parent_id')
@@ -41,7 +34,14 @@ assert_not_equals "null" "$(\echo "$span" | \jq -r '.attributes."user_agent.orig
 assert_equals "200" "$(\echo "$span" | \jq -r '.attributes."http.response.status_code"')"
 assert_not_equals null "$(\echo "$span" | \jq -r '.attributes."http.response.header.content-type"')"
 assert_not_equals null "$(\echo "$span" | \jq -r '.attributes."network.peer.port"')"
-assert_equals "$span_id" $(\echo "$span" | \jq -r '.parent_id')
+span_id=$(\echo "$span" | \jq -r '.parent_id')
+span="$(resolve_span '.context.span_id == "'$span_id'"')"
+assert_equals "SpanKind.PRODUCER" $(\echo "$span" | \jq -r '.kind')
+assert_equals "send/receive" $(\echo "$span" | \jq -r '.name')
+span_id=$(\echo "$span" | \jq -r '.parent_id')
+span="$(resolve_span '.context.span_id == "'$span_id'"')"
+assert_equals "SpanKind.INTERNAL" $(\echo "$span" | \jq -r '.kind')
+assert_equals "netcat -w 5 www.google.com 80" $(\echo "$span" | \jq -r '.name')
 
 # check HTTP client with real HTTP server (compare instrumented vs non-instrumented)
 \echo "TEST 2" >&2
