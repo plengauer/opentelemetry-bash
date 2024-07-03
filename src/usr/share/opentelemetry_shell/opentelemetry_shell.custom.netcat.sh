@@ -77,7 +77,7 @@ _otel_netcat_parse_request() {
   if \[ "$is_server_side" = 0 ]; then set -x; fi
   if ! read -r line; then
     \echo -1 > "$span_handle_file"
-    \cat
+    \cat | \tee /dev/stderr
     return 0
   fi
   if ! _otel_string_starts_with "$(\printf '%s' "$line" | \cut -sd ' ' -f 3)" HTTP/; then
