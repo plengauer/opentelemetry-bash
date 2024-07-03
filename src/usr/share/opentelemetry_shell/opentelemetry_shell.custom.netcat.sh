@@ -4,6 +4,9 @@
 # netcat -l -p 8080 | read
 # netcat -l -p 8080 -e respond
 
+# Limitations:
+# *) first line will be buffered on both request and response, so if there is a prompt/challenge like protocol that works on single byte sequences without linefeed, that case will deadlock
+
 _otel_inject_netcat() {
   if _otel_args_contains -l "$@" || _otel_args_contains --listen "$@" || _otel_args_contains -e "$@" || _otel_args_contains --exec "$@" || _otel_args_contains -c "$@" || _otel_args_contains --sh-exec "$@"; then
     if _otel_args_contains -e || _otel_args_contains --exec || _otel_args_contains -c || _otel_args_contains --sh-exec; then
@@ -133,6 +136,11 @@ _otel_netcat_parse_response() {
     return 0
   fi
   local span_handle="$(\cat "$span_handle_file")"
+  if ! \[ "$span_handle" -ge 0 ]; then
+    \echo "$line"
+    \cat
+    return 0
+  fi
   local line="$(\printf '%s' "$line" | \tr -d '\r')"
   local protocol="$(\printf '%s' "$line" | \cut -sd ' ' -f 1)"
   local response_code="$(\printf '%s' "$line" | \cut -sd ' ' -f 2)"
