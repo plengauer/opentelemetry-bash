@@ -5,7 +5,7 @@ set -e
 # check simple HTTP request
 \echo "TEST 0" >&2
 \echo 'GET / HTTP/1.1
-' | netcat -w 30 www.google.com 80
+' | netcat -w 5 www.google.com 80
 assert_equals 0 "$?"
 span="$(resolve_span '.name == "GET"')"
 assert_equals "SpanKind.CLIENT" $(\echo "$span" | \jq -r '.kind')
@@ -28,7 +28,7 @@ port=12345
 response_file="$(\mktemp)"
 netcat -l "$port" > "$response_file" &
 pid="$!"
-\echo -n hello world | netcat -w 30 127.0.0.1 "$port"
+\echo -n hello world | netcat -w 1 127.0.0.1 "$port"
 \wait "$pid"
 assert_equals "hello world" "$(\cat "$response_file")"
 span="$(resolve_span '.kind == "SpanKind.CLIENT") | select(.name == "send"')"
@@ -65,7 +65,7 @@ port=$((port + 1))
 \cat /dev/urandom | \head -c $((1024 * 1024 * 10)) > "$expected"
 netcat -l "$port" > "$actual" &
 pid="$!"
-\cat "$expected" | netcat -w 3 127.0.0.1 "$port"
+\cat "$expected" | netcat -w 1 127.0.0.1 "$port"
 \wait "$pid"
 assert_equals "$(\cat "$expected")" "$(\cat "$actual")"
 
@@ -75,7 +75,7 @@ port=$((port + 1))
 \cat /dev/urandom | \tr -d '\n' | \head -c $((1024 * 1024 * 10)) > "$expected"
 netcat -l "$port" > "$actual" &
 pid="$!"
-\cat "$expected" | netcat -w 3 127.0.0.1 "$port"
+\cat "$expected" | netcat -w 1 127.0.0.1 "$port"
 \wait "$pid"
 assert_equals "$(\cat "$expected")" "$(\cat "$actual")"
 
@@ -86,6 +86,6 @@ port=$((port + 1))
 \cat /dev/urandom | \head -c $((1024 * 1024 * 10)) > "$expected"
 \cat "$expected" | netcat -l "$port" &
 pid="$!"
-netcat -w 3 127.0.0.1 "$port" > "$actual"
+netcat -w 1 127.0.0.1 "$port" > "$actual"
 \wait "$pid"
 assert_equals "$(\cat "$expected")" "$(\cat "$actual")"
