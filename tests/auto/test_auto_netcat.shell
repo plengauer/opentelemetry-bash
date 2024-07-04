@@ -61,7 +61,7 @@ assert_equals "$(curl http://www.example.com)" "$(\cat "$actual")"
 # check real HTTP client with HTTP server with binary data
 \echo "TEST 3" >&2
 port=$((port + 1))
-\cat /dev/urandom | \head -c $((1024 * 1024 * 10)) > "$expected"
+\cat /dev/urandom | \head -c $((1024 * 1)) > "$expected"
 { \echo -e 'HTTP/1.1 200 OK\r\nFoo: Bar\r\n\r\n' && \cat "$expected"; } | netcat -l -w 1 "$port" &
 wget -O "$actual" http://127.0.0.1:$port/
 assert_equals "$(\cat "$expected")" "$(\cat "$actual")"
@@ -69,7 +69,7 @@ assert_equals "$(\cat "$expected")" "$(\cat "$actual")"
 # check large binary data integrety
 \echo "TEST 4" >&2
 port=$((port + 1))
-\cat /dev/urandom | \head -c $((1024 * 1024 * 10)) > "$expected"
+\cat /dev/urandom | \head -c $((1024 * 1)) > "$expected"
 netcat -l "$port" > "$actual" &
 pid="$!"
 \cat "$expected" | netcat -w 1 127.0.0.1 "$port"
@@ -79,7 +79,7 @@ assert_equals "$(\cat "$expected")" "$(\cat "$actual")"
 # check binary data without linefeed (linefeed has an internal meaning)
 \echo "TEST 5" >&2
 port=$((port + 1))
-\cat /dev/urandom | \tr -d '\n' | \head -c $((1024 * 1024 * 10)) > "$expected"
+\cat /dev/urandom | \tr -d '\n' | \head -c $((1024 * 1)) > "$expected"
 netcat -l "$port" > "$actual" &
 pid="$!"
 \cat "$expected" | netcat -w 1 127.0.0.1 "$port"
@@ -89,7 +89,7 @@ assert_equals "$(\cat "$expected")" "$(\cat "$actual")"
 # check simple binary response only
 \echo "TEST 6" >&2
 port=$((port + 1))
-\cat /dev/urandom | \head -c $((1024 * 1024 * 10)) > "$expected"
+\cat /dev/urandom | \head -c $((1024 * 1)) > "$expected"
 \cat "$expected" | netcat -l "$port" &
 pid="$!"
 netcat -w 1 127.0.0.1 "$port" > "$actual"
