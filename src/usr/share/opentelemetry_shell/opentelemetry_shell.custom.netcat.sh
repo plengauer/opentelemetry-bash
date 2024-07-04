@@ -85,12 +85,12 @@ _otel_netcat_parse_request() {
   local span_handle_file="$1"; shift
   if ! read -r line; then
     \echo -1 > "$span_handle_file"
-    \printf '%s' "$line"
+    \printf "$line"
     return 0
   fi
   if ! _otel_string_starts_with "$(\printf '%s' "$line" | \cut -sd ' ' -f 3)" HTTP/; then
     \echo -1 > "$span_handle_file"
-    \printf '%s\n' "$line"
+    \printf "$line\n"
     \cat
     return 0
   fi
@@ -152,17 +152,17 @@ _otel_netcat_parse_response() {
   local is_server_side="$1"; shift
   local span_handle_file="$1"; shift
   if ! read -r line; then
-    \printf '%s' "$line"
+    \printf "$line"
     return 0
   fi
   if ! _otel_string_starts_with "$line" HTTP/; then
-    \printf '%s\n' "$line"
+    \printf "$line\n"
     \cat
     return 0
   fi
   local span_handle="$(\cat "$span_handle_file")"
   if \[ -z "$span_handle" ] || ! \[ "$span_handle" -ge 0 ]; then
-    \printf '%s\n' "$line" 
+    \printf "$line\n" 
     \cat
     return 0
   fi
