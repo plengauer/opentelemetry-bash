@@ -1,3 +1,4 @@
+set -e
 . ./assert.sh
 . otel.sh
 
