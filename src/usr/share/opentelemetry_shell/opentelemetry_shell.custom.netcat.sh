@@ -28,7 +28,7 @@ _otel_inject_netcat() {
       \echo 0 > "$exit_code_file"
       local span_handle="$(otel_span_start CONSUMER "$name")"
       otel_span_activate "$span_handle"
-      _otel_netcat_parse_args "$span_handle" "$@" > /dev/null
+      _otel_netcat_parse_args 0 "$span_handle" "$@" > /dev/null
       _otel_netcat_parse_response 1 "$span_handle_file" | { _otel_call "$@" || \echo "$?" > "$exit_code_file"; } | _otel_netcat_parse_request 1 "$span_handle_file" "$@"
       otel_span_deactivate "$span_handle"
       otel_span_end "$span_handle"
@@ -43,7 +43,7 @@ _otel_inject_netcat() {
     \echo 0 > "$exit_code_file"
     local span_handle="$(otel_span_start PRODUCER "$name")"
     otel_span_activate "$span_handle"
-    _otel_netcat_parse_args "$span_handle" "$@" > /dev/null
+    _otel_netcat_parse_args 0 "$span_handle" "$@" > /dev/null
     _otel_netcat_parse_request 0 "$span_handle_file" "$@" | { _otel_call "$@" || \echo "$?" > "$exit_code_file"; } | _otel_netcat_parse_response 0 "$span_handle_file"
     otel_span_deactivate "$span_handle"
     otel_span_end "$span_handle"
@@ -70,7 +70,7 @@ mkfifo \"\$span_handle_file_1\" \"\$span_handle_file_2\"
 (tee \"\$span_handle_file_1\" \"\$span_handle_file_2\" < \"\$span_handle_file\" > /dev/null &)
 . otel.sh
 span_handle=\"\$(otel_span_start CONSUMER send/receive)\"
-_otel_netcat_parse_args \"\$span_handle\" $(_otel_escape_args "$@") > /dev/null
+_otel_netcat_parse_args 1 \"\$span_handle\" $(_otel_escape_args "$@") > /dev/null
 _otel_netcat_parse_request 1 \"\$span_handle_file\" $(_otel_escape_args "$@") | { local span_handle=\"\$(\cat \"\$span_handle_file_inner\")\"; if \[ \"\$span_handle\" -ge 0 ]; then otel_span_activate \"\$span_handle\"; fi; $command; } | _otel_netcat_parse_response 1 \"\$span_handle_file\"
 otel_span_end \"\$span_handle\"
 \rm \"\$span_handle_file\" \"\$span_handle_file_inner\" 2> /dev null"
@@ -114,7 +114,7 @@ _otel_netcat_parse_request() {
   if \[ "$is_server_side" = 1 ]; then local span_handle="$(otel_span_start SERVER "$method")"; else local span_handle="$(otel_span_start CLIENT "$method")"; fi
   \echo "$span_handle" > "$span_handle_file"
   # TODO add span link with old traceparent and tracestate
-  local host_and_port="$(_otel_netcat_parse_args "$span_handle" "$@")"
+  local host_and_port="$(_otel_netcat_parse_args "$is_server_side" "$span_handle" "$@")"
   otel_span_attribute_typed "$span_handle" string network.protocol.name="$(\printf '%s' "$protocol" | \cut -d / -f 1 | \tr '[:upper:]' '[:lower:]')"
   otel_span_attribute_typed "$span_handle" string network.protocol.version="$(\printf '%s' "$protocol" | \cut -d / -f 2-)"
   otel_span_attribute_typed "$span_handle" string url.full="$(\printf '%s' "$protocol" | \cut -d / -f 1 | \tr '[:upper:]' '[:lower:]')://$host_and_port$path_and_query"
@@ -194,47 +194,56 @@ _otel_netcat_parse_response() {
 }
 
 _otel_netcat_parse_args() {
+  local is_server_side="$1"; shift
   local span_handle="$1"; shift
-  local transport=tcp
+  local transport="${NCAT_PROTO:-tcp}"
   local host=""
   local ip=""
   local port=31337
-  local is_listening=0
-  shift
-  while \[ "$#" -gt 0 ]; do
-    if \[ "$1" = -l ] || \[ "$1" = --listen ]; then
-      local is_listening=1
-    elif \[ "$1" = -u ] || \[ "$1" = --udp ]; then
-      local transport=udp
-    elif \[ "$1" = --sctp ]; then
-      local transport=sctp
-    elif \[ "$1" = -p ] && \[ "$#" -ge 2 ]; then
-      local port="$2"
-      shift
-    elif _otel_string_starts_with "$1" - && \[ "$#" -gt 1 ] && _otel_is_netcat_arg_arg "$1"; then
-      shift
-    elif _otel_string_starts_with "$1" -; then
-      \true
+  if \[ -n "$NCAT_PROTO" ]; then
+    otel_span_attribute_typed "$span_handle" string network.peer.address="$NCAT_REMOTE_ADDR"
+    otel_span_attribute_typed "$span_handle" int network.peer.port="$NCAT_REMOTE_PORT"
+    if \[ "$is_server_side" = 1 ]; then
+      otel_span_attribute_typed "$span_handle" string server.address="$NCAT_LOCAL_ADDR"
+      otel_span_attribute_typed "$span_handle" int server.port="$NCAT_LOCAL_PORT"
+      otel_span_attribute_typed "$span_handle" string client.address="$NCAT_REMOTE_ADDR"
+      otel_span_attribute_typed "$span_handle" int client.port="$NCAT_REMOTE_PORT"
+      local port="$NCAT_LOCAL_PORT"
     else
-      if \[ "$1" -eq "$1" ] 2> /dev/null; then
-        local port="$1"
-      elif _otel_is_ip "$1"; then
-        local ip="$1"
-        local host="$1"
-      else
-        local host="$1"
-      fi
+      otel_span_attribute_typed "$span_handle" string server.address="$NCAT_REMOTE_ADDR"
+      otel_span_attribute_typed "$span_handle" int server.port="$NCAT_REMOTE_PORT"
+      otel_span_attribute_typed "$span_handle" string client.address="$NCAT_LOCAL_ADDR"
+      otel_span_attribute_typed "$span_handle" int client.port="$NCAT_LOCAL_PORT"
+      local host="$NCAT_REMOTE_ADDR"
+      local port="$NCAT_REMOTE_PORT"
     fi
-    shift
-  done
-  otel_span_attribute_typed "$span_handle" string network.transport="$transport"
-  if \[ "$is_listening" = 0 ]; then
-    otel_span_attribute_typed "$span_handle" string network.peer.address="$ip"
-    otel_span_attribute_typed "$span_handle" int network.peer.port="$port"
   fi
-  otel_span_attribute_typed "$span_handle" string server.address="$host"
-  otel_span_attribute_typed "$span_handle" int server.port="$port"
-  \echo "$host:$port"
+  while \[ "$#" -gt 0 ]; do
+      if \[ "$1" = -u ] || \[ "$1" = --udp ]; then local transport=udp
+      elif \[ "$1" = --sctp ]; then local transport=sctp
+      elif \[ "$1" = -p ] && \[ "$#" -ge 2 ]; then local port="$2"; shift
+      elif _otel_string_starts_with "$1" - && \[ "$#" -gt 1 ] && _otel_is_netcat_arg_arg "$1"; then shift
+      elif _otel_string_starts_with "$1" -; then \true
+      else
+        if \[ "$1" -eq "$1" ] 2> /dev/null; then
+          local port="$1"
+        elif _otel_is_ip "$1"; then
+          local ip="$1"
+          local host="$1"
+        else
+          local host="$1"
+        fi
+      fi
+      shift
+    done
+    otel_span_attribute_typed "$span_handle" string network.transport="$transport"
+    if \[ "$is_server_side" != 1 ]; then
+      if \[ -n "$ip" ]; then otel_span_attribute_typed "$span_handle" string network.peer.address="$ip"; fi
+      if \[ -n "$port" ]; then otel_span_attribute_typed "$span_handle" int network.peer.port="$port"; fi
+    fi
+    if \[ -n "$host" ]; then otel_span_attribute_typed "$span_handle" string server.address="$host"; fi
+    if \[ -n "$port" ]; then otel_span_attribute_typed "$span_handle" int server.port="$port"; fi
+    \echo "$host:$port"
 }
 
 _otel_is_ip() {
