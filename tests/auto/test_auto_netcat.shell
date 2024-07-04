@@ -64,7 +64,7 @@ port=$((port + 1))
 \cat /dev/urandom | \head -c $((1024 * 1)) > "$expected"
 { \echo -e 'HTTP/1.1 200 OK\r\nFoo: Bar\r\n\r\n' && \cat "$expected"; } | netcat -l -w 1 "$port" &
 wget -O "$actual" http://127.0.0.1:$port/
-assert_equals "$(\cat "$expected")" "$(\cat "$actual")"
+assert_equals "$(\cat "$expected" | \hexdump -c)" "$(\cat "$actual" | \hexdump -c)"
 
 # check large binary data integrety
 \echo "TEST 4" >&2
