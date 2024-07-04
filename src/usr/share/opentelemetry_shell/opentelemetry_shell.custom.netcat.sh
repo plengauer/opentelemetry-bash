@@ -123,20 +123,20 @@ _otel_netcat_parse_request() {
   otel_span_attribute_typed "$span_handle" string url.scheme="$(\printf '%s' "$protocol" | \cut -d / -f 1 | \tr '[:upper:]' '[:lower:]')"
   otel_span_attribute_typed "$span_handle" string http.request.method="$method"
   otel_span_attribute_typed "$span_handle" string user_agent.original=netcat
-  \echo -e "$method $path_and_query $protocol\r"
+  \printf '%s\r\n' "$method $path_and_query $protocol"
   if \[ "$_is_server_side" = 0 ]; then
     otel_span_activate "$span_handle"
-    \echo -e "traceparent: $TRACEPARENT\r"
-    \echo -e "tracestate: $TRACESTATE\r"
+    \printf '%s\r\n' "traceparent: $TRACEPARENT"
+    \printf '%s\r\n' "tracestate: $TRACESTATE"
     otel_span_deactivate "$span_handle"
   fi
   while read -r line; do
-    \echo -e "$line\r"
+    \printf '%s\r\n' "$line"
     local key="$(\printf '%s' "$line" | \cut -d ' ' -f 1 | \tr -d : | \tr '[:upper:]' '[:lower:]')"
     local value="$(\printf '%s' "$line" | \cut -d ' ' -f 2-)"
     otel_span_attribute_typed "$span_handle" string[1] http.request.header."$key"="$value"
   done < "$headers"
-  \echo -e '\r'
+  \printf '\r\n'
   local body_size_pipe="$(\mktemp -u)"
   local body_size_file="$(\mktemp)"
   \mkfifo "$body_size_pipe"
@@ -172,10 +172,10 @@ _otel_netcat_parse_response() {
   otel_span_attribute_typed "$span_handle" int http.response.status_code="$response_code"
   if \[ "$is_server_side" = 0 ] && \[ "$response_code" -ge 400 ]; then otel_span_error "$span_handle"; fi
   if \[ "$is_server_side" = 1 ] && \[ "$response_code" -ge 500 ]; then otel_span_error "$span_handle"; fi
-  \echo -e "$line\r"
+  \printf '%s\r\n' "$line"
   while read -r line; do
     local line="$(\printf '%s' "$line" | \tr -d '\r')"
-    \echo -e "$line\r"
+    \printf '%s\r\n' "$line"
     if \[ "${#line}" = 0 ]; then break; fi
     local key="$(\printf '%s' "$line" | \cut -d ' ' -f 1 | \tr -d : | \tr '[:upper:]' '[:lower:]')"
     local value="$(\printf '%s' "$line" | \cut -d ' ' -f 2-)"
