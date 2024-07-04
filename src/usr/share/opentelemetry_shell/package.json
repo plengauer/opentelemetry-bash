@@ -7,7 +7,7 @@
     "opentelemetry-resource-detector-git": "0.30.0",
     "@opentelemetry/resource-detector-github": "0.28.2",
     "@opentelemetry/resource-detector-container": "0.3.11",
-    "@opentelemetry/resource-detector-aws": "1.5.1",
+    "@opentelemetry/resource-detector-aws": "1.5.2",
     "@opentelemetry/resource-detector-gcp": "0.29.10",
     "@opentelemetry/resource-detector-alibaba-cloud": "0.28.10"
   }
