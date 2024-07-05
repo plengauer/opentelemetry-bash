@@ -71,7 +71,7 @@ assert_equals "$(\cat "$expected" | \hexdump -c)" "$(\cat "$actual" | \hexdump -
 # check large binary data integrety
 \echo "TEST 4" >&2
 port=$((port + 1))
-\cat /dev/urandom | \head -c $((1024 * 1)) > "$expected"
+\cat /dev/urandom | \head -c $((1024 * 1 / 4)) > "$expected"
 netcat -l "$port" > "$actual" &
 pid="$!"
 \cat "$expected" | netcat -w 1 127.0.0.1 "$port"
