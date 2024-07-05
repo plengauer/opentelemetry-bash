@@ -85,7 +85,7 @@ _otel_netcat_parse_request() {
     \printf '%s' "$line" | _otel_binary_write
     return 0
   fi
-  if ! _otel_string_starts_with "$(\printf '%s' "$line" | _otel_binary_write | \cut -sd ' ' -f 3)" HTTP/; then
+  if ! _otel_string_starts_with "$(\printf '%s' "$line" | _otel_binary_write | \cut -sd ' ' -f 3)" HTTP/; then # TODO this may print warnings
     \printf '%s' "$line" | _otel_binary_write
     \printf '\n'
     \cat
@@ -152,7 +152,7 @@ _otel_netcat_parse_response() {
     \printf '%s' "$line" | _otel_binary_write
     return 0
   fi
-  if ! _otel_string_starts_with "$(\printf '%s' "$line" | _otel_binary_write)" HTTP/; then
+  if ! _otel_string_starts_with "$(\printf '%s' "$line" | _otel_binary_write)" HTTP/; then # TODO this may print warnings
     \printf '%s' "$line" | _otel_binary_write
     \printf '\n'
     \cat
