@@ -38,7 +38,7 @@ jobs:
         with:
           name: package.deb
       - run: sudo -E apt-get -y install ./package.deb
-      - run: bash -c "cd tests && sudo bash run_tests.sh bash"
+      - run: bash -c "cd tests && sudo -E bash run_tests.sh bash"
 
   os-shell:
     needs: smoke
@@ -94,12 +94,24 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           issue-message: "Hello, thanks for adding an issue for the first time!"
           pr-message: "Hello, thanks for contributing for the first time!"
-      - uses: renovatebot/github-action@v40.1.12 # integration, node action with call to docker, docker flags that make injection more complicated, then call a node script via exec that already is injected with otel
+      - uses: renovatebot/github-action@v40.2.0 # integration, node action with call to docker, docker flags that make injection more complicated, then call a node script via exec that already is injected with otel
         env:
           RENOVATE_DRY_RUN: full
           RENOVATE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RENOVATE_REPOSITORIES: ${{ github.repository }}
           LOG_LEVEL: debug
+      - uses: docker/setup-qemu-action@v3 # some docker actions have otel built-in
+      - uses: docker/setup-buildx-action@v3 # some docker actions have otel built-in
+      - run: cp package.deb tests/package.deb
+      - uses: docker/build-push-action@v6 # some docker actions have otel built-in
+        with:
+          context: ./tests/
+          tags: test
+          push: false
+          build-args: |
+           image=ubuntu:latest
+           update=TRUE
+           shell=bash
 
   performance-prepare:
     runs-on: ubuntu-latest
