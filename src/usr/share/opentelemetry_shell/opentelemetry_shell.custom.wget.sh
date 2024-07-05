@@ -54,7 +54,7 @@ _otel_pipe_wget_stderr() {
       esac
     fi
     if _otel_string_starts_with "$line" 'Connecting to '; then
-      if _otel_string_contains "$(\printf '%s', "$line" | \cut -sd ' ' -f 4)" |; then
+      if _otel_string_contains "$(\printf '%s', "$line" | \cut -sd ' ' -f 4)" '|'; then
         local host="$(\printf '%s' "$line" | \cut -d ' ' -f 4 | \cut -d '|' -f 1 | \tr -d '()')"
         local ip="$(\printf '%s' "$line" | \cut -d ' ' -f 4 | \cut -d '|' -f 2)"
         local port="$(\printf '%s' "$line" | \cut -d ' ' -f 4 | \cut -d '|' -f 3 | \tr -d ':.')"
