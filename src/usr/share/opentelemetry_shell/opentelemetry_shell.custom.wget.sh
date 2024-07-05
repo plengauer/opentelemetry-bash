@@ -41,7 +41,8 @@ _otel_propagate_wget() {
 
 _otel_pipe_wget_stderr() {
   local span_handle=""
-  while read -r line; do  
+  while read -r line; do
+    \echo "$line"
     if _otel_string_starts_with "$line" --; then
       case "$line" in
         --****-**-**' '**:**:**--'  '*)
