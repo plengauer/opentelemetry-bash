@@ -305,6 +305,7 @@ _otel_binary_read() {
     local byte="$(\dd bs=1 count=1 2> /dev/null | \hexdump -v -e '/1 "%02x"')"
     if \[ "$byte" = '' ]; then local eos=1; break; fi
     if \[ "$byte" = 0a ]; then break; fi
+    local line="$line$byte"
   done
   \eval "$var='$line'"
   return "$eos"
