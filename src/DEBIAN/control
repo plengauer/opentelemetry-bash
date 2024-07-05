@@ -1,7 +1,7 @@
 Package: opentelemetry-shell
 Version: __VERSION__
 Architecture: all
-Depends: ash | dash | bash, coreutils, util-linux, findutils, grep, sed, awk, dpkg | apt, python3, python3-pip, python3-venv
+Depends: ash | dash | bash, coreutils, util-linux, findutils, grep, sed, awk, dpkg | apt, python3, python3-pip, python3-venv, jq, xxd
 Enhances: ash, dash, bash
 Priority: extra
 Maintainer: Philipp Lengauer <p.lengauer@gmail.com>
