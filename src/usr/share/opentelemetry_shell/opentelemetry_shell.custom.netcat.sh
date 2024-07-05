@@ -78,20 +78,20 @@ otel_span_end \"\$span_handle\"
   done
 }
 
-_otel_netcat_parse_request() {
+_otel_netcat_parse_request() { #  485454502f
   local is_server_side="$1"; shift
   local span_handle_file="$1"; shift
-  if ! read -r line; then
-    _otel_echo_binary "$line"
+  if ! _otel_binary_read line; then
+    \printf '%s' "$line" | _otel_binary_write
     return 0
   fi
-  if ! _otel_string_starts_with "$(\printf '%s' "$line" | \cut -sd ' ' -f 3)" HTTP/; then
-    _otel_echo_binary "$line"
+  if ! _otel_string_starts_with "$(\printf '%s' "$line" | _otel_binary_write | \cut -sd ' ' -f 3)" HTTP/; then
+    \printf '%s' "$line" | _otel_binary_write
     \printf '\n'
     \cat
     return 0
   fi
-  local line="$(\printf '%s' "$line" | \tr -d '\r')"
+  local line="$(\printf '%s' "$line" | _otel_binary_write | \tr -d '\r')"
   local protocol="$(\printf '%s' "$line" | \cut -sd ' ' -f 3)"
   local method="$(\printf '%s' "$line" | \cut -sd ' ' -f 1)"
   local path_and_query="$(\printf '%s' "$line" | \cut -sd ' ' -f 2)"
@@ -147,25 +147,25 @@ _otel_netcat_parse_request() {
 
 _otel_netcat_parse_response() {
   local is_server_side="$1"; shift
-  local span_handle_file="$1"; shift
-  if ! read -r line; then
-    _otel_echo_binary "$line"
+  local span_handle_file="$1"; shift  
+  if ! _otel_binary_read line; then
+    \printf '%s' "$line" | _otel_binary_write
     return 0
   fi
-  if ! _otel_string_starts_with "$line" HTTP/; then
-    _otel_echo_binary "$line"
+  if ! _otel_string_starts_with "$(\printf '%s' "$line" | _otel_binary_write)" HTTP/; then
+    \printf '%s' "$line" | _otel_binary_write
     \printf '\n'
     \cat
     return 0
   fi
   local span_handle="$(\cat "$span_handle_file")"
   if \[ -z "$span_handle" ]; then
-    _otel_echo_binary "$line"
+    \printf '%s' "$line" | _otel_binary_write
     \printf '\n'
     \cat
     return 0
   fi
-  local line="$(\printf '%s' "$line" | \tr -d '\r')"
+  local line="$(\printf '%s' "$line" | _otel_binary_write | \tr -d '\r')"
   local protocol="$(\printf '%s' "$line" | \cut -sd ' ' -f 1)"
   local response_code="$(\printf '%s' "$line" | \cut -sd ' ' -f 2)"
   otel_span_attribute_typed "$span_handle" int http.response.status_code="$response_code"
@@ -297,11 +297,21 @@ _otel_is_netcat_arg_arg() {
   esac
 }
 
-_otel_echo_binary() {
-#  python3 -c "import sys
-#sys.stdout.buffer.write(sys.argv[1].encode('latin-1'))" "$@"
-  python3 -c "import sys
-print(sys.argv[1], end='')" "$@"
+_otel_binary_read() {
+  local var="$1"
+  local line=""
+  local eos=0
+  while \true; do
+    local byte="$(\dd bs=1 count=10 2> /dev/null | \hexdump -v -e '/1 "%02x"')"
+    if \[ "$byte" = '' ]; then local eos=1; break; fi
+    if \[ "$byte" = 0a ]; then break; fi
+  done
+  \eval "$var='$line'"
+  return "$eos"
+}
+
+_otel_binary_write() {
+  \xxd -r -p
 }
 
 _otel_args_contains() {
