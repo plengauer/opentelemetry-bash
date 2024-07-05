@@ -298,8 +298,10 @@ _otel_is_netcat_arg_arg() {
 }
 
 _otel_echo_binary() {
+#  python3 -c "import sys
+#sys.stdout.buffer.write(sys.argv[1].encode('latin-1'))" "$@"
   python3 -c "import sys
-sys.stdout.buffer.write(sys.argv[1].encode('latin-1'))" "$@"
+print(sys.argv[1], end='')" "$@"
 }
 
 _otel_args_contains() {
