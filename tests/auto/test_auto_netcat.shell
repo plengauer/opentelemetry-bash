@@ -5,12 +5,14 @@ set -e
 expected="$(\mktemp)"
 actual="$(\mktemp)"
 
-for i in $(seq 1 10); do
+for i in $(\seq 1 10); do
+  set -x
   \cat /dev/urandom | \head -c $((1024 * 1)) > "$expected"
   _otel_netcat_parse_request < "$expected" > "$actual"
   assert_equals "$(\cat "$expected" | \xxd -p)" "$(\cat "$actual" | \xxd -p)"
   _otel_netcat_parse_response < "$expected" > "$actual"
   assert_equals "$(\cat "$expected" | \xxd -p)" "$(\cat "$actual" | \xxd -p)"
+  set +x
 done
 
 # check simple string request
