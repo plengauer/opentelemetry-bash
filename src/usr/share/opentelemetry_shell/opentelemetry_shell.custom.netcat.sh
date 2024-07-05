@@ -148,20 +148,24 @@ _otel_netcat_parse_response() {
   local is_server_side="$1"; shift
   local span_handle_file="$1"; shift
   if ! read -r line; then
+    \echo DEBUG 0 >&2
     \printf "$line"
     return 0
   fi
   if ! _otel_string_starts_with "$line" HTTP/; then
-    \printf "$line"
+    \echo DEBUG 1 >&2
+    \printf "$line\n"
     \cat
     return 0
   fi
   local span_handle="$(\cat "$span_handle_file")"
   if \[ -z "$span_handle" ]; then
+    \echo DEBUG 2 >&2
     \printf "$line\n" 
     \cat
     return 0
   fi
+  \echo DEBUG 3 >&2
   local line="$(\printf '%s' "$line" | \tr -d '\r')"
   local protocol="$(\printf '%s' "$line" | \cut -sd ' ' -f 1)"
   local response_code="$(\printf '%s' "$line" | \cut -sd ' ' -f 2)"
