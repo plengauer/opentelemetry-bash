@@ -78,7 +78,7 @@ otel_span_end \"\$span_handle\"
   done
 }
 
-_otel_netcat_parse_request() { #  485454502f
+_otel_netcat_parse_request() {
   local is_server_side="$1"; shift
   local span_handle_file="$1"; shift
   if ! _otel_binary_read line; then
