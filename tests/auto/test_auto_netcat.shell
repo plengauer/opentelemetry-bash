@@ -66,7 +66,7 @@ port=$((port + 1))
 pid="$!"
 wget --retry-connrefused -O "$actual" http://127.0.0.1:$port/
 wait "$pid"
-assert_equals "$(\cat "$expected" | \base64)" "$(\cat "$actual" | \base64)"
+assert_equals "$(\cat "$expected" | \hexdump -c)" "$(\cat "$actual" | \hexdump -c)"
 
 # check large binary data integrety
 \echo "TEST 4" >&2
@@ -76,7 +76,7 @@ netcat -l "$port" > "$actual" &
 pid="$!"
 \cat "$expected" | netcat -w 1 127.0.0.1 "$port"
 \wait "$pid"
-assert_equals "$(\cat "$expected" | \base64)" "$(\cat "$actual" | \base64)"
+assert_equals "$(\cat "$expected" | \hexdump -c)" "$(\cat "$actual" | \hexdump -c)"
 
 # check binary data without linefeed (linefeed has an internal meaning)
 \echo "TEST 5" >&2
@@ -86,7 +86,7 @@ netcat -l "$port" > "$actual" &
 pid="$!"
 \cat "$expected" | netcat -w 1 127.0.0.1 "$port"
 \wait "$pid"
-assert_equals "$(\cat "$expected" | \base64)" "$(\cat "$actual" | \base64)"
+assert_equals "$(\cat "$expected" | \hexdump -c)" "$(\cat "$actual" | \hexdump -c)"
 
 # check simple binary response only
 \echo "TEST 6" >&2
@@ -96,4 +96,4 @@ port=$((port + 1))
 pid="$!"
 netcat -w 1 127.0.0.1 "$port" > "$actual"
 \wait "$pid"
-assert_equals "$(\cat "$expected" | \base64)" "$(\cat "$actual" | \base64)"
+assert_equals "$(\cat "$expected" | \hexdump -c)" "$(\cat "$actual" | \hexdump -c)"
