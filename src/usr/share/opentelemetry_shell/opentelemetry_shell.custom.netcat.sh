@@ -82,11 +82,12 @@ _otel_netcat_parse_request() {
   local is_server_side="$1"; shift
   local span_handle_file="$1"; shift
   if ! read -r line; then
-    \printf "$line"
+    _otel_echo_binary "$line"
     return 0
   fi
   if ! _otel_string_starts_with "$(\printf '%s' "$line" | \cut -sd ' ' -f 3)" HTTP/; then
-    \printf "$line\n"
+    _otel_echo_binary "$line"
+    \printf '\n'
     \cat
     return 0
   fi
@@ -148,17 +149,19 @@ _otel_netcat_parse_response() {
   local is_server_side="$1"; shift
   local span_handle_file="$1"; shift
   if ! read -r line; then
-    \printf "$line"
+    _otel_echo_binary "$line"
     return 0
   fi
   if ! _otel_string_starts_with "$line" HTTP/; then
-    \printf "$line\n"
+    _otel_echo_binary "$line"
+    \printf '\n'
     \cat
     return 0
   fi
   local span_handle="$(\cat "$span_handle_file")"
   if \[ -z "$span_handle" ]; then
-    \printf "$line\n" 
+    _otel_echo_binary "$line"
+    \printf '\n'
     \cat
     return 0
   fi
@@ -292,6 +295,11 @@ _otel_is_netcat_arg_arg() {
     --proxy|--proxy-type|--proxy-auth|--proxy-dns) return 0;;
      *) return 1;;
   esac
+}
+
+_otel_echo_binary() {
+  python3 -c "import sys
+sys.stdout.buffer.write(sys.argv[1].encode('latin-1'))" "$@"
 }
 
 _otel_args_contains() {
