@@ -21,6 +21,7 @@ _otel_propagate_wget() {
 
 # Resolving www.google.com (www.google.com)... 142.250.185.196, 2a00:1450:4001:809::2004
 # Connecting to www.google.com (www.google.com)|142.250.185.196|:80... connected.
+# Connecting to 127.0.0.1:12346... failed: Connection refused.
 # HTTP request sent, awaiting response... 200 OK
 # Length: unspecified [text/html]
 # Saving to: ‘index.html.3’
@@ -53,9 +54,15 @@ _otel_pipe_wget_stderr() {
       esac
     fi
     if _otel_string_starts_with "$line" 'Connecting to '; then
-      local host="$(\printf '%s', "$line" | \cut -d ' ' -f 4 | \cut -d '|' -f 1 | \tr -d '()')"
-      local ip="$(\printf '%s', "$line" | \cut -d ' ' -f 4 | \cut -d '|' -f 2)"
-      local port="$(\printf '%s', "$line" | \cut -d ' ' -f 4 | \cut -d '|' -f 3 | \tr -d ':.')"
+      if _otel_string_contains "$(\printf '%s', "$line" | \cut -sd ' ' -f 4)" |; then
+        local host="$(\printf '%s' "$line" | \cut -d ' ' -f 4 | \cut -d '|' -f 1 | \tr -d '()')"
+        local ip="$(\printf '%s' "$line" | \cut -d ' ' -f 4 | \cut -d '|' -f 2)"
+        local port="$(\printf '%s' "$line" | \cut -d ' ' -f 4 | \cut -d '|' -f 3 | \tr -d ':.')"
+      else
+        local ip="$(\printf '%s' "$line" | \cut -d ' ' -f 3 | \cut -d ':' -f 1)"
+        local host="$ip"
+        local port="$(\printf '%s' "$line" | \cut -d ' ' -f 3 | \cut -d ':' -f 2 | \tr -d '.')"
+      fi
     fi
     # Connecting to www.google.at (www.google.at)|142.250.185.131|:80... connected.
     if _otel_string_starts_with "$line" 'Connecting to ' || _otel_string_starts_with "$line" 'Reusing existing connection to '; then
