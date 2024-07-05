@@ -29,7 +29,7 @@ assert_equals "send/receive" $(\echo "$span" | \jq -r '.name')
 
 # check HTTP client with real HTTP server (check spans and structure)
 \echo "TEST 1" >&2
-\echo -e 'GET / HTTP/1.1\r\n\r\n' | netcat -w 5 www.google.com 80
+\echo -n -e 'GET / HTTP/1.1\r\n\r\n' | netcat -w 5 www.google.com 80
 assert_equals 0 "$?"
 span="$(resolve_span '.name == "GET"')"
 assert_equals "SpanKind.CLIENT" $(\echo "$span" | \jq -r '.kind')
@@ -62,8 +62,8 @@ http_body() {
   done
   \cat
 }
-\echo -e 'GET /index.html HTTP/1.1\r\nUser-agent: netcat/1.0\r\nAccept: */*\r\nHost: www.example.com\r\n\r\n' | \netcat -w 5 www.example.com 80 | http_body > "$expected"
-\echo -e 'GET /index.html HTTP/1.1\r\nUser-agent: netcat/1.0\r\nAccept: */*\r\nHost: www.example.com\r\n\r\n' |  netcat -w 5 www.example.com 80 | http_body >   "$actual"
+\echo -n -e 'GET /index.html HTTP/1.1\r\nUser-agent: netcat/1.0\r\nAccept: */*\r\nHost: www.example.com\r\n\r\n' | \netcat -w 5 www.example.com 80 | http_body > "$expected"
+\echo -n -e 'GET /index.html HTTP/1.1\r\nUser-agent: netcat/1.0\r\nAccept: */*\r\nHost: www.example.com\r\n\r\n' |  netcat -w 5 www.example.com 80 | http_body >   "$actual"
 assert_equals "$(\cat "$expected")" "$(\cat "$actual")"
 assert_equals "$(curl http://www.example.com)" "$(\cat "$actual")"
 
