@@ -152,7 +152,7 @@ _otel_netcat_parse_response() {
     return 0
   fi
   if ! _otel_string_starts_with "$line" HTTP/; then
-    \printf "$line\n"
+    \printf "$line"
     \cat
     return 0
   fi
