@@ -190,7 +190,6 @@ _otel_netcat_parse_response() {
 }
 
 _otel_netcat_parse_args() {
-set -x
   local is_server_side="$1"; shift
   local span_handle="$1"; shift
   local transport="${NCAT_PROTO:-tcp}"
@@ -241,7 +240,6 @@ set -x
     if \[ -n "$host" ]; then otel_span_attribute_typed "$span_handle" string server.address="$host"; fi
     if \[ -n "$port" ]; then otel_span_attribute_typed "$span_handle" int server.port="$port"; fi
     \echo "$host:$port"
-set +x
 }
 
 _otel_is_ip() {
