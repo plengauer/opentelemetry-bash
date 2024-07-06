@@ -1,0 +1,2 @@
+#!/bin/sh -e
+OTEL_SHELL_CONFIG_NETCAT_ASSUME_REQUEST_RESPONSE=TRUE otel4netcat "$@"
