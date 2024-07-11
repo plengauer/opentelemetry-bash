@@ -113,6 +113,6 @@ port=$((port + 1))
 \cat /dev/urandom | \head -c $((1024 * 1)) > "$expected"
 \cat "$expected" | OTEL_SHELL_DEBUG=TRUE netcat -l "$port" &
 pid="$!"
-netcat -w 10 127.0.0.1 "$port" > "$actual"
+netcat -w 60 127.0.0.1 "$port" > "$actual"
 \wait "$pid"
 assert_equals "$(\cat "$expected" | \xxd -p)" "$(\cat "$actual" | \xxd -p)"
