@@ -60,6 +60,7 @@ _otel_inject_netcat_listen_and_respond_args() {
       local command="$2"; shift; shift
       # TODO the following injection doesnt maintain the exit code, does it matter though? is it important for netcat?
       # TODO using pipes for passing the handle means a single line has to be sent before responses will be streamed
+      # TODO handle OTEL_SHELL_CONFIG_NETCAT_ASSUME_REQUEST_RESPONSE
       _otel_escape_args -c "OTEL_SHELL_AUTO_INJECTED=FALSE
 span_handle_file=\"\$(mktemp)\"
 span_handle_file_1=\"\$(mktemp -u)\"
@@ -69,7 +70,7 @@ mkfifo \"\$span_handle_file_1\" \"\$span_handle_file_2\"
 . otel.sh
 span_handle=\"\$(otel_span_start CONSUMER send/receive)\"
 _otel_netcat_parse_args 1 \"\$span_handle\" $(_otel_escape_args "$@") > /dev/null
-_otel_netcat_parse_request 1 \"\$span_handle_file\" $(_otel_escape_args "$@") | { local span_handle=\"\$(\cat \"\$span_handle_file_inner\")\"; if \[ \"\$span_handle\" -ge 0 ]; then otel_span_activate \"\$span_handle\"; fi; $command; } | _otel_netcat_parse_response 1 \"\$span_handle_file\"
+_otel_netcat_parse_request 1 \"\$span_handle_file\" $(_otel_escape_args "$@") | { local span_handle=\"\$(\cat \"\$span_handle_file_1\")\"; if \[ \"\$span_handle\" -ge 0 ]; then otel_span_activate \"\$span_handle\"; fi; $command; } | _otel_netcat_parse_response 1 \"\$span_handle_file_2\"
 otel_span_end \"\$span_handle\"
 \rm \"\$span_handle_file\" \"\$span_handle_file_inner\" 2> /dev null"
     else
@@ -85,7 +86,7 @@ _otel_netcat_parse_request() {
     \printf '%s' "$line" | _otel_binary_write
     return 0
   fi
-  if ! _otel_string_starts_with "$(\printf '%s' "$line" | _otel_binary_write | \cut -sd ' ' -f 3)" HTTP/ 2> /dev/null; then
+  if ! _otel_string_starts_with "$(\printf '%s' "$line" | _otel_binary_write | \cut -sd ' ' -f 3)" HTTP/; then # TODO mute null byte warning somehow
     \printf '%s' "$line" | _otel_binary_write
     \printf '\n'
     \cat
@@ -153,7 +154,7 @@ _otel_netcat_parse_response() {
     \printf '%s' "$line" | _otel_binary_write
     return 0
   fi
-  if ! _otel_string_starts_with "$(\printf '%s' "$line" | _otel_binary_write)" HTTP/ 2> /dev/null; then
+  if ! _otel_string_starts_with "$(\printf '%s' "$line" | _otel_binary_write)" HTTP/; then # TODO mute null byte warning somehow
     \printf '%s' "$line" | _otel_binary_write
     \printf '\n'
     \cat
