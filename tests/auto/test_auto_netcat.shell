@@ -98,12 +98,12 @@ pid="$!"
 assert_equals "$(\cat "$expected" | \xxd -p)" "$(\cat "$actual" | \xxd -p)"
 
 # check simple binary response only
-\echo "TEST 6.5" >&2
+\echo "TEST 5.5" >&2
 port=$((port + 1))
 \cat /dev/urandom | \head -c $((1024 * 1)) > "$expected"
 \cat "$expected" | \netcat -l "$port" &
 pid="$!"
-\netcat -w 10 127.0.0.1 "$port" > "$actual"
+netcat -w 10 127.0.0.1 "$port" > "$actual"
 \wait "$pid"
 assert_equals "$(\cat "$expected" | \xxd -p)" "$(\cat "$actual" | \xxd -p)"
 
