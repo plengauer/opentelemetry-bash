@@ -2,6 +2,7 @@ if ! [ -x "$(which ncat)" ]; then exit 0; fi
 set -e
 . ./assert.sh
 
+set -x
 otel4netcat ncat -v -l -p 12345 -c cat &
 pid="$!"
 sleep 3
