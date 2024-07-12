@@ -61,7 +61,8 @@ _otel_inject_netcat_listen_and_respond_args() {
       # TODO the following injection doesnt maintain the exit code, does it matter though? is it important for netcat?
       # TODO using pipes for passing the handle means a single line has to be sent before responses will be streamed
       # TODO handle OTEL_SHELL_CONFIG_NETCAT_ASSUME_REQUEST_RESPONSE
-      _otel_escape_args -c "OTEL_SHELL_AUTO_INJECTED=FALSE
+      if \[ "$OTEL_SHELL_CONFIG_NETCAT_ASSUME_REQUEST_RESPONSE" = TRUE ];
+        _otel_escape_args -c "OTEL_SHELL_AUTO_INJECTED=FALSE
 span_handle_file=\"\$(mktemp)\"
 span_handle_file_1=\"\$(mktemp -u)\"
 span_handle_file_2=\"\$(mktemp -u)\"
@@ -69,10 +70,24 @@ mkfifo \"\$span_handle_file_1\" \"\$span_handle_file_2\"
 (tee \"\$span_handle_file_1\" \"\$span_handle_file_2\" < \"\$span_handle_file\" > /dev/null &)
 . otel.sh
 span_handle=\"\$(otel_span_start CONSUMER send/receive)\"
+otel_span_activate \"\$span_handle\"
 _otel_netcat_parse_args 1 \"\$span_handle\" $(_otel_escape_args "$@") > /dev/null
-_otel_netcat_parse_request 1 \"\$span_handle_file\" $(_otel_escape_args "$@") | { local span_handle=\"\$(\cat \"\$span_handle_file_1\")\"; if \[ \"\$span_handle\" -ge 0 ]; then otel_span_activate \"\$span_handle\"; fi; $command; } | _otel_netcat_parse_response 1 \"\$span_handle_file_2\"
+_otel_netcat_parse_request 1 \"\$span_handle_file\" $(_otel_escape_args "$@") | { otel_span_activate \"\$(\cat \"\$span_handle_file_1\")\"; $command; } | _otel_netcat_parse_response 1 \"\$span_handle_file_2\"
+otel_span_deactivate \"\$span_handle\"
 otel_span_end \"\$span_handle\"
-\rm \"\$span_handle_file\" \"\$span_handle_file_inner\" 2> /dev null"
+\rm \"\$span_handle_file\" \"\$span_handle_file_1\" \"\$span_handle_file_2\" 2> /dev null"        
+      else
+        _otel_escape_args -c "OTEL_SHELL_AUTO_INJECTED=FALSE
+span_handle_file=\"\$(mktemp)\"
+. otel.sh
+span_handle=\"\$(otel_span_start CONSUMER send/receive)\"
+otel_span_activate \"\$span_handle\"
+_otel_netcat_parse_args 1 \"\$span_handle\" $(_otel_escape_args "$@") > /dev/null
+_otel_netcat_parse_request 1 \"\$span_handle_file\" $(_otel_escape_args "$@") | $command | _otel_netcat_parse_response 1 \"\$span_handle_file_2\"
+otel_span_deactivate \"\$span_handle\"
+otel_span_end \"\$span_handle\"
+\rm \"\$span_handle_file\" 2> /dev null"
+      fi
     else
       _otel_escape_arg "$1"; shift
     fi
