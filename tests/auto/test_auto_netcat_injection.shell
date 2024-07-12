@@ -5,13 +5,13 @@ set -e
 ncat -v -l -p 12345 -c cat &
 pid="$!"
 sleep 3
-assert_equals "hello" "$(echo -n hello | netcat -v -w 10 127.0.0.1 12345)"
+assert_equals "hello" "$(echo -n hello | ncat -v -i 3 --no-shutdown 127.0.0.1 12345)"
 wait "$pid"
 
 otel4netcat ncat -v -l -p 12345 -c cat &
 pid="$!"
 sleep 3
-assert_equals "hello world" "$(echo -n hello world | netcat -v -w 10 127.0.0.1 12345)"
+assert_equals "hello world" "$(echo -n hello world | ncat -v -i 3 --no-shutdown 127.0.0.1 12345)"
 wait "$pid"
 
 span="$(resolve_span '.name == "cat"')"
@@ -31,7 +31,7 @@ span="$(resolve_span '.parent_id == "'$span_id'"')"
 assert_equals "SpanKind.PRODUCER" $(\echo "$span" | jq -r '.kind')
 assert_equals "send/receive" $(\echo "$span" | jq -r '.name')
 
-otel4netcat_http ncat -l -p 12345 -c 'cat && printf "HTTP/1.1 200 OK\r\n\r\nhello world"' &
+otel4netcat_http ncat -l -p 12345 -c 'printf "HTTP/1.1 200 OK\r\n\r\nhello world"' &
 pid="$!"
 sleep 3
 assert_equals "hello world" "$(curl http://127.0.0.1/)"
