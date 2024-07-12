@@ -2,7 +2,6 @@ if ! [ -x "$(which ncat)" ]; then exit 0; fi
 set -e
 . ./assert.sh
 
-export OTEL_SHELL_DEBUG=TRUE
 otel4netcat ncat -l -p 12345 -c cat &
 pid="$!"
 sleep 3
