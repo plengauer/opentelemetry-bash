@@ -72,6 +72,7 @@ assert_equals "$(curl http://www.example.com)" "$(\cat "$actual")"
 port=$((port + 1))
 \cat /dev/urandom | \head -c $((1024 * 1)) > "$expected"
 { \echo -n -e 'HTTP/1.1 200 OK\r\nFoo: Bar\r\n\r\n' && \cat "$expected"; } | netcat -l -w 1 "$port" &
+sleep 3
 pid="$!"
 wget --retry-connrefused -O "$actual" http://127.0.0.1:$port/
 wait "$pid"
@@ -83,6 +84,7 @@ port=$((port + 1))
 \cat /dev/urandom | \head -c $((1024 * 1)) > "$expected"
 netcat -l "$port" > "$actual" &
 pid="$!"
+sleep 3
 \cat "$expected" | netcat -w 10 127.0.0.1 "$port"
 \wait "$pid"
 assert_equals "$(\cat "$expected" | \xxd -p)" "$(\cat "$actual" | \xxd -p)"
@@ -93,6 +95,7 @@ port=$((port + 1))
 \cat /dev/urandom | \tr -d '\n' | \head -c $((1024 * 1)) > "$expected"
 netcat -l "$port" > "$actual" &
 pid="$!"
+sleep 3
 \cat "$expected" | netcat -w 10 127.0.0.1 "$port"
 \wait "$pid"
 assert_equals "$(\cat "$expected" | \xxd -p)" "$(\cat "$actual" | \xxd -p)"
@@ -103,6 +106,7 @@ port=$((port + 1))
 \cat /dev/urandom | \head -c $((1024 * 1)) > "$expected"
 \cat "$expected" | \netcat -l "$port" &
 pid="$!"
+sleep 3
 netcat -w 10 127.0.0.1 "$port" > "$actual"
 \wait "$pid"
 assert_equals "$(\cat "$expected" | \xxd -p)" "$(\cat "$actual" | \xxd -p)"
@@ -111,9 +115,9 @@ assert_equals "$(\cat "$expected" | \xxd -p)" "$(\cat "$actual" | \xxd -p)"
 \echo "TEST 6" >&2
 port=$((port + 1))
 \cat /dev/urandom | \head -c $((1024 * 1)) > "$expected"
-\cat "$expected" | OTEL_SHELL_DEBUG=TRUE netcat -v -l "$port" &
-sleep 10
+\cat "$expected" | netcat -v -l "$port" &
 pid="$!"
+sleep 3
 netcat -v -w 10 127.0.0.1 "$port" > "$actual"
 \wait "$pid"
 assert_equals "$(\cat "$expected" | \xxd -p)" "$(\cat "$actual" | \xxd -p)"
