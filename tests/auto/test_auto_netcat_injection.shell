@@ -2,7 +2,7 @@ if ! [ -x "$(which ncat)" ]; then exit 0; fi
 set -e
 . ./assert.sh
 
-otel4netcat ncat -v -l -p 12345 -c cat &
+otel4netcat ncat -l -p 12345 -c cat &
 pid="$?"
 sleep 3
 assert_equals "hello world" "$(echo -n hello world | netcat -w 1 127.0.0.1 12345)"
@@ -16,7 +16,7 @@ assert_equals "SpanKind.CONSUMER" $(\echo "$span" | jq -r '.kind')
 assert_equals "send/receive" $(\echo "$span" | jq -r '.name')
 span="$(resolve_span '.context.span_id == "'$span_id'"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
-assert_equals "ncat -v -l -p 12345 -c cat" $(\echo "$span" | jq -r '.name')
+assert_equals "ncat -l -p 12345 -c cat" $(\echo "$span" | jq -r '.name')
 
 span="$(resolve_span '.name == "netcat -w 1 127.0.0.1 12345"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
