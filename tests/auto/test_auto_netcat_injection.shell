@@ -4,6 +4,7 @@ set -e
 
 otel4netcat ncat -v -l -p 12345 -c cat &
 pid="$?"
+sleep 3
 assert_equals "hello world" "$(echo -n hello world | netcat -w 1 127.0.0.1 12345)"
 wait "$?"
 
