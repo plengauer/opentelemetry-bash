@@ -89,12 +89,12 @@ _otel_netcat_parse_request() {
   local is_server_side="$1"; shift
   local span_handle_file="$1"; shift
   if ! _otel_binary_read line; then
-\echo 'DEBUG REQUEST binary (no line)' >&2
+\echo 'DEBUG REQUEST binary no line' >&2
     \printf '%s' "$line" | _otel_binary_write
     return 0
   fi
   if ! _otel_string_starts_with "$(\printf '%s' "$line" | _otel_binary_write | \cut -sd ' ' -f 3)" HTTP/; then # TODO mute null byte warning somehow
-\echo 'DEBUG REQUEST binary (line)' >&2
+\echo 'DEBUG REQUEST binary line' >&2
     \printf '%s' "$line" | _otel_binary_write
     \printf '\n'
     \cat
@@ -159,12 +159,12 @@ _otel_netcat_parse_response() {
   local is_server_side="$1"; shift
   local span_handle_file="$1"; shift  
   if ! _otel_binary_read line; then
-\echo 'DEBUG RESPONSE binary (no line)' >&2
+\echo 'DEBUG RESPONSE binary no line' >&2
     \printf '%s' "$line" | _otel_binary_write
     return 0
   fi
   if ! _otel_string_starts_with "$(\printf '%s' "$line" | _otel_binary_write)" HTTP/; then # TODO mute null byte warning somehow
-\echo 'DEBUG RESPONSE binary (line)' >&2
+\echo 'DEBUG RESPONSE binary line' >&2
     \printf '%s' "$line" | _otel_binary_write
     \printf '\n'
     \cat
@@ -172,7 +172,7 @@ _otel_netcat_parse_response() {
   fi
   local span_handle="$(\cat "$span_handle_file")"
   if \[ -z "$span_handle" ]; then
-\echo 'DEBUG RESPONSE http (no request)' >&2
+\echo 'DEBUG RESPONSE http no request' >&2
     \printf '%s' "$line" | _otel_binary_write
     \printf '\n'
     \cat
