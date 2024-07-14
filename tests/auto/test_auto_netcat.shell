@@ -29,7 +29,7 @@ assert_equals "send/receive" $(\echo "$span" | \jq -r '.name')
 
 # check HTTP client with real HTTP server (check spans and structure)
 \echo "TEST 1" >&2
-\echo -n -e 'GET / HTTP/1.1\r\n\r\n' | netcat -w 5 www.google.com 80
+\echo -n -e 'GET / HTTP/1.1\r\nHost: www.google.com\r\n\r\n' | netcat -w 5 www.google.com 80
 assert_equals 0 "$?"
 span="$(resolve_span '.name == "GET"')"
 assert_equals "SpanKind.CLIENT" $(\echo "$span" | \jq -r '.kind')
