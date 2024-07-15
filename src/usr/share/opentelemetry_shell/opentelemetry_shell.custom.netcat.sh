@@ -11,7 +11,7 @@
 _otel_inject_netcat() {
   local name=send/receive
   if _otel_args_contains -l "$@" || _otel_args_contains --listen "$@" || _otel_args_contains -e "$@" || _otel_args_contains --exec "$@" || _otel_args_contains -c "$@" || _otel_args_contains --sh-exec "$@"; then
-    if _otel_args_contains -e || _otel_args_contains --exec || _otel_args_contains -c || _otel_args_contains --sh-exec; then
+    if _otel_args_contains -e "$@" || _otel_args_contains --exec "$@" || _otel_args_contains -c "$@" || _otel_args_contains --sh-exec "$@"; then
       \eval _otel_call "$(_otel_inject_netcat_listen_and_respond_args "$@")"
     else
       local span_handle_file="$(\mktemp)"
