@@ -1,4 +1,5 @@
 #!/bin/sh -e
+set -x # TODO remove
 if [ "$OTEL_SHELL_AUTO_INJECTED" = TRUE ]; then
   exec "$@"
 else
