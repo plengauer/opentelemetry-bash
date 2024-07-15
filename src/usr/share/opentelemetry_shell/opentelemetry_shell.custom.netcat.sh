@@ -74,7 +74,8 @@ span_handle_file=\"\$(mktemp)\"
 # span_handle=\"\$(otel_span_start CONSUMER send/receive)\"
 # otel_span_activate \"\$span_handle\"
 # _otel_netcat_parse_args 1 \"\$span_handle\" $netcat_command > /dev/null
-_otel_netcat_parse_request 1 \"\$span_handle_file\" $netcat_command | $command | _otel_netcat_parse_response 1 \"\$span_handle_file\"
+# _otel_netcat_parse_request 1 \"\$span_handle_file\" $netcat_command | $command | _otel_netcat_parse_response 1 \"\$span_handle_file\"
+$command
 # otel_span_deactivate \"\$span_handle\"
 # otel_span_end \"\$span_handle\"
 \rm \"\$span_handle_file\" 2> /dev null"
