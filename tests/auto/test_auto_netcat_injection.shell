@@ -1,6 +1,9 @@
 if ! [ -x "$(which ncat)" ]; then exit 0; fi
 set -e
 . ./assert.sh
+. otelapi.sh
+
+otel_init
 
 \echo TEST 0 >&2
 ncat -l -p 12345 -c cat &
@@ -13,7 +16,7 @@ wait "$pid"
 otel4netcat ncat -l -p 12345 -c cat &
 pid="$!"
 sleep 3
-assert_equals "hello world" "$(echo -n hello world | ncat -i 10 --no-shutdown 127.0.0.1 12345)"
+assert_equals "hello world" "$(echo -n hello world | otel_observe ncat -i 10 --no-shutdown 127.0.0.1 12345)"
 wait "$pid"
 
 span="$(resolve_span '.name == "cat"')"
@@ -27,7 +30,7 @@ assert_equals "SpanKind.CONSUMER" $(\echo "$span" | jq -r '.kind')
 # assert_equals "ncat -l -p 12345 -c cat" $(\echo "$span" | jq -r '.name')
 # assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
 
-span="$(resolve_span '.name == "netcat -w 1 127.0.0.1 12345"')"
+span="$(resolve_span '.name == "netcat -i 10 127.0.0.1 12345"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
 span_id=$(\echo "$span" | jq -r '.context.span_id')
 span="$(resolve_span '.parent_id == "'$span_id'"')"
@@ -46,3 +49,5 @@ assert_equals "SpanKind.SERVER" $(\echo "$span" | jq -r '.kind')
 span_id=$(\echo "$span" | jq -r '.parent_id')
 span="$(resolve_span '.context.span_id == "'$span_id'"')"
 assert_equals "curl http://127.0.0.1/" $(\echo "$span" | jq -r '.name')
+
+otel_shutdown
