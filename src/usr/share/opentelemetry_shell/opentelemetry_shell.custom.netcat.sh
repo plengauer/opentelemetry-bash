@@ -312,7 +312,7 @@ _otel_binary_contains_null() {
   local i=0
   while \[ "$i" -lt "${#string}" ]; do
     if \[ "${string:$i:2}" = 00 ]; then return 0; fi
-    local i=$((i+2))
+    local i=$(($i + 2))
   done
   return 1
 }
