@@ -308,10 +308,12 @@ _otel_is_netcat_arg_arg() {
 }
 
 _otel_binary_contains_null() {
+  # substring=
   local string="$1"
+  if ! _otel_string_contains "$string" 00; then return 1; fi
   local i=0
   while \[ "$i" -lt "${#string}" ]; do
-    if \[ "${string:$i:2}" = 00 ]; then return 0; fi
+    if \[ "$(\printf '%s' "$string" | \cut -c $i-$((i + 2 - 1)))" = 00 ]; then return 0; fi
     local i=$(($i + 2))
   done
   return 1
