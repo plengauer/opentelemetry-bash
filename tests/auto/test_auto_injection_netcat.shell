@@ -32,7 +32,7 @@ echo TEST 2 >&2
 \otel4netcat_http ncat -l -p 12345 -c 'printf "HTTP/1.1 200 OK\r\n\r\nhello world"' &
 pid="$!"
 sleep 3
-assert_equals "hello world" "$(curl http://127.0.0.1/)"
+assert_equals "hello world" "$(curl http://127.0.0.1:12345/)"
 wait "$pid"
 
 span="$(resolve_span '.name == "GET"')"
