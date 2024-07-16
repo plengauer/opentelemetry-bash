@@ -53,7 +53,8 @@ _otel_inject_netcat_listen_and_respond_args() {
       local command="$2"; shift; shift
       # TODO the following injection doesnt maintain the exit code, does it matter though? is it important for netcat?
       if \[ "$OTEL_SHELL_CONFIG_NETCAT_ASSUME_REQUEST_RESPONSE" = TRUE ]; then
-        _otel_escape_args -c "OTEL_SHELL_AUTO_INJECTED=TRUE
+        _otel_escape_args -c "
+OTEL_SHELL_AUTO_INJECTED=TRUE
 span_handle_file=\"\$(mktemp)\"
 span_handle_file_1=\"\$(mktemp -u)\"
 span_handle_file_2=\"\$(mktemp -u)\"
@@ -68,16 +69,18 @@ otel_span_deactivate \"\$span_handle\"
 otel_span_end \"\$span_handle\"
 \rm \"\$span_handle_file\" \"\$span_handle_file_1\" \"\$span_handle_file_2\" 2> /dev null"        
       else
-        _otel_escape_args -c "OTEL_SHELL_AUTO_INJECTED=TRUE
-span_handle_file=\"\$(mktemp)\"
+        _otel_escape_args -c "
+OTEL_SHELL_AUTO_INJECTED=TRUE
 . otel.sh
 span_handle=\"\$(otel_span_start CONSUMER send/receive)\"
 otel_span_activate \"\$span_handle\"
 _otel_netcat_parse_args 1 \"\$span_handle\" $netcat_command > /dev/null
-\cat | _otel_netcat_parse_request 1 \"\$span_handle_file\" $netcat_command | $command | _otel_netcat_parse_response 1 \"\$span_handle_file\" | \cat
+exit_code=0
+$command || exit_code=\$?
 otel_span_deactivate \"\$span_handle\"
 otel_span_end \"\$span_handle\"
-\rm \"\$span_handle_file\" 2> /dev null"
+exit \$exit_code
+"
       fi
     else
       _otel_escape_arg "$1"; shift
