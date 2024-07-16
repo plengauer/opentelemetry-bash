@@ -3,8 +3,6 @@ set -e
 . ./assert.sh
 . otelapi.sh
 
-otel_init
-
 \echo TEST 0 >&2
 ncat -l -p 12345 -c cat &
 pid="$!"
@@ -16,8 +14,10 @@ wait "$pid"
 otel4netcat ncat -l -p 12345 -c cat &
 pid="$!"
 sleep 3
+otel_init
 assert_equals "hello world" "$(echo -n hello world | otel_observe ncat -i 10 --no-shutdown 127.0.0.1 12345)"
 wait "$pid"
+otel_shutdown
 
 span="$(resolve_span '.name == "cat"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
@@ -50,4 +50,3 @@ span_id=$(\echo "$span" | jq -r '.parent_id')
 span="$(resolve_span '.context.span_id == "'$span_id'"')"
 assert_equals "curl http://127.0.0.1/" $(\echo "$span" | jq -r '.name')
 
-otel_shutdown
