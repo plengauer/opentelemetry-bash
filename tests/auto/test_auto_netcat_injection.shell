@@ -1,21 +1,21 @@
 if ! [ -x "$(which ncat)" ]; then exit 0; fi
 set -e
 . ./assert.sh
-. otelapi.sh
+. otel.sh
 
-\echo TEST 0 >&2
+echo TEST 0 >&2
 ncat -l -p 12345 -c cat &
 pid="$!"
 sleep 3
 assert_equals "hello" "$(echo -n hello | ncat -i 10 --no-shutdown 127.0.0.1 12345)"
 wait "$pid"
 
-\echo TEST 1 >&2
-otel4netcat ncat -l -p 12345 -c cat &
+echo TEST 1 >&2
+\otel4netcat ncat -l -p 12345 -c cat &
 pid="$!"
 sleep 3
 otel_init
-assert_equals "hello world" "$(echo -n hello world | otel_observe ncat -i 10 --no-shutdown 127.0.0.1 12345)"
+assert_equals "hello world" "$(echo -n hello world | ncat -i 10 --no-shutdown 127.0.0.1 12345)"
 wait "$pid"
 otel_shutdown
 
@@ -37,8 +37,8 @@ span="$(resolve_span '.parent_id == "'$span_id'"')"
 assert_equals "send/receive" $(\echo "$span" | jq -r '.name')
 assert_equals "SpanKind.PRODUCER" $(\echo "$span" | jq -r '.kind')
 
-\echo TEST 2 >&2
-otel4netcat_http ncat -l -p 12345 -c 'printf "HTTP/1.1 200 OK\r\n\r\nhello world"' &
+echo TEST 2 >&2
+\otel4netcat_http ncat -l -p 12345 -c 'printf "HTTP/1.1 200 OK\r\n\r\nhello world"' &
 pid="$!"
 sleep 3
 assert_equals "hello world" "$(curl http://127.0.0.1/)"
@@ -49,4 +49,3 @@ assert_equals "SpanKind.SERVER" $(\echo "$span" | jq -r '.kind')
 span_id=$(\echo "$span" | jq -r '.parent_id')
 span="$(resolve_span '.context.span_id == "'$span_id'"')"
 assert_equals "curl http://127.0.0.1/" $(\echo "$span" | jq -r '.name')
-
