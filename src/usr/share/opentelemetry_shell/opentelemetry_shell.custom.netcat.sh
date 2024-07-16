@@ -308,7 +308,6 @@ _otel_is_netcat_arg_arg() {
 }
 
 _otel_binary_contains_null() {
-  # substring=
   local string="$1"
   if ! _otel_string_contains "$string" 00; then return 1; fi
   local i=0
