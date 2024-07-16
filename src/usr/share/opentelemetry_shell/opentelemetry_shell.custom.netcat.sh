@@ -95,7 +95,7 @@ _otel_netcat_parse_request() {
     \printf '%s' "$line" | _otel_binary_write
     return 0
   fi
-  if ! _otel_string_starts_with "$(\printf '%s' "$line" | _otel_binary_write | \cut -sd ' ' -f 3)" HTTP/; then # TODO mute null byte warning somehow
+  if _otel_binary_contains_null "$line" || ! _otel_string_starts_with "$(\printf '%s' "$line" | _otel_binary_write | \cut -sd ' ' -f 3)" HTTP/; then
     \printf '%s' "$line" | _otel_binary_write
     \printf '\n'
     \cat
@@ -162,7 +162,7 @@ _otel_netcat_parse_response() {
     \printf '%s' "$line" | _otel_binary_write
     return 0
   fi
-  if ! _otel_string_starts_with "$(\printf '%s' "$line" | _otel_binary_write)" HTTP/; then # TODO mute null byte warning somehow
+  if _otel_binary_contains_null "$line" || ! _otel_string_starts_with "$(\printf '%s' "$line" | _otel_binary_write)" HTTP/; then
     \printf '%s' "$line" | _otel_binary_write
     \printf '\n'
     \cat
@@ -305,6 +305,16 @@ _otel_is_netcat_arg_arg() {
     --proxy|--proxy-type|--proxy-auth|--proxy-dns) return 0;;
      *) return 1;;
   esac
+}
+
+_otel_binary_contains_null() {
+  local string="$1"
+  local i=0
+  while \[ "$i" -lt "${#string}" ]; do
+    if \[ "${string:$i:2}" = 00 ]; then return 0; fi
+    local i=$((i+2))
+  done
+  return 1
 }
 
 _otel_binary_read() {
