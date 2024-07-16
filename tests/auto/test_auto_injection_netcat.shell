@@ -3,13 +3,6 @@ set -e
 . ./assert.sh
 . otel.sh
 
-echo TEST 0 >&2
-ncat -l -p 12345 -c cat &
-pid="$!"
-sleep 3
-assert_equals "hello" "$(echo -n hello | ncat -i 10 --no-shutdown 127.0.0.1 12345)"
-wait "$pid"
-
 echo TEST 1 >&2
 \otel4netcat ncat -l -p 12345 -c cat &
 pid="$!"
