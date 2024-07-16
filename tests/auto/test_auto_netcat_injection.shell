@@ -14,10 +14,8 @@ echo TEST 1 >&2
 \otel4netcat ncat -l -p 12345 -c cat &
 pid="$!"
 sleep 3
-otel_init
 assert_equals "hello world" "$(echo -n hello world | ncat -i 10 --no-shutdown 127.0.0.1 12345)"
 wait "$pid"
-otel_shutdown
 
 span="$(resolve_span '.name == "cat"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
