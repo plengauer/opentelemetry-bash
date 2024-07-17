@@ -51,7 +51,7 @@ _otel_inject_netcat_listen_and_respond_args() {
     \echo -n ' '
     if (\[ "$1" = -e ] || \[ "$1" = --exec ] || \[ "$1" = -c ] || \[ "$1" = --sh-exec ]) && \[ "$#" -gt 1 ]; then
       local command="$2"; shift; shift
-      # TODO the following injection doesnt maintain the exit code, does it matter though? is it important for netcat?
+      # TODO the following injection doesnt maintain the exit code, does it matter though? is it important for netcat
       if \[ "$OTEL_SHELL_CONFIG_NETCAT_ASSUME_REQUEST_RESPONSE" = TRUE ]; then
         _otel_escape_args -c '
 OTEL_SHELL_AUTO_INJECTED=TRUE
@@ -66,6 +66,8 @@ otel_span_activate "$span_handle"
 _otel_netcat_parse_args 1 "$span_handle" '"$netcat_command"' > /dev/null
 # TODO problem is stdin doesnt close as long as TCP conneciton is active, so command dies when its done, parse_response follows by receiving SIGPIPE, but parse_request hangs in read
 # we cant put parse_request in the background and kill it manually, because then it cannot consume stdin
+# option #1: make parse request somehow background job and redirect stdin, kill it manually
+# option #2: make command and parse response background job, let parse response foreground, and search it manually and kill it on end
 _otel_netcat_parse_request 1 "$span_handle_file_0" '"$netcat_command"' | { otel_span_activate "$(\cat "$span_handle_file_1")"; '"$command"'; } | _otel_netcat_parse_response 1 "$span_handle_file_2"
 otel_span_deactivate "$span_handle"
 otel_span_end "$span_handle"
