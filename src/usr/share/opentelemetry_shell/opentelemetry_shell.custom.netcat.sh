@@ -55,19 +55,19 @@ _otel_inject_netcat_listen_and_respond_args() {
       if \[ "$OTEL_SHELL_CONFIG_NETCAT_ASSUME_REQUEST_RESPONSE" = TRUE ]; then
         _otel_escape_args -c '
 OTEL_SHELL_AUTO_INJECTED=TRUE
-span_handle_file="$(mktemp)"
-span_handle_file_1="$(mktemp -u)"
-span_handle_file_2="$(mktemp -u)"
-mkfifo "$span_handle_file_1" "$span_handle_file_2"
-(tee "$span_handle_file_1" "$span_handle_file_2" < "$span_handle_file" > /dev/null &)
+span_handle_file_0="$(\mktemp -u)_opentelemetry_shell_$$.netcat.request.span_handle"
+span_handle_file_1="$(mktemp -u)_opentelemetry_shell_$$.netcat.command.span_handle"
+span_handle_file_2="$(mktemp -u)_opentelemetry_shell_$$.netcat.response.span_handle"
+mkfifo "$span_handle_file_0" "$span_handle_file_1" "$span_handle_file_2"
+(cat "$span_handle_file_0" | tee "$span_handle_file_1" | tee "$span_handle_file_2" > /dev/null &)
 . otel.sh
 span_handle="$(otel_span_start CONSUMER send/receive)"
 otel_span_activate "$span_handle"
 _otel_netcat_parse_args 1 "$span_handle" '"$netcat_command"' > /dev/null
-_otel_netcat_parse_request 1 "$span_handle_file" '"$netcat_command"' | { otel_span_activate "$(\cat "$span_handle_file_1")"; '"$command"'; } | _otel_netcat_parse_response 1 "$span_handle_file_2"
+_otel_netcat_parse_request 1 "$span_handle_file_0" '"$netcat_command"' | { otel_span_activate "$(\cat "$span_handle_file_1")"; '"$command"'; } | _otel_netcat_parse_response 1 "$span_handle_file_2"
 otel_span_deactivate "$span_handle"
 otel_span_end "$span_handle"
-\rm "$span_handle_file" "$span_handle_file_1" "$span_handle_file_2" 2> /dev null
+\rm "$span_handle_file_0" "$span_handle_file_1" "$span_handle_file_2" 2> /dev null
 '
       else
         _otel_escape_args -c '
