@@ -53,7 +53,7 @@ _otel_inject_netcat_listen_and_respond_args() {
       local command="$2"; shift; shift
       # TODO the following injection doesnt maintain the exit code, does it matter though? is it important for netcat?
       if \[ "$OTEL_SHELL_CONFIG_NETCAT_ASSUME_REQUEST_RESPONSE" = TRUE ]; then
-        _otel_escape_args -c "
+        _otel_escape_args -c "set -x
 OTEL_SHELL_AUTO_INJECTED=TRUE
 span_handle_file=\"\$(mktemp)\"
 span_handle_file_1=\"\$(mktemp -u)\"
