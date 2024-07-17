@@ -145,10 +145,10 @@ _otel_netcat_parse_request() {
     otel_span_attribute_typed "$span_handle" string[1] http.request.header."$key"="$value"
   done < "$headers"
   \printf '\r\n'
-  local body_size_pipe="$(\mktemp -u)"
+  local body_size_pipe="$(\mktemp -u)_opentelemetry_shell_$$.netcat.http_body_size.pipe"
   local body_size_file="$(\mktemp)"
   \mkfifo "$body_size_pipe"
-  \wc -c < "$body_size_pipe" > "$body_size_file" &
+  (\wc -c < "$body_size_pipe" > "$body_size_file" &)
   local pid="$!"
   \tee "$body_size_pipe"
   \wait "$pid"
