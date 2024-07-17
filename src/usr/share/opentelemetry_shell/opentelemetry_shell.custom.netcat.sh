@@ -312,7 +312,7 @@ _otel_binary_contains_null() {
   if ! _otel_string_contains "$string" 00; then return 1; fi
   local i=0
   while \[ "$i" -lt "${#string}" ]; do
-    if \[ "$(\printf '%s' "$string" | \cut -c $i-$((i + 2 - 1)))" = 00 ]; then return 0; fi
+    if \[ "$(\printf '%s' "$string" | \cut -c $((i + 1))-$((i + 1 + 2 - 1)))" = 00 ]; then return 0; fi
     local i=$(($i + 2))
   done
   return 1
