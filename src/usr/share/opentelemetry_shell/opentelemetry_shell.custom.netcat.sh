@@ -66,8 +66,7 @@ otel_span_activate "$span_handle"
 _otel_netcat_parse_args 1 "$span_handle" '"$netcat_command"' > /dev/null
 # TODO problem is stdin doesnt close as long as TCP conneciton is active, so command dies when its done, parse_response follows by receiving SIGPIPE, but parse_request hangs in read
 # we cant put parse_request in the background and kill it manually, because then it cannot consume stdin
-_otel_netcat_parse_request 1 "$span_handle_file_0" '"$netcat_command"' | { otel_span_activate "$(\cat "$span_handle_file_1")"; '"$command"'; } | { _otel_netcat_parse_response 1 "$span_handle_file_2" && for pid in $(\pgrep -P "$$"); do \kill -s PIPE "$pid"; done; }
-# _otel_netcat_parse_request 1 "$span_handle_file_0" '"$netcat_command"' | { otel_span_activate "$(\cat "$span_handle_file_1")"; '"$command"'; } | _otel_netcat_parse_response 1 "$span_handle_file_2"
+_otel_netcat_parse_request 1 "$span_handle_file_0" '"$netcat_command"' | { otel_span_activate "$(\cat "$span_handle_file_1")"; '"$command"'; } | _otel_netcat_parse_response 1 "$span_handle_file_2"
 otel_span_deactivate "$span_handle"
 otel_span_end "$span_handle"
 \rm "$span_handle_file_0" "$span_handle_file_1" "$span_handle_file_2" 2> /dev null
