@@ -209,7 +209,7 @@ otel_span_deactivate() {
 
 otel_event_create() {
   local event_name="$1"
-  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.event.handle.pipe"
+  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.event_handle.pipe"
   \mkfifo $_otel_mkfifo_flags "$response_pipe"
   _otel_sdk_communicate "EVENT_CREATE" "$response_pipe" "$event_name"
   \cat "$response_pipe"
@@ -235,9 +235,38 @@ otel_event_add() {
   _otel_sdk_communicate "EVENT_ADD" "$event_handle" "$span_handle"
 }
 
+otel_link_create() {
+  local traceparent="$1"
+  local tracestate="$2"
+  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.link_handle.pipe"
+  \mkfifo $_otel_mkfifo_flags "$response_pipe"
+  _otel_sdk_communicate "LINK_CREATE" "$response_pipe" "$traceparent" "$tracestate"
+  \cat "$response_pipe"
+  \rm "$response_pipe" 1> /dev/null 2> /dev/null
+}
+
+otel_link_attribute() {
+  local link_handle="$1"
+  local kvp="$2"
+  otel_link_attribute_typed "$link_handle" auto "$kvp"
+}
+
+otel_link_attribute_typed() {
+  local link_handle="$1"
+  local type="$2"
+  local kvp="$3"
+  _otel_sdk_communicate "LINK_ATTRIBUTE" "$link_handle" "$type" "$kvp"
+}
+
+otel_link_add() {
+  local event_handle="$1"
+  local span_handle="$2"
+  _otel_sdk_communicate "LINK_ADD" "$link_handle" "$span_handle"
+}
+
 otel_metric_create() {
   local metric_name="$1"
-  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.metric.handle.pipe"
+  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.metric_handle.pipe"
   \mkfifo $_otel_mkfifo_flags "$response_pipe"
   _otel_sdk_communicate "METRIC_CREATE" "$response_pipe" "$metric_name"
   \cat "$response_pipe"
