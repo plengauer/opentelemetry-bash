@@ -136,7 +136,7 @@ _otel_resolve_package_version() {
 }
 
 otel_span_current() {
-  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.span.handle.pipe"
+  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.span_handle.pipe"
   \mkfifo $_otel_mkfifo_flags "$response_pipe"
   _otel_sdk_communicate "SPAN_HANDLE" "$response_pipe" "$TRACEPARENT"
   \cat "$response_pipe"
@@ -146,7 +146,7 @@ otel_span_current() {
 otel_span_start() {
   local kind="$1"
   local name="$2"
-  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.span.handle.pipe"
+  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.span_handle.pipe"
   \mkfifo $_otel_mkfifo_flags "$response_pipe"
   _otel_sdk_communicate "SPAN_START" "$response_pipe" "$TRACEPARENT" "$TRACESTATE" "$kind" "$name"
   \cat "$response_pipe"
