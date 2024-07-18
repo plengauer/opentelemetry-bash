@@ -70,6 +70,7 @@ _otel_resource_attributes() {
   \echo -n telemetry.sdk.version=; _otel_package_version opentelemetry-shell
 
   local process_command="$(_otel_command_self)"
+  \echo "DEBUG DEBUG DEBUG $process_command" >&2
   local process_executable_path="$(\readlink -f "/proc/$$/exe")"
   local process_executable_name="${process_executable_path##*/}" # "$(\printf '%s' "$process_executable_path" | \rev | \cut -d / -f 1 | \rev)"
   \echo process.pid="$$"
