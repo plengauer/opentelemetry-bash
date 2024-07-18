@@ -114,8 +114,9 @@ _otel_netcat_parse_request() {
     if \[ "$_is_server_side" = 1 ]; then
       local key="$(\printf '%s' "$line" | \cut -d ' ' -f 1 | \tr -d : | \tr '[:upper:]' '[:lower:]')"
       local value="$(\printf '%s' "$line" | \cut -d ' ' -f 2-)"
+\echo "DEBUG DEBUG DEBUG header key={$key} value={$value}" >&2
       # TODO save old traceparent and tracestate
-      if \[ "$key" = traceparent ]; then export TRACEPARENT="$value"; fi
+      if \[ "$key" = traceparent ]; then export TRACEPARENT="$value"; \echo "DEBUG DEBUG DEBUG header traceparent set" >&2; fi
       if \[ "$key" = tracestate ]; then export TRACESTATE="$value"; fi
       if \[ "$key" = 'content-length' ]; then local content_length="$value"; fi
     fi
