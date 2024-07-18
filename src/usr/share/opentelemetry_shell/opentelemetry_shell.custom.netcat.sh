@@ -68,7 +68,9 @@ _otel_netcat_parse_args 1 "$span_handle" '"$netcat_command"' > /dev/null
 # we cant put parse_request in the background and kill it manually, because then it cannot consume stdin
 # option #1: make parse request somehow background job and redirect stdin, kill it manually
 # option #2: make command and parse response background job, let parse response foreground, and search it manually and kill it on end
+set -x
 _otel_netcat_parse_request 1 "$span_handle_file_0" '"$netcat_command"' | { otel_span_activate "$(\cat "$span_handle_file_1")"; '"$command"'; } | _otel_netcat_parse_response 1 "$span_handle_file_2"
+set +x
 otel_span_deactivate "$span_handle"
 otel_span_end "$span_handle"
 \rm "$span_handle_file_0" "$span_handle_file_1" "$span_handle_file_2" 2> /dev/null
