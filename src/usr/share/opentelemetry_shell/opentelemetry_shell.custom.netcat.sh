@@ -111,7 +111,7 @@ _otel_netcat_parse_request() {
     local line="$(\printf '%s' "$line" | \tr -d '\r')"
     if \[ "${#line}" = 0 ]; then break; fi
     \echo "$line" >> "$headers"
-    if \[ "$_is_server_side" = 1 ]; then
+    if \[ "$is_server_side" = 1 ]; then
       local key="$(\printf '%s' "$line" | \cut -d ' ' -f 1 | \tr -d : | \tr '[:upper:]' '[:lower:]')"
       local value="$(\printf '%s' "$line" | \cut -d ' ' -f 2-)"
 \echo "DEBUG DEBUG DEBUG header key={$key} value={$value}" >&2
@@ -135,7 +135,7 @@ _otel_netcat_parse_request() {
   otel_span_attribute_typed "$span_handle" int http.request.body.size="${content_length:-0}"
   if \[ "$is_server_side" = 0 ]; then otel_span_attribute_typed "$span_handle" string user_agent.original=netcat; fi
   \printf '%s\r\n' "$method $path_and_query $protocol"
-  if \[ "$_is_server_side" = 0 ]; then
+  if \[ "$is_server_side" = 0 ]; then
     otel_span_activate "$span_handle"
     \printf '%s\r\n' "traceparent: $TRACEPARENT"
     \printf '%s\r\n' "tracestate: $TRACESTATE"
