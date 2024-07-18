@@ -93,7 +93,7 @@ _otel_resource_attributes() {
      yash) _otel_resource_attribute string process.runtime.description="Yet Another Shell" ;;
      bosh) _otel_resource_attribute string process.runtime.description="Bourne Shell" ;;
      fish) _otel_resource_attribute string process.runtime.description="Friendly Interactive Shell" ;;
-     'busybox sh') _otel_resource_attribute austringto process.runtime.description="Busy Box" ;;
+     'busybox sh') _otel_resource_attribute string process.runtime.description="Busy Box" ;;
   esac
   _otel_resource_attribute string process.runtime.version="$(_otel_package_version "$process_executable_name")"
   _otel_resource_attribute string process.runtime.options="$-"
