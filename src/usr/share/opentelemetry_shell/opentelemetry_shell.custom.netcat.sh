@@ -152,9 +152,9 @@ _otel_netcat_parse_request() {
   done < "$headers"
   \printf '\r\n'
   if \[ -n "$length" ]; then # TODO this shoudl transparently pipe the entire request through, even if it is not in line with content-length (or content-length hasn't been set at all)
-    head -c "$length"
+    \head -c "$length"
   fi
-  \rm "$headers" "$body_size_file" "$body_size_pipe" 2> /dev/null
+  \rm "$headers" 2> /dev/null
 }
 
 _otel_netcat_parse_response() {
