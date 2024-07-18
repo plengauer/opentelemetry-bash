@@ -121,6 +121,7 @@ _otel_netcat_parse_request() {
       # TODO save old traceparent and tracestate
       if \[ "$key" = traceparent ]; then export TRACEPARENT="$value"; fi
       if \[ "$key" = tracestate ]; then export TRACESTATE="$value"; fi
+      if \[ "$key" = 'content-length' ]; then local content_length="$value"; fi
     fi
   done
   if \[ "$is_server_side" = 1 ]; then local span_handle="$(otel_span_start SERVER "$method")"; else local span_handle="$(otel_span_start CLIENT "$method")"; fi
@@ -134,6 +135,7 @@ _otel_netcat_parse_request() {
   otel_span_attribute_typed "$span_handle" string url.query="$(\printf '%s' "$path_and_query" | \cut -sd ? -f 2-)"
   otel_span_attribute_typed "$span_handle" string url.scheme="$(\printf '%s' "$protocol" | \cut -d / -f 1 | \tr '[:upper:]' '[:lower:]')"
   otel_span_attribute_typed "$span_handle" string http.request.method="$method"
+  otel_span_attribute_typed "$span_handle" int http.request.body.size="${content_length:-0}"
   otel_span_attribute_typed "$span_handle" string user_agent.original=netcat
   \printf '%s\r\n' "$method $path_and_query $protocol"
   if \[ "$_is_server_side" = 0 ]; then
@@ -149,14 +151,9 @@ _otel_netcat_parse_request() {
     otel_span_attribute_typed "$span_handle" string[1] http.request.header."$key"="$value"
   done < "$headers"
   \printf '\r\n'
-  local body_size_pipe="$(\mktemp -u)_opentelemetry_shell_$$.netcat.http_body_size.pipe"
-  local body_size_file="$(\mktemp)"
-  \mkfifo "$body_size_pipe"
-  (\wc -c < "$body_size_pipe" > "$body_size_file" &)
-  local pid="$!"
-  \tee "$body_size_pipe"
-  \wait "$pid"
-  otel_span_attribute_typed "$span_handle" int http.request.body.size="$(\cat "$body_size_file")"
+  if \[ -n "$length" ]; then # TODO this shoudl transparently pipe the entire request through, even if it is not in line with content-length (or content-length hasn't been set at all)
+    head -c "$length"
+  fi
   \rm "$headers" "$body_size_file" "$body_size_pipe" 2> /dev/null
 }
 
