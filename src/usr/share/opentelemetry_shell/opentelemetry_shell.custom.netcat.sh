@@ -132,7 +132,7 @@ _otel_netcat_parse_request() {
   otel_span_attribute_typed "$span_handle" string url.scheme="$(\printf '%s' "$protocol" | \cut -d / -f 1 | \tr '[:upper:]' '[:lower:]')"
   otel_span_attribute_typed "$span_handle" string http.request.method="$method"
   otel_span_attribute_typed "$span_handle" int http.request.body.size="${content_length:-0}"
-  otel_span_attribute_typed "$span_handle" string user_agent.original=netcat
+  if \[ "$is_server_side" = 0 ]; then otel_span_attribute_typed "$span_handle" string user_agent.original=netcat; fi
   \printf '%s\r\n' "$method $path_and_query $protocol"
   if \[ "$_is_server_side" = 0 ]; then
     otel_span_activate "$span_handle"
