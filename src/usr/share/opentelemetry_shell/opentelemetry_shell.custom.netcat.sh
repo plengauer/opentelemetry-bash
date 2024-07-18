@@ -71,7 +71,7 @@ _otel_netcat_parse_args 1 "$span_handle" '"$netcat_command"' > /dev/null
 _otel_netcat_parse_request 1 "$span_handle_file_0" '"$netcat_command"' | { otel_span_activate "$(\cat "$span_handle_file_1")"; '"$command"'; } | _otel_netcat_parse_response 1 "$span_handle_file_2"
 otel_span_deactivate "$span_handle"
 otel_span_end "$span_handle"
-\rm "$span_handle_file_0" "$span_handle_file_1" "$span_handle_file_2" 2> /dev null
+\rm "$span_handle_file_0" "$span_handle_file_1" "$span_handle_file_2" 2> /dev/null
 '
       else
         _otel_escape_args -c '
