@@ -65,6 +65,7 @@ _otel_sdk_communicate() {
 }
 
 _otel_resource_attributes() {
+if \[ "$OTEL_SHELL_DEBUG" = TRUE ]; then set -x; fi
   \echo telemetry.sdk.name=opentelemetry
   \echo telemetry.sdk.language=shell
   \echo -n telemetry.sdk.version=; _otel_package_version opentelemetry-shell
@@ -101,6 +102,7 @@ _otel_resource_attributes() {
   \echo service.version="$OTEL_SERVICE_VERSION"
   \echo service.namespace="$OTEL_SERVICE_NAMESPACE"
   \echo service.instance.id="$OTEL_SERVICE_INSTANCE_ID"
+if \[ "$OTEL_SHELL_DEBUG" = TRUE ]; then set +x; fi
 }
 
 _otel_command_self() {
