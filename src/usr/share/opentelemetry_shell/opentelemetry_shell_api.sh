@@ -78,7 +78,7 @@ _otel_resource_attributes() {
   \echo process.parent_pid="$PPID"
   \echo process.executable.name="$process_executable_name"
   \echo process.executable.path="$process_executable_path"
-  \echo process.command_line="$process_command"
+  _otel_sdk_communicate RESOURCE_ATTRIBUTE auto "$process_command" # \echo process.command_line="$process_command"
   \echo process.command="${process_command%% *}" # "$(\printf '%s' "$process_command" | \cut -d ' ' -f 1)"
   \echo process.owner="$USER"
   \echo process.runtime.name="$_otel_shell"
