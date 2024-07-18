@@ -44,7 +44,9 @@ else
     if \env --help 2>&1 | \grep -q 'ignore-signal'; then local extra_env_flags='--ignore-signal=INT --ignore-signal=HUP'; fi
     ( (\env $extra_env_flags otelsdk "shell" "$(_otel_package_version opentelemetry-shell)" < "$_otel_remote_sdk_pipe" 1> "$sdk_output" 2> "$sdk_output") &)
     \exec 7> "$_otel_remote_sdk_pipe"
+    if \[ "$OTEL_SHELL_DEBUG" = TRUE ]; then set -x; fi
     _otel_resource_attributes | while IFS= read -r kvp; do _otel_sdk_communicate "RESOURCE_ATTRIBUTE" "auto" "$kvp"; done
+    if \[ "$OTEL_SHELL_DEBUG" = TRUE ]; then set +x; fi
     _otel_sdk_communicate "INIT"
   }
 
@@ -65,7 +67,6 @@ _otel_sdk_communicate() {
 }
 
 _otel_resource_attributes() {
-if \[ "$OTEL_SHELL_DEBUG" = TRUE ]; then set -x; fi
   \echo telemetry.sdk.name=opentelemetry
   \echo telemetry.sdk.language=shell
   \echo -n telemetry.sdk.version=; _otel_package_version opentelemetry-shell
@@ -102,7 +103,6 @@ if \[ "$OTEL_SHELL_DEBUG" = TRUE ]; then set -x; fi
   \echo service.version="$OTEL_SERVICE_VERSION"
   \echo service.namespace="$OTEL_SERVICE_NAMESPACE"
   \echo service.instance.id="$OTEL_SERVICE_INSTANCE_ID"
-if \[ "$OTEL_SHELL_DEBUG" = TRUE ]; then set +x; fi
 }
 
 _otel_command_self() {
