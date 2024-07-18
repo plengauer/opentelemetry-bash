@@ -44,9 +44,7 @@ else
     if \env --help 2>&1 | \grep -q 'ignore-signal'; then local extra_env_flags='--ignore-signal=INT --ignore-signal=HUP'; fi
     ( (\env $extra_env_flags otelsdk "shell" "$(_otel_package_version opentelemetry-shell)" < "$_otel_remote_sdk_pipe" 1> "$sdk_output" 2> "$sdk_output") &)
     \exec 7> "$_otel_remote_sdk_pipe"
-    if \[ "$OTEL_SHELL_DEBUG" = TRUE ]; then set -x; fi
     _otel_resource_attributes | while IFS= read -r kvp; do _otel_sdk_communicate "RESOURCE_ATTRIBUTE" "auto" "$kvp"; done
-    if \[ "$OTEL_SHELL_DEBUG" = TRUE ]; then set +x; fi
     _otel_sdk_communicate "INIT"
   }
 
@@ -78,7 +76,7 @@ _otel_resource_attributes() {
   \echo process.parent_pid="$PPID"
   \echo process.executable.name="$process_executable_name"
   \echo process.executable.path="$process_executable_path"
-  _otel_sdk_communicate RESOURCE_ATTRIBUTE auto "$process_command" # \echo process.command_line="$process_command"
+  _otel_sdk_communicate RESOURCE_ATTRIBUTE auto process.command_line="$process_command" # \echo process.command_line="$process_command"
   \echo process.command="${process_command%% *}" # "$(\printf '%s' "$process_command" | \cut -d ' ' -f 1)"
   \echo process.owner="$USER"
   \echo process.runtime.name="$_otel_shell"
