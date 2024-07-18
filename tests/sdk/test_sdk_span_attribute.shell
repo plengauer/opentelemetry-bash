@@ -8,6 +8,7 @@ otel_span_attribute $span_id key=value
 assert_equals 0 $?
 otel_span_attribute $span_id foo='bar
 baz'
+otel_span_attribute $span_id bar='printf "\r\n\r\n"'
 assert_equals 0 $?
 otel_span_end $span_id
 assert_equals 0 $?
@@ -20,3 +21,4 @@ assert_equals "null" $(echo "$span" | jq -r '.parent_id')
 assert_equals "UNSET" $(echo "$span" | jq -r '.status.status_code')
 assert_equals "value" $(echo "$span" | jq -r '.attributes.key')
 assert_equals "bar baz" "$(echo "$span" | jq -r '.attributes.foo')"
+assert_equals 'printf "\r\n\r\n"' "$(echo "$span" | jq -r '.attributes.bar')"
