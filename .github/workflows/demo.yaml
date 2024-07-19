@@ -24,7 +24,8 @@ jobs:
     steps:
       - run: wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh
       - uses: actions/checkout@v4
-      - run: |
+      - id: demo
+        run: |
           set +o pipefail
           cd demos/${{ matrix.demo_directory }}
           
@@ -43,17 +44,27 @@ jobs:
           kill -9 "$pid"
           wait
           sleep 10
+          echo "STDOUT=$stdout" >> "$GITHUB_OUTPUT"
+          echo "STDERR=$stderr" >> "$GITHUB_OUTPUT"
+          echo "OTLP=$otlp" >> "$GITHUB_OUTPUT"
+      - env:
+          STDOUT: ${{ steps.demo.outputs.STDOUT }}
+          STDERR: ${{ steps.demo.outputs.STDERR }}
+          OTLP: ${{ steps.demo.outputs.OTLP }}
+        run: |
+          set +o pipefail
+          cd demos/${{ matrix.demo_directory }}
 
           convert_span_id_to_name() {
-            cat "$otlp" | jq -r '. | select(.context.span_id == "'"$1"'") | .name'
+            cat "$OTLP" | jq -r '. | select(.context.span_id == "'"$1"'") | .name'
           }
 
           get_root_span_id() {
-            cat "$otlp" | jq -r '. | select(.parent_id == null) | .context.span_id'
+            cat "$OTLP" | jq -r '. | select(.parent_id == null) | .context.span_id'
           }
 
           get_child_span_ids() {
-            cat "$otlp" | jq -r '. | select(.parent_id == "'"$1"'") | .context.span_id'
+            cat "$OTLP" | jq -r '. | select(.parent_id == "'"$1"'") | .context.span_id'
           }
 
           print_span_name_tree() {
@@ -74,11 +85,11 @@ jobs:
             echo '´´´'
             echo '## Standard Out'
             echo '´´´'
-            cat "$stdout"
+            cat "$STDOUT"
             echo '´´´'
             echo '## Standard Error'
             echo '´´´'
-            cat "$stderr"
+            cat "$STDERR"
             echo '´´´'
             echo '## Trace Overview'
             echo '´´´'
@@ -86,7 +97,7 @@ jobs:
             echo '´´´'
             echo '## Full OTLP Data'
             echo '´´´json'
-            cat "$otlp"
+            cat "$OTLP"
             echo '´´´'
           } > README.md
       - run: cat demos/${{ matrix.demo_directory }}/README.md
