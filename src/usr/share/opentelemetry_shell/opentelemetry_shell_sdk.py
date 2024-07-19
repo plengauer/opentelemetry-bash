@@ -314,10 +314,11 @@ def handle(scope, version, command, arguments):
         del events[event_id]
     elif command == 'LINK_CREATE':
         global next_link_id
-        tokens = arguments.split(' ', 2)
+        tokens = arguments.split(' ', 3)
         response_path = tokens[0]
         traceparent = tokens[1]
         tracestate = tokens[2]
+        # third is dummy to not be stripped away
         link_context = opentelemetry.trace.get_current_span(TraceContextTextMapPropagator().extract({'traceparent': traceparent, 'tracestate': tracestate})).get_span_context()
         link_id = str(next_link_id)
         next_link_id = next_link_id + 1
