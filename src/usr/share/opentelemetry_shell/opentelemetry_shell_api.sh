@@ -251,7 +251,7 @@ otel_link_create() {
   local tracestate="$2"
   local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.link_handle.pipe"
   \mkfifo $_otel_mkfifo_flags "$response_pipe"
-  _otel_sdk_communicate "LINK_CREATE" "$response_pipe" "$traceparent" "$tracestate"
+  _otel_sdk_communicate "LINK_CREATE" "$response_pipe" "$traceparent" "$tracestate" END
   \cat "$response_pipe"
   \rm "$response_pipe" 1> /dev/null 2> /dev/null
 }
@@ -270,7 +270,7 @@ otel_link_attribute_typed() {
 }
 
 otel_link_add() {
-  local event_handle="$1"
+  local link_handle="$1"
   local span_handle="$2"
   _otel_sdk_communicate "LINK_ADD" "$link_handle" "$span_handle"
 }
