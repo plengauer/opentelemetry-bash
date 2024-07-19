@@ -64,7 +64,8 @@ jobs:
           }
 
           {
-            echo '# Demo Output'
+            echo '# Demo "'"$(cat ./meta.json | jq -r .title)"'"'
+            cat ./meta.json | jq -r .description
             echo '## Script'
             echo '´´´sh'
             cat ./demo.sh
