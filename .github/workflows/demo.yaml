@@ -65,6 +65,10 @@ jobs:
 
           {
             echo '# Demo Output'
+            echo '## Script'
+            echo '´´´sh'
+            cat ./demo.sh
+            echo '´´´'
             echo '## Standard Out'
             echo '´´´'
             cat "$stdout"
@@ -85,7 +89,8 @@ jobs:
       - run: cat README.md
       - run: |
           git add --intent-to-add README.md
-          git diff | grep -v '^+++' | grep -v '^---' | grep -v _id | grep -v _time | grep -v github. | grep -q '^+' && echo dirty=true >> "$GITHUB_OUTPUT" || true
+          git diff
+          git diff | grep -v '^+++' | grep -v '^---' | grep -v _id | grep -v _time | grep -v github. | grep -v .ip | grep -q '^+' && echo dirty=true >> "$GITHUB_OUTPUT" || true
         id: diff
       - name: "Resolve Reviewers"
         if: steps.diff.outputs.dirty
