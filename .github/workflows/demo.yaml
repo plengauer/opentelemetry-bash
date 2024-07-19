@@ -75,11 +75,6 @@ jobs:
             done
           }
 
-          echo "DEBUG DEBUG DEBUG 0" && cat "$OTLP" | jq -r '.name'
-          echo "DEBUG DEBUG DEBUG 1" && cat "$OTLP" | jq -r '.parent_id'
-          echo "DEBUG DEBUG DEBUG 2" && cat "$OTLP" | jq -r '. | select(.parent_id == null) | .name'
-          echo "DEBUG DEBUG DEBUG 3" && cat "$OTLP" | jq -r '. | select(.name != null) | select(.parent_id != null) | .name'
-
           {
             echo '# Demo "'"$(cat ./meta.json | jq -r .title)"'"'
             cat meta.json | jq -r .description
