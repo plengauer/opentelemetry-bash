@@ -219,6 +219,15 @@ otel_event_attribute_typed "$event_handle" string foo=bar
 otel_event_add "$event_handle" "$span_handle"
 ```
 
+### Span Links
+Customize your spans by manually adding span links to other spans. This is only possible between `otel_span_start` and `otel_span_end` for the respective span handle. Valid types for link attributes `string`, `int`, `float`, and `auto`. The `auto` type will try to guess the type based on the value.
+```bash
+link_handle="$(otel_link_create "$foreign_traceparent" "$foreign_tracestate")"
+otel_link_attribute "$link_handle" key=value
+otel_link_attribute_typed "$link_handle" string foo=bar
+otel_link_add "$link_handle" "$span_handle"
+```
+
 ### Span Error
 Customize your spans by marking them as failed. This is only possible between `otel_span_start` and `otel_span_end` for the respective span handle.
 ```bash
@@ -279,7 +288,6 @@ This projects adheres to the <a href="https://opentelemetry.io/docs/specs/semcon
 | pipe.stdout.lines | int  | The number of lines written to stdout (fd 1). | `0`      |
 | pipe.stderr.bytes | int  | The number of bytes written to stderr (fd 2). | `0`      |
 | pipe.stderr.lines | int  | The number of lines written to stderr (fd 2). | `0`      |
-
 
 ## SSH
 These attributes are set when the script is called via an SSH connection.

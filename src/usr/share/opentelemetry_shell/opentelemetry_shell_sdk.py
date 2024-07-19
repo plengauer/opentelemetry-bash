@@ -102,6 +102,8 @@ spans = {}
 next_span_id = 0
 events = {}
 next_event_id = 0
+links = {}
+next_link_id = 0
 metrics = {}
 next_metric_id = 0
 
@@ -304,6 +306,36 @@ def handle(scope, version, command, arguments):
         event = events[event_id]
         spans[span_id].add_event(event['name'], event['attributes'])
         del events[event_id]
+    elif command == 'LINK_CREATE':
+        global next_link_id
+        tokens = arguments.split(' ', 2)
+        response_path = tokens[0]
+        traceparent = tokens[1]
+        tracestate = tokens[2]
+        link_context = opentelemetry.trace.get_current_span(TraceContextTextMapPropagator().extract({'traceparent': traceparent, 'tracestate': tracestate})).get_span_context()
+        link_id = str(next_link_id)
+        next_link_id = next_link_id + 1
+        links[link_id] = { 'context': link_context, 'attributes': {} }
+        with open(response_path, 'w') as response:
+            response.write(link_id)
+    elif command == 'LINK_ATTRIBUTE':
+        tokens = arguments.split(' ', 2)
+        link_id = tokens[0]
+        type = tokens[1]
+        keyvaluepair = tokens[2]
+        tokens = keyvaluepair.split('=', 1)
+        key = tokens[0]
+        value = tokens[1]
+        if value == '':
+            return
+        links[link_id]['attributes'][key] = convert_type(type, value)
+    elif command == 'LINK_ADD':
+        tokens = arguments.split(' ', 2)
+        link_id = tokens[0]
+        span_id = tokens[1]
+        link = links[link_id]
+        spans[span_id].add_link(event['context'], event['attributes'])
+        del links[link_id]
     elif command == 'METRIC_CREATE':
         global next_metric_id
         tokens = arguments.split(' ', 1)
