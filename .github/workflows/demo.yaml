@@ -28,7 +28,6 @@ jobs:
         run: |
           set +o pipefail
           cd demos/${{ matrix.demo_directory }}
-          
           export OTEL_METRICS_EXPORTER=console
           export OTEL_LOGS_EXPORTER=console
           export OTEL_TRACES_EXPORTER=console
