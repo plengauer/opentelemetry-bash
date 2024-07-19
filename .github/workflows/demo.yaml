@@ -75,6 +75,11 @@ jobs:
             done
           }
 
+          cat "$OTLP" | jq -r '.name'
+          cat "$OTLP" | jq -r '.parent_id'
+          cat "$OTLP" | jq -r '. | select(.parent_id == null) | .name'
+          cat "$OTLP" | jq -r '. | select(.parent_id != null) | .name'
+
           {
             echo '# Demo "'"$(cat ./meta.json | jq -r .title)"'"'
             cat meta.json | jq -r .description
