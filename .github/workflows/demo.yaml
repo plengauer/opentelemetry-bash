@@ -87,7 +87,7 @@ jobs:
             cat "$otlp"
             echo '´´´'
           } > README.md
-      - run: cat README.md
+      - run: demos/${{ matrix.demo_directory }}/README.md
       - run: |
           cd demos/${{ matrix.demo_directory }}
           git add --intent-to-add README.md
