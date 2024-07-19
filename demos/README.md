@@ -1,1 +1,1 @@
-See the subdirectory for invidual demo scripts including the output in terms of traces and logs.
+See the subdirectories for invidual demo scripts including their output and traces they generate.
