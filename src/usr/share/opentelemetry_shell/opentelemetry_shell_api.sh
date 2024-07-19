@@ -40,11 +40,12 @@ else
     local sdk_output="${OTEL_SHELL_SDK_OUTPUT_REDIRECT:-$sdk_output}"
     \mkfifo "$_otel_remote_sdk_pipe"
     _otel_package_version opentelemetry-shell > /dev/null # to build the cache outside a subshell
+    _otel_package_version "$_otel_shell" > /dev/null
     # several weird things going on in the next line, (1) using '((' fucks up the syntax highlighting in github while '( (' does not, and (2) &> causes weird buffering / late flushing behavior
     if \env --help 2>&1 | \grep -q 'ignore-signal'; then local extra_env_flags='--ignore-signal=INT --ignore-signal=HUP'; fi
     ( (\env $extra_env_flags otelsdk "shell" "$(_otel_package_version opentelemetry-shell)" < "$_otel_remote_sdk_pipe" 1> "$sdk_output" 2> "$sdk_output") &)
     \exec 7> "$_otel_remote_sdk_pipe"
-    _otel_resource_attributes | while IFS= read -r kvp; do _otel_sdk_communicate "RESOURCE_ATTRIBUTE" "auto" "$kvp"; done
+    _otel_resource_attributes
     _otel_sdk_communicate "INIT"
   }
 
@@ -65,42 +66,46 @@ _otel_sdk_communicate() {
 }
 
 _otel_resource_attributes() {
-  \echo telemetry.sdk.name=opentelemetry
-  \echo telemetry.sdk.language=shell
-  \echo -n telemetry.sdk.version=; _otel_package_version opentelemetry-shell
+  _otel_resource_attribute string telemetry.sdk.name=opentelemetry
+  _otel_resource_attribute string telemetry.sdk.language=shell
+  _otel_resource_attribute string telemetry.sdk.version="$(_otel_package_version opentelemetry-shell)"
 
   local process_command="$(_otel_command_self)"
   local process_executable_path="$(\readlink -f "/proc/$$/exe")"
   local process_executable_name="${process_executable_path##*/}" # "$(\printf '%s' "$process_executable_path" | \rev | \cut -d / -f 1 | \rev)"
-  \echo process.pid="$$"
-  \echo process.parent_pid="$PPID"
-  \echo process.executable.name="$process_executable_name"
-  \echo process.executable.path="$process_executable_path"
-  \echo process.command_line="$process_command"
-  \echo process.command="${process_command%% *}" # "$(\printf '%s' "$process_command" | \cut -d ' ' -f 1)"
-  \echo process.owner="$USER"
-  \echo process.runtime.name="$_otel_shell"
+  _otel_resource_attribute int process.pid="$$"
+  _otel_resource_attribute int process.parent_pid="$PPID"
+  _otel_resource_attribute string process.executable.name="$process_executable_name"
+  _otel_resource_attribute string process.executable.path="$process_executable_path"
+  _otel_resource_attribute string process.command_line="$process_command"
+  _otel_resource_attribute string process.command="${process_command%% *}" # "$(\printf '%s' "$process_command" | \cut -d ' ' -f 1)"
+  _otel_resource_attribute string process.owner="$USER"
+  _otel_resource_attribute string process.runtime.name="$_otel_shell"
   case "$_otel_shell" in
-       sh) \echo process.runtime.description="Bourne Shell" ;;
-      ash) \echo process.runtime.description="Almquist Shell" ;;
-     dash) \echo process.runtime.description="Debian Almquist Shell" ;;
-     bash) \echo process.runtime.description="Bourne Again Shell" ;;
-      zsh) \echo process.runtime.description="Z Shell" ;;
-      ksh) \echo process.runtime.description="Korn Shell" ;;
-    pdksh) \echo process.runtime.description="Public Domain Korn Shell" ;;
-     posh) \echo process.runtime.description="Policy-compliant Ordinary Shell" ;;
-     yash) \echo process.runtime.description="Yet Another Shell" ;;
-     bosh) \echo process.runtime.description="Bourne Shell" ;;
-     fish) \echo process.runtime.description="Friendly Interactive Shell" ;;
-     'busybox sh') \echo process.runtime.description="Busy Box" ;;
+       sh) _otel_resource_attribute string process.runtime.description="Bourne Shell" ;;
+      ash) _otel_resource_attribute string process.runtime.description="Almquist Shell" ;;
+     dash) _otel_resource_attribute string process.runtime.description="Debian Almquist Shell" ;;
+     bash) _otel_resource_attribute string process.runtime.description="Bourne Again Shell" ;;
+      zsh) _otel_resource_attribute string process.runtime.description="Z Shell" ;;
+      ksh) _otel_resource_attribute string process.runtime.description="Korn Shell" ;;
+    pdksh) _otel_resource_attribute string process.runtime.description="Public Domain Korn Shell" ;;
+     posh) _otel_resource_attribute string process.runtime.description="Policy-compliant Ordinary Shell" ;;
+     yash) _otel_resource_attribute string process.runtime.description="Yet Another Shell" ;;
+     bosh) _otel_resource_attribute string process.runtime.description="Bourne Shell" ;;
+     fish) _otel_resource_attribute string process.runtime.description="Friendly Interactive Shell" ;;
+     'busybox sh') _otel_resource_attribute string process.runtime.description="Busy Box" ;;
   esac
-  \echo -n process.runtime.version=; _otel_package_version "$process_executable_name"
-  \echo process.runtime.options="$-"
+  _otel_resource_attribute string process.runtime.version="$(_otel_package_version "$process_executable_name")"
+  _otel_resource_attribute string process.runtime.options="$-"
 
-  \echo service.name="${OTEL_SERVICE_NAME:-unknown_service}"
-  \echo service.version="$OTEL_SERVICE_VERSION"
-  \echo service.namespace="$OTEL_SERVICE_NAMESPACE"
-  \echo service.instance.id="$OTEL_SERVICE_INSTANCE_ID"
+  _otel_resource_attribute string service.name="${OTEL_SERVICE_NAME:-unknown_service}"
+  _otel_resource_attribute string service.version="$OTEL_SERVICE_VERSION"
+  _otel_resource_attribute string service.namespace="$OTEL_SERVICE_NAMESPACE"
+  _otel_resource_attribute string service.instance.id="$OTEL_SERVICE_INSTANCE_ID"
+}
+
+_otel_resource_attribute() {
+  _otel_sdk_communicate RESOURCE_ATTRIBUTE "$@"
 }
 
 _otel_command_self() {
@@ -136,7 +141,7 @@ _otel_resolve_package_version() {
 }
 
 otel_span_current() {
-  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.span.handle.pipe"
+  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.span_handle.pipe"
   \mkfifo $_otel_mkfifo_flags "$response_pipe"
   _otel_sdk_communicate "SPAN_HANDLE" "$response_pipe" "$TRACEPARENT"
   \cat "$response_pipe"
@@ -146,7 +151,7 @@ otel_span_current() {
 otel_span_start() {
   local kind="$1"
   local name="$2"
-  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.span.handle.pipe"
+  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.span_handle.pipe"
   \mkfifo $_otel_mkfifo_flags "$response_pipe"
   _otel_sdk_communicate "SPAN_START" "$response_pipe" "$TRACEPARENT" "$TRACESTATE" "$kind" "$name"
   \cat "$response_pipe"
@@ -156,6 +161,12 @@ otel_span_start() {
 otel_span_end() {
   local span_handle="$1"
   _otel_sdk_communicate "SPAN_END" "$span_handle"
+}
+
+otel_span_name() {
+  local span_handle="$1"
+  local span_name="$2"
+  _otel_sdk_communicate "SPAN_NAME" "$span_handle" "$span_name"
 }
 
 otel_span_error() {
@@ -209,7 +220,7 @@ otel_span_deactivate() {
 
 otel_event_create() {
   local event_name="$1"
-  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.event.handle.pipe"
+  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.event_handle.pipe"
   \mkfifo $_otel_mkfifo_flags "$response_pipe"
   _otel_sdk_communicate "EVENT_CREATE" "$response_pipe" "$event_name"
   \cat "$response_pipe"
@@ -235,9 +246,38 @@ otel_event_add() {
   _otel_sdk_communicate "EVENT_ADD" "$event_handle" "$span_handle"
 }
 
+otel_link_create() {
+  local traceparent="$1"
+  local tracestate="$2"
+  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.link_handle.pipe"
+  \mkfifo $_otel_mkfifo_flags "$response_pipe"
+  _otel_sdk_communicate "LINK_CREATE" "$response_pipe" "$traceparent" "$tracestate"
+  \cat "$response_pipe"
+  \rm "$response_pipe" 1> /dev/null 2> /dev/null
+}
+
+otel_link_attribute() {
+  local link_handle="$1"
+  local kvp="$2"
+  otel_link_attribute_typed "$link_handle" auto "$kvp"
+}
+
+otel_link_attribute_typed() {
+  local link_handle="$1"
+  local type="$2"
+  local kvp="$3"
+  _otel_sdk_communicate "LINK_ATTRIBUTE" "$link_handle" "$type" "$kvp"
+}
+
+otel_link_add() {
+  local event_handle="$1"
+  local span_handle="$2"
+  _otel_sdk_communicate "LINK_ADD" "$link_handle" "$span_handle"
+}
+
 otel_metric_create() {
   local metric_name="$1"
-  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.metric.handle.pipe"
+  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.metric_handle.pipe"
   \mkfifo $_otel_mkfifo_flags "$response_pipe"
   _otel_sdk_communicate "METRIC_CREATE" "$response_pipe" "$metric_name"
   \cat "$response_pipe"
@@ -416,7 +456,7 @@ _otel_call_and_record_pipes() {
       local inner_exit_code=0
       $call_command "$@" || local inner_exit_code="$?"
       local stdin_pid="$(\ps -o 'pid,command' | \grep -F "tee $stdin_bytes $stdin_lines" | \grep -vF grep | \awk '{ print $1 }')"
-      if \[ -n "$stdin_pid" ]; then \kill -2 "$stdin_pid" 2> /dev/null || true; fi
+      if \[ -n "$stdin_pid" ]; then \kill -2 "$stdin_pid" 2> /dev/null || \true; fi
       \echo -n "$inner_exit_code" > "$exit_code_file" # return "$inner_exit_code"
     } 1> "$stdout" 2> "$stderr" # || local exit_code="$?"
     local exit_code="$(\cat "$exit_code_file")"

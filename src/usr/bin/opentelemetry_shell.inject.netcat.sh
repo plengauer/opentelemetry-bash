@@ -1,0 +1,1 @@
+../share/opentelemetry_shell/opentelemetry_shell.inject.netcat.sh

@@ -1,4 +1,4 @@
-This project delivers [OpenTelemetry](https://opentelemetry.io/) traces, metrics and logs from shell scripts (sh, ash, dash, bash, busybox, and many other POSIX compliant shells) as well as from GitHub actions (including node and docker actions). Compared to similar projects, it delivers not just a command-line SDK to create spans manually, but also provides context propagation via HTTP (wget and curl), auto-instrumentation of all available commands, auto-injection into child scripts and into executables using shebangs, as well as automatic log collection from stderr. Its installable via a debian package from the releases in this repository, or from the apt-repository below. This project is not officially affiliated with the CNCF project [OpenTelemetry](https://opentelemetry.io/).
+This project delivers [OpenTelemetry](https://opentelemetry.io/) traces, metrics and logs from shell scripts (sh, ash, dash, bash, busybox, and many other POSIX compliant shells) as well as from GitHub actions (including node and docker actions). Compared to similar projects, it delivers not just a command-line SDK to create spans manually, but also provides context propagation via HTTP (wget, curl, and netcat), auto-instrumentation of all available commands, auto-injection into child scripts and into executables using shebangs, as well as automatic log collection from stderr. Its installable via a debian package from the releases in this repository, or from the apt-repository below. This project is not officially affiliated with the CNCF project [OpenTelemetry](https://opentelemetry.io/).
 
 [![Tests](https://github.com/plengauer/opentelemetry-bash/actions/workflows/test_branch.yaml/badge.svg?branch=main)](https://github.com/plengauer/opentelemetry-bash/actions/workflows/test_branch.yaml)
 
@@ -219,6 +219,15 @@ otel_event_attribute_typed "$event_handle" string foo=bar
 otel_event_add "$event_handle" "$span_handle"
 ```
 
+### Span Links
+Customize your spans by manually adding span links to other spans. This is only possible between `otel_span_start` and `otel_span_end` for the respective span handle. Valid types for link attributes `string`, `int`, `float`, and `auto`. The `auto` type will try to guess the type based on the value.
+```bash
+link_handle="$(otel_link_create "$foreign_traceparent" "$foreign_tracestate")"
+otel_link_attribute "$link_handle" key=value
+otel_link_attribute_typed "$link_handle" string foo=bar
+otel_link_add "$link_handle" "$span_handle"
+```
+
 ### Span Error
 Customize your spans by marking them as failed. This is only possible between `otel_span_start` and `otel_span_end` for the respective span handle.
 ```bash
@@ -279,7 +288,6 @@ This projects adheres to the <a href="https://opentelemetry.io/docs/specs/semcon
 | pipe.stdout.lines | int  | The number of lines written to stdout (fd 1). | `0`      |
 | pipe.stderr.bytes | int  | The number of bytes written to stderr (fd 2). | `0`      |
 | pipe.stderr.lines | int  | The number of lines written to stderr (fd 2). | `0`      |
-
 
 ## SSH
 These attributes are set when the script is called via an SSH connection.
