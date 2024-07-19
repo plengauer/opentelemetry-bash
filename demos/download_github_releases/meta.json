@@ -1,4 +1,5 @@
 {
   "title": "Download GitHub releases",
-  "description": "This script takes a github repository (hard-coded for demo purposes), and downloads the last 3 GitHub releases. It showcases context propgation (via netcat, curl, and wget) and auto-injection into inner commands (via xargs and parallel). Netcat is used for an initial head request to configure pagination, curl to make the inidivdual API requests, and wget for the actual downloads."
+  "description": "This script takes a github repository (hard-coded for demo purposes), and downloads the last 3 GitHub releases. It showcases context propgation (via netcat, curl, and wget) and auto-injection into inner commands (via xargs and parallel). Netcat is used for an initial head request to configure pagination, curl to make the inidivdual API requests, and wget for the actual downloads.",
+  "setup": "sudo apt-get install ncat"
 }
