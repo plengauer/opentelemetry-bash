@@ -38,9 +38,11 @@ jobs:
           mkfifo "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"
           while true; do cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" >> "$otlp"; done &
           pid="$!"
-          bash -e ./demo.sh 1> "$stdout" 2> "$stderr" || true
+          cat meta.json | (jq -r .setup || true) | sh
+          bash -e demo.sh 1> "$stdout" 2> "$stderr" || true
           kill -9 "$pid"
           wait
+          sleep 10
 
           convert_span_id_to_name() {
             cat "$otlp" | jq -r '. | select(.context.span_id == "'"$1"'") | .name'
