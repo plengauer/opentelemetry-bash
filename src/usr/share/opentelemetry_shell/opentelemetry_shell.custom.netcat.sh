@@ -124,7 +124,7 @@ _otel_netcat_parse_request() {
   done
   if \[ "$is_server_side" = 1 ]; then local span_handle="$(otel_span_start SERVER "$method")"; else local span_handle="$(otel_span_start CLIENT "$method")"; fi
   \echo "$span_handle" > "$span_handle_file"
-  if \[ "$TRACEPARENT" != "$local_traceparent" ] || \[ "$TRACESTATE" != "$local_tracestate" ]; then
+  if \[ "$TRACEPARENT" != "$nc_traceparent" ] || \[ "$TRACESTATE" != "$nc_tracestate" ]; then
     otel_span_activate "$span_handle"
     otel_link_add "$(otel_link_create "$TRACEPARENT" "$TRACESTATE")" "$nc_span_handle"
     otel_link_add "$(otel_link_create "$nc_traceparent" "$nc_tracestate")" "$span_handle"
