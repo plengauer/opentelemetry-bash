@@ -306,7 +306,7 @@ def handle(scope, version, command, arguments):
         event = events[event_id]
         spans[span_id].add_event(event['name'], event['attributes'])
         del events[event_id]
-    elif command == 'LINK_CREATE'
+    elif command == 'LINK_CREATE':
         global next_link_id
         tokens = arguments.split(' ', 2)
         response_path = tokens[0]
@@ -318,7 +318,7 @@ def handle(scope, version, command, arguments):
         links[link_id] = { 'context': link_context, 'attributes': {} }
         with open(response_path, 'w') as response:
             response.write(link_id)
-    elif command == 'LINK_ATTRIBUTE'
+    elif command == 'LINK_ATTRIBUTE':
         tokens = arguments.split(' ', 2)
         link_id = tokens[0]
         type = tokens[1]
@@ -329,7 +329,7 @@ def handle(scope, version, command, arguments):
         if value == '':
             return
         links[link_id]['attributes'][key] = convert_type(type, value)
-    elif command == 'LINK_ADD'
+    elif command == 'LINK_ADD':
         tokens = arguments.split(' ', 2)
         link_id = tokens[0]
         span_id = tokens[1]
