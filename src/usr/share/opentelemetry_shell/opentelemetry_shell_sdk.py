@@ -113,7 +113,7 @@ def main():
     scope = sys.argv[1]
     version = sys.argv[2]
     for line in sys.stdin:
-        # line = line.strip()
+        line = line.strip()
         if len(line) == 0:
             continue
         tokens = line.split(' ', 1)
