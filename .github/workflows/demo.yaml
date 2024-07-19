@@ -1,9 +1,8 @@
 name: Demo
 
 on:
-  workflow_call:
-  push:
-#    branches: main
+  release:
+    types: [created]
 
 jobs:
   demo-prepare:
@@ -13,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          cd demos && echo */ | tr ' ' '\n' | jq -nR '{"include": [inputs | select(length > 0) | {demo_directory: .}]}' | tr -d '\n' | xargs -0 -I {} echo 'matrix={}' >> "$GITHUB_OUTPUT"
+          cd demos && echo */ | tr ' ' '\n' | tr -d / | jq -nR '{"include": [inputs | select(length > 0) | {demo_directory: .}]}' | tr -d '\n' | xargs -0 -I {} echo 'matrix={}' >> "$GITHUB_OUTPUT"
         id: demos
 
   demo-generate:
@@ -92,7 +91,7 @@ jobs:
           cd demos/${{ matrix.demo_directory }}
           git add --intent-to-add README.md
           git diff
-          git diff | grep -v '^+++' | grep -v '^---' | grep -v _id | grep -v _time | grep -v github. | grep -v .ip | grep -v process.pid | grep -q '^+' && echo dirty=true >> "$GITHUB_OUTPUT" || true
+          # git diff | grep -v '^+++' | grep -v '^---' | grep -v _id | grep -v _time | grep -v github. | grep -v .ip | grep -v process.pid | grep -q '^+' && echo dirty=true >> "$GITHUB_OUTPUT" || true
         id: diff
       - name: "Resolve Reviewers"
         if: steps.diff.outputs.dirty
@@ -108,7 +107,7 @@ jobs:
           token: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
           commit-message: "Update demo"
           branch: "demos/${{ matrix.demo_directory }}"
-          title: "Update demo"
+          title: "Update Demo ${{ matrix.demo_directory }}"
           body: |
             (this PR is automatically generated)
           reviewers: ${{ steps.reviewers.outputs.reviewers }}
