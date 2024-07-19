@@ -3,7 +3,6 @@ name: Demo
 on:
   release:
     types: [created]
-  push:
 
 jobs:
   demo-prepare:
