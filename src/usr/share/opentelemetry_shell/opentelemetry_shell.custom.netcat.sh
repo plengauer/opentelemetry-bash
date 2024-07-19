@@ -102,6 +102,9 @@ _otel_netcat_parse_request() {
     \cat
     return 0
   fi
+  local nc_span_handle="$(otel_span_current)"
+  local nc_traceparent="$TRACEPARENT"
+  local nc_tracestate="$TRACESTATE"
   local line="$(\printf '%s' "$line" | _otel_binary_write | \tr -d '\r')"
   local protocol="$(\printf '%s' "$line" | \cut -sd ' ' -f 3)"
   local method="$(\printf '%s' "$line" | \cut -sd ' ' -f 1)"
@@ -114,7 +117,6 @@ _otel_netcat_parse_request() {
     if \[ "$is_server_side" = 1 ]; then
       local key="$(\printf '%s' "$line" | \cut -d ' ' -f 1 | \tr -d : | \tr '[:upper:]' '[:lower:]')"
       local value="$(\printf '%s' "$line" | \cut -d ' ' -f 2-)"
-      # TODO save old traceparent and tracestate
       if \[ "$key" = traceparent ]; then export TRACEPARENT="$value"; fi
       if \[ "$key" = tracestate ]; then export TRACESTATE="$value"; fi
       if \[ "$key" = 'content-length' ]; then local content_length="$value"; fi
@@ -122,7 +124,12 @@ _otel_netcat_parse_request() {
   done
   if \[ "$is_server_side" = 1 ]; then local span_handle="$(otel_span_start SERVER "$method")"; else local span_handle="$(otel_span_start CLIENT "$method")"; fi
   \echo "$span_handle" > "$span_handle_file"
-  # TODO add span link with old traceparent and tracestate
+  if \[ "$TRACEPARENT" != "$local_traceparent" ] || \[ "$TRACESTATE" != "$local_tracestate" ]; then
+    otel_span_activate "$span_handle"
+    otel_link_add "$(otel_link_create "$TRACEPARENT" "$TRACESTATE")" "$nc_span_handle"
+    otel_link_add "$(otel_link_create "$nc_traceparent" "$nc_tracestate")" "$span_handle"
+    otel_span_deactivate
+  fi
   local host_and_port="$(_otel_netcat_parse_args "$is_server_side" "$span_handle" "$@")"
   otel_span_attribute_typed "$span_handle" string network.protocol.name="$(\printf '%s' "$protocol" | \cut -d / -f 1 | \tr '[:upper:]' '[:lower:]')"
   otel_span_attribute_typed "$span_handle" string network.protocol.version="$(\printf '%s' "$protocol" | \cut -d / -f 2-)"
