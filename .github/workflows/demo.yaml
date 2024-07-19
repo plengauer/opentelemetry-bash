@@ -38,7 +38,7 @@ jobs:
           mkfifo "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"
           while true; do cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" >> "$otlp"; done &
           pid="$!"
-          cat meta.json | (jq -r .setup || true) | sh
+          cat meta.json | jq -r .setup | (grep -v '^null$' || true) | sh
           bash -e demo.sh 1> "$stdout" 2> "$stderr" || true
           kill -9 "$pid"
           wait
