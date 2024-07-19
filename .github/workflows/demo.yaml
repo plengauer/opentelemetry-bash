@@ -59,11 +59,11 @@ jobs:
           }
 
           get_root_span_id() {
-            cat "$OTLP" | jq -r '. | select(.parent_id == null) | .context.span_id'
+            cat "$OTLP" | jq -r '. | select(.name != null) | select(.parent_id == null) | .context.span_id'
           }
 
           get_child_span_ids() {
-            cat "$OTLP" | jq -r '. | select(.parent_id == "'"$1"'") | .context.span_id'
+            cat "$OTLP" | jq -r '. | select(.name != null) | select(.parent_id == "'"$1"'") | .context.span_id'
           }
 
           print_span_name_tree() {
@@ -75,10 +75,10 @@ jobs:
             done
           }
 
-          cat "$OTLP" | jq -r '.name'
-          cat "$OTLP" | jq -r '.parent_id'
-          cat "$OTLP" | jq -r '. | select(.parent_id == null) | .name'
-          cat "$OTLP" | jq -r '. | select(.parent_id != null) | .name'
+          echo "DEBUG DEBUG DEBUG 0" && cat "$OTLP" | jq -r '.name'
+          echo "DEBUG DEBUG DEBUG 1" && cat "$OTLP" | jq -r '.parent_id'
+          echo "DEBUG DEBUG DEBUG 2" && cat "$OTLP" | jq -r '. | select(.parent_id == null) | .name'
+          echo "DEBUG DEBUG DEBUG 3" && cat "$OTLP" | jq -r '. | select(.name != null) | select(.parent_id != null) | .name'
 
           {
             echo '# Demo "'"$(cat ./meta.json | jq -r .title)"'"'
