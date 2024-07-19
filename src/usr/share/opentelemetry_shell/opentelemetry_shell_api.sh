@@ -270,7 +270,7 @@ otel_link_attribute_typed() {
 }
 
 otel_link_add() {
-  local event_handle="$1"
+  local link_handle="$1"
   local span_handle="$2"
   _otel_sdk_communicate "LINK_ADD" "$link_handle" "$span_handle"
 }
