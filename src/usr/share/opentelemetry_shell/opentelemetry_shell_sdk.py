@@ -341,7 +341,7 @@ def handle(scope, version, command, arguments):
         link_id = tokens[0]
         span_id = tokens[1]
         link = links[link_id]
-        spans[span_id].add_link(event['context'], event['attributes'])
+        spans[span_id].add_link(link['context'], link['attributes'])
         del links[link_id]
     elif command == 'METRIC_CREATE':
         global next_metric_id
