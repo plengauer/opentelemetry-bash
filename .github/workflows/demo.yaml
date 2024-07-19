@@ -78,10 +78,10 @@ jobs:
 
           {
             echo '# Demo "'"$(cat ./meta.json | jq -r .title)"'"'
-            cat ./meta.json | jq -r .description
+            cat meta.json | jq -r .description
             echo '## Script'
             echo '´´´sh'
-            cat ./demo.sh
+            cat demo.sh
             echo '´´´'
             echo '## Standard Out'
             echo '´´´'
