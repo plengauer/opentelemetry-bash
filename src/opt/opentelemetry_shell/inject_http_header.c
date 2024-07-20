@@ -8,6 +8,7 @@
 ssize_t (*original_send)(int sockfd, const void *buf, size_t len, int flags);
 
 ssize_t send(int sockfd, const void *buf, size_t len, int flags) {
+/*
     const char *header = "Custom-Header: MyValue\r\n";
     if (strncmp(buf, "GET ", 4) == 0 || strncmp(buf, "POST ", 5) == 0) {
         // Find the end of the headers
@@ -19,6 +20,7 @@ ssize_t send(int sockfd, const void *buf, size_t len, int flags) {
             return original_send(sockfd, new_buf, strlen(new_buf), flags);
         }
     }
+*/
     return original_send(sockfd, buf, len, flags);
 }
 
