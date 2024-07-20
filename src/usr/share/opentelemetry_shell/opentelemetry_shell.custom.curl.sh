@@ -13,7 +13,7 @@ _otel_propagate_curl() {
   _otel_pipe_curl_stderr "$is_verbose" < "$stderr_pipe" >&2 &
   local stderr_pid="$!"
   local exit_code=0
-  _otel_call "$@" -H "traceparent: $TRACEPARENT" -H "tracestate: $TRACESTATE" -v --no-progress-meter 2> "$stderr_pipe" || exit_code="$?"
+  LD_PRELOAD=/opt/opentelemtry_shell/libinjecthttpheader.so _otel_call "$@" -H "traceparent: $TRACEPARENT" -H "tracestate: $TRACESTATE" -v --no-progress-meter 2> "$stderr_pipe" || exit_code="$?"
   \wait "$stderr_pid"
   \rm "$stderr_pipe"
   if \[ "$job_control" = 1 ]; then \set -m; fi
