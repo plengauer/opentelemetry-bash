@@ -9,6 +9,9 @@ elif [ "$1" = 'configure' ]; then
   source /opt/opentelemetry_shell/venv/bin/activate
   pip3 install -r /opt/opentelemetry_shell/requirements.txt
   deactivate
+  if type gcc; then
+    gcc -shared -fPIC -o /opt/opentelemetry_shell/libinjecthttpheader.so /usr/share/opentelemetry_shell/injecthttpheader.c -ldl # TODO what is -ldl?
+  fi
   export PATH="$PATH":/usr/local/bin
   if type npm; then
     cache="$(npm config list -l | grep -E '^cache = ' | cut -d '=' -f 2- | tr -d '" ')"
