@@ -21,6 +21,7 @@ ssize_t send(int sockfd, const void *buf, size_t len, int flags) {
         }
     }
 */
+    fprintf(stderr, 'DEBUG\n');
     return original_send(sockfd, buf, len, flags);
 }
 
