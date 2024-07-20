@@ -7,15 +7,27 @@ _otel_propagate_curl() {
     *m*) local job_control=1; \set +m;;
     *) local job_control=0;;
   esac
+  if \[ -f /opt/opentelemtry_shell/libinjecthttpheader.so ]; then
+    local OLD_LD_PRELOAD="$LD_PRELOAD"
+    export LD_PRELOAD=/opt/opentelemtry_shell/libinjecthttpheader.so
+    if \[ -n "$OLD_PRELOAD" ]; then
+      export LD_PRELOAD="$LD_PRELOAD:$OLD_LD_PRELOAD"
+    fi
+  fi
   if _otel_string_contains "$(_otel_dollar_star "$@")" " -v "; then local is_verbose=1; fi
   local stderr_pipe="$(\mktemp -u)_opentelemetry_shell_$$.stderr.curl.pipe"
   \mkfifo "$stderr_pipe"
   _otel_pipe_curl_stderr "$is_verbose" < "$stderr_pipe" >&2 &
   local stderr_pid="$!"
   local exit_code=0
-  LD_PRELOAD=/opt/opentelemtry_shell/libinjecthttpheader.so _otel_call "$@" -H "traceparent: $TRACEPARENT" -H "tracestate: $TRACESTATE" -v --no-progress-meter 2> "$stderr_pipe" || exit_code="$?"
+  _otel_call "$@" -H "traceparent: $TRACEPARENT" -H "tracestate: $TRACESTATE" -v --no-progress-meter 2> "$stderr_pipe" || exit_code="$?"
   \wait "$stderr_pid"
   \rm "$stderr_pipe"
+  if \[ -n "$OLD_LD_PRELOAD" ]; then
+    export LD_PRELOAD="$OLD_LD_PRELOAD"
+  else
+    unset LD_PRELOAD
+  fi
   if \[ "$job_control" = 1 ]; then \set -m; fi
   return "$exit_code"
 }
