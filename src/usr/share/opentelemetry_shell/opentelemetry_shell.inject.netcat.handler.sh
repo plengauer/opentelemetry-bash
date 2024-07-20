@@ -1,10 +1,11 @@
 #!/bin/sh -e
+OTEL_SHELL_AUTO_INJECTED=TRUE
+. otel.sh
+
 handler_command_string="$(_otel_escape_args "$@")"
 netcat_command_string="$OTEL_SHELL_NETCAT_COMMAND"
 unset OTEL_SHELL_NETCAT_COMMAND
 
-OTEL_SHELL_AUTO_INJECTED=TRUE
-. otel.sh
 span_handle="$(otel_span_start CONSUMER send/receive)"
 _otel_netcat_parse_args 1 "$span_handle" $netcat_command_string > /dev/null
 otel_span_activate "$span_handle"
