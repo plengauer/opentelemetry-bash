@@ -9,8 +9,8 @@ jobs:
   bump:
     runs-on: ubuntu-latest
     steps:
-      - uses: plengauer/autoversion@v0.11.0
+      - uses: plengauer/autoversion@v0.12.0
         with:
           github_token: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
           openai_token: ${{ secrets.OPENAI_TOKEN }}
-          include_path: ./src
+          include_path: ./src:./actions
