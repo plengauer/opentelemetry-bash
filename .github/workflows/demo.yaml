@@ -83,25 +83,25 @@ jobs:
             echo '# Demo "'"$(cat ./meta.json | jq -r .title)"'"'
             cat meta.json | jq -r .description
             echo '## Script'
-            echo '´´´sh'
+            echo '```sh'
             cat demo.sh
-            echo '´´´'
+            echo '```'
             echo '## Standard Out'
-            echo '´´´'
+            echo '```'
             cat "$STDOUT"
-            echo '´´´'
+            echo '```'
             echo '## Standard Error'
-            echo '´´´'
+            echo '```'
             cat "$STDERR"
-            echo '´´´'
+            echo '```'
             echo '## Trace Overview'
-            echo '´´´'
+            echo '```'
             print_span_name_tree "$(get_root_span_id)" ""
-            echo '´´´'
+            echo '```'
             echo '## Full OTLP Data'
-            echo '´´´json'
+            echo '```json'
             cat "$OTLP"
-            echo '´´´'
+            echo '```'
           } > README.md
       - run: cat demos/${{ matrix.demo_directory }}/README.md
       - run: |
