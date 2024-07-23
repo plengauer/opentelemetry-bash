@@ -8,6 +8,8 @@ on:
       - 'VERSION'
       - '.github/workflows/demo.yaml'
       - 'demos/**'
+    paths-ignore:
+      - '**/README.md'
 
 jobs:
   demo-prepare:
