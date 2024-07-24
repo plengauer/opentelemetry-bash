@@ -102,7 +102,7 @@ jobs:
             echo '```'
             echo '## Full OTLP Data'
             echo '```json'
-            cat "$OTLP"
+            cat "$OTLP" | jq .
             echo '```'
           } > README.md
       - run: cat demos/${{ matrix.demo_directory }}/README.md
