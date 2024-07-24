@@ -7,9 +7,8 @@ on:
     paths:
       - 'VERSION'
       - '.github/workflows/demo.yaml'
-      - 'demos/**'
-    paths-ignore:
-      - '**/README.md'
+      - 'demos/**/*.sh'
+      - 'demos/**/*.json'
 
 jobs:
   demo-prepare:
