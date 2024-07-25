@@ -7,7 +7,8 @@ on:
     paths:
       - 'VERSION'
       - '.github/workflows/demo.yaml'
-      - 'demos/**'
+      - 'demos/**/*.sh'
+      - 'demos/**/*.json'
 
 jobs:
   demo-prepare:
@@ -83,32 +84,32 @@ jobs:
             echo '# Demo "'"$(cat ./meta.json | jq -r .title)"'"'
             cat meta.json | jq -r .description
             echo '## Script'
-            echo '´´´sh'
+            echo '```sh'
             cat demo.sh
-            echo '´´´'
+            echo '```'
             echo '## Standard Out'
-            echo '´´´'
+            echo '```'
             cat "$STDOUT"
-            echo '´´´'
+            echo '```'
             echo '## Standard Error'
-            echo '´´´'
+            echo '```'
             cat "$STDERR"
-            echo '´´´'
+            echo '```'
             echo '## Trace Overview'
-            echo '´´´'
+            echo '```'
             print_span_name_tree "$(get_root_span_id)" ""
-            echo '´´´'
+            echo '```'
             echo '## Full OTLP Data'
-            echo '´´´json'
-            cat "$OTLP"
-            echo '´´´'
+            echo '```json'
+            cat "$OTLP" | jq .
+            echo '```'
           } > README.md
       - run: cat demos/${{ matrix.demo_directory }}/README.md
       - run: |
           cd demos/${{ matrix.demo_directory }}
           git add --intent-to-add README.md
           git diff
-          git diff | grep -v '^+++' | grep -v '^---' | grep -v _id | grep -v _time | grep -v timestamp | grep -v github. | grep -v process.pid | grep -q '^+' && echo dirty=true >> "$GITHUB_OUTPUT" || true
+          git diff | grep -v '^+++' | grep -v '^---' | grep -v _id | grep -v _time | grep -v timestamp | grep -v github. | grep -v process.pid | grep -v process.parent_pid | grep -q '^+' && echo dirty=true >> "$GITHUB_OUTPUT" || true
         id: diff
       - name: "Resolve Reviewers"
         if: steps.diff.outputs.dirty
