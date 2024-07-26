@@ -65,7 +65,6 @@ _otel_inject_docker_args() {
   # extract image
   local image="$1"
   if \type jq > /dev/null 2> /dev/null && _otel_is_docker_image_injectable "$executable" "$image" && ! _otel_is_docker_image_injected "$executable" "$image" && ( ! \[ "$GITHUB_ACTIONS" = true ] || ! \printenv | \cut -d = -f 1 | \grep -E '^INPUT_' | \grep -q - ); then
-    \echo "DEBUG DEBUG DEBUG injecting" >&2
     \echo -n ' '; _otel_escape_args --env TRACEPARENT="$TRACEPARENT" --env TRACESTATE="$TRACESTATE"
     for file in $(\dpkg -L opentelemetry-shell | \grep -E '^/usr/bin/'); do \echo -n ' '; _otel_escape_args --mount type=bind,source="$file",target="$file",readonly; done
     \echo -n ' '; _otel_escape_args --mount type=bind,source=/usr/share/opentelemetry_shell,target=/usr/share/opentelemetry_shell
@@ -84,7 +83,6 @@ eval "$(_otel_escape_args "$@")"' sh
     \echo -n ' '; if \[ -n "$entrypoint_override" ]; then \echo "$entrypoint_override" | _otel_line_split; else "$executable" inspect "$image" | \jq -r '.[0].Config.Entrypoint[]?'; fi | _otel_escape_stdin
     if \[ "$#" = 0 ]; then \echo -n ' '; "$executable" inspect "$image" | \jq -r '.[0].Config.Cmd[]?' | _otel_escape_stdin; fi
   else
-    \echo "DEBUG DEBUG DEBUG propagating" >&2
     \echo -n ' '; _otel_escape_args --env TRACEPARENT="$TRACEPARENT" --env TRACESTATE="$TRACESTATE"
     \echo -n ' '; _otel_escape_arg "$1"; shift
   fi
