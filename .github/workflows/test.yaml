@@ -150,11 +150,24 @@ jobs:
           path: performance.${{ matrix.tag_name }}.warmstart.list
           retention-days: 1
 
-  all:
-    if: ${{ always() }}
+  join:
     needs: [install, upgrade, os-shell, action, performance]
     runs-on: ubuntu-latest
+    outputs:
+      success: ${{ steps.tests.outputs.success }}
     steps:
+      - id: tests
+        run: echo "success=true" >> "$GITHUB_OUTPUT"
+
+  all:
+    if: ${{ always() }}
+    needs: [join]
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          SUCCESS: ${{ needs.join.outputs.success }}
+        run: |
+          [ "$SUCCESS" = 'true' ]
       - uses: actions/download-artifact@v4
         with:
           pattern: 'performance.*.list'
