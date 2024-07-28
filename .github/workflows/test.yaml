@@ -151,6 +151,7 @@ jobs:
           retention-days: 1
 
   all:
+    if: ${{ always() }}
     needs: [install, upgrade, os-shell, action, performance]
     runs-on: ubuntu-latest
     steps:
