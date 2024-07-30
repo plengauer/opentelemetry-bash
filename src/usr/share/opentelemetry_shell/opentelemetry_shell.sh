@@ -370,6 +370,15 @@ command() {
   fi
 }
 
+_otel_inject() {
+  if _otel_string_contains "$1" / && \[ "$(\which "$1" | \rev | \cut -d / -f 1 | \rev)" = "$(\readlink -f "$1")" ]; then
+    local command="$(\readlink -f "$1" | \rev | \cut -d / -f 1 | \rev)"
+    shift
+    set -- "$command" "$@"
+  fi
+  _otel_call "$@"
+}
+
 _otel_start_script() {
   otel_init || return $?
   if \[ -n "$SSH_CLIENT"  ] && \[ -n "$SSH_CONNECTION" ] && \[ "$PPID" != 0 ] && \[ "$(\cat /proc/$PPID/cmdline | \tr -d '\000' | \cut -d ' ' -f 1)" = "sshd:" ]; then
