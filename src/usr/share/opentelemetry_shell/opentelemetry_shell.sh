@@ -372,15 +372,11 @@ command() {
 
 _otel_inject() {
   if _otel_string_contains "$1" /; then
-    if \[ "$(\which "$(\echo "$1" | \rev | \cut -d / -f 1 | \rev)")" = "$1" ]; then
-      local command="$(\readlink -f "$1" | \rev | \cut -d / -f 1 | \rev)"
-      shift
-      set -- "$command" "$@"
-    else
-      local command="$(\readlink -f "$1" | \rev | \cut -d / -f 1 | \rev)"
-      shift
+    local command="$(\readlink -f "$1" | \rev | \cut -d / -f 1 | \rev)"
+    shift
+    set -- "$command" "$@"
+    if ! \[ "$(\which "$(\echo "$1" | \rev | \cut -d / -f 1 | \rev)")" = "$1" ]; then
       local PATH="$(\readlink -f "$1" | \rev | \cut -d / -f 2- | \rev):$PATH"
-      set -- "$command" "$@"
     fi
   fi
   _otel_call "$@"
