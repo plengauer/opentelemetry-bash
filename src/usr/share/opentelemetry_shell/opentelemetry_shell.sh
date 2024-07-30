@@ -372,6 +372,7 @@ command() {
 
 _otel_inject() {
   if _otel_string_contains "$1" / && \[ "$(\which "$1" | \rev | \cut -d / -f 1 | \rev)" = "$(\readlink -f "$1")" ]; then
+    \echo DEBUG DEBUG DEBUG "$(\which "$1" | \rev | \cut -d / -f 1 | \rev)" = "$(\readlink -f "$1")" >&2
     local command="$(\readlink -f "$1" | \rev | \cut -d / -f 1 | \rev)"
     shift
     set -- "$command" "$@"
