@@ -310,6 +310,8 @@ _otel_instrument_and_source() {
 _otel_inject_and_exec_directly() { # this function assumes there is no fd fuckery
   if \[ "$#" = 1 ]; then
     export OTEL_SHELL_CONSERVATIVE_EXEC=TRUE
+    export OTEL_SHELL_AUTO_INJECTED=TRUE
+    # in theory we could also use _otel_commandline_override to reset some overrides
     \eval '"exec"' "$(\xargs -0 sh -c '. otelapi.sh; _otel_escape_args "$@"' sh < /proc/$$/cmdline)"
   fi
   
