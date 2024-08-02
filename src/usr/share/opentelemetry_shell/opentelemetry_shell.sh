@@ -310,6 +310,7 @@ _otel_instrument_and_source() {
 _otel_inject_and_exec_directly() { # this function assumes there is no fd fuckery
   if \[ "$#" = 1 ]; then
     export OTEL_SHELL_CONSERVATIVE_EXEC=TRUE
+    _otel_sdk_communicate 'SPAN_AUTO_END'
     if \[ -n "$_otel_commandline_override" ]; then
       export OTEL_SHELL_COMMANDLINE_OVERRIDE="$_otel_commandline_override"
       export OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$PPID"
