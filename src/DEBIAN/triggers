@@ -5,3 +5,7 @@ interest /usr/local/bin/python3
 interest /bin/npm
 interest /usr/bin/npm
 interest /usr/local/bin/npm
+
+interest /bin/gcc
+interest /usr/bin/gcc
+interest /usr/local/bin/gcc
