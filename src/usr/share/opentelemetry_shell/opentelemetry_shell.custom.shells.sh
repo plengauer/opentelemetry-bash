@@ -46,8 +46,7 @@ _otel_inject_shell_args_with_copy() {
   \echo "OTEL_SHELL_AUTO_INSTRUMENTATION_HINT='$temporary_script'" >> "$temporary_script"
   \echo ". otel.sh" >> "$temporary_script"
   \echo "\set -- $(_otel_escape_args "$@")" >> "$temporary_script"
-  if \[ "$is_script" -eq 1 ]; then \cat "$command"; else \echo "$command"; fi >> "$temporary_script"
-  return 0
+  # if \[ "$is_script" -eq 1 ]; then \cat "$command"; else \echo "$command"; fi >> "$temporary_script"
   if \[ "$is_script" -eq 1 ]; then \cat "$command"; else \echo "$command"; fi | if \[ "$OTEL_SHELL_EXPERIMENTAL_INSTRUMENT_ABSOLUTE_PATHS" = TRUE ]; then \awk '
   {
     gsub(/^[ \t]+/, "", $0);
