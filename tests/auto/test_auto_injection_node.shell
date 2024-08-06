@@ -9,8 +9,10 @@ span="$(resolve_span '.name == "echo hello world 0"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
 assert_not_equals null $(\echo "$span" | jq -r '.parent_id')
 
+set -x
 node -e "const child_process = require('child_process'); child_process.exec('echo hello world 1', {});"
 assert_equals 0 $?
+set +x
 span="$(resolve_span '.name == "echo hello world 1"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
 assert_not_equals null $(\echo "$span" | jq -r '.parent_id')
