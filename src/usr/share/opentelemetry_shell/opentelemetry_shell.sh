@@ -63,7 +63,6 @@ _otel_auto_instrument() {
   local cache_file="$(\mktemp -u | \rev | \cut -d / -f 2- | \rev)/opentelemetry_shell_$(_otel_package_version opentelemetry-shell)"_"$_otel_shell"_instrumentation_cache_"$cache_key".aliases
   if \[ -f "$cache_file" ]; then
     \eval "$(\grep -vh '_otel_alias_prepend ' $(_otel_list_special_auto_instrument_files))"
-    # for otel_custom_file in $(_otel_list_special_auto_instrument_files); do \eval "$(\sed '/_otel_alias_prepend /\true /g' < "$otel_custom_file")"; done
     \. "$cache_file"
     return $?
   fi
