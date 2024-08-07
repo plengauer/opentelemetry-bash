@@ -59,7 +59,7 @@ function otel_exec(command, options, callback, original) {
   }
   if (options && options.stdio && Array.isArray(options.stdio) && options.stdio.length > 3) return _exec(command, options, callback);
   if (command.trim().startsWith('/') || command.trim().startsWith('.')) {
-    if (_execSync(options.shell ?? '/bin/sh' + " -c 'which \"$1\"' sh " + command) == command) {
+    if (_execSync((options.shell ?? '/bin/sh') + " -c 'which \"$1\"' sh " + command) == command) {
       command = command.substring(command.lastIndexOf('/') + 1);
     } else {
       command = 'otel_observe ' + command;
