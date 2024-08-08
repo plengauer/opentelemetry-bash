@@ -375,6 +375,19 @@ command() {
   fi
 }
 
+_otel_inject() {
+  if _otel_string_contains "$1" /; then
+    local command="$(\readlink -f "$1" | \rev | \cut -d / -f 1 | \rev)"
+    shift
+    set -- "$command" "$@"
+    if ! \[ "$(\which "$(\echo "$1" | \rev | \cut -d / -f 1 | \rev)")" = "$1" ]; then
+      local PATH="$(\readlink -f "$1" | \rev | \cut -d / -f 2- | \rev):$PATH"
+      _otel_auto_instrument "$_otel_shell_auto_instrumentation_hint"
+    fi
+  fi
+  \eval "$(_otel_escape_args "$@")"
+}
+
 _otel_start_script() {
   otel_init || return $?
   if \[ -n "$SSH_CLIENT"  ] && \[ -n "$SSH_CONNECTION" ] && \[ "$PPID" != 0 ] && \[ "$(\cat /proc/$PPID/cmdline | \tr -d '\000' | \cut -d ' ' -f 1)" = "sshd:" ]; then
