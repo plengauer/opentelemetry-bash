@@ -86,6 +86,7 @@ jobs:
           STDOUT: ${{ steps.demo.outputs.STDOUT }}
           STDERR: ${{ steps.demo.outputs.STDERR }}
           OTLP: ${{ steps.demo.outputs.OTLP }}
+          GITHUB_TOKEN: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
         run: |
           set +o pipefail
           cd demos/${{ matrix.demo_directory }}
