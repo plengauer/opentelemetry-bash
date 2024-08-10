@@ -11,6 +11,9 @@ if \[ "$_otel_shell_injected" = "TRUE" ]; then
 fi
 _otel_shell_injected=TRUE
 
+export OTEL_SHELL_CONFIG_INSTRUMENT_MINIMALLY="${OTEL_SHELL_CONFIG_INSTRUMENT_MINIMALLY:-${OTEL_SHELL_EXPERIMENTAL_INSTRUMENT_MINIMALLY:-FALSE}}"
+export OTEL_SHELL_CONFIG_INJECT_DEEP="${OTEL_SHELL_CONFIG_INJECT_DEEP:-${OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP:-FALSE}}"
+
 _otel_shell_conservative_exec="$OTEL_SHELL_CONSERVATIVE_EXEC"
 unset OTEL_SHELL_CONSERVATIVE_EXEC
 
@@ -60,7 +63,7 @@ _otel_auto_instrument() {
   ## (1) using the hint - will not work when scripts are changing or called the same but very fast!
   ## (2) using the resolved hint - will not work when new executables are added onto the system or their shebang changes or new bash.rc aliases are added
   ## (3) using the filtered list of commands - will work in every case but slowest
-  local cache_key="$({ _otel_list_path_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_hint "$hint" | \sort -u; \alias; \echo "$_otel_shell_conservative_exec" "$OTEL_SHELL_EXPERIMENTAL_INSTRUMENT_MINIMALLY"; } | \md5sum | \cut -d ' ' -f 1)"
+  local cache_key="$({ _otel_list_path_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_hint "$hint" | \sort -u; \alias; \echo "$_otel_shell_conservative_exec" "$OTEL_SHELL_CONFIG_INSTRUMENT_MINIMALLY"; } | \md5sum | \cut -d ' ' -f 1)"
   local cache_file="$(\mktemp -u | \rev | \cut -d / -f 2- | \rev)/opentelemetry_shell_$(_otel_package_version opentelemetry-shell)"_"$_otel_shell"_instrumentation_cache_"$cache_key".aliases
   if \[ -f "$cache_file" ]; then
     \eval "$(\grep -vh '_otel_alias_prepend ' $(_otel_list_special_auto_instrument_files))"
@@ -170,7 +173,7 @@ _otel_filter_commands_by_instrumentation() {
 }
 
 _otel_filter_commands_by_mode() {
-  if \[ "$OTEL_SHELL_EXPERIMENTAL_INSTRUMENT_MINIMALLY" = TRUE ]; then
+  if \[ "$OTEL_SHELL_CONFIG_INSTRUMENT_MINIMALLY" = TRUE ]; then
     \grep -F "$(\alias | \grep OTEL_SHELL_SPAN_KIND_OVERRIDE | \grep -v OTEL_SHELL_SPAN_KIND_OVERRIDE=INTERNAL | \sed 's/^alias //g' | \cut -d = -f 1)"
   else
     \cat
