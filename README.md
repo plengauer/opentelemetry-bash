@@ -118,10 +118,12 @@ wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/IN
 ```
 or via
 ```bash
-echo "deb [arch=all] https://3.73.14.87:8000/ stable main" | sudo tee /etc/apt/sources.list.d/otel.list
+echo "deb [arch=all] http://3.73.14.87:8000/ stable main" | sudo tee /etc/apt/sources.list.d/otel.list
 sudo apt-get update
 sudo apt-get install opentelemetry-shell
 ```
+
+Note: the apt repo only acts as a facade to offer a better unix-native installation option, internally it redirects the apt client to the releases of this repository.
 
 # Documentation
 You can either use the fully automatic instrumentation (recommended) or just import the API to do everything manually. In both cases, you can use the API to manually create customized spans and metrics. However, the automatic approach creates rich spans and logs fully automatically. We recommend to use the manual approach only to augment the automatic approach where necessary.
