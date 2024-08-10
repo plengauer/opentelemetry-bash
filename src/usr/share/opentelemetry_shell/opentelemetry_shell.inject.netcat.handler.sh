@@ -10,7 +10,7 @@ span_handle="$(otel_span_start CONSUMER send/receive)"
 _otel_netcat_parse_args 1 "$span_handle" $netcat_command_string > /dev/null
 otel_span_activate "$span_handle"
 
-if [ "$OTEL_SHELL_CONFIG_NETCAT_ASSUME_REQUEST_RESPONSE" = TRUE ]; then
+if \[ "$OTEL_SHELL_CONFIG_NETCAT_ASSUME_REQUEST_RESPONSE" = TRUE ]; then
   exit_code_file="$(\mktemp)"
   \echo 0 > "$exit_code_file"
   span_handle_file_0="$(\mktemp -u)_opentelemetry_shell_$$.netcat.request.span_handle"
