@@ -30,6 +30,7 @@ if \[ -n "$OTEL_SHELL_AUTO_INSTRUMENTATION_HINT" ]; then
   _otel_shell_auto_instrumentation_hint="$OTEL_SHELL_AUTO_INSTRUMENTATION_HINT"
   unset OTEL_SHELL_AUTO_INSTRUMENTATION_HINT
 elif \[ "$_otel_is_interactive" = "TRUE" ]; then
+  \echo "WARNING When using OpenTelemetry in an interactive shell for the first time after startup, it may take some time to create the instrumentation cache! Subsequent interactive shells will start faster. This performance impact does not apply in non-interactive shells, like scripts or invocations with -c." >&2
   _otel_shell_auto_instrumentation_hint=""
 elif \[ -f "$0" ] && \[ "$(\readlink -f "$0" | \rev | \cut -d / -f 1 | \rev)" != "$(\readlink -f "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)" ]; then
   _otel_shell_auto_instrumentation_hint="$0"
