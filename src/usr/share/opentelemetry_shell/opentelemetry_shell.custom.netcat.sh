@@ -179,11 +179,8 @@ _otel_netcat_parse_response() {
 _otel_netcat_parse_args() {
   local is_server_side="$1"; shift
   local span_handle="$1"; shift
-  local transport="${NCAT_PROTO:-tcp}"
-  local host=""
-  local ip=""
-  local port=31337
   if \[ -n "$NCAT_PROTO" ]; then
+    otel_span_attribute_typed "$span_handle" string network.transport="$NCAT_PROTO"
     otel_span_attribute_typed "$span_handle" string network.peer.address="$NCAT_REMOTE_ADDR"
     otel_span_attribute_typed "$span_handle" int network.peer.port="$NCAT_REMOTE_PORT"
     if \[ "$is_server_side" = 1 ]; then
@@ -200,32 +197,37 @@ _otel_netcat_parse_args() {
       local host="$NCAT_REMOTE_ADDR"
       local port="$NCAT_REMOTE_PORT"
     fi
-  fi
-  while \[ "$#" -gt 0 ]; do
-      if \[ "$1" = -u ] || \[ "$1" = --udp ]; then local transport=udp
-      elif \[ "$1" = --sctp ]; then local transport=sctp
-      elif \[ "$1" = -p ] && \[ "$#" -ge 2 ]; then local port="$2"; shift
-      elif _otel_string_starts_with "$1" - && \[ "$#" -gt 1 ] && _otel_is_netcat_arg_arg "$1"; then shift
-      elif _otel_string_starts_with "$1" -; then \true
-      else
-        if \[ "$1" -eq "$1" ] 2> /dev/null; then
-          local port="$1"
-        elif _otel_is_ip "$1"; then
-          local ip="$1"
-          local host="$1"
+  else
+    local transport=tcp
+    local ip=""
+    local host=""
+    local port=31337
+    while \[ "$#" -gt 0 ]; do
+        if \[ "$1" = -u ] || \[ "$1" = --udp ]; then local transport=udp
+        elif \[ "$1" = --sctp ]; then local transport=sctp
+        elif \[ "$1" = -p ] && \[ "$#" -ge 2 ]; then local port="$2"; shift
+        elif _otel_string_starts_with "$1" - && \[ "$#" -gt 1 ] && _otel_is_netcat_arg_arg "$1"; then shift
+        elif _otel_string_starts_with "$1" -; then \true
         else
-          local host="$1"
+          if \[ "$1" -eq "$1" ] 2> /dev/null; then
+            local port="$1"
+          elif _otel_is_ip "$1"; then
+            local ip="$1"
+            local host="$1"
+          else
+            local host="$1"
+          fi
         fi
+        shift
+      done
+      otel_span_attribute_typed "$span_handle" string network.transport="$transport"
+      if \[ "$is_server_side" != 1 ]; then
+        if \[ -n "$ip" ]; then otel_span_attribute_typed "$span_handle" string network.peer.address="$ip"; fi
+        if \[ -n "$port" ]; then otel_span_attribute_typed "$span_handle" int network.peer.port="$port"; fi
       fi
-      shift
-    done
-    otel_span_attribute_typed "$span_handle" string network.transport="$transport"
-    if \[ "$is_server_side" != 1 ]; then
-      if \[ -n "$ip" ]; then otel_span_attribute_typed "$span_handle" string network.peer.address="$ip"; fi
-      if \[ -n "$port" ]; then otel_span_attribute_typed "$span_handle" int network.peer.port="$port"; fi
+      if \[ -n "$host" ]; then otel_span_attribute_typed "$span_handle" string server.address="$host"; fi
+      if \[ -n "$port" ]; then otel_span_attribute_typed "$span_handle" int server.port="$port"; fi
     fi
-    if \[ -n "$host" ]; then otel_span_attribute_typed "$span_handle" string server.address="$host"; fi
-    if \[ -n "$port" ]; then otel_span_attribute_typed "$span_handle" int server.port="$port"; fi
     \echo "$host:$port"
 }
 
