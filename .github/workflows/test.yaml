@@ -17,6 +17,126 @@ jobs:
       - run: sudo apt-get -y install ./package.deb
       - run: sudo apt-get -y remove opentelemetry-shell
 
+  experiment:
+    needs: _build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: package.deb
+      - run: sudo apt-get -y install ./package.deb
+      - run: |
+          unset OTEL_SHELL_EXPERIMENTAL_OBSERVE_PIPES # temporarily disable pipes
+          export OTEL_TRACES_EXPORTER=console
+          export OTEL_METRICS_EXPORTER=console
+          export OTEL_LOGS_EXPORTER=console
+          export OTEL_SHELL_SDK_OUTPUT_REDIRECT=/dev/null
+          . otel.sh
+
+          list_version_files() {
+            find . | grep -E '/VERSION$|/DEBIAN/control$|/package.json$|.toml$|.gemspec$'
+          }
+
+          is_version_touched() {
+            local version_file="$1"
+            local commit_id="$2"
+            git diff "$commit_id"^ "$commit_id" -- "${version_file#./}" | { grep -E '^\+' || true; } | case "$version_file" in
+              */VERSION) echo dirty;;
+              */DEBIAN/control) grep -q 'Version: ' && echo dirty;;
+              */package.json) grep -q '"version":' && echo dirty;;
+              *.gemspec) grep -q '.version' && echo dirty;;
+              *.toml) grep -q 'version' && echo dirty;;
+              *) echo "Here be dragons! (version file $version_file)" >&2;;
+            esac | grep -q dirty
+          }
+          
+          read_version() {
+            local version_file="$1"
+            cat "$version_file" | case "$version_file" in
+              */VERSION) cat;;
+              */DEBIAN/control) grep -E '^Version: ' | cut -d ' ' -f 2-;;
+              */package.json) jq -r .version;;
+              *.gemspec) grep version | cut -d = -f 2 | awk '{ print $1 }' | tr -d "'"'"';;
+              *.toml) grep version | cut -d = -f 2 | awk '{ print $1 }' | tr -d "'"'"';;
+              *) echo "Here be dragons! (version file $version_file)" >&2; cat;;
+            esac
+          }
+          
+          write_version() {
+            local version_file="$1"
+            local version_string="$2"
+            local version_string_new="$3"
+            case "$version_file" in
+              */VERSION) echo -n "$version_string_new" > "$version_file";;
+              */DEBIAN/control) sed -i "s/^Version: .*/Version: $version_string_new/" "$version_file";;
+              */package.json) jq --arg version "$version_string_new" '.version = $version' "$version_file" > tmp.$$.json && rm "$version_file" && mv tmp.$$.json "$version_file";;
+              *.gemspec) sed -i "s/$version_string/$version_string_new/g" "$version_file";;
+              *.toml) sed -i "s/$version_string/$version_string_new/g" "$version_file";;
+              *) echo "Here be dragons! (version file $version_file)" >&2; return 1;;
+            esac
+          }
+  
+          increment_version() {
+            local version_string="$1"
+            local change_type="$2"
+            major="$(echo "$version_string" | cut -d . -f 1)"
+            minor="$(echo "$version_string" | cut -d . -f 2)"
+            patch="$(echo "$version_string" | cut -d . -f 3)"
+            if [ "$major.$minor.$patch" != "$version_string" ]; then echo "Version format not supported! ($version_string)" >&2; return 1; fi
+            case "$change_type" in
+              major) major="$((major + 1))"; minor=0; patch=0;;
+              minor) minor="$((minor + 1))"; patch=0;;
+              patch) patch="$((patch + 1))";;
+              *) echo "Here be dragons! (change type $change_type)" >&2; return 1;;
+            esac
+            echo "$major.$minor.$patch"
+          }
+  
+          set +e
+          set +o pipefail
+          export AI_SYSTEM_PROMPT="I take input that are commit messages and analyze whether the maximum change is either major, minor or patch. Major changes are for breaking changes, minor for new features, enhancements and optimizations, dependency updates, and other new functionality that does not break existing functionality, patch is for bug fixes only. Refactors do not need a version change. If the commit messages hint at more than one type of a change, I respond with the highest one. I only respond with major, minor, patch, or none if nothing at all need changing."
+          list_version_files | while read -r version_file; do
+            echo "processing $version_file ..." >&2
+            directory="$(echo "$version_file" | rev | cut -d '/' -f 2- | rev)"/
+            case "$version_file" in
+              */DEBIAN/control) directory="$(echo "$directory" | rev | cut -d '/' -f 3- | rev)"/;;
+              */package.json) if jq '.version' "$version_file" | grep -q null; then continue; fi;;
+              *) true;;
+            esac
+            git log --oneline | cut -d ' ' -f 1 | while read -r commit_id; do
+              if [ -n "$PATH_INCLUDE" ]; then
+                skip=0
+                IFS=:
+                for path_include in $PATH_INCLUDE; do
+                  if ! git diff-tree --no-commit-id --name-only -r "$commit_id" | grep -qE '^'"${path_include#./}"; then skip=1; fi
+                done
+                IFS=' '
+                if [ "$skip" = 1 ]; then continue; fi
+              fi
+              if [ -n "$PATH_EXCLUDE" ]; then
+                skip=0
+                IFS=:
+                for path_exclude in $PATH_EXCLUDE; do
+                  if git diff-tree --no-commit-id --name-only -r "$commit_id" | grep -qE '^'"${path_exclude#./}"; then skip=1; fi
+                done
+                IFS=' '
+                if [ "$skip" = 1 ]; then continue; fi
+              fi
+              if ! git diff-tree --no-commit-id --name-only -r "$commit_id" | grep -qE '^'"${directory#./}"; then continue; fi
+              if git diff-tree --no-commit-id --name-only -r "$commit_id" | grep -qF "${version_file#./}" && is_version_touched "$version_file" "$commit_id"; then echo "stopping at $commit_id" >&2; break; fi
+              echo "including $commit_id" >&2
+              echo "$commit_id"
+            done | while read -r commit_id; do git log -1 --format=%B "$commit_id"; done | grep -vE '^$' | xargs -r -0 ai | sort -u -r | while read -r change_type; do
+              if [ "$change_type" = none ]; then continue; fi
+              echo "bumping $change_type version in $version_file" >&2
+              version_string="$(read_version "$version_file" || true)"
+              if [ -z "$version_string" ]; then break; fi
+              version_string_new="$(increment_version "$version_string" "$change_type" || true)"
+              if [ -z "$version_string_new" ]; then break; fi
+              write_version "$version_file" "$version_string" "$version_string_new" || true
+            done
+          done
+
   upgrade:
     needs: install
     runs-on: ubuntu-latest
