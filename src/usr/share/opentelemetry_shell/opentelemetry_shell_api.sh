@@ -449,7 +449,7 @@ _otel_call_and_record_pipes() {
   local stdout_pid="$!"
   \tee "$stderr_bytes" "$stderr_lines" < "$stderr" >&2 2> /dev/null &
   local stderr_pid="$!"
-  if \[ "$(\readlink -f /proc/$$/fd/0)" = /dev/null ] || ! \[ -e "$(\readlink -f /proc/$$/fd/0)" ] || \tty 1> /dev/null 2> /dev/null || \[ "$command_type" = builtin ] || \[ "$command_type" = 'function' ] || \[ "$command_type" = keyword ]; then
+  if \[ "$(\readlink -f /proc/self/fd/0)" = /dev/null ] || ! \[ -e "$(\readlink -f /proc/self/fd/0)" ] || \tty 1> /dev/null 2> /dev/null || \[ "$command_type" = builtin ] || \[ "$command_type" = 'function' ] || \[ "$command_type" = keyword ]; then
     \echo -n '' > "$stdin_bytes"
     \echo -n '' > "$stdin_lines"
     $call_command "$@" 1> "$stdout" 2> "$stderr" || local exit_code="$?"
