@@ -25,6 +25,16 @@ jobs:
         with:
           name: package.deb
       - run: sudo apt-get -y install ./package.deb
+      - env:
+          OPENAI_TOKEN: ${{ secrets.OPENAI_TOKEN }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y debconf-utils wget jq
+          echo openai openai/OPENAI_API_TOKEN string "$OPENAI_TOKEN" | sudo debconf-set-selections
+          wget -O - https://raw.githubusercontent.com/plengauer/openai/main/INSTALL.sh | sh
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - run: |
           unset OTEL_SHELL_EXPERIMENTAL_OBSERVE_PIPES # temporarily disable pipes
           export OTEL_TRACES_EXPORTER=console
