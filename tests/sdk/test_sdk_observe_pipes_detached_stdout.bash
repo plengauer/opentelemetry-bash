@@ -1,9 +1,9 @@
 # disabled for non bash be ause dash has very weird (buggy) behavior for commands that follow closing stdout
 . ./assert.sh
+export OTEL_SHELL_EXPERIMENTAL_OBSERVE_PIPES=TRUE
 . /usr/bin/opentelemetry_shell_api.sh
 
 exec 1>&-
-export OTEL_SHELL_EXPERIMENTAL_OBSERVE_PIPES=TRUE
 otel_init
 echo "hello world" | otel_observe cat
 otel_shutdown
