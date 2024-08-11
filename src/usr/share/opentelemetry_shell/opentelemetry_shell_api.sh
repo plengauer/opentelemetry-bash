@@ -304,6 +304,7 @@ otel_metric_add() {
 }
 
 otel_observe() {
+  local IFS=' '
   # validate and clean arguments
   local dollar_star="$(_otel_dollar_star "$@")"
   local command="$dollar_star"
@@ -380,6 +381,7 @@ else
 fi
 
 _otel_call_and_record_logs() {
+  local IFS=' '
   case "$-" in
     *m*) local job_control=1; \set +m;;
     *) local job_control=0;;
@@ -399,6 +401,7 @@ _otel_call_and_record_logs() {
 }
 
 _otel_call_and_record_pipes() {
+  local IFS=' '
   # some notes about this function
   # (*) we have to wait for the background processes because otherwise the span_id may not be valid anymore
   # (*) waiting for the processes only works when its not a subshell so we can access the last process id
