@@ -185,11 +185,12 @@ otel_shutdown
 
 ## Configuration
 You can configure the underlying SDK with the same variables as any other OpenTelemetry SDK as described <a href="https://opentelemetry.io/docs/languages/sdk-configuration/">here</a>. In addition to that, use the following environment variables to further configure behavior of this project:
-| Variable                               | Values          | Default                                      | Description                                                                                 | State        |
-| ---------------------------------------| --------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------ |
-| OTEL_SHELL_CONFIG_OBSERVE_PIPES        | `TRUE`, `FALSE` | `TRUE` for GitHub Actions, `FALSE` otherwise | Count bytes and lines on stdin, stdout, and stderr and add counts as attributes on spans.   | stable       |
-| OTEL_SHELL_CONFIG_INSTRUMENT_MINIMALLY | `TRUE`, `FALSE` | `TRUE` for GitHub Actions, `FALSE` otherwise | Only create `SERVER`, `CONSUMER`, `CLIENT` and `PRODUCER` spans, mute all `INTERNAL` spans. | stable       |
-| OTEL_SHELL_CONFIG_INJECT_DEEP          | `TRUE`, `FALSE` | `FALSE`                                      | Inject native OpenTelemetry into scripting languages like node.js.                          | experimental |
+| Variable                                    | Values          | Default                                      | Description                                                                                 | State        |
+| ------------------------------------------- | --------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------ |
+| OTEL_SHELL_CONFIG_OBSERVE_PIPES             | `TRUE`, `FALSE` | `TRUE` for GitHub Actions, `FALSE` otherwise | Count bytes and lines on stdin, stdout, and stderr and add counts as attributes on spans.   | stable       |
+| OTEL_SHELL_CONFIG_INSTRUMENT_MINIMALLY      | `TRUE`, `FALSE` | `FALSE`                                      | Only create `SERVER`, `CONSUMER`, `CLIENT` and `PRODUCER` spans, mute all `INTERNAL` spans. | stable       |
+| OTEL_SHELL_CONFIG_INJECT_DEEP               | `TRUE`, `FALSE` | `TRUE` for GitHub Actions, `FALSE` otherwise | Inject native OpenTelemetry into scripting languages like node.js.                          | stable       |
+| OTEL_SHELL_CONFIG_INSTRUMENT_ABSOLUTE_PATHS | `TRUE`, `FALSE` | `FALSE`                                      | Create spans for commands with an absolute path to the executable.                          | experimental |
 
 ## Traces
 The API described below is for manually creating and customizing spans. We recommend to do this only if the automatic instrumentation is not sufficient.
