@@ -1,7 +1,7 @@
 . ./assert.sh
+export OTEL_SHELL_CONFIG_OBSERVE_PIPES=TRUE
 . /usr/bin/opentelemetry_shell_api.sh
 
-export OTEL_SHELL_EXPERIMENTAL_OBSERVE_PIPES=TRUE
 otel_init
 assert_equals "" "$(echo -n '' | otel_observe cat)"
 otel_shutdown

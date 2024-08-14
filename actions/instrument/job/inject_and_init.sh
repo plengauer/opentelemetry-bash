@@ -111,7 +111,7 @@ while ! [ -f "$traceparent_file" ]; do sleep 1; done
 export TRACEPARENT="$(cat "$traceparent_file")"
 rm "$traceparent_file"
 
-export OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE
-export OTEL_SHELL_EXPERIMENTAL_OBSERVE_PIPES=TRUE
+export OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE
+export OTEL_SHELL_CONFIG_OBSERVE_PIPES=TRUE
 
 printenv | grep -E '^OTEL_|^TRACEPARENT=|^TRACESTATE=' >> "$GITHUB_ENV"
