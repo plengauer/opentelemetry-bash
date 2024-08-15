@@ -47,7 +47,7 @@ assert_not_equals null $(\echo "$span" | jq -r '.parent_id')
 
 type npm || exit 1
 
-OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE node -e "const child_process = require('child_process'); child_process.spawn('echo', [ 'hello', 'world', '6' ]);"
+OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE node -e "const child_process = require('child_process'); child_process.spawn('echo', [ 'hello', 'world', '6' ]);"
 assert_equals 0 $?
 span="$(resolve_span '.name == "echo hello world 6"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
@@ -66,7 +66,7 @@ const options = {
 const req = https.request(options, (res) => {});
 req.end();
 " > "$directory"/index.js
-span="$(OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE node "$directory"/index.js 2>&1)"
+span="$(OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE node "$directory"/index.js 2>&1)"
 assert_equals 0 $?
 \echo "$span"
 assert_equals "GET" $(\echo "$span" | grep -E '^  name:' | cut -d ':' -f 2- | tr -d \''" ,')
@@ -95,7 +95,7 @@ const req = https.request(options, (res) => {});
 req.end();
 " > "$directory"/index.js
 (cd "$directory" && npm install @opentelemetry/api @opentelemetry/sdk-node @opentelemetry/sdk-trace-node @opentelemetry/auto-instrumentations-node)
-span="$(OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE node "$directory"/index.js 2>&1)"
+span="$(OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE node "$directory"/index.js 2>&1)"
 assert_equals 0 $?
 \echo "$span"
 assert_equals "GET" $(\echo "$span" | grep -E '^  name:' | cut -d ':' -f 2- | tr -d \''" ,')
@@ -121,7 +121,7 @@ opentelemetry_api.trace.getTracerProvider().getTracer('my-tracer').startActiveSp
 });
 " > "$directory"/index.js
 (cd "$directory" && npm install @opentelemetry/api @opentelemetry/sdk-node @opentelemetry/sdk-trace-node @opentelemetry/auto-instrumentations-node)
-span="$(OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE node "$directory"/index.js 2>&1)"
+span="$(OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE node "$directory"/index.js 2>&1)"
 assert_equals 0 $?
 \echo "$span"
 assert_equals $(resolve_span '.name == "echo hello world 7"' | jq -r .parent_id) 0x$(\echo "$span" | grep -E '^  id:' | cut -d ':' -f 2- | tr -d \''" ,')
