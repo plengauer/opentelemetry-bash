@@ -1,6 +1,7 @@
 # disabled for non bash be ause dash has very weird (buggy) behavior for commands that follow closing stdout
 . ./assert.sh
 export OTEL_SHELL_CONFIG_OBSERVE_PIPES=TRUE
+export OTEL_SHELL_CONFIG_OBSERVE_PIPES_STDIN=TRUE
 . /usr/bin/opentelemetry_shell_api.sh
 
 exec 1>&-
