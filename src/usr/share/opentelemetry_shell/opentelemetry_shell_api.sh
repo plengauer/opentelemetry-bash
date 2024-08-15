@@ -305,6 +305,8 @@ otel_metric_add() {
 }
 
 otel_observe() {
+  local IFS=' 
+'
   # validate and clean arguments
   local dollar_star="$(_otel_dollar_star "$@")"
   local command="$dollar_star"
@@ -381,6 +383,8 @@ else
 fi
 
 _otel_call_and_record_logs() {
+  local IFS=' 
+'
   case "$-" in
     *m*) local job_control=1; \set +m;;
     *) local job_control=0;;
@@ -400,6 +404,8 @@ _otel_call_and_record_logs() {
 }
 
 _otel_call_and_record_pipes() {
+  local IFS=' 
+'
   # some notes about this function
   # (*) we have to wait for the background processes because otherwise the span_id may not be valid anymore
   # (*) waiting for the processes only works when its not a subshell so we can access the last process id
@@ -447,7 +453,7 @@ _otel_call_and_record_pipes() {
   local stdout_pid="$!"
   \tee "$stderr_bytes" "$stderr_lines" < "$stderr" >&2 2> /dev/null &
   local stderr_pid="$!"
-  if \[ "$(\readlink -f /proc/self/fd/0)" = /dev/null ] || \[ "$(\readlink -f /proc/self/fd/0)" = "/proc/$$/fd/0" ] || \[ "$command_type" = builtin ] || \[ "$command_type" = 'function' ] || \[ "$command_type" = keyword ]; then
+  if \[ "$OTEL_SHELL_CONFIG_OBSERVE_PIPES_STDIN" != TRUE ] && ( \[ "$(\readlink -f /proc/self/fd/0)" = /dev/null ] || \[ "$command_type" = builtin ] || \[ "$command_type" = 'function' ] || \[ "$command_type" = keyword ] ); then
     \echo -n '' > "$stdin_bytes"
     \echo -n '' > "$stdin_lines"
     $call_command "$@" 1> "$stdout" 2> "$stderr" || local exit_code="$?"
