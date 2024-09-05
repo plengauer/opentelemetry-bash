@@ -13,7 +13,6 @@ def relay_stdout(proc):
             sys.stdout.buffer.write(output)
             sys.stdout.buffer.flush()
     sys.stdout.close()
-    print('stdout closed', file=sys.stderr)
 
 def relay_stdin(proc):
     while True:
@@ -27,7 +26,6 @@ def relay_stdin(proc):
         except EOFError:
             break
     proc.stdin.close()
-    print('stdin closed', file=sys.stderr)
 
 def main(command):
     proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=sys.stderr, stdin=subprocess.PIPE, text=False)
@@ -36,7 +34,6 @@ def main(command):
     thread_stdout.start()
     thread_stdin.start()
     thread_stdout.join()
-    print('exiting', file=sys.stderr)
     os._exit(0)
 
 if __name__ == '__main__':
