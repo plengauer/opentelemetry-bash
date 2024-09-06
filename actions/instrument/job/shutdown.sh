@@ -1,6 +1,6 @@
 #!/bin/sh
 set -e
-if [ "$INPUT___JOB_STATUS" = 'failed' ]; then
+if [ "$INPUT___JOB_STATUS" = failure ]; then
   touch /tmp/opentelemetry_shell.github.error
 fi
 root_pid="$STATE_pid"
