@@ -2,7 +2,6 @@
 if ! [ -x "$(which docker)" ]; then exit 0; fi
 . ./assert.sh
 export OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE
-export OTEL_SHELL_CONFIG_INSTRUMENT_ABSOLUTE_PATHS=TRUE
 . /usr/bin/opentelemetry_shell.sh
 
 log_file="$(\mktemp)"
