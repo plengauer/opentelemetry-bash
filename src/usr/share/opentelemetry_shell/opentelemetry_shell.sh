@@ -175,7 +175,12 @@ _otel_filter_commands_by_instrumentation() {
 
 _otel_filter_commands_by_mode() {
   if \[ "$OTEL_SHELL_CONFIG_INSTRUMENT_MINIMALLY" = TRUE ]; then
-    \grep -F "$(\alias | \grep OTEL_SHELL_SPAN_KIND_OVERRIDE | \grep -v OTEL_SHELL_SPAN_KIND_OVERRIDE=INTERNAL | \sed 's/^alias //g' | \cut -d = -f 1)"
+    local non_internal_instrumentations="$(\alias | \grep OTEL_SHELL_SPAN_KIND_OVERRIDE | \grep -v OTEL_SHELL_SPAN_KIND_OVERRIDE=INTERNAL | \sed 's/^alias //g' | \cut -d = -f 1)"
+    if \[ -n "$non_internal_instrumentations" ]; then
+      \grep -F "$non_internal_instrumentations"
+    else
+      \cat > /dev/null
+    fi
   else
     \cat
   fi
