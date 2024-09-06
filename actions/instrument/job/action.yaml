@@ -5,3 +5,7 @@ runs:
   pre: 'inject_and_init.js'
   main: 'nop.js'
   post: 'shutdown.js'
+inputs:
+  __job_status:
+    description: 'INTERNAL ONLY - DO NOT SET MANUALLY'
+    default: '${{ job.status }}'
