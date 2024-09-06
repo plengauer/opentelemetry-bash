@@ -7,7 +7,7 @@ _otel_propagate_wget() {
     *m*) local job_control=1; \set +m;;
     *) local job_control=0;;
   esac
-  if \[ -f /opt/opentelemtry_shell/libinjecthttpheader.so ]; then
+  if \[ -f /opt/opentelemetry_shell/libinjecthttpheader.so ]; then
     local OLD_LD_PRELOAD="$LD_PRELOAD"
     export LD_PRELOAD=/opt/opentelemtry_shell/libinjecthttpheader.so
     if \[ -n "$OLD_PRELOAD" ]; then
