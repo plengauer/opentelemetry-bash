@@ -8,7 +8,7 @@ github() {
     | grep 'rel="last"' | cut -d ';' -f1 | cut -d '?' -f 2- | tr '&' '\n' \
     | grep '^page=' | cut -d = -f 2 \
     | xargs seq 1 | while IFS= read -r page; do
-      command curl --no-progress-meter --fail --retry 12 --retry-all-errors "$url"\&page="$page"
+      curl --no-progress-meter --fail --retry 12 --retry-all-errors "$url"\&page="$page"
     done
 }
 export -f github
