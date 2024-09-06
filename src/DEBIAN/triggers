@@ -2,6 +2,6 @@
 # interest /usr/bin/python3
 # interest /usr/local/bin/python3
 
-# interest /bin/npm
-# interest /usr/bin/npm
-# interest /usr/local/bin/npm
+interest /bin/npm
+interest /usr/bin/npm
+interest /usr/local/bin/npm
