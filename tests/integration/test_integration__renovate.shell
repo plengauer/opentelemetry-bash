@@ -14,3 +14,5 @@ assert_equals "SpanKind.INTERNAL" $(\echo "$span" | \jq -r '.kind')
 span_id="$(\echo "$span" | \jq -r '.context.span_id')"
 
 \cat "$log_file" | \grep parentId | \grep "${span_id:2}" || exit 1
+
+\cat $OTEL_EXPORT_LOCATION
