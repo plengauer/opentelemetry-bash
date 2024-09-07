@@ -16,7 +16,7 @@ int otel_span_start(FILE *sdk, const char *type, const char *name) {
   if (mkfifo(sdk_response, 0666) != 0) { free(buffer); return -1; }
   
   memset(buffer, 0, buffer_size);
-  sprintf(buffer, "SPAN_START %s %s %s %s %s", sdk_response, getenv("TRACEPARENT"), getenv("TRACESTATE"), type, name);
+  sprintf(buffer, "SPAN_START %s %s %s %s %s\n", sdk_response, getenv("TRACEPARENT"), getenv("TRACESTATE"), type, name);
   fwrite(buffer, sizeof(char), strlen(buffer), sdk);
   fflush(sdk);
   
@@ -28,6 +28,7 @@ fprintf(stderr, "DEBUG %s\n", "reading ...");
   fread(buffer, sizeof(char), strlen(buffer), response_file);
   fclose(response_file);
   int span_handle = atoi(buffer);
+fprintf(stderr, "DEBUG span handle %d\n", span_handle);
   
   remove(sdk_response);
   free(buffer);
@@ -43,7 +44,7 @@ char * otel_traceparent(FILE *sdk, int span_handle) {
   if (mkfifo(sdk_response, 0666) != 0) { free(buffer); return NULL; }
 
   memset(buffer, 0, buffer_size);
-  sprintf(buffer, "SPAN_TRACEPARENT %s %d", sdk_response, span_handle);
+  sprintf(buffer, "SPAN_TRACEPARENT %s %d\n", sdk_response, span_handle);
   fwrite(buffer, sizeof(char), strlen(buffer), sdk);
   fflush(sdk);
 
