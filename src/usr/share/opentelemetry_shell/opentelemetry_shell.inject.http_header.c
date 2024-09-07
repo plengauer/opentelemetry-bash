@@ -37,7 +37,7 @@ char * otel_traceparent(FILE *sdk, int span_handle) {
   if (!buffer) return NULL;
   
   char *sdk_response = tmpnam(NULL); // this is unsafe, i know
-  if (mkfifo(sdk_response, 0666) != 0) { free(buffer); return -1; }
+  if (mkfifo(sdk_response, 0666) != 0) { free(buffer); return NULL; }
 
   memset(buffer, 0, buffer_size);
   sprintf(buffer, "SPAN_TRACEPARENT %s %d", sdk_response, span_handle);
