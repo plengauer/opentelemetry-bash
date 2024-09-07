@@ -100,6 +100,13 @@ int inject(char *buffer, size_t length) {
   return 3;
 }
 
+int inject_safely(char *buffer, size_t length) {
+  char last = buffer[length - 1];
+  buffer[length - 1] = '\0';
+  int result = inject(buffer, length);
+  buffer[length - 1] = last;
+  return result;
+}
 
 ssize_t (*original_send)(int sockfd, const void *buf, size_t len, int flags);
 ssize_t send(int sockfd, const void *buf, size_t len, int flags) {
