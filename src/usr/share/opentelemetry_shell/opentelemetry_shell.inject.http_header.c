@@ -4,6 +4,7 @@
 #include <string.h>
 #include <dlfcn.h>
 #include <sys/types.h> // TODO do we need this?
+#include <sys/stat.h>
 #include <sys/socket.h> // TODO do we need this?
 
 int otel_span_start(FILE *sdk, const char *type, const char *name) {
@@ -11,7 +12,7 @@ int otel_span_start(FILE *sdk, const char *type, const char *name) {
   char *buffer = (char*) calloc(buffer_size, sizeof(char));
   if (!buffer) return -1;
   
-  char *sdk_response = tmpnam(); // this is unsafe, i know
+  char *sdk_response = tmpnam(NULL); // this is unsafe, i know
   if (mkfifo(sdk_response, 0666) != 0) { free(buffer); return -1; }
   
   memset(buffer, 0, buffer_size);
@@ -21,9 +22,9 @@ int otel_span_start(FILE *sdk, const char *type, const char *name) {
   
   memset(buffer, 0, buffer_size);
   FILE *response_file = fopen(sdk_response, "r");
-  fread(buffer, sizeof(char), strlen(buffer), sdk_response);
+  fread(buffer, sizeof(char), strlen(buffer), response_file);
   fclose(response_file);
-  span_handle = atoi(buffer);
+  int span_handle = atoi(buffer);
   
   remove(sdk_response);
   free(buffer);
@@ -33,9 +34,9 @@ int otel_span_start(FILE *sdk, const char *type, const char *name) {
 char * otel_traceparent(FILE *sdk, int span_handle) {
   size_t buffer_size = 1024 * 4;
   char *buffer = (char*) calloc(buffer_size, sizeof(char));
-  if (!buffer) return -1;
+  if (!buffer) return NULL;
   
-  char *sdk_response = tmpnam(); // this is unsafe, i know
+  char *sdk_response = tmpnam(NULL); // this is unsafe, i know
   if (mkfifo(sdk_response, 0666) != 0) { free(buffer); return -1; }
 
   memset(buffer, 0, buffer_size);
@@ -45,9 +46,8 @@ char * otel_traceparent(FILE *sdk, int span_handle) {
 
   memset(buffer, 0, buffer_size);
   FILE *response_file = fopen(sdk_response, "r");
-  fread(buffer, sizeof(char), strlen(buffer), sdk_response);
+  fread(buffer, sizeof(char), strlen(buffer), response_file);
   fclose(response_file);
-  span_handle = atoi(buffer);
 
   remove(sdk_response);
   return buffer;
@@ -83,7 +83,7 @@ int inject(char *buffer, size_t length) {
         fwrite(span_handle_string, sizeof(char), strlen(span_handle_string), storage); // TODO this could fail, what then?
         fclose(storage);
       }
-      char *traceparent = otel_traceparent(span_handle);
+      char *traceparent = otel_traceparent(sdk, span_handle);
       if (!traceparent) return 7;
       if (strlen("traceparent: ") + strlen(traceparent) + 1 != strlen(buffer)) { free(traceparent); return 8; }
       sprintf(buffer, "traceparent: %s\r", traceparent);
