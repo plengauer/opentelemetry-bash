@@ -1,0 +1,4 @@
+{
+  "title": "Renovate Bot",
+  "description": "This script manually runs the renovate bot, injects deeply into both the docker container and the node process within"
+}

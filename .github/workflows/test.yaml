@@ -31,7 +31,7 @@ jobs:
   smoke:
     needs: install
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
@@ -94,7 +94,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           issue-message: "Hello, thanks for adding an issue for the first time!"
           pr-message: "Hello, thanks for contributing for the first time!"
-      - uses: renovatebot/github-action@v40.2.4 # integration, node action with call to docker, docker flags that make injection more complicated, then call a node script via exec that already is injected with otel
+      - uses: renovatebot/github-action@v40.2.7 # integration, node action with call to docker, docker flags that make injection more complicated, then call a node script via exec that already is injected with otel
         env:
           RENOVATE_DRY_RUN: full
           RENOVATE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -150,10 +150,24 @@ jobs:
           path: performance.${{ matrix.tag_name }}.warmstart.list
           retention-days: 1
 
-  all:
+  join:
     needs: [install, upgrade, os-shell, action, performance]
     runs-on: ubuntu-latest
+    outputs:
+      success: ${{ steps.tests.outputs.success }}
     steps:
+      - id: tests
+        run: echo "success=true" >> "$GITHUB_OUTPUT"
+
+  all:
+    if: ${{ always() }}
+    needs: [join]
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          SUCCESS: ${{ needs.join.outputs.success }}
+        run: |
+          [ "$SUCCESS" = 'true' ]
       - uses: actions/download-artifact@v4
         with:
           pattern: 'performance.*.list'

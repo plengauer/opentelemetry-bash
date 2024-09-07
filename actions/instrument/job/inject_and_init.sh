@@ -8,7 +8,7 @@ github() {
     | grep 'rel="last"' | cut -d ';' -f1 | cut -d '?' -f 2- | tr '&' '\n' \
     | grep '^page=' | cut -d = -f 2 \
     | xargs seq 1 | while IFS= read -r page; do
-      command curl --no-progress-meter --fail --retry 12 --retry-all-errors "$url"\&page="$page"
+      curl --no-progress-meter --fail --retry 16 --retry-all-errors "$url"\&page="$page"
     done
 }
 export -f github
@@ -72,7 +72,7 @@ if [ -z "$OTEL_SERVICE_NAME" ]; then
 fi
 
 root4job_end() {
-  if [ -f /tmp/opentelemetry_shell.github.error ] || [ "$(github_workflow jobs | jq -r ".jobs[] | select(.name == \"$GITHUB_JOB\") | select(.run_attempt == $GITHUB_RUN_ATTEMPT) | .steps[] | select(.status == \"completed\") | select(.conclusion == \"failure\") | .name" | wc -l)" -gt 0 ]; then
+  if [ -f /tmp/opentelemetry_shell.github.error ]; then
     otel_span_error "$span_handle"
   fi
   otel_span_end "$span_handle"
@@ -111,7 +111,7 @@ while ! [ -f "$traceparent_file" ]; do sleep 1; done
 export TRACEPARENT="$(cat "$traceparent_file")"
 rm "$traceparent_file"
 
-export OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE
-export OTEL_SHELL_EXPERIMENTAL_OBSERVE_PIPES=TRUE
+export OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE
+export OTEL_SHELL_CONFIG_OBSERVE_PIPES=TRUE
 
 printenv | grep -E '^OTEL_|^TRACEPARENT=|^TRACESTATE=' >> "$GITHUB_ENV"

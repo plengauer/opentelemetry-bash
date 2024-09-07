@@ -25,13 +25,7 @@ function otel_spawn(command, args, options, original) {
   if (options && options.stdio && Array.isArray(options.stdio) && options.stdio.length > 3) return _spawn(command, args, options);
   options = options ?? {};
   options.env = options.env ?? { ... process.env };
-  if (command.includes('/')) {
-    if (_execSync("which " + command) == command, options.shell && typeof options.shell == 'string' ? { shell: options.shell } : {}) {
-      command = command.substring(command.lastIndexOf('/') + 1);
-    } else {
-      command = 'otel_observe ' + command;
-    }
-  }
+  if (command.includes('/')) command = '_otel_inject ' + command;
   shell_propagator_inject(options.env);
   if (options.shell) {
     if (typeof options.shell == 'boolean') options.shell = '/bin/sh';
@@ -58,13 +52,7 @@ function otel_exec(command, options, callback, original) {
     options = {};
   }
   if (options && options.stdio && Array.isArray(options.stdio) && options.stdio.length > 3) return _exec(command, options, callback);
-  if (command.trim().startsWith('/') || command.trim().startsWith('.')) {
-    if (_execSync(options.shell ?? '/bin/sh' + " -c 'which \"$1\"' sh " + command) == command) {
-      command = command.substring(command.lastIndexOf('/') + 1);
-    } else {
-      command = 'otel_observe ' + command;
-    }
-  }
+  if (command.includes('/')) command = '_otel_inject ' + command;
   options = options ?? {};
   options.env = options.env ?? { ... process.env };
   shell_propagator_inject(options.env);

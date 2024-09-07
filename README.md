@@ -1,4 +1,4 @@
-This project delivers [OpenTelemetry](https://opentelemetry.io/) traces, metrics and logs from shell scripts (sh, ash, dash, bash, busybox, and many other POSIX compliant shells) as well as from GitHub actions (including node and docker actions). Compared to similar projects, it delivers not just a command-line SDK to create spans manually, but also provides context propagation via HTTP (wget, curl, and netcat), auto-instrumentation of all available commands, auto-injection into child scripts and into executables using shebangs, as well as automatic log collection from stderr. Its installable via a debian package from the releases in this repository, or from the apt-repository below. This project is not officially affiliated with the CNCF project [OpenTelemetry](https://opentelemetry.io/).
+This project delivers [OpenTelemetry](https://opentelemetry.io/) traces, metrics and logs from shell scripts (sh, ash, dash, bash, busybox, and many other POSIX compliant shells) as well as from GitHub actions (including node and docker actions). Compared to similar projects, it delivers not just a command-line SDK to create spans manually, but also provides automatic context propagation via HTTP (wget, curl, and netcat), auto-instrumentation of all available commands, auto-injection into child scripts and into executables using shebangs, as well as automatic log collection from stderr. Its installable via a debian package from the releases in this repository, or from the apt-repository below. This project is not officially affiliated with the CNCF project [OpenTelemetry](https://opentelemetry.io/).
 
 [![Tests](https://github.com/plengauer/opentelemetry-bash/actions/workflows/test_branch.yaml/badge.svg?branch=main)](https://github.com/plengauer/opentelemetry-bash/actions/workflows/test_branch.yaml)
 
@@ -118,10 +118,12 @@ wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/IN
 ```
 or via
 ```bash
-echo "deb [arch=all] https://3.73.14.87:8000/ stable main" | sudo tee /etc/apt/sources.list.d/otel.list
+echo "deb [arch=all] http://3.73.14.87:8000/ stable main" | sudo tee /etc/apt/sources.list.d/otel.list
 sudo apt-get update
 sudo apt-get install opentelemetry-shell
 ```
+
+Note: the apt repo only acts as a facade to offer a better unix-native installation option, internally it redirects the apt client to the releases of this repository.
 
 # Documentation
 You can either use the fully automatic instrumentation (recommended) or just import the API to do everything manually. In both cases, you can use the API to manually create customized spans and metrics. However, the automatic approach creates rich spans and logs fully automatically. We recommend to use the manual approach only to augment the automatic approach where necessary.
@@ -183,11 +185,12 @@ otel_shutdown
 
 ## Configuration
 You can configure the underlying SDK with the same variables as any other OpenTelemetry SDK as described <a href="https://opentelemetry.io/docs/languages/sdk-configuration/">here</a>. In addition to that, use the following environment variables to further configure behavior of this project:
-| Variable                                     | Values          | Default | Description                                                                                 |
-| -------------------------------------------- | --------------- | ------- | ------------------------------------------------------------------------------------------- |
-| OTEL_SHELL_EXPERIMENTAL_OBSERVE_PIPES        | `TRUE`, `FALSE` | `FALSE` | Count bytes and lines on stdin, stdout, and stderr and add counts as attributes on spans.   |
-| OTEL_SHELL_EXPERIMENTAL_INSTRUMENT_MINIMALLY | `TRUE`, `FALSE` | `FALSE` | Only create `SERVER`, `CONSUMER`, `CLIENT` and `PRODUCER` spans, mute all `INTERNAL` spans. |
-| OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP          | `TRUE`, `FALSE` | `FALSE` | Inject native OpenTelemetry into scripting languages like node.js.                          |
+| Variable                                    | Values          | Default                                      | Description                                                                                 | State        |
+| ------------------------------------------- | --------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------ |
+| OTEL_SHELL_CONFIG_OBSERVE_PIPES             | `TRUE`, `FALSE` | `TRUE` for GitHub Actions, `FALSE` otherwise | Count bytes and lines on stdin, stdout, and stderr and add counts as attributes on spans.   | stable       |
+| OTEL_SHELL_CONFIG_INSTRUMENT_MINIMALLY      | `TRUE`, `FALSE` | `FALSE`                                      | Only create `SERVER`, `CONSUMER`, `CLIENT` and `PRODUCER` spans, mute all `INTERNAL` spans. | stable       |
+| OTEL_SHELL_CONFIG_INJECT_DEEP               | `TRUE`, `FALSE` | `TRUE` for GitHub Actions, `FALSE` otherwise | Inject native OpenTelemetry into scripting languages like node.js.                          | stable       |
+| OTEL_SHELL_CONFIG_INSTRUMENT_ABSOLUTE_PATHS | `TRUE`, `FALSE` | `FALSE`                                      | Create spans for commands with an absolute path to the executable.                          | experimental |
 
 ## Traces
 The API described below is for manually creating and customizing spans. We recommend to do this only if the automatic instrumentation is not sufficient.

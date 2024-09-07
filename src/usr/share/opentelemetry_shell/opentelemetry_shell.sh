@@ -11,6 +11,10 @@ if \[ "$_otel_shell_injected" = "TRUE" ]; then
 fi
 _otel_shell_injected=TRUE
 
+export OTEL_SHELL_CONFIG_INSTRUMENT_MINIMALLY="${OTEL_SHELL_CONFIG_INSTRUMENT_MINIMALLY:-${OTEL_SHELL_EXPERIMENTAL_INSTRUMENT_MINIMALLY:-FALSE}}"
+export OTEL_SHELL_CONFIG_INJECT_DEEP="${OTEL_SHELL_CONFIG_INJECT_DEEP:-${OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP:-FALSE}}"
+export OTEL_SHELL_CONFIG_INSTRUMENT_ABSOLUTE_PATHS="${OTEL_SHELL_CONFIG_INSTRUMENT_ABSOLUTE_PATHS:-FALSE}"
+
 _otel_shell_conservative_exec="$OTEL_SHELL_CONSERVATIVE_EXEC"
 unset OTEL_SHELL_CONSERVATIVE_EXEC
 
@@ -30,6 +34,7 @@ if \[ -n "$OTEL_SHELL_AUTO_INSTRUMENTATION_HINT" ]; then
   _otel_shell_auto_instrumentation_hint="$OTEL_SHELL_AUTO_INSTRUMENTATION_HINT"
   unset OTEL_SHELL_AUTO_INSTRUMENTATION_HINT
 elif \[ "$_otel_is_interactive" = "TRUE" ]; then
+  \echo "WARNING When using OpenTelemetry in an interactive shell for the first time after startup, it may take some time to create the instrumentation cache! Subsequent interactive shells will start faster. This performance impact does not apply in non-interactive shells, like scripts or invocations with -c." >&2
   _otel_shell_auto_instrumentation_hint=""
 elif \[ -f "$0" ] && \[ "$(\readlink -f "$0" | \rev | \cut -d / -f 1 | \rev)" != "$(\readlink -f "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)" ]; then
   _otel_shell_auto_instrumentation_hint="$0"
@@ -59,7 +64,7 @@ _otel_auto_instrument() {
   ## (1) using the hint - will not work when scripts are changing or called the same but very fast!
   ## (2) using the resolved hint - will not work when new executables are added onto the system or their shebang changes or new bash.rc aliases are added
   ## (3) using the filtered list of commands - will work in every case but slowest
-  local cache_key="$({ _otel_list_path_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_hint "$hint" | \sort -u; \alias; \echo "$_otel_shell_conservative_exec" "$OTEL_SHELL_EXPERIMENTAL_INSTRUMENT_MINIMALLY"; } | \md5sum | \cut -d ' ' -f 1)"
+  local cache_key="$({ _otel_list_path_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_hint "$hint" | \sort -u; \alias; \echo "$_otel_shell_conservative_exec" "$OTEL_SHELL_CONFIG_INSTRUMENT_MINIMALLY"; } | \md5sum | \cut -d ' ' -f 1)"
   local cache_file="$(\mktemp -u | \rev | \cut -d / -f 2- | \rev)/opentelemetry_shell_$(_otel_package_version opentelemetry-shell)"_"$_otel_shell"_instrumentation_cache_"$cache_key".aliases
   if \[ -f "$cache_file" ]; then
     \eval "$(\grep -vh '_otel_alias_prepend ' $(_otel_list_special_auto_instrument_files))"
@@ -169,8 +174,13 @@ _otel_filter_commands_by_instrumentation() {
 }
 
 _otel_filter_commands_by_mode() {
-  if \[ "$OTEL_SHELL_EXPERIMENTAL_INSTRUMENT_MINIMALLY" = TRUE ]; then
-    \grep -F "$(\alias | \grep OTEL_SHELL_SPAN_KIND_OVERRIDE | \grep -v OTEL_SHELL_SPAN_KIND_OVERRIDE=INTERNAL | \sed 's/^alias //g' | \cut -d = -f 1)"
+  if \[ "$OTEL_SHELL_CONFIG_INSTRUMENT_MINIMALLY" = TRUE ]; then
+    local non_internal_instrumentations="$(\alias | \grep OTEL_SHELL_SPAN_KIND_OVERRIDE | \grep -v OTEL_SHELL_SPAN_KIND_OVERRIDE=INTERNAL | \sed 's/^alias //g' | \cut -d = -f 1)"
+    if \[ -n "$non_internal_instrumentations" ]; then
+      \grep -F "$non_internal_instrumentations"
+    else
+      \cat > /dev/null
+    fi
   else
     \cat
   fi
@@ -310,6 +320,11 @@ _otel_instrument_and_source() {
 _otel_inject_and_exec_directly() { # this function assumes there is no fd fuckery
   if \[ "$#" = 1 ]; then
     export OTEL_SHELL_CONSERVATIVE_EXEC=TRUE
+    _otel_sdk_communicate 'SPAN_AUTO_END'
+    if \[ -n "$_otel_commandline_override" ]; then
+      export OTEL_SHELL_COMMANDLINE_OVERRIDE="$_otel_commandline_override"
+      export OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$PPID"
+    fi
     \eval '"exec"' "$(\xargs -0 sh -c '. otelapi.sh; _otel_escape_args "$@"' sh < /proc/$$/cmdline)"
   fi
   
@@ -368,6 +383,19 @@ command() {
   else
     \command "$@"
   fi
+}
+
+_otel_inject() {
+  if _otel_string_contains "$1" /; then
+    local command="$(\readlink -f "$1" | \rev | \cut -d / -f 1 | \rev)"
+    shift
+    set -- "$command" "$@"
+    if ! \[ "$(\which "$(\echo "$1" | \rev | \cut -d / -f 1 | \rev)")" = "$1" ]; then
+      local PATH="$(\readlink -f "$1" | \rev | \cut -d / -f 2- | \rev):$PATH"
+      _otel_auto_instrument "$_otel_shell_auto_instrumentation_hint"
+    fi
+  fi
+  \eval "$(_otel_escape_args "$@")"
 }
 
 _otel_start_script() {

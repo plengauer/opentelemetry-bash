@@ -48,4 +48,4 @@ _otel_inject_shell_with_c_flag() {
   return $exit_code
 }
 
-_otel_alias_prepend bash _otel_inject_shell_with_c_flag
+if \[ "$OTEL_SHELL_CONFIG_INSTRUMENT_ABSOLUTE_PATHS" = TRUE ]; then _otel_alias_prepend bash _otel_inject_shell_with_copy; else _otel_alias_prepend bash _otel_inject_shell_with_c_flag; fi

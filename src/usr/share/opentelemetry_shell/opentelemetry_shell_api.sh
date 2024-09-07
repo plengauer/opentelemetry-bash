@@ -12,6 +12,7 @@ if \[ -n "$OTEL_SHELL_TRACES_ENABLE" ] || \[ -n "$OTEL_SHELL_METRICS_ENABLE" ] |
   \[ "$OTEL_SHELL_LOGS_ENABLE" = TRUE ] && export OTEL_LOGS_EXPORTER=otlp || export OTEL_LOGS_EXPORTER=""
   export OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=delta
 fi
+export OTEL_SHELL_CONFIG_OBSERVE_PIPES="${OTEL_SHELL_CONFIG_OBSERVE_PIPES:-${OTEL_SHELL_EXPERIMENTAL_OBSERVE_PIPES:-FALSE}}"
 
 # basic setup
 _otel_remote_sdk_pipe="${OTEL_REMOTE_SDK_PIPE:-$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.pipe}"
@@ -304,6 +305,8 @@ otel_metric_add() {
 }
 
 otel_observe() {
+  local IFS=' 
+'
   # validate and clean arguments
   local dollar_star="$(_otel_dollar_star "$@")"
   local command="$dollar_star"
@@ -338,7 +341,7 @@ otel_observe() {
   local exit_code=0
   local call_command=_otel_call
   if ! \[ -t 2 ] && ! _otel_string_contains "$-" x; then local call_command="_otel_call_and_record_logs $call_command"; fi
-  if ! \[ -t 0 ] && ! \[ -t 1 ] && ! \[ -t 2 ] && ! _otel_string_contains "$-" x && \[ "$OTEL_SHELL_EXPERIMENTAL_OBSERVE_PIPES" = TRUE ]; then local call_command="_otel_call_and_record_pipes $span_handle $command_type $call_command"; fi
+  if ! \[ -t 0 ] && ! \[ -t 1 ] && ! \[ -t 2 ] && ! _otel_string_contains "$-" x && \[ "$OTEL_SHELL_CONFIG_OBSERVE_PIPES" = TRUE ]; then local call_command="_otel_call_and_record_pipes $span_handle $command_type $call_command"; fi
   $call_command "$@" || local exit_code="$?"
   otel_span_deactivate "$span_handle"
   
@@ -380,6 +383,8 @@ else
 fi
 
 _otel_call_and_record_logs() {
+  local IFS=' 
+'
   case "$-" in
     *m*) local job_control=1; \set +m;;
     *) local job_control=0;;
@@ -399,6 +404,8 @@ _otel_call_and_record_logs() {
 }
 
 _otel_call_and_record_pipes() {
+  local IFS=' 
+'
   # some notes about this function
   # (*) we have to wait for the background processes because otherwise the span_id may not be valid anymore
   # (*) waiting for the processes only works when its not a subshell so we can access the last process id
@@ -446,26 +453,30 @@ _otel_call_and_record_pipes() {
   local stdout_pid="$!"
   \tee "$stderr_bytes" "$stderr_lines" < "$stderr" >&2 2> /dev/null &
   local stderr_pid="$!"
-  if \[ "$(\readlink -f /proc/self/fd/0)" = /dev/null ] || \[ "$(\readlink -f /proc/self/fd/0)" = "/proc/$$/fd/0" ] || \[ "$command_type" = builtin ] || \[ "$command_type" = 'function' ] || \[ "$command_type" = keyword ]; then
+  if \[ "$OTEL_SHELL_CONFIG_OBSERVE_PIPES_STDIN" != TRUE ] || \[ "$(\readlink -f /proc/self/fd/0)" = /dev/null ] || \[ "$command_type" = builtin ] || \[ "$command_type" = 'function' ] || \[ "$command_type" = keyword ]; then
+    local observe_stdin=FALSE
     \echo -n '' > "$stdin_bytes"
     \echo -n '' > "$stdin_lines"
     $call_command "$@" 1> "$stdout" 2> "$stderr" || local exit_code="$?"
   else
+    local observe_stdin=TRUE
     local exit_code_file="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.exit_code"
     \tee "$stdin_bytes" "$stdin_lines" 2> /dev/null | {
       local inner_exit_code=0
       $call_command "$@" || local inner_exit_code="$?"
       local stdin_pid="$(\ps -o 'pid,command' | \grep -F "tee $stdin_bytes $stdin_lines" | \grep -vF grep | \awk '{ print $1 }')"
       if \[ -n "$stdin_pid" ]; then \kill -2 "$stdin_pid" 2> /dev/null || \true; fi
-      \echo -n "$inner_exit_code" > "$exit_code_file" # return "$inner_exit_code"
-    } 1> "$stdout" 2> "$stderr" # || local exit_code="$?"
+      \echo -n "$inner_exit_code" > "$exit_code_file"
+    } 1> "$stdout" 2> "$stderr" || \true
     local exit_code="$(\cat "$exit_code_file")"
     \rm "$exit_code_file" 2> /dev/null
   fi
   \wait "$stdin_bytes_pid" "$stdin_lines_pid" "$stdout_bytes_pid" "$stdout_lines_pid" "$stderr_bytes_pid" "$stderr_lines_pid" "$stdout_pid" "$stderr_pid"
   \rm "$stdout" "$stderr" "$stdin_bytes" "$stdin_lines" "$stdout_bytes" "$stdout_lines" "$stderr_bytes" "$stderr_lines" 2> /dev/null
-  otel_span_attribute_typed "$span_handle" int pipe.stdin.bytes="$(\cat "$stdin_bytes_result")"
-  otel_span_attribute_typed "$span_handle" int pipe.stdin.lines="$(\cat "$stdin_lines_result")"
+  if \[ "$observe_stdin" = TRUE ]; then
+    otel_span_attribute_typed "$span_handle" int pipe.stdin.bytes="$(\cat "$stdin_bytes_result")"
+    otel_span_attribute_typed "$span_handle" int pipe.stdin.lines="$(\cat "$stdin_lines_result")"
+  fi
   otel_span_attribute_typed "$span_handle" int pipe.stdout.bytes="$(\cat "$stdout_bytes_result")"
   otel_span_attribute_typed "$span_handle" int pipe.stdout.lines="$(\cat "$stdout_lines_result")"
   otel_span_attribute_typed "$span_handle" int pipe.stderr.bytes="$(\cat "$stderr_bytes_result")"

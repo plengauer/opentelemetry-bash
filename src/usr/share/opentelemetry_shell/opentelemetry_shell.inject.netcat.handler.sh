@@ -1,16 +1,17 @@
 #!/bin/sh -e
-OTEL_SHELL_AUTO_INJECTED=TRUE
-. otel.sh
-
+. otelapi.sh
 handler_command_string="$(_otel_escape_args "$@")"
 netcat_command_string="$OTEL_SHELL_NETCAT_COMMAND"
 unset OTEL_SHELL_NETCAT_COMMAND
+OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$handler_command_string"
+OTEL_SHELL_AUTO_INJECTED=TRUE
+. otel.sh
 
 span_handle="$(otel_span_start CONSUMER send/receive)"
 _otel_netcat_parse_args 1 "$span_handle" $netcat_command_string > /dev/null
 otel_span_activate "$span_handle"
 
-if [ "$OTEL_SHELL_CONFIG_NETCAT_ASSUME_REQUEST_RESPONSE" = TRUE ]; then
+if \[ "$OTEL_SHELL_CONFIG_NETCAT_ASSUME_REQUEST_RESPONSE" = TRUE ]; then
   exit_code_file="$(\mktemp)"
   \echo 0 > "$exit_code_file"
   span_handle_file_0="$(\mktemp -u)_opentelemetry_shell_$$.netcat.request.span_handle"

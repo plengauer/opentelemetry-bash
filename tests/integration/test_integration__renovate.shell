@@ -1,13 +1,14 @@
 # renovate is really a docker running an npm package, that is pre-isntrumented with otel running in a docker container that during startup runs through an exec and a shebang first!
 if ! [ -x "$(which docker)" ]; then exit 0; fi
 . ./assert.sh
+export OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE
 . /usr/bin/opentelemetry_shell.sh
-export OTEL_SHELL_EXPERIMENTAL_INJECT_DEEP=TRUE
 
 log_file="$(\mktemp)"
-docker run --rm --env RENOVATE_DRY_RUN=full --env RENOVATE_TOKEN=abc --env RENOVATE_REPOSITORIES="plengauer/opentelemetry-bash" renovate/renovate > "$log_file"
+docker run --rm --env RENOVATE_DRY_RUN=full --env RENOVATE_TOKEN=abc --env RENOVATE_REPOSITORIES="plengauer/opentelemetry-bash" ghcr.io/renovatebot/renovate:latest > "$log_file"
 assert_not_equals 0 "$?" # because no github token available
-span="$(resolve_span '. | select(.name == "/bin/bash /usr/local/bin/node /usr/local/renovate/dist/renovate.js")')"
+\cat "$log_file"
+span="$(resolve_span '. | select(.name == "node --use-openssl-ca /usr/local/renovate/dist/renovate.js")')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | \jq -r '.kind')
 span_id="$(\echo "$span" | \jq -r '.context.span_id')"
 
