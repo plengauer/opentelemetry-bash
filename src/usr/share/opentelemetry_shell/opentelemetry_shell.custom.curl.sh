@@ -8,6 +8,7 @@ _otel_propagate_curl() {
     *) local job_control=0;;
   esac
   if \[ -f /opt/opentelemetry_shell/libinjecthttpheader.so ]; then
+    export OTEL_SHELL_INJECT_HTTP_SDK_PIPE="$_otel_remote_sdk_pipe"
     export OTEL_SHELL_INJECT_HTTP_HANDLE_FILE="$(\mktemp -u)_opentelemetry_shell_$$.curl.handle)"
     local OLD_LD_PRELOAD="$LD_PRELOAD"
     export LD_PRELOAD=/opt/opentelemetry_shell/libinjecthttpheader.so
@@ -31,6 +32,7 @@ _otel_propagate_curl() {
       unset LD_PRELOAD
     fi
     unset OTEL_SHELL_INJECT_HTTP_HANDLE_FILE
+    unset OTEL_SHELL_INJECT_HTTP_SDK_PIPE
   fi
   if \[ "$job_control" = 1 ]; then \set -m; fi
   return "$exit_code"
