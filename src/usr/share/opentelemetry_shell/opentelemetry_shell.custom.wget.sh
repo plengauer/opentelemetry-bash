@@ -7,13 +7,6 @@ _otel_propagate_wget() {
     *m*) local job_control=1; \set +m;;
     *) local job_control=0;;
   esac
-  if \[ -f /opt/opentelemetry_shell/libinjecthttpheader.so ]; then
-    local OLD_LD_PRELOAD="$LD_PRELOAD"
-    export LD_PRELOAD=/opt/opentelemtry_shell/libinjecthttpheader.so
-    if \[ -n "$OLD_PRELOAD" ]; then
-      export LD_PRELOAD="$LD_PRELOAD:$OLD_LD_PRELOAD"
-    fi
-  fi
   local stderr_pipe="$(\mktemp -u)_opentelemetry_shell_$$.stderr.wget.pipe"
   \mkfifo "$stderr_pipe"
   _otel_pipe_wget_stderr < "$stderr_pipe" >&2 &
@@ -22,11 +15,6 @@ _otel_propagate_wget() {
   _otel_call "$@" --header="traceparent: $TRACEPARENT" --header="tracestate: $TRACESTATE" 2> "$stderr_pipe" || exit_code="$?"
   \wait "$stderr_pid"
   \rm "$stderr_pipe"
-  if \[ -n "$OLD_LD_PRELOAD" ]; then
-    export LD_PRELOAD="$OLD_LD_PRELOAD"
-  else
-    unset LD_PRELOAD
-  fi
   if \[ "$job_control" = 1 ]; then \set -m; fi
   return "$exit_code"
 }
