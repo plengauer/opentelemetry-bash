@@ -18,7 +18,6 @@ int otel_span_start(FILE *sdk, const char *type, const char *name) {
   memset(buffer, 0, buffer_size);
   sprintf(buffer, "SPAN_START %s %s %s %s %s", sdk_response, getenv("TRACEPARENT"), getenv("TRACESTATE"), type, name);
   fwrite(buffer, sizeof(char), strlen(buffer), sdk);
-  free(buffer);
   
   memset(buffer, 0, buffer_size);
   FILE *response_file = fopen(sdk_response, "r");
@@ -42,7 +41,6 @@ char * otel_traceparent(FILE *sdk, int span_handle) {
   memset(buffer, 0, buffer_size);
   sprintf(buffer, "SPAN_TRACEPARENT %s %d", sdk_response, span_handle);
   fwrite(buffer, sizeof(char), strlen(buffer), sdk);
-  free(buffer);
 
   memset(buffer, 0, buffer_size);
   FILE *response_file = fopen(sdk_response, "r");
