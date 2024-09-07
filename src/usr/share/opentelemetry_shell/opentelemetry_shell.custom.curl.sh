@@ -83,7 +83,7 @@ _otel_pipe_curl_stderr() {
       local protocol="$(\printf '%s' "$line" | \cut -d ' ' -f 4 | \cut -d / -f 1 | \tr '[:upper:]' '[:lower:]')"
       if \[ "$protocol" = http ] && \[ "$port" = 443 ]; then local protocol=https; fi
       local path_and_query="$(\printf '%s' "$line" | \cut -d ' ' -f 3)"
-      if \[ -n "$span_handle_file" ]; then local span_handle="$(\cat "$span_handle_file")"; fi
+      if \[ -n "$span_handle_file" ] && \[ -f "$span_handle_file" ]; then local span_handle="$(\cat "$span_handle_file")"; fi
       if \[ -z "$span_handle" ]; then
         local span_handle="$(otel_span_start CLIENT "$(\printf '%s' "$line" | \cut -d ' ' -f 2)")"
       else
