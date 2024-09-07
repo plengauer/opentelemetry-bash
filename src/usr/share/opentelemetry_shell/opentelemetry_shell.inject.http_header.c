@@ -110,14 +110,14 @@ int inject_safely(char *buffer, size_t length) {
 
 ssize_t (*original_send)(int sockfd, const void *buf, size_t len, int flags);
 ssize_t send(int sockfd, const void *buf, size_t len, int flags) {
-    int result = inject((char *) buf, len);
+    int result = inject_safely((char *) buf, len);
     fprintf(stderr, "DEBUG %d\n", result);
     return original_send(sockfd, buf, len, flags);
 }
 
 int (*original_SSL_write)(void *ssl, const void *buf, int num);
 int SSL_write(void *ssl, const void *buf, int num) {
-    int result = inject((char *) buf, (size_t) num);
+    int result = inject_safely((char *) buf, (size_t) num);
     fprintf(stderr, "DEBUG %d\n", result);
     return original_SSL_write(ssl, buf, num);
 }
