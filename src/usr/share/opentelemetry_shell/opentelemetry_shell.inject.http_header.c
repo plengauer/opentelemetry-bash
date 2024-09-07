@@ -20,8 +20,11 @@ int otel_span_start(FILE *sdk, const char *type, const char *name) {
   fwrite(buffer, sizeof(char), strlen(buffer), sdk);
   fflush(sdk);
   
-  memset(buffer, 0, buffer_size);
+fprintf(stderr, "DEBUG %s\n sent to SDK", buffer);  
+  memset(buffer, 0, buffer_size);  
+fprintf(stderr, "DEBUG %s\n", "opening ...");
   FILE *response_file = fopen(sdk_response, "r");
+fprintf(stderr, "DEBUG %s\n", "reading ...");
   fread(buffer, sizeof(char), strlen(buffer), response_file);
   fclose(response_file);
   int span_handle = atoi(buffer);
