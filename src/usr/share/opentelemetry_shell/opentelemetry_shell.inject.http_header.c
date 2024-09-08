@@ -54,17 +54,17 @@ char * otel_traceparent(FILE *sdk, int span_handle) {
 }
 
 int inject(char *buffer, size_t length) {
-  if (length >= 24 && strstr(buffer, "PRI * HTTP/") == buffer) {
+  if (length == 24 && strcmp(buffer, "PRI * HTTP/2.0\r\n\r\nSM\r\n") == 0) {
     return 1;
   }
   char *line_end = strchr(buffer, '\n');
   if (!line_end) {
-    return 1;
+    return 2;
   }
   *line_end = '\0';
   if (!strstr(buffer, " HTTP/")) {
     *line_end = '\n';
-    return 2;
+    return 3;
   }
   *line_end = '\n';
 
@@ -100,7 +100,7 @@ int inject(char *buffer, size_t length) {
     line_end = strchr(buffer, '\n');
   }
   
-  return 3;
+  return 9;
 }
 
 int inject_safely(char *buffer, size_t length) {
