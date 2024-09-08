@@ -38,4 +38,8 @@ wait "$pid"
 span="$(resolve_span '.name == "GET") | select(.kind == "SpanKind.SERVER"')"
 span_id=$(\echo "$span" | jq -r '.parent_id')
 span="$(resolve_span '.context.span_id == "'"$span_id"'"')"
+assert_equals "GET" "$(\echo "$span" | jq -r '.name')"
+assert_equals "CLIENT" "$(\echo "$span" | jq -r '.kind')"
+span_id=$(\echo "$span" | jq -r '.parent_id')
+span="$(resolve_span '.context.span_id == "'"$span_id"'"')"
 assert_equals "curl http://127.0.0.1:12345/" "$(\echo "$span" | jq -r '.name')"
