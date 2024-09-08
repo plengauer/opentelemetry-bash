@@ -69,7 +69,7 @@ int inject(char *buffer, size_t length) {
   line_end = strchr(buffer, '\n');
   while (!!line_end && line_end - buffer > 1) {
     *line_end = '\0';
-    if (strstr(buffer, "traceparent: ") == buffer) {
+    if (strstr(buffer, "traceparent: ") == buffer && !!strstr(buffer, getenv("TRACEPARENT"))) {
       FILE *sdk = fopen(getenv("OTEL_SHELL_INJECT_HTTP_SDK_PIPE"), "a+");
       if (!sdk) return 4;
       int span_handle = otel_span_start(sdk, "CLIENT", "HTTP");
