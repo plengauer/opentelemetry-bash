@@ -108,6 +108,12 @@ int inject_safely(char *buffer, size_t length) {
   return result;
 }
 
+ssize_t (*original_write)(int fd, const void *buf, size_t count);
+ssize_t write(int fd, const void *buf, size_t count) {
+  if (fd > 2) inject_safely((char *) buf, count);
+  return original_write(fd, buf, count);
+}
+
 ssize_t (*original_send)(int sockfd, const void *buf, size_t len, int flags);
 ssize_t send(int sockfd, const void *buf, size_t len, int flags) {
     inject_safely((char *) buf, len);
@@ -120,8 +126,30 @@ int SSL_write(void *ssl, const void *buf, int num) {
     return original_SSL_write(ssl, buf, num);
 }
 
+ssize_t (*original_gnutls_record_send)(void *session, const void *data, size_t data_size);
+ssize_t gnutls_record_send(void* session, const void* data, size_t data_size) {
+  inject_safely((char*) data, data_size);
+  return original_gnutls_record_send(session, data, data_size);
+}
+
+ssize_t (*original_gnutls_record_send2)(void *session, const void *data, size_t data_size, size_t pad, unsigned flags);
+ssize_t gnutls_record_send2(void* session, const void* data, size_t data_size, size_t pad, unsigned flags) {
+  inject_safely((char*) data, data_size);
+  return original_gnutls_record_send2(session, data, data_size, pad, flags);
+}
+
+ssize_t (*original_gnutls_record_send_range)(void *session, const void *data, size_t data_size, const void *range);
+ssize_t gnutls_record_send_range(void* session, const void* data, size_t data_size, const void *range) {
+  inject_safely((char*) data, data_size);
+  return original_gnutls_record_send_range(session, data, data_size, range);
+}
+
 __attribute__ ((constructor))
 void init() {
+    original_write = dlsym(RTLD_NEXT, "write");
     original_send = dlsym(RTLD_NEXT, "send");
     original_SSL_write = dlsym(RTLD_NEXT, "SSL_write");
+    original_gnutls_record_send = dlsym(RTLD_NEXT, "gnutls_record_send");
+    original_gnutls_record_send2 = dlsym(RTLD_NEXT, "gnutls_record_send2");
+    original_gnutls_record_send_range = dlsym(RTLD_NEXT, "gnutls_record_send_range");
 }
