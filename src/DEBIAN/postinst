@@ -10,7 +10,7 @@ elif [ "$1" = 'configure' ]; then
   pip3 install -r /opt/opentelemetry_shell/requirements.txt
   deactivate
   if type gcc; then
-    gcc -shared -fPIC -o /opt/opentelemetry_shell/libinjecthttpheader.so /usr/share/opentelemetry_shell/opentelemetry_shell.inject.http_header.c -ldl # TODO what is -ldl?
+    gcc -shared -fPIC -o /opt/opentelemetry_shell/libinjecthttpheader.so /usr/share/opentelemetry_shell/opentelemetry_shell.inject.http_header.c -ldl
   fi
   export PATH="$PATH":/usr/local/bin
   if type npm; then
