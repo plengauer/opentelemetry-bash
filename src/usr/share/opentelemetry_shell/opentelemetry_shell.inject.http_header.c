@@ -54,6 +54,9 @@ char * otel_traceparent(FILE *sdk, int span_handle) {
 }
 
 int inject(char *buffer, size_t length) {
+  if (length >= 24 && strstr(buffer, "PRI * HTTP/") == buffer) {
+    return 1;
+  }
   char *line_end = strchr(buffer, '\n');
   if (!line_end) {
     return 1;
