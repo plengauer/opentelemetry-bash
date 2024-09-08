@@ -1,7 +1,7 @@
-# interest /bin/python3
-# interest /usr/bin/python3
-# interest /usr/local/bin/python3
+interest-noawait /bin/python3
+interest-noawait /usr/bin/python3
+interest-noawait /usr/local/bin/python3
 
-interest /bin/npm
-interest /usr/bin/npm
-interest /usr/local/bin/npm
+interest-noawait /bin/npm
+interest-noawait /usr/bin/npm
+interest-noawait /usr/local/bin/npm
