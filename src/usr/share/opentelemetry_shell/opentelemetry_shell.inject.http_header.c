@@ -5,9 +5,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <dlfcn.h>
-#include <sys/types.h> // TODO do we need this?
 #include <sys/stat.h>
-#include <sys/socket.h> // TODO do we need this?
 
 int otel_span_start(FILE *sdk, const char *type, const char *name) {
   size_t buffer_size = 1024 * 4;
