@@ -31,7 +31,7 @@ fprintf(stderr, "DEBUG %s\n", "reading ...");
   //fread(buffer, sizeof(char), strlen(buffer), response_file);
   //fclose(response_file);
   read(response_file, buffer, buffer_size);
-  close(response_file)
+  close(response_file);
   int span_handle = atoi(buffer);
 fprintf(stderr, "DEBUG span handle %d\n", span_handle);
   
@@ -59,7 +59,7 @@ char * otel_traceparent(FILE *sdk, int span_handle) {
   //fread(buffer, sizeof(char), strlen(buffer), response_file);
   //fclose(response_file);
   read(response_file, buffer, buffer_size);
-  close(response_file)
+  close(response_file);
 
   remove(sdk_response);
   return buffer;
