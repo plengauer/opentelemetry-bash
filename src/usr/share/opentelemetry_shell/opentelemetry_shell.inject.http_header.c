@@ -22,18 +22,11 @@ int otel_span_start(FILE *sdk, const char *type, const char *name) {
   fwrite(buffer, sizeof(char), strlen(buffer), sdk);
   fflush(sdk);
   
-fprintf(stderr, "DEBUG %s sent to SDK\n", buffer);
   memset(buffer, 0, buffer_size);  
-fprintf(stderr, "DEBUG %s\n", "opening ...");
-  //FILE *response_file = fopen(sdk_response, "r");
   int response_file = open(sdk_response, O_RDONLY);
-fprintf(stderr, "DEBUG %s\n", "reading ...");
-  //fread(buffer, sizeof(char), strlen(buffer), response_file);
-  //fclose(response_file);
   read(response_file, buffer, buffer_size);
   close(response_file);
   int span_handle = atoi(buffer);
-fprintf(stderr, "DEBUG span handle %d\n", span_handle);
   
   remove(sdk_response);
   free(buffer);
@@ -54,10 +47,7 @@ char * otel_traceparent(FILE *sdk, int span_handle) {
   fflush(sdk);
 
   memset(buffer, 0, buffer_size);
-  //FILE *response_file = fopen(sdk_response, "r");
   int response_file = open(sdk_response, O_RDONLY);
-  //fread(buffer, sizeof(char), strlen(buffer), response_file);
-  //fclose(response_file);
   read(response_file, buffer, buffer_size);
   close(response_file);
 
