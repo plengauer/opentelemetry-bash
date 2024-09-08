@@ -6,6 +6,6 @@ interest /bin/npm
 interest /usr/bin/npm
 interest /usr/local/bin/npm
 
-interest /bin/gcc
-interest /usr/bin/gcc
-interest /usr/local/bin/gcc
+interest-noawait /bin/gcc
+interest-noawait /usr/bin/gcc
+interest-noawait /usr/local/bin/gcc
