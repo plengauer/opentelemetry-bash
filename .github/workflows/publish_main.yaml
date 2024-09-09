@@ -68,18 +68,18 @@ jobs:
           stdout="$(mktemp)"
           stderr="$(mktemp)"
           echo "
-            receivers:
-              otlp:
-                protocols:
-                  grpc:
-                    endpoint: 0.0.0.0:4317
-                  http:
-                    endpoint: 0.0.0.0:4318
-            processors:
-              batch:
-            exporters:
-              file:
-                path: /data/otlp.json
+          receivers:
+            otlp:
+              protocols:
+                grpc:
+                  endpoint: 0.0.0.0:4317
+                http:
+                  endpoint: 0.0.0.0:4318
+          processors:
+            batch:
+          exporters:
+            file:
+              path: /data/otlp.json
           " > config.yaml
           touch otlp.json
           sudo docker create --rm --mount type=bind,source=$(pwd)/config.yaml,target=/etc/otelcol-contrib/config.yaml --mount type=bind,source=$(pwd)/otlp.json,target=/data/otlp.json --network=host --name=collector otel/opentelemetry-collector:latest
