@@ -120,23 +120,14 @@ jobs:
             echo '```sh'
             cat demo.sh
             echo '```'
-            echo '## Standard Out'
-            echo '```'
-            cat "$STDOUT"
-            echo '```'
-            echo '## Standard Error'
-            echo '```'
-            cat "$STDERR"
-            echo '```'
             echo '## Trace Overview'
             echo '```'
             print_span_name_tree "$(get_root_span_id)" ""
             echo '```'
-            echo '## Full OTLP Data'
-            echo '```json'
-            cat "$OTLP" | jq .
-            echo '```'
           } > README.md
+          cat < "$STDOUT" > output.stdout
+          cat < "$STDERR" > output.stderr
+          jq . < "$OTLP" > otlp.json
       - run: cat demos/${{ matrix.demo_directory }}/README.md
       - run: |
           cd demos/${{ matrix.demo_directory }}
