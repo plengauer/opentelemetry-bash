@@ -7,14 +7,32 @@ _otel_propagate_wget() {
     *m*) local job_control=1; \set +m;;
     *) local job_control=0;;
   esac
+  if \[ -f /opt/opentelemetry_shell/libinjecthttpheader.so ]; then
+    export OTEL_SHELL_INJECT_HTTP_SDK_PIPE="$_otel_remote_sdk_pipe"
+    export OTEL_SHELL_INJECT_HTTP_HANDLE_FILE="$(\mktemp -u)_opentelemetry_shell_$$.wget.handle)"
+    local OLD_LD_PRELOAD="$LD_PRELOAD"
+    export LD_PRELOAD=/opt/opentelemetry_shell/libinjecthttpheader.so
+    if \[ -n "$OLD_PRELOAD" ]; then
+      export LD_PRELOAD="$LD_PRELOAD:$OLD_LD_PRELOAD"
+    fi
+  fi
   local stderr_pipe="$(\mktemp -u)_opentelemetry_shell_$$.stderr.wget.pipe"
   \mkfifo "$stderr_pipe"
-  _otel_pipe_wget_stderr < "$stderr_pipe" >&2 &
+  _otel_pipe_wget_stderr "$OTEL_SHELL_INJECT_HTTP_HANDLE_FILE" < "$stderr_pipe" >&2 &
   local stderr_pid="$!"
   local exit_code=0
   _otel_call "$@" --header="traceparent: $TRACEPARENT" --header="tracestate: $TRACESTATE" 2> "$stderr_pipe" || exit_code="$?"
   \wait "$stderr_pid"
   \rm "$stderr_pipe"
+  if \[ -f /opt/opentelemetry_shell/libinjecthttpheader.so ]; then
+    if \[ -n "$OLD_LD_PRELOAD" ]; then
+      export LD_PRELOAD="$OLD_LD_PRELOAD"
+    else
+      unset LD_PRELOAD
+    fi
+    unset OTEL_SHELL_INJECT_HTTP_HANDLE_FILE
+    unset OTEL_SHELL_INJECT_HTTP_SDK_PIPE
+  fi
   if \[ "$job_control" = 1 ]; then \set -m; fi
   return "$exit_code"
 }
@@ -41,6 +59,7 @@ _otel_propagate_wget() {
 # 2024-05-26 09:21:52 (119 MB/s) - ‘index.html.4’ saved [19608]
 
 _otel_pipe_wget_stderr() {
+  local span_handle_file="$1"
   local span_handle=""
   while read -r line; do
     \echo "$line"
@@ -67,7 +86,12 @@ _otel_pipe_wget_stderr() {
     # Connecting to www.google.at (www.google.at)|142.250.185.131|:80... connected.
     if _otel_string_starts_with "$line" 'Connecting to ' || _otel_string_starts_with "$line" 'Reusing existing connection to '; then
       if \[ -n "$span_handle" ]; then otel_span_end "$span_handle"; fi
-      local span_handle="$(otel_span_start CLIENT GET)"
+      if \[ -n "$span_handle_file" ] && \[ -f "$span_handle_file" ]; then local span_handle="$(\cat "$span_handle_file")"; \rm "$span_handle_file"; fi
+      if \[ -z "$span_handle" ]; then
+        local span_handle="$(otel_span_start CLIENT GET)"
+      else
+        otel_span_name "$span_handle" GET
+      fi
       otel_span_attribute_typed "$span_handle" string network.protocol.name="$protocol"
       otel_span_attribute_typed "$span_handle" string network.transport=tcp
       otel_span_attribute_typed "$span_handle" string network.peer.address="$ip"

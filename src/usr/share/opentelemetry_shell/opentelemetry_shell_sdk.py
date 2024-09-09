@@ -258,7 +258,7 @@ def handle(scope, version, command, arguments):
         tokens = arguments.split(' ', 2)
         span_id = tokens[0]
         name = tokens[1]
-        span : Span = spans[arguments]
+        span : Span = spans[span_id]
         span.update_name(name)
     elif command == 'SPAN_ERROR':
         span : Span = spans[arguments]

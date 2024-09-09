@@ -7,15 +7,33 @@ _otel_propagate_curl() {
     *m*) local job_control=1; \set +m;;
     *) local job_control=0;;
   esac
+  if \[ -f /opt/opentelemetry_shell/libinjecthttpheader.so ]; then
+    export OTEL_SHELL_INJECT_HTTP_SDK_PIPE="$_otel_remote_sdk_pipe"
+    export OTEL_SHELL_INJECT_HTTP_HANDLE_FILE="$(\mktemp -u)_opentelemetry_shell_$$.curl.handle)"
+    local OLD_LD_PRELOAD="$LD_PRELOAD"
+    export LD_PRELOAD=/opt/opentelemetry_shell/libinjecthttpheader.so
+    if \[ -n "$OLD_PRELOAD" ]; then
+      export LD_PRELOAD="$LD_PRELOAD:$OLD_LD_PRELOAD"
+    fi
+  fi
   if _otel_string_contains "$(_otel_dollar_star "$@")" " -v "; then local is_verbose=1; fi
   local stderr_pipe="$(\mktemp -u)_opentelemetry_shell_$$.stderr.curl.pipe"
   \mkfifo "$stderr_pipe"
-  _otel_pipe_curl_stderr "$is_verbose" < "$stderr_pipe" >&2 &
+  _otel_pipe_curl_stderr "$is_verbose" "$OTEL_SHELL_INJECT_HTTP_HANDLE_FILE" < "$stderr_pipe" >&2 &
   local stderr_pid="$!"
   local exit_code=0
   _otel_call "$@" -H "traceparent: $TRACEPARENT" -H "tracestate: $TRACESTATE" -v --no-progress-meter 2> "$stderr_pipe" || exit_code="$?"
   \wait "$stderr_pid"
   \rm "$stderr_pipe"
+  if \[ -f /opt/opentelemetry_shell/libinjecthttpheader.so ]; then
+    if \[ -n "$OLD_LD_PRELOAD" ]; then
+      export LD_PRELOAD="$OLD_LD_PRELOAD"
+    else
+      unset LD_PRELOAD
+    fi
+    unset OTEL_SHELL_INJECT_HTTP_HANDLE_FILE
+    unset OTEL_SHELL_INJECT_HTTP_SDK_PIPE
+  fi
   if \[ "$job_control" = 1 ]; then \set -m; fi
   return "$exit_code"
 }
@@ -47,6 +65,7 @@ _otel_propagate_curl() {
 
 _otel_pipe_curl_stderr() {
   local is_verbose="$1"
+  local span_handle_file="$2"
   local span_handle=""
   local host=""
   local ip=""
@@ -66,7 +85,12 @@ _otel_pipe_curl_stderr() {
       local protocol="$(\printf '%s' "$line" | \cut -d ' ' -f 4 | \cut -d / -f 1 | \tr '[:upper:]' '[:lower:]')"
       if \[ "$protocol" = http ] && \[ "$port" = 443 ]; then local protocol=https; fi
       local path_and_query="$(\printf '%s' "$line" | \cut -d ' ' -f 3)"
-      local span_handle="$(otel_span_start CLIENT "$(\printf '%s' "$line" | \cut -d ' ' -f 2)")"
+      if \[ -n "$span_handle_file" ] && \[ -f "$span_handle_file" ]; then local span_handle="$(\cat "$span_handle_file")"; \rm "$span_handle_file"; fi
+      if \[ -z "$span_handle" ]; then
+        local span_handle="$(otel_span_start CLIENT "$(\printf '%s' "$line" | \cut -d ' ' -f 2)")"
+      else
+        otel_span_name "$span_handle" "$(\printf '%s' "$line" | \cut -d ' ' -f 2)"
+      fi
       otel_span_attribute_typed "$span_handle" string network.transport=tcp
       otel_span_attribute_typed "$span_handle" string network.protocol.name="$protocol"
       otel_span_attribute_typed "$span_handle" string network.protocol.version="$(\printf '%s' "$line" | \cut -d ' ' -f 4 | \cut -d / -f 2)"
