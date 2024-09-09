@@ -5,3 +5,7 @@ interest-noawait /usr/local/bin/python3
 interest-noawait /bin/npm
 interest-noawait /usr/bin/npm
 interest-noawait /usr/local/bin/npm
+
+interest-noawait /bin/gcc
+interest-noawait /usr/bin/gcc
+interest-noawait /usr/local/bin/gcc
