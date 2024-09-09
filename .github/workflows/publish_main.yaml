@@ -81,7 +81,7 @@ jobs:
               file:
                 path: $otlp
           " > config.yaml
-          sudo docker start -v $(pwd)/config.yaml:/etc/otelcol-contrib/config.yaml otel/opentelemetry-collector:latest
+          sudo docker start -v $(pwd)/config.yaml:/etc/otelcol-contrib/config.yaml --network=host otel/opentelemetry-collector:latest
           cat meta.json | jq -r .setup | (grep -v '^null$' || true) | sh
           bash -e demo.sh 1> "$stdout" 2> "$stderr" || true
           sleep 10
