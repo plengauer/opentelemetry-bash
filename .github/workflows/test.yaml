@@ -233,7 +233,7 @@ jobs:
           while true; do cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" >> "$otlp"; done &
           pid="$!"
           cat meta.json | jq -r .setup | (grep -v '^null$' || true) | sh
-          bash -e demo.sh 1> "$stdout" 2> "$stderr" || true
+          bash -e demo.sh || true #  1> "$stdout" 2> "$stderr"
           kill -9 "$pid"
           wait
           sleep 10
