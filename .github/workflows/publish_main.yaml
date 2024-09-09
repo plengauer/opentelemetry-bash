@@ -64,24 +64,31 @@ jobs:
         run: |
           set +o pipefail
           cd demos/${{ matrix.demo_directory }}
-          export OTEL_METRICS_EXPORTER=console
-          export OTEL_LOGS_EXPORTER=console
-          export OTEL_TRACES_EXPORTER=console
-          export OTEL_SHELL_SDK_OUTPUT_REDIRECT="$(mktemp -u)"
           otlp="$(mktemp)"
           stdout="$(mktemp)"
           stderr="$(mktemp)"
-          mkfifo "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"
-          while true; do cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" >> "$otlp"; done &
-          pid="$!"
+          echo "
+            receivers:
+              otlp:
+                protocols:
+                  grpc:
+                    endpoint: 0.0.0.0:4317
+                  http:
+                    endpoint: 0.0.0.0:4318
+            processors:
+              batch:
+            exporters:
+              file:
+                path: $otlp
+          " > config.yaml
+          sudo docker start -v $(pwd)/config.yaml:/etc/otelcol-contrib/config.yaml otel/opentelemetry-collector:latest
           cat meta.json | jq -r .setup | (grep -v '^null$' || true) | sh
           bash -e demo.sh 1> "$stdout" 2> "$stderr" || true
-          kill -9 "$pid"
-          wait
           sleep 10
           echo "STDOUT=$stdout" >> "$GITHUB_OUTPUT"
           echo "STDERR=$stderr" >> "$GITHUB_OUTPUT"
           echo "OTLP=$otlp" >> "$GITHUB_OUTPUT"
+          rm "config.yaml"
       - env:
           STDOUT: ${{ steps.demo.outputs.STDOUT }}
           STDERR: ${{ steps.demo.outputs.STDERR }}
