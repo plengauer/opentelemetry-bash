@@ -79,17 +79,21 @@ jobs:
               batch:
             exporters:
               file:
-                path: $otlp
+                path: /data/otlp.json
           " > config.yaml
-          sudo docker create --rm -v $(pwd)/config.yaml:/etc/otelcol-contrib/config.yaml --network=host --name=collector otel/opentelemetry-collector:latest
+          touch otlp.json
+          sudo docker create --rm --mount type=bind,source=$(pwd)/config.yaml,target=/etc/otelcol-contrib/config.yaml --mount type=bind,source=$(pwd)/otlp.json,target=/data/otlp.json --network=host --name=collector otel/opentelemetry-collector:latest
           sudo docker start collector
           cat meta.json | jq -r .setup | (grep -v '^null$' || true) | sh
           bash -e demo.sh 1> "$stdout" 2> "$stderr" || true
           sleep 10
+          sudo docker stop collector
+          cat < otlp.json > "$otlp"
           echo "STDOUT=$stdout" >> "$GITHUB_OUTPUT"
           echo "STDERR=$stderr" >> "$GITHUB_OUTPUT"
           echo "OTLP=$otlp" >> "$GITHUB_OUTPUT"
-          rm "config.yaml"
+          rm config.yaml
+          rm otlp.json
       - env:
           STDOUT: ${{ steps.demo.outputs.STDOUT }}
           STDERR: ${{ steps.demo.outputs.STDERR }}

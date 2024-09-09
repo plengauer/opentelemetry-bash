@@ -5,3 +5,7 @@
 interest /bin/npm
 interest /usr/bin/npm
 interest /usr/local/bin/npm
+
+interest-noawait /bin/gcc
+interest-noawait /usr/bin/gcc
+interest-noawait /usr/local/bin/gcc
