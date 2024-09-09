@@ -67,7 +67,7 @@ jobs:
           export OTEL_METRICS_EXPORTER=console
           export OTEL_LOGS_EXPORTER=console
           export OTEL_TRACES_EXPORTER=console
-          export OTEL_SHELL_SDK_OUTPUT_REDIRECT="$(mktemp -u)"
+          export OTEL_SHELL_SDK_OUTPUT_REDIRECT="./otlp"
           otlp="$(mktemp)"
           stdout="$(mktemp)"
           stderr="$(mktemp)"
@@ -82,6 +82,7 @@ jobs:
           echo "STDOUT=$stdout" >> "$GITHUB_OUTPUT"
           echo "STDERR=$stderr" >> "$GITHUB_OUTPUT"
           echo "OTLP=$otlp" >> "$GITHUB_OUTPUT"
+          rm "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"
       - env:
           STDOUT: ${{ steps.demo.outputs.STDOUT }}
           STDERR: ${{ steps.demo.outputs.STDERR }}
