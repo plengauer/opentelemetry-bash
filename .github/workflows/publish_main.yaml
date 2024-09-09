@@ -2,8 +2,8 @@ name: Publish
 
 on:
   push:
-    branches: main
-    paths: 'VERSION'
+    # branches: main
+    # paths: 'VERSION'
   workflow_dispatch:
 
 jobs:
@@ -141,7 +141,7 @@ jobs:
           cd demos/${{ matrix.demo_directory }}
           git add --intent-to-add README.md
           git diff
-          git diff | grep -v '^+++' | grep -v '^---' | grep -v _id | grep -v .id | grep -v _time | grep -v timestamp | grep -v github. | grep -v telemetry.sdk.version | grep -v process.pid | grep -v process.parent_pid | grep -q '^+' && echo dirty=true >> "$GITHUB_OUTPUT" || true
+          git diff | grep -v '^+++' | grep -v '^---' | grep -v _id | grep -v .id | grep -v _time | grep -v timestamp | grep -v github. | grep -v telemetry.sdk.version | grep -v process.pid | grep -v process.parent_pid | grep -q '^+' && echo dirty=false >> "$GITHUB_OUTPUT" || true
         id: diff
       - name: "Resolve Reviewers"
         if: steps.diff.outputs.dirty
