@@ -1,0 +1,2 @@
+. otel.sh
+which bash
