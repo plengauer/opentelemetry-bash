@@ -145,10 +145,6 @@ jobs:
             echo '```'
             print_span_name_tree "$(get_root_span_id)" ""
             echo '```'
-            echo '## Full OTLP Data'
-            echo '```json'
-            cat "$OTLP" | jq .
-            echo '```'
           } > README.md
           cat < "$STDOUT" > output.stdout
           cat < "$STDERR" > output.stderr
