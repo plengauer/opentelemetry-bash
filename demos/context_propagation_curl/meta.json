@@ -1,4 +1,5 @@
 {
   "title": "Context Propagation with curl",
-  "description": "This script shows context propagation via HTTP from a client (curl) to a server (netcat)."
+  "description": "This script shows context propagation via HTTP from a client (curl) to a server (netcat).",
+  "setup": "sudo apt-get update && sudo apt-get install -y ncat"
 }
