@@ -95,7 +95,6 @@ jobs:
           bash -e demo.sh 1> "$stdout" 2> "$stderr" || true
           sleep 15
           sudo docker stop collector
-          jq .resourceSpans.[].scopeSpans.[].spans < otlp.json > "$otlp"
           echo "STDOUT=$stdout" >> "$GITHUB_OUTPUT"
           echo "STDERR=$stderr" >> "$GITHUB_OUTPUT"
           echo "OTLP=$otlp" >> "$GITHUB_OUTPUT"
@@ -110,16 +109,20 @@ jobs:
           set +o pipefail
           cd demos/${{ matrix.demo_directory }}
 
+          spans() {
+            jq '.resourceSpans.[].scopeSpans.[].spans.[]' < "$OTLP"
+          }
+
           convert_span_id_to_name() {
-            cat "$OTLP" | jq -r '. | select(.spanId == "'"$1"'") | .name'
+            spans | jq -r '. | select(.spanId == "'"$1"'") | .name'
           }
 
           get_root_span_id() {
-            cat "$OTLP" | jq -r '. | select(.name != null) | select(.parentSpanId == null) | .spanId'
+            spans | jq -r '. | select(.name != null) | select(.parentSpanId == "") | .spanId'
           }
 
           get_child_span_ids() {
-            cat "$OTLP" | jq -r '. | select(.name != null) | select(.parentSpanId == "'"$1"'") | .spanId'
+            spans | jq -r '. | select(.name != null) | select(.parentSpanId == "'"$1"'") | .spanId'
           }
 
           print_span_name_tree() {
