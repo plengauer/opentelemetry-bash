@@ -111,15 +111,15 @@ jobs:
           cd demos/${{ matrix.demo_directory }}
 
           convert_span_id_to_name() {
-            cat "$OTLP" | jq -r '. | select(.context.spanId == "'"$1"'") | .name'
+            cat "$OTLP" | jq -r '. | select(.spanId == "'"$1"'") | .name'
           }
 
           get_root_span_id() {
-            cat "$OTLP" | jq -r '. | select(.name != null) | select(.parentSpanId == null) | .context.spanId'
+            cat "$OTLP" | jq -r '. | select(.name != null) | select(.parentSpanId == null) | .spanId'
           }
 
           get_child_span_ids() {
-            cat "$OTLP" | jq -r '. | select(.name != null) | select(.parentSpanId == "'"$1"'") | .context.spanId'
+            cat "$OTLP" | jq -r '. | select(.name != null) | select(.parentSpanId == "'"$1"'") | .spanId'
           }
 
           print_span_name_tree() {
