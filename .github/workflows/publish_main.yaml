@@ -79,17 +79,23 @@ jobs:
             batch:
           exporters:
             file:
-              path: /data/otlp.json
+              path: /etc/otelcol/otlp.json
+          service:
+            pipelines:
+              traces:
+                receivers: [otlp]
+                exporters: [file]
+                processors: [batch]
           " > config.yaml
-          touch otlp.json
-          sudo docker create --rm --mount type=bind,source=$(pwd)/config.yaml,target=/etc/otelcol-contrib/config.yaml --mount type=bind,source=$(pwd)/otlp.json,target=/data/otlp.json --network=host --name=collector otel/opentelemetry-collector:latest
+          touch otlp.json && chmod 0666 otlp.json
+          sudo docker create --rm --mount type=bind,source=$(pwd)/config.yaml,target=/etc/otelcol/config.yaml --mount type=bind,source=$(pwd)/otlp.json,target=/etc/otelcol/otlp.json --network=host --name=collector otel/opentelemetry-collector:latest
           sudo docker start collector
           sleep 10
           cat meta.json | jq -r .setup | (grep -v '^null$' || true) | sh
           bash -e demo.sh 1> "$stdout" 2> "$stderr" || true
           sleep 15
           sudo docker stop collector
-          cat < otlp.json > "$otlp"
+          jq .resourceSpans.[].scopeSpans.[].spans < otlp.json > "$otlp"
           echo "STDOUT=$stdout" >> "$GITHUB_OUTPUT"
           echo "STDERR=$stderr" >> "$GITHUB_OUTPUT"
           echo "OTLP=$otlp" >> "$GITHUB_OUTPUT"
@@ -105,15 +111,15 @@ jobs:
           cd demos/${{ matrix.demo_directory }}
 
           convert_span_id_to_name() {
-            cat "$OTLP" | jq -r '. | select(.context.span_id == "'"$1"'") | .name'
+            cat "$OTLP" | jq -r '. | select(.context.spanId == "'"$1"'") | .name'
           }
 
           get_root_span_id() {
-            cat "$OTLP" | jq -r '. | select(.name != null) | select(.parent_id == null) | .context.span_id'
+            cat "$OTLP" | jq -r '. | select(.name != null) | select(.parentSpanId == null) | .context.spanId'
           }
 
           get_child_span_ids() {
-            cat "$OTLP" | jq -r '. | select(.name != null) | select(.parent_id == "'"$1"'") | .context.span_id'
+            cat "$OTLP" | jq -r '. | select(.name != null) | select(.parentSpanId == "'"$1"'") | .context.spanId'
           }
 
           print_span_name_tree() {
@@ -154,7 +160,7 @@ jobs:
           cd demos/${{ matrix.demo_directory }}
           git add --intent-to-add README.md
           git diff
-          git diff | grep -v '^+++' | grep -v '^---' | grep -v _id | grep -v .id | grep -v _time | grep -v timestamp | grep -v github. | grep -v telemetry.sdk.version | grep -v process.pid | grep -v process.parent_pid | grep -q '^+' && echo dirty=true >> "$GITHUB_OUTPUT" || true
+          git diff | grep -v '^+++' | grep -v '^---' | grep -v Id | grep -v _id | grep -v .id | grep -v Time | grep -v _time | grep -v timestamp | grep -v github. | grep -v telemetry.sdk.version | grep -v process.pid | grep -v process.parent_pid | grep -q '^+' && echo dirty=true >> "$GITHUB_OUTPUT" || true
         id: diff
       - name: "Resolve Reviewers"
         if: steps.diff.outputs.dirty
