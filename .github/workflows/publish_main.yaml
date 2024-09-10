@@ -84,9 +84,10 @@ jobs:
           touch otlp.json
           sudo docker create --rm --mount type=bind,source=$(pwd)/config.yaml,target=/etc/otelcol-contrib/config.yaml --mount type=bind,source=$(pwd)/otlp.json,target=/data/otlp.json --network=host --name=collector otel/opentelemetry-collector:latest
           sudo docker start collector
+          sleep 10
           cat meta.json | jq -r .setup | (grep -v '^null$' || true) | sh
           bash -e demo.sh 1> "$stdout" 2> "$stderr" || true
-          sleep 10
+          sleep 15
           sudo docker stop collector
           cat < otlp.json > "$otlp"
           echo "STDOUT=$stdout" >> "$GITHUB_OUTPUT"
