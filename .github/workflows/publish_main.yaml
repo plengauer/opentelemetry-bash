@@ -87,30 +87,24 @@ jobs:
                 exporters: [file]
                 processors: [batch]
           " > config.yaml
+          rm otlp.json || true
           touch otlp.json && chmod 0666 otlp.json
           sudo docker create --rm --mount type=bind,source=$(pwd)/config.yaml,target=/etc/otelcol/config.yaml --mount type=bind,source=$(pwd)/otlp.json,target=/etc/otelcol/otlp.json --network=host --name=collector otel/opentelemetry-collector:latest
           sudo docker start collector
           sleep 10
           cat meta.json | jq -r .setup | (grep -v '^null$' || true) | sh
-          bash -e demo.sh 1> "$stdout" 2> "$stderr" || true
+          bash -e demo.sh 1> output.stdout 2> output.stderr || true
           sleep 15
           sudo docker stop collector
           rm config.yaml
-          cat < otlp.json > "$otlp" && rm otlp.json
-          echo "STDOUT=$stdout" >> "$GITHUB_OUTPUT"
-          echo "STDERR=$stderr" >> "$GITHUB_OUTPUT"
-          echo "OTLP=$otlp" >> "$GITHUB_OUTPUT"
       - env:
-          STDOUT: ${{ steps.demo.outputs.STDOUT }}
-          STDERR: ${{ steps.demo.outputs.STDERR }}
-          OTLP: ${{ steps.demo.outputs.OTLP }}
           GITHUB_TOKEN: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
         run: |
           set +o pipefail
           cd demos/${{ matrix.demo_directory }}
 
           spans() {
-            jq '.resourceSpans.[].scopeSpans.[].spans.[]' < "$OTLP"
+            jq '.resourceSpans.[].scopeSpans.[].spans.[]' < otlp.json
           }
 
           convert_span_id_to_name() {
@@ -160,9 +154,9 @@ jobs:
           }
 
           pretty_print_trace() {
-            for span_id in $(cat "$OTLP" | jq -r '.resourceSpans.[].scopeSpans.[].spans.[].spanId'); do
-              span="$(jq '.resourceSpans.[].scopeSpans.[].spans.[] | select(.spanId == "'$span_id'")' < "$OTLP")"
-              resource_attributes="$(jq '.resourceSpans.[] | select(.scopeSpans.[].spans.[].spanId == "'$span_id'")' < "$OTLP" | jq .resource.attributes)"
+            for span_id in $(cat otlp.json | jq -r '.resourceSpans.[].scopeSpans.[].spans.[].spanId'); do
+              span="$(jq '.resourceSpans.[].scopeSpans.[].spans.[] | select(.spanId == "'$span_id'")' < otlp.json)"
+              resource_attributes="$(jq '.resourceSpans.[] | select(.scopeSpans.[].spans.[].spanId == "'$span_id'")' < otlp.json | jq .resource.attributes)"
               jq -n \
                 --argjson trace_id "$(printf '%s' "$span" | jq .traceId)" \
                 --argjson span_id "$(printf '%s' "$span" | jq .spanId)" \
@@ -202,9 +196,9 @@ jobs:
             pretty_print_trace
             echo '```'
           } > README.md
-          cat < "$STDOUT" > output.stdout
-          cat < "$STDERR" > output.stderr
-          jq . < "$OTLP" > otlp.json
+          mv otlp.json otlp.json.minimized
+          jq . < otlp.json.minimized > otlp.json
+          rm otlp.json.minimized
       - run: cat demos/${{ matrix.demo_directory }}/README.md
       - run: |
           cd demos/${{ matrix.demo_directory }}
