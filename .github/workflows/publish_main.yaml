@@ -95,11 +95,11 @@ jobs:
           bash -e demo.sh 1> "$stdout" 2> "$stderr" || true
           sleep 15
           sudo docker stop collector
+          rm config.yaml
+          cat < otlp.json > "$otlp" && rm otlp.json
           echo "STDOUT=$stdout" >> "$GITHUB_OUTPUT"
           echo "STDERR=$stderr" >> "$GITHUB_OUTPUT"
           echo "OTLP=$otlp" >> "$GITHUB_OUTPUT"
-          rm config.yaml
-          rm otlp.json
       - env:
           STDOUT: ${{ steps.demo.outputs.STDOUT }}
           STDERR: ${{ steps.demo.outputs.STDERR }}
