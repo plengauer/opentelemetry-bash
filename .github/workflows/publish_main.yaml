@@ -131,7 +131,7 @@ jobs:
           pretty_print_attributes() {
             attributes="$(jq .[] 2> /dev/null)"
             if [ -z "$attributes" ]; then echo "{}"; return 0; fi
-            for key in $(printf '%s' "$attributes" | jq -r .key); do
+            printf '%s' "$attributes" | jq -r .key | while read -r key; do
               value="$(printf '%s' "$attributes" | jq 'select(.key == "'"$key"'")' | jq .value)"
               if printf '%s' "$value" | grep -q arrayValue; then
                 if printf '%s' "$value" | grep -q stringValue; then
