@@ -154,7 +154,7 @@ jobs:
           }
 
           pretty_print_trace() {
-            for span_id in $(cat otlp.json | jq -r '.resourceSpans.[].scopeSpans.[].spans.[].spanId'); do
+            cat otlp.json | jq -r '.resourceSpans.[].scopeSpans.[].spans.[].spanId' | while read -r span_id; do
               span="$(jq '.resourceSpans.[].scopeSpans.[].spans.[] | select(.spanId == "'$span_id'")' < otlp.json)"
               resource_attributes="$(jq '.resourceSpans.[] | select(.scopeSpans.[].spans.[].spanId == "'$span_id'")' < otlp.json | jq .resource.attributes)"
               jq -n \
