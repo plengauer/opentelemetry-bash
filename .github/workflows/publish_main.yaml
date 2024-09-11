@@ -155,7 +155,6 @@ jobs:
               else
                 value="null"
               fi
-              echo "$key = $value" >&2
               jq -n --argjson "$key" "$value" '$ARGS.named'
             done | jq -s add
           }
