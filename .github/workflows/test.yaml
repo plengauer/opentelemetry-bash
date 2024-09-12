@@ -33,7 +33,7 @@ jobs:
     needs: [upgrade-prepare, install]
     runs-on: ubuntu-latest
     strategy: 
-      matrix: ${{ fromJSON(needs.demo-prepare.outputs.matrix) }}
+      matrix: ${{ fromJSON(needs.upgrade-prepare.outputs.matrix) }}
     steps:
       - run: |
           curl --no-progress-meter --fail --retry 16 --retry-all-errors --head https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100 \
