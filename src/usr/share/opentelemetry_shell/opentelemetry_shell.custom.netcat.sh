@@ -61,7 +61,7 @@ _otel_inject_netcat_listen_and_respond_args() {
 _otel_netcat_parse_request() {
   local is_server_side="$1"; shift
   local span_handle_file="$1"; shift
-  if ! \timeout "${OTEL_SHELL_CONFIG_NETCAT_INIT_TIMEOUT:-0}" _otel_binary_read line; then
+  if ! _otel_binary_read line; then
     \printf '%s' "$line" | _otel_binary_write
     return 0
   fi
@@ -299,7 +299,7 @@ _otel_binary_read() {
   local __line=""
   local eos=0
   while \true; do
-    local byte="$(\dd bs=1 count=1 2> /dev/null | \xxd -p)"
+    local byte="$(\timeout "${OTEL_SHELL_CONFIG_NETCAT_READ_TIMEOUT:-0}" \dd bs=1 count=1 2> /dev/null | \xxd -p)"
     if \[ "$byte" = '' ]; then local eos=1; break; fi
     if \[ "$byte" = 0a ]; then break; fi
     local __line="$__line$byte"
