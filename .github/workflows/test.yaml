@@ -17,6 +17,18 @@ jobs:
       - run: sudo apt-get -y install ./package.deb
       - run: sudo apt-get -y remove opentelemetry-shell
 
+  smoke:
+    needs: install
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: package.deb
+      - run: sudo -E apt-get -y install ./package.deb
+      - run: bash -c "cd tests && sudo -E bash run_tests.sh bash"
+
   upgrade-prepare:
     runs-on: ubuntu-latest
     outputs:
@@ -30,7 +42,7 @@ jobs:
         id: dynamic-matrix
 
   upgrade:
-    needs: [upgrade-prepare, install]
+    needs: [upgrade-prepare, install, smoke]
     runs-on: ubuntu-latest
     strategy: 
       matrix: ${{ fromJSON(needs.upgrade-prepare.outputs.matrix) }}
@@ -46,18 +58,6 @@ jobs:
         with:
           name: package.deb
       - run: sudo apt-get -y install ./package.deb
-
-  smoke:
-    needs: install
-    runs-on: ubuntu-latest
-    timeout-minutes: 180
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-          name: package.deb
-      - run: sudo -E apt-get -y install ./package.deb
-      - run: bash -c "cd tests && sudo -E bash run_tests.sh bash"
 
   os-shell:
     needs: smoke
