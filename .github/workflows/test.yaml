@@ -18,7 +18,6 @@ jobs:
       - run: sudo apt-get -y remove opentelemetry-shell
 
   upgrade-prepare:
-    needs: install
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.dynamic-matrix.outputs.matrix }}
