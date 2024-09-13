@@ -35,11 +35,14 @@ jobs:
       matrix: ${{ steps.dynamic-matrix.outputs.matrix }}
     steps:
       - run: |
-          curl --no-progress-meter --fail --retry 16 --retry-all-errors --head https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases?per_page=100 \
+          curl --no-progress-meter --fail --retry 16 --retry-all-errors --header "Authorization: Bearer $GITHUB_TOKEN" --head https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases?per_page=100 \
             | tr '[:upper:]' '[:lower:]' | grep '^link: ' | cut -d ' '  -f 2- | tr -d ' <>' | tr ',' '\n' | grep 'rel="last"' | cut -d ';' -f 1 | cut -d '?' -f 2- | tr '&' '\n' | grep '^page=' | cut -d = -f 2 \
-            | xargs seq 1 | xargs -I '{}' curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases?per_page=100\&page={} | jq -r '.[].tag_name' \
+            | xargs seq 1 | xargs -I '{}' curl --no-progress-meter --fail --retry 16 --retry-all-errors --header "Authorization: Bearer $GITHUB_TOKEN" https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases?per_page=100\&page={} | jq -r '.[].tag_name' \
+            | grep -v - | grep -v '^v1.0.0$' | grep -v '^v1.1.0$' \
             | jq -nR '{"include": [inputs | select(length > 0) | {tag_name: .}]}' | tr -d '\n' | xargs -0 -I {} echo 'matrix={}' >> "$GITHUB_OUTPUT"
         id: dynamic-matrix
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
 
   upgrade:
     needs: [upgrade-prepare, install]
@@ -49,7 +52,9 @@ jobs:
       fail-fast: false
     steps:
       - run: |
-          curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases/tags/${{ matrix.tag_name }} | jq -r '.assets[].browser_download_url' | xargs wget
+          curl --no-progress-meter --fail --retry 16 --retry-all-errors --header "Authorization: Bearer $GITHUB_TOKEN" https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases/tags/${{ matrix.tag_name }} | jq -r '.assets[].browser_download_url' | xargs wget --header "Authorization: Bearer $GITHUB_TOKEN"
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       - run: sudo apt-get -y install ./*.deb
       - uses: actions/download-artifact@v4
         with:
