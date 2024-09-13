@@ -147,6 +147,27 @@ ssize_t gnutls_record_send_range(void* session, const void* data, size_t data_si
   return original_gnutls_record_send_range(session, data, data_size, range);
 }
 
+ssize_t (*original_nghttp2_hd_deflate_hd)(void *deflater, unsigned char *buf, size_t bufmax, void *nva, size_t nvlen);
+ssize_t nghttp2_hd_deflate_hd(void *deflater, unsigned char *buf, size_t bufmax, void *nva, size_t nvlen) {
+  for (size_t index = 0; index < nvlen; index++) {
+    void* nv = nva + (sizeof(void*) * 2 + sizeof(size_t) * 2 + 8) * index; // we are guessing struct layouts here, hella scary!
+    char* key = * (char**) nv; nv += sizeof(char*);
+    char* value = * (char**) nv; nv += sizeof(char*);
+    size_t keylen = * (size_t*) nv; nv += sizeof(size_t);
+    size_t valuelen = * (size_t*) nv; nv += sizeof(size_t);
+    char* my_key = (char*) calloc(keylen + 1, sizeof(char));
+    char* my_value = (char*) calloc(valuelen + 1, sizeof(char));
+    memcpy(my_key, key, keylen);
+    memcpy(my_value, value, valuelen);
+    my_key[keylen] = '\0';
+    my_value[valuelen] = '\0';
+    fprintf(stderr, "%s: %s", my_key, my_value); //TODO remove!
+    free(my_key);
+    free(my_value);
+  }
+  return original_nghttp2_hd_deflate_hd(deflater, buf, bufmax, nva, nvlen);
+}
+
 __attribute__ ((constructor))
 void init() {
     original_write = dlsym(RTLD_NEXT, "write");
@@ -155,4 +176,5 @@ void init() {
     original_gnutls_record_send = dlsym(RTLD_NEXT, "gnutls_record_send");
     original_gnutls_record_send2 = dlsym(RTLD_NEXT, "gnutls_record_send2");
     original_gnutls_record_send_range = dlsym(RTLD_NEXT, "gnutls_record_send_range");
+    original_nghttp2_hd_deflate_hd = dlsym(RTLD_NEXT, "nghttp2_hd_deflate_hd");
 }
