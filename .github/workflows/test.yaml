@@ -42,12 +42,13 @@ jobs:
         id: dynamic-matrix
 
   upgrade:
-    needs: [upgrade-prepare, smoke]
+    needs: [upgrade-prepare, install]
     runs-on: ubuntu-latest
     strategy: 
       matrix: ${{ fromJSON(needs.upgrade-prepare.outputs.matrix) }}
     steps:
-      - run: curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases/tags/${{ matrix.tag_name }} | tee /dev/stderr | jq -r '.assets.[].browser_download_url' | xargs wget
+      - run: |
+          curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases/tags/${{ matrix.tag_name }} | jq -r '.assets.[].browser_download_url' | xargs wget
       - run: sudo apt-get -y install ./*.deb
       - uses: actions/download-artifact@v4
         with:
