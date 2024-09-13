@@ -163,7 +163,7 @@ jobs:
                 --argjson parent_span_id "$(printf '%s' "$span" | jq .parentSpanId)" \
                 --argjson name "$(printf '%s' "$span" | jq .name)" \
                 --argjson kind "$(printf '%s' "$span" | jq .kind)" \
-                --argjson status "$(printf '%s' "$span" | jq .status.statusCode)" \
+                --argjson status "$(printf '%s' "$span" | jq .status.code)" \
                 --argjson time_start "$(printf '%s' "$span" | jq .startTimeUnixNano)" \
                 --argjson time_end "$(printf '%s' "$span" | jq .endTimeUnixNano)" \
                 --argjson attributes "$(printf '%s' "$span" | jq .attributes | pretty_print_attributes)" \
@@ -177,6 +177,10 @@ jobs:
               | jq 'with_entries(if .key == "kind" and .value == 3 then .value = "SERVER" else . end)' \
               | jq 'with_entries(if .key == "kind" and .value == 4 then .value = "PRODUCER" else . end)' \
               | jq 'with_entries(if .key == "kind" and .value == 5 then .value = "CONSUMER" else . end)' \
+              | jq 'with_entries(if .key == "status" and .value == null then .value = "UNSET" else . end)' \
+              | jq 'with_entries(if .key == "status" and .value == 0 then .value = "UNSET" else . end)' \
+              | jq 'with_entries(if .key == "status" and .value == 1 then .value = "OK" else . end)' \
+              | jq 'with_entries(if .key == "status" and .value == 2 then .value = "ERROR" else . end)' \
               | jq .
           }
 
