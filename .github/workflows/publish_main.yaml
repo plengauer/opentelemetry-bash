@@ -147,10 +147,36 @@ jobs:
               elif printf '%s' "$value" | grep -q intValue; then
                 value="$(printf '%s' "$value" | jq -r .intValue)"
               else
-                value="null"
+                value=null
               fi
               jq -n --argjson "$key" "$value" '$ARGS.named'
             done | jq -s add
+          }
+
+          pretty_print_events() {
+            events="$(cat)"
+            if [ -z "$events" ] || [ "$events" = null ]; then echo "[]"; return 0; fi
+            printf '%s' "$events" | jq .[].name | wc -l | xargs seq 1 | while read -r index; do echo "$((index-1))"; done | while read -r index; do
+              event="$(printf '%s' "$events" | jq ".[$index]")"
+              jq -n \
+                --argjson name "$(printf '%s' "$event" | jq .name)" \
+                --argjson time "$(printf '%s' "$event" | jq -r .timeUnixNano)" \
+                --argjson attributes "$(printf '%s' "$event" | jq .attributes | pretty_print_attributes)" \
+                 '$ARGS.named'
+            done | jq -s .
+          }
+
+          pretty_print_links() {
+            links="$(cat)"
+            if [ -z "$links" ] || [ "$links" = null ]; then echo "[]"; return 0; fi
+            printf '%s' "$links" | jq .[].traceId | wc -l | xargs seq 1 | while read -r index; do echo "$((index-1))"; done | while read -r index; do
+              link="$(printf '%s' "$links" | jq ".[$index]")"
+              jq -n \
+                --argjson trace_id "$(printf '%s' "$link" | jq .traceId)" \
+                --argjson span_id "$(printf '%s' "$link" | jq .spanId)" \
+                --argjson attributes "$(printf '%s' "$link" | jq .attributes | pretty_print_attributes)" \
+                 '$ARGS.named'
+            done | jq -s .
           }
 
           pretty_print_trace() {
@@ -168,9 +194,9 @@ jobs:
                 --argjson time_end "$(printf '%s' "$span" | jq .endTimeUnixNano)" \
                 --argjson attributes "$(printf '%s' "$span" | jq .attributes | pretty_print_attributes)" \
                 --argjson resource_attributes "$(printf '%s' "$resource_attributes" | pretty_print_attributes)" \
+                --argjson links "$(printf '%s' "$span" | jq .links | pretty_print_links)" \
+                --argjson events "$(printf '%s' "$span" | jq .events | pretty_print_events)" \
                 '$ARGS.named'
-                 # TODO events
-                 # TODO links
             done \
               | jq 'with_entries(if .key == "kind" and .value == 1 then .value = "INTERNAL" else . end)' \
               | jq 'with_entries(if .key == "kind" and .value == 2 then .value = "CLIENT" else . end)' \
