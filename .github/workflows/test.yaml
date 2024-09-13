@@ -42,7 +42,7 @@ jobs:
         id: dynamic-matrix
 
   upgrade:
-    needs: [upgrade-prepare, install, smoke]
+    needs: [upgrade-prepare, smoke]
     runs-on: ubuntu-latest
     strategy: 
       matrix: ${{ fromJSON(needs.upgrade-prepare.outputs.matrix) }}
