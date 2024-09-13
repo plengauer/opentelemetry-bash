@@ -161,7 +161,6 @@ int nghttp2_submit_request(void *session, void *pri_spec, void *nva, size_t nvle
     memcpy(my_value, value, valuelen);
     my_key[keylen] = '\0';
     my_value[valuelen] = '\0';
-fprintf(stderr, "### HEADER %s: %s\n", my_key, my_value);
     if (strcmp(my_key, "traceparent") == 0) {
       FILE *sdk = fopen(getenv("OTEL_SHELL_INJECT_HTTP_SDK_PIPE"), "a+");
       if (!sdk) break;
