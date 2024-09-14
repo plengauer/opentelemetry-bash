@@ -173,8 +173,8 @@ jobs:
                  # TODO links
             done \
               | jq 'with_entries(if .key == "kind" and .value == 1 then .value = "INTERNAL" else . end)' \
-              | jq 'with_entries(if .key == "kind" and .value == 2 then .value = "CLIENT" else . end)' \
-              | jq 'with_entries(if .key == "kind" and .value == 3 then .value = "SERVER" else . end)' \
+              | jq 'with_entries(if .key == "kind" and .value == 2 then .value = "SERVER" else . end)' \
+              | jq 'with_entries(if .key == "kind" and .value == 3 then .value = "CLIENT" else . end)' \
               | jq 'with_entries(if .key == "kind" and .value == 4 then .value = "PRODUCER" else . end)' \
               | jq 'with_entries(if .key == "kind" and .value == 5 then .value = "CONSUMER" else . end)' \
               | jq .
