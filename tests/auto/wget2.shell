@@ -1,2 +1,2 @@
 . /usr/bin/opentelemetry_shell.sh
-wget -O - "$@"
+wget2 -O - "$@"
