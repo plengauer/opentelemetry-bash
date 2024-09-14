@@ -137,3 +137,4 @@ _otel_pipe_wget_stderr() {
 }
 
 _otel_alias_prepend wget _otel_propagate_wget
+_otel_alias_prepend wget2 _otel_propagate_wget
