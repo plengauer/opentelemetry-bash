@@ -49,7 +49,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix: ${{ fromJSON(needs.upgrade-prepare.outputs.matrix) }}
-      fail-fast: false
     steps:
       - run: |
           curl --no-progress-meter --fail --retry 16 --retry-all-errors --header "Authorization: Bearer $GITHUB_TOKEN" https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases/tags/${{ matrix.tag_name }} | jq -r '.assets[].browser_download_url' | xargs wget --header "Authorization: Bearer $GITHUB_TOKEN"
