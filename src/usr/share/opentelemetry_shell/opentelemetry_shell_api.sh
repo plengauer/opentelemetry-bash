@@ -10,7 +10,7 @@ if \[ -n "$OTEL_SHELL_TRACES_ENABLE" ] || \[ -n "$OTEL_SHELL_METRICS_ENABLE" ] |
   \[ "$OTEL_SHELL_TRACES_ENABLE" = TRUE ] && export OTEL_TRACES_EXPORTER=otlp || export OTEL_TRACES_EXPORTER=""
   \[ "$OTEL_SHELL_METRICS_ENABLE" = TRUE ] && export OTEL_METRICS_EXPORTER=otlp || export OTEL_METRICS_EXPORTER=""
   \[ "$OTEL_SHELL_LOGS_ENABLE" = TRUE ] && export OTEL_LOGS_EXPORTER=otlp || export OTEL_LOGS_EXPORTER=""
-  export OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=delta
+  export OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=delta.st
 fi
 export OTEL_SHELL_CONFIG_OBSERVE_PIPES="${OTEL_SHELL_CONFIG_OBSERVE_PIPES:-${OTEL_SHELL_EXPERIMENTAL_OBSERVE_PIPES:-FALSE}}"
 
@@ -392,7 +392,7 @@ _otel_call_and_record_logs() {
   local call_command="$1"; shift
   local traceparent="$TRACEPARENT"
   local stderr_logs="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.stderr.logs.pipe"
-  \mkfifo "$stderr_logs"
+  \mkfifo $_otel_mkfifo_flags "$stderr_logs"
   while IFS= read -r line; do _otel_log_record "$traceparent" "$line"; \echo "$line" >&2; done < "$stderr_logs" &
   local stderr_pid="$!"
   local exit_code=0
