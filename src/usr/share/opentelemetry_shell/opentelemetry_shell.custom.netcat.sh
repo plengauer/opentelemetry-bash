@@ -51,7 +51,7 @@ _otel_inject_netcat_listen_and_respond_args() {
     \echo -n ' '
     if (\[ "$1" = -e ] || \[ "$1" = --exec ] || \[ "$1" = -c ] || \[ "$1" = --sh-exec ]) && \[ "$#" -gt 1 ]; then
       local command="$2"; shift; shift
-      _otel_escape_args -c "otel4netcat_handler_wrapper /bin/sh /usr/bin/otel4netcat_handler $command"
+      _otel_escape_args -c "otel4netcat_handler $command"
     else
       _otel_escape_arg "$1"; shift
     fi
@@ -299,7 +299,7 @@ _otel_binary_read() {
   local __line=""
   local eos=0
   while \true; do
-    local byte="$(\dd bs=1 count=1 2> /dev/null | \xxd -p)"
+    local byte="$(\timeout "${OTEL_SHELL_CONFIG_NETCAT_READ_TIMEOUT:-0}" \dd bs=1 count=1 2> /dev/null | \xxd -p)"
     if \[ "$byte" = '' ]; then local eos=1; break; fi
     if \[ "$byte" = 0a ]; then break; fi
     local __line="$__line$byte"
