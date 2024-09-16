@@ -50,7 +50,7 @@ jobs:
           sudo docker start collector
           sleep 10
           cat meta.json | jq -r .setup | (grep -v '^null$' || true) | sh
-          timeout 60s bash -e demo.sh 1> output.stdout 2> output.stderr || cat output.stdout output.stderr
+          timeout 60s bash -e demo.sh || true #  1> output.stdout 2> output.stderr
           sleep 15
           sudo docker stop collector
           rm config.yaml
