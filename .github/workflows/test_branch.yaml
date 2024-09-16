@@ -49,8 +49,7 @@ jobs:
           sudo docker create --rm --mount type=bind,source=$(pwd)/config.yaml,target=/etc/otelcol/config.yaml --mount type=bind,source=$(pwd)/otlp.json,target=/etc/otelcol/otlp.json --network=host --name=collector otel/opentelemetry-collector:latest
           sudo docker start collector
           sleep 10
-          set -x
-          cat meta.json | jq -r .setup | (grep -v '^null$' || true) | sh -x
+          cat meta.json | jq -r .setup | (grep -v '^null$' || true) | sh
           bash -e demo.sh 1> output.stdout 2> output.stderr || true
           sleep 15
           sudo docker stop collector
@@ -157,4 +156,4 @@ jobs:
           mv otlp.json otlp.json.minimized
           jq . < otlp.json.minimized > otlp.json
           rm otlp.json.minimized
-      - run: cat demos/${{ matrix.demo_directory }}/README.md
+      - run: cat demos/injection_docker_renovate/README.md
