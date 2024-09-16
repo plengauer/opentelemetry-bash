@@ -11,3 +11,154 @@ on:
 jobs:
   test:
     uses: ./.github/workflows/test.yaml
+
+  demo-generate:
+    runs-on: ubuntu-latest
+    strategy: 
+      matrix: ${{ fromJSON(needs.demo-prepare.outputs.matrix) }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: package.deb
+      - run: sudo apt-get update && sudo apt-get install -y ./package.deb && rm ./package.deb
+      - uses: actions/checkout@v4
+      - id: demo
+        run: |
+          set +o pipefail
+          cd demos/injection_docker_renovate
+          otlp="$(mktemp)"
+          stdout="$(mktemp)"
+          stderr="$(mktemp)"
+          echo "
+          receivers:
+            otlp:
+              protocols:
+                grpc:
+                  endpoint: 0.0.0.0:4317
+                http:
+                  endpoint: 0.0.0.0:4318
+          processors:
+            batch:
+          exporters:
+            file:
+              path: /etc/otelcol/otlp.json
+          service:
+            pipelines:
+              traces:
+                receivers: [otlp]
+                exporters: [file]
+                processors: [batch]
+          " > config.yaml
+          rm otlp.json || true
+          touch otlp.json && chmod 0666 otlp.json
+          sudo docker create --rm --mount type=bind,source=$(pwd)/config.yaml,target=/etc/otelcol/config.yaml --mount type=bind,source=$(pwd)/otlp.json,target=/etc/otelcol/otlp.json --network=host --name=collector otel/opentelemetry-collector:latest
+          sudo docker start collector
+          sleep 10
+          cat meta.json | jq -r .setup | (grep -v '^null$' || true) | sh
+          bash -e demo.sh 1> output.stdout 2> output.stderr || true
+          sleep 15
+          sudo docker stop collector
+          rm config.yaml
+      - env:
+          GITHUB_TOKEN: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
+        run: |
+          set +o pipefail
+          cd demos/injection_docker_renovate
+
+          spans() {
+            jq '.resourceSpans.[].scopeSpans.[].spans.[]' < otlp.json
+          }
+
+          convert_span_id_to_name() {
+            spans | jq -r '. | select(.spanId == "'"$1"'") | .name'
+          }
+
+          get_root_span_id() {
+            spans | jq -r '. | select(.name != null) | select(.parentSpanId == "") | .spanId'
+          }
+
+          get_child_span_ids() {
+            spans | jq -r '. | select(.name != null) | select(.parentSpanId == "'"$1"'") | .spanId'
+          }
+
+          print_span_name_tree() {
+            local span_id="$1"
+            local indent="$2"
+            printf '%s' "$indent"; convert_span_id_to_name "$span_id"
+            get_child_span_ids "$span_id" | while read -r child_span_id; do
+              print_span_name_tree "$child_span_id" "$indent  "
+            done
+          }
+
+          pretty_print_attributes() {
+            attributes="$(jq .[] 2> /dev/null)"
+            if [ -z "$attributes" ]; then echo "{}"; return 0; fi
+            printf '%s' "$attributes" | jq -r .key | while read -r key; do
+              value="$(printf '%s' "$attributes" | jq 'select(.key == "'"$key"'")' | jq .value)"
+              if printf '%s' "$value" | grep -q arrayValue; then
+                if printf '%s' "$value" | grep -q stringValue; then
+                  value="$(printf '%s' "$value" | jq .arrayValue.values.[].stringValue | tr '\n' ',')"
+                elif printf '%s' "$value" | grep -q intValue; then
+                  value="$(printf '%s', "$value" | jq -r .arrayValue.values.[].intValue | tr '\n' ',')"
+                else
+                  value=","
+                fi
+                value="[${value::-1}]"
+              elif printf '%s' "$value" | grep -q stringValue; then
+                value="$(printf '%s' "$value" | jq .stringValue)"
+              elif printf '%s' "$value" | grep -q intValue; then
+                value="$(printf '%s' "$value" | jq -r .intValue)"
+              else
+                value="null"
+              fi
+              jq -n --argjson "$key" "$value" '$ARGS.named'
+            done | jq -s add
+          }
+
+          pretty_print_trace() {
+            cat otlp.json | jq -r '.resourceSpans.[].scopeSpans.[].spans.[].spanId' | while read -r span_id; do
+              span="$(jq '.resourceSpans.[].scopeSpans.[].spans.[] | select(.spanId == "'$span_id'")' < otlp.json)"
+              resource_attributes="$(jq '.resourceSpans.[] | select(.scopeSpans.[].spans.[].spanId == "'$span_id'")' < otlp.json | jq .resource.attributes)"
+              jq -n \
+                --argjson trace_id "$(printf '%s' "$span" | jq .traceId)" \
+                --argjson span_id "$(printf '%s' "$span" | jq .spanId)" \
+                --argjson parent_span_id "$(printf '%s' "$span" | jq .parentSpanId)" \
+                --argjson name "$(printf '%s' "$span" | jq .name)" \
+                --argjson kind "$(printf '%s' "$span" | jq .kind)" \
+                --argjson status "$(printf '%s' "$span" | jq .status.statusCode)" \
+                --argjson time_start "$(printf '%s' "$span" | jq .startTimeUnixNano)" \
+                --argjson time_end "$(printf '%s' "$span" | jq .endTimeUnixNano)" \
+                --argjson attributes "$(printf '%s' "$span" | jq .attributes | pretty_print_attributes)" \
+                --argjson resource_attributes "$(printf '%s' "$resource_attributes" | pretty_print_attributes)" \
+                '$ARGS.named'
+                 # TODO events
+                 # TODO links
+            done \
+              | jq 'with_entries(if .key == "kind" and .value == 1 then .value = "INTERNAL" else . end)' \
+              | jq 'with_entries(if .key == "kind" and .value == 2 then .value = "CLIENT" else . end)' \
+              | jq 'with_entries(if .key == "kind" and .value == 3 then .value = "SERVER" else . end)' \
+              | jq 'with_entries(if .key == "kind" and .value == 4 then .value = "PRODUCER" else . end)' \
+              | jq 'with_entries(if .key == "kind" and .value == 5 then .value = "CONSUMER" else . end)' \
+              | jq .
+          }
+
+          {
+            echo '# Demo "'"$(cat ./meta.json | jq -r .title)"'"'
+            cat meta.json | jq -r .description
+            echo '## Script'
+            echo '```sh'
+            cat demo.sh
+            echo '```'
+            echo '## Trace Structure Overview'
+            echo '```'
+            print_span_name_tree "$(get_root_span_id)" ""
+            echo '```'
+            echo '## Full Trace'
+            echo '```'
+            pretty_print_trace
+            echo '```'
+          } > README.md
+          mv otlp.json otlp.json.minimized
+          jq . < otlp.json.minimized > otlp.json
+          rm otlp.json.minimized
+      - run: cat demos/${{ matrix.demo_directory }}/README.md
