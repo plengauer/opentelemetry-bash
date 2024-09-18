@@ -147,6 +147,47 @@ ssize_t gnutls_record_send_range(void* session, const void* data, size_t data_si
   return original_gnutls_record_send_range(session, data, data_size, range);
 }
 
+int (*original_nghttp2_submit_request)(void *session, void *pri_spec, void *nva, size_t nvlen, void *data_prd, void *stream_user_data);
+int nghttp2_submit_request(void *session, void *pri_spec, void *nva, size_t nvlen, void *data_prd, void *stream_user_data) {
+  for (size_t index = 0; index < nvlen; index++) {
+    void* nv = nva + (sizeof(void*) * 2 + sizeof(size_t) * 2 + 8) * index; // we are guessing struct layouts here, hella scary!
+    char* key = * (char**) nv; nv += sizeof(char*);
+    char* value = * (char**) nv; nv += sizeof(char*);
+    size_t keylen = * (size_t*) nv; nv += sizeof(size_t);
+    size_t valuelen = * (size_t*) nv; nv += sizeof(size_t);
+    char* my_key = (char*) calloc(keylen + 1, sizeof(char));
+    char* my_value = (char*) calloc(valuelen + 1, sizeof(char));
+    memcpy(my_key, key, keylen);
+    memcpy(my_value, value, valuelen);
+    my_key[keylen] = '\0';
+    my_value[valuelen] = '\0';
+    if (strcmp(my_key, "traceparent") == 0) {
+      FILE *sdk = fopen(getenv("OTEL_SHELL_INJECT_HTTP_SDK_PIPE"), "a+");
+      if (!sdk) break;
+      int span_handle = otel_span_start(sdk, "CLIENT", "HTTP");
+      if (span_handle < 0) break;
+      {
+        char span_handle_string[16];
+        memset(span_handle_string, 0, 16);
+        sprintf(span_handle_string, "%d", span_handle);
+        FILE *storage = fopen(getenv("OTEL_SHELL_INJECT_HTTP_HANDLE_FILE"), "w");
+        if (!storage) break;
+        fwrite(span_handle_string, sizeof(char), strlen(span_handle_string), storage);
+        fclose(storage);
+      }
+      char *traceparent = otel_traceparent(sdk, span_handle);
+      if (!traceparent) break;
+      if (strlen(traceparent) != valuelen) { free(traceparent); break; }
+      memcpy(key, traceparent, valuelen);
+      free(traceparent);
+      fclose(sdk);
+    }
+    free(my_key);
+    free(my_value);
+  }
+  return original_nghttp2_submit_request(session, pri_spec, nva, nvlen, data_prd, stream_user_data);
+}
+
 __attribute__ ((constructor))
 void init() {
     original_write = dlsym(RTLD_NEXT, "write");
@@ -155,4 +196,5 @@ void init() {
     original_gnutls_record_send = dlsym(RTLD_NEXT, "gnutls_record_send");
     original_gnutls_record_send2 = dlsym(RTLD_NEXT, "gnutls_record_send2");
     original_gnutls_record_send_range = dlsym(RTLD_NEXT, "gnutls_record_send_range");
+    original_nghttp2_submit_request = dlsym(RTLD_NEXT, "nghttp2_submit_request");
 }
