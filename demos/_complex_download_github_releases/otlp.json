@@ -1,0 +1,5878 @@
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "telemetry.sdk.language",
+            "value": {
+              "stringValue": "shell"
+            }
+          },
+          {
+            "key": "telemetry.sdk.name",
+            "value": {
+              "stringValue": "opentelemetry"
+            }
+          },
+          {
+            "key": "telemetry.sdk.version",
+            "value": {
+              "stringValue": "4.28.0"
+            }
+          },
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "unknown_service"
+            }
+          },
+          {
+            "key": "github.sha",
+            "value": {
+              "stringValue": "582e5a04b959fb87b5509940c0a6e84821332719"
+            }
+          },
+          {
+            "key": "github.repository.id",
+            "value": {
+              "stringValue": "692042935"
+            }
+          },
+          {
+            "key": "github.repository.name",
+            "value": {
+              "stringValue": "plengauer/opentelemetry-bash"
+            }
+          },
+          {
+            "key": "github.repository.owner.id",
+            "value": {
+              "stringValue": "100447901"
+            }
+          },
+          {
+            "key": "github.repository.owner.name",
+            "value": {
+              "stringValue": "plengauer"
+            }
+          },
+          {
+            "key": "github.event.ref",
+            "value": {
+              "stringValue": "refs/heads/main"
+            }
+          },
+          {
+            "key": "github.event.ref.sha",
+            "value": {
+              "stringValue": "582e5a04b959fb87b5509940c0a6e84821332719"
+            }
+          },
+          {
+            "key": "github.event.ref.name",
+            "value": {
+              "stringValue": "main"
+            }
+          },
+          {
+            "key": "github.event.actor.id",
+            "value": {
+              "stringValue": "170979611"
+            }
+          },
+          {
+            "key": "github.event.actor.name",
+            "value": {
+              "stringValue": "actions-bot-pl"
+            }
+          },
+          {
+            "key": "github.event.name",
+            "value": {
+              "stringValue": "push"
+            }
+          },
+          {
+            "key": "github.workflow.run.id",
+            "value": {
+              "stringValue": "10878133798"
+            }
+          },
+          {
+            "key": "github.workflow.run.attempt",
+            "value": {
+              "stringValue": "1"
+            }
+          },
+          {
+            "key": "github.workflow.ref",
+            "value": {
+              "stringValue": "plengauer/opentelemetry-bash/.github/workflows/publish_main.yaml@refs/heads/main"
+            }
+          },
+          {
+            "key": "github.workflow.sha",
+            "value": {
+              "stringValue": "582e5a04b959fb87b5509940c0a6e84821332719"
+            }
+          },
+          {
+            "key": "github.workflow.name",
+            "value": {
+              "stringValue": "Publish"
+            }
+          },
+          {
+            "key": "github.job.name",
+            "value": {
+              "stringValue": "demo-generate"
+            }
+          },
+          {
+            "key": "github.step.name",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "github.action.name",
+            "value": {
+              "stringValue": "demo"
+            }
+          },
+          {
+            "key": "process.pid",
+            "value": {
+              "intValue": "4996"
+            }
+          },
+          {
+            "key": "process.parent_pid",
+            "value": {
+              "intValue": "4272"
+            }
+          },
+          {
+            "key": "process.executable.name",
+            "value": {
+              "stringValue": "bash"
+            }
+          },
+          {
+            "key": "process.executable.path",
+            "value": {
+              "stringValue": "/usr/bin/bash"
+            }
+          },
+          {
+            "key": "process.command_line",
+            "value": {
+              "stringValue": "xargs seq 1"
+            }
+          },
+          {
+            "key": "process.command",
+            "value": {
+              "stringValue": "xargs"
+            }
+          },
+          {
+            "key": "process.owner",
+            "value": {
+              "stringValue": "runner"
+            }
+          },
+          {
+            "key": "process.runtime.name",
+            "value": {
+              "stringValue": "bash"
+            }
+          },
+          {
+            "key": "process.runtime.description",
+            "value": {
+              "stringValue": "Bourne Again Shell"
+            }
+          },
+          {
+            "key": "process.runtime.version",
+            "value": {
+              "stringValue": "5.1-6ubuntu1.1"
+            }
+          },
+          {
+            "key": "process.runtime.options",
+            "value": {
+              "stringValue": "hBc"
+            }
+          },
+          {
+            "key": "service.version",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "service.namespace",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "service.instance.id",
+            "value": {
+              "stringValue": ""
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "shell",
+            "version": "4.28.0"
+          },
+          "spans": [
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "f15cd79d911beda7",
+              "parentSpanId": "aad70d7aa55cdc4f",
+              "flags": 768,
+              "name": "seq 1 3",
+              "kind": 1,
+              "startTimeUnixNano": "1726467159290191990",
+              "endTimeUnixNano": "1726467159308664562",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "seq 1 3"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "seq"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "seq"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/seq"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "seq"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.lineno",
+                  "value": {
+                    "intValue": "2"
+                  }
+                }
+              ],
+              "status": {}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "telemetry.sdk.language",
+            "value": {
+              "stringValue": "shell"
+            }
+          },
+          {
+            "key": "telemetry.sdk.name",
+            "value": {
+              "stringValue": "opentelemetry"
+            }
+          },
+          {
+            "key": "telemetry.sdk.version",
+            "value": {
+              "stringValue": "4.28.0"
+            }
+          },
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "unknown_service"
+            }
+          },
+          {
+            "key": "github.sha",
+            "value": {
+              "stringValue": "582e5a04b959fb87b5509940c0a6e84821332719"
+            }
+          },
+          {
+            "key": "github.repository.id",
+            "value": {
+              "stringValue": "692042935"
+            }
+          },
+          {
+            "key": "github.repository.name",
+            "value": {
+              "stringValue": "plengauer/opentelemetry-bash"
+            }
+          },
+          {
+            "key": "github.repository.owner.id",
+            "value": {
+              "stringValue": "100447901"
+            }
+          },
+          {
+            "key": "github.repository.owner.name",
+            "value": {
+              "stringValue": "plengauer"
+            }
+          },
+          {
+            "key": "github.event.ref",
+            "value": {
+              "stringValue": "refs/heads/main"
+            }
+          },
+          {
+            "key": "github.event.ref.sha",
+            "value": {
+              "stringValue": "582e5a04b959fb87b5509940c0a6e84821332719"
+            }
+          },
+          {
+            "key": "github.event.ref.name",
+            "value": {
+              "stringValue": "main"
+            }
+          },
+          {
+            "key": "github.event.actor.id",
+            "value": {
+              "stringValue": "170979611"
+            }
+          },
+          {
+            "key": "github.event.actor.name",
+            "value": {
+              "stringValue": "actions-bot-pl"
+            }
+          },
+          {
+            "key": "github.event.name",
+            "value": {
+              "stringValue": "push"
+            }
+          },
+          {
+            "key": "github.workflow.run.id",
+            "value": {
+              "stringValue": "10878133798"
+            }
+          },
+          {
+            "key": "github.workflow.run.attempt",
+            "value": {
+              "stringValue": "1"
+            }
+          },
+          {
+            "key": "github.workflow.ref",
+            "value": {
+              "stringValue": "plengauer/opentelemetry-bash/.github/workflows/publish_main.yaml@refs/heads/main"
+            }
+          },
+          {
+            "key": "github.workflow.sha",
+            "value": {
+              "stringValue": "582e5a04b959fb87b5509940c0a6e84821332719"
+            }
+          },
+          {
+            "key": "github.workflow.name",
+            "value": {
+              "stringValue": "Publish"
+            }
+          },
+          {
+            "key": "github.job.name",
+            "value": {
+              "stringValue": "demo-generate"
+            }
+          },
+          {
+            "key": "github.step.name",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "github.action.name",
+            "value": {
+              "stringValue": "demo"
+            }
+          },
+          {
+            "key": "process.pid",
+            "value": {
+              "intValue": "2933"
+            }
+          },
+          {
+            "key": "process.parent_pid",
+            "value": {
+              "intValue": "2723"
+            }
+          },
+          {
+            "key": "process.executable.name",
+            "value": {
+              "stringValue": "bash"
+            }
+          },
+          {
+            "key": "process.executable.path",
+            "value": {
+              "stringValue": "/usr/bin/bash"
+            }
+          },
+          {
+            "key": "process.command_line",
+            "value": {
+              "stringValue": "bash -e demo.sh"
+            }
+          },
+          {
+            "key": "process.command",
+            "value": {
+              "stringValue": "bash"
+            }
+          },
+          {
+            "key": "process.owner",
+            "value": {
+              "stringValue": "runner"
+            }
+          },
+          {
+            "key": "process.runtime.name",
+            "value": {
+              "stringValue": "bash"
+            }
+          },
+          {
+            "key": "process.runtime.description",
+            "value": {
+              "stringValue": "Bourne Again Shell"
+            }
+          },
+          {
+            "key": "process.runtime.version",
+            "value": {
+              "stringValue": "5.1-6ubuntu1.1"
+            }
+          },
+          {
+            "key": "process.runtime.options",
+            "value": {
+              "stringValue": "ehB"
+            }
+          },
+          {
+            "key": "service.version",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "service.namespace",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "service.instance.id",
+            "value": {
+              "stringValue": ""
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "shell",
+            "version": "4.28.0"
+          },
+          "spans": [
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "bdb64360dc86a23e",
+              "parentSpanId": "9d69728bb360260a",
+              "flags": 768,
+              "name": "printf HEAD /repos/plengauer/opentelemetry-bash/releases?per_page=100 HTTP/1.1\\r\\nConnection: close\\r\\nUser-Agent: ncat\\r\\nHost: api.github.com\\r\\n\\r\\n",
+              "kind": 1,
+              "startTimeUnixNano": "1726467154913374778",
+              "endTimeUnixNano": "1726467155023046017",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "printf HEAD /repos/plengauer/opentelemetry-bash/releases?per_page=100 HTTP/1.1\\r\\nConnection: close\\r\\nUser-Agent: ncat\\r\\nHost: api.github.com\\r\\n\\r\\n"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "printf"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "builtin"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "printf"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "demo.sh"
+                  }
+                },
+                {
+                  "key": "code.lineno",
+                  "value": {
+                    "intValue": "7"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "52648e6a0e079012",
+              "parentSpanId": "300398c122694bdc",
+              "flags": 768,
+              "name": "HEAD",
+              "kind": 3,
+              "startTimeUnixNano": "1726467155258768696",
+              "endTimeUnixNano": "1726467158679824462",
+              "attributes": [
+                {
+                  "key": "network.transport",
+                  "value": {
+                    "stringValue": "tcp"
+                  }
+                },
+                {
+                  "key": "network.peer.port",
+                  "value": {
+                    "intValue": "443"
+                  }
+                },
+                {
+                  "key": "server.address",
+                  "value": {
+                    "stringValue": "api.github.com"
+                  }
+                },
+                {
+                  "key": "server.port",
+                  "value": {
+                    "intValue": "443"
+                  }
+                },
+                {
+                  "key": "network.protocol.name",
+                  "value": {
+                    "stringValue": "http"
+                  }
+                },
+                {
+                  "key": "network.protocol.version",
+                  "value": {
+                    "stringValue": "1.1"
+                  }
+                },
+                {
+                  "key": "url.full",
+                  "value": {
+                    "stringValue": "http://api.github.com:443/repos/plengauer/opentelemetry-bash/releases?per_page=100"
+                  }
+                },
+                {
+                  "key": "url.path",
+                  "value": {
+                    "stringValue": "/repos/plengauer/opentelemetry-bash/releases"
+                  }
+                },
+                {
+                  "key": "url.query",
+                  "value": {
+                    "stringValue": "per_page=100"
+                  }
+                },
+                {
+                  "key": "url.scheme",
+                  "value": {
+                    "stringValue": "http"
+                  }
+                },
+                {
+                  "key": "http.request.method",
+                  "value": {
+                    "stringValue": "HEAD"
+                  }
+                },
+                {
+                  "key": "http.request.body.size",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "user_agent.original",
+                  "value": {
+                    "stringValue": "netcat"
+                  }
+                },
+                {
+                  "key": "http.request.header.connection",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "close"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.request.header.user-agent",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "ncat"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.request.header.host",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "api.github.com"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.status_code",
+                  "value": {
+                    "intValue": "200"
+                  }
+                },
+                {
+                  "key": "http.response.header.date",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "Mon, 16 Sep 2024 06:12:35 GMT"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.content-type",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "application/json; charset=utf-8"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.cache-control",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "public, max-age=60, s-maxage=60"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.vary",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "Accept,Accept-Encoding, Accept, X-Requested-With"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.etag",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "W/\"677145355c11207e4c8cb8d258186b0e03447386b7d8c1a29769d6b2fc504d50\""
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-github-media-type",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "github.v3; format=json"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.link",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "<https://api.github.com/repositories/692042935/releases?per_page=100&page=2>; rel=\"next\", <https://api.github.com/repositories/692042935/releases?per_page=100&page=3>; rel=\"last\""
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-github-api-version-selected",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "2022-11-28"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.access-control-expose-headers",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.access-control-allow-origin",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "*"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.strict-transport-security",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "max-age=31536000; includeSubdomains; preload"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-frame-options",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "deny"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-content-type-options",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "nosniff"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-xss-protection",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "0"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.referrer-policy",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "origin-when-cross-origin, strict-origin-when-cross-origin"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.content-security-policy",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "default-src 'none'"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.server",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "github.com"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-ratelimit-limit",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "60"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-ratelimit-remaining",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "59"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-ratelimit-reset",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "1726470755"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-ratelimit-resource",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "core"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-ratelimit-used",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "1"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.accept-ranges",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "bytes"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-github-request-id",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "4C30:908CE:2A5B50B:2ABB227:66E7CC53"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.connection",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "close"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.body.size",
+                  "value": {
+                    "intValue": "0"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "300398c122694bdc",
+              "parentSpanId": "72cc09a67daf4f3a",
+              "flags": 768,
+              "name": "send/receive",
+              "kind": 4,
+              "startTimeUnixNano": "1726467155061873821",
+              "endTimeUnixNano": "1726467158680304806",
+              "attributes": [
+                {
+                  "key": "network.transport",
+                  "value": {
+                    "stringValue": "tcp"
+                  }
+                },
+                {
+                  "key": "network.peer.port",
+                  "value": {
+                    "intValue": "443"
+                  }
+                },
+                {
+                  "key": "server.address",
+                  "value": {
+                    "stringValue": "api.github.com"
+                  }
+                },
+                {
+                  "key": "server.port",
+                  "value": {
+                    "intValue": "443"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "72cc09a67daf4f3a",
+              "parentSpanId": "9d69728bb360260a",
+              "flags": 768,
+              "name": "ncat --ssl -i 3 --no-shutdown api.github.com 443",
+              "kind": 1,
+              "startTimeUnixNano": "1726467154923337796",
+              "endTimeUnixNano": "1726467158684977660",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "ncat --ssl -i 3 --no-shutdown api.github.com 443"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "ncat"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "ncat"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/ncat"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "ncat"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "1"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "demo.sh"
+                  }
+                },
+                {
+                  "key": "code.lineno",
+                  "value": {
+                    "intValue": "7"
+                  }
+                }
+              ],
+              "status": {
+                "code": 2
+              }
+            },
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "49c36279360a069e",
+              "parentSpanId": "9d69728bb360260a",
+              "flags": 768,
+              "name": "tr [:upper:] [:lower:]",
+              "kind": 1,
+              "startTimeUnixNano": "1726467154936441694",
+              "endTimeUnixNano": "1726467158687337415",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "tr [:upper:] [:lower:]"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "tr"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "tr"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/tr"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "tr"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "demo.sh"
+                  }
+                },
+                {
+                  "key": "code.lineno",
+                  "value": {
+                    "intValue": "7"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "274766d01a774b8e",
+              "parentSpanId": "9d69728bb360260a",
+              "flags": 768,
+              "name": "grep ^link:",
+              "kind": 1,
+              "startTimeUnixNano": "1726467154954875958",
+              "endTimeUnixNano": "1726467158689715526",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "grep ^link:"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "grep"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "grep"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/grep"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "grep"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "demo.sh"
+                  }
+                },
+                {
+                  "key": "code.lineno",
+                  "value": {
+                    "intValue": "8"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "287df6e2c44fa6fe",
+              "parentSpanId": "9d69728bb360260a",
+              "flags": 768,
+              "name": "cut -d   -f 2-",
+              "kind": 1,
+              "startTimeUnixNano": "1726467154923194639",
+              "endTimeUnixNano": "1726467158692086873",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "cut -d   -f 2-"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "cut"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "cut"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/cut"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "cut"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "demo.sh"
+                  }
+                },
+                {
+                  "key": "code.lineno",
+                  "value": {
+                    "intValue": "8"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "e05e88bfd49eb8ed",
+              "parentSpanId": "9d69728bb360260a",
+              "flags": 768,
+              "name": "tr -d  <>",
+              "kind": 1,
+              "startTimeUnixNano": "1726467154922875375",
+              "endTimeUnixNano": "1726467158694429466",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "tr -d  <>"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "tr"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "tr"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/tr"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "tr"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "demo.sh"
+                  }
+                },
+                {
+                  "key": "code.lineno",
+                  "value": {
+                    "intValue": "8"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "dd9fc93f6704b90e",
+              "parentSpanId": "9d69728bb360260a",
+              "flags": 768,
+              "name": "tr , \\n",
+              "kind": 1,
+              "startTimeUnixNano": "1726467154935715572",
+              "endTimeUnixNano": "1726467158696701729",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "tr , \\n"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "tr"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "tr"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/tr"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "tr"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "demo.sh"
+                  }
+                },
+                {
+                  "key": "code.lineno",
+                  "value": {
+                    "intValue": "8"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "be49b3afcc10d58a",
+              "parentSpanId": "9d69728bb360260a",
+              "flags": 768,
+              "name": "grep rel=\"last\"",
+              "kind": 1,
+              "startTimeUnixNano": "1726467154946235332",
+              "endTimeUnixNano": "1726467158699091631",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "grep rel=\"last\""
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "grep"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "grep"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/grep"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "grep"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "demo.sh"
+                  }
+                },
+                {
+                  "key": "code.lineno",
+                  "value": {
+                    "intValue": "9"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "04524c5fcd0605d8",
+              "parentSpanId": "9d69728bb360260a",
+              "flags": 768,
+              "name": "cut -d ; -f1",
+              "kind": 1,
+              "startTimeUnixNano": "1726467154946773414",
+              "endTimeUnixNano": "1726467158701411050",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "cut -d ; -f1"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "cut"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "cut"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/cut"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "cut"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "demo.sh"
+                  }
+                },
+                {
+                  "key": "code.lineno",
+                  "value": {
+                    "intValue": "9"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "30b00e9aa3ad2556",
+              "parentSpanId": "9d69728bb360260a",
+              "flags": 768,
+              "name": "cut -d ? -f 2-",
+              "kind": 1,
+              "startTimeUnixNano": "1726467154945882996",
+              "endTimeUnixNano": "1726467158703845655",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "cut -d ? -f 2-"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "cut"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "cut"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/cut"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "cut"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "demo.sh"
+                  }
+                },
+                {
+                  "key": "code.lineno",
+                  "value": {
+                    "intValue": "9"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "04b895a278bb3bea",
+              "parentSpanId": "9d69728bb360260a",
+              "flags": 768,
+              "name": "tr & \\n",
+              "kind": 1,
+              "startTimeUnixNano": "1726467154946043464",
+              "endTimeUnixNano": "1726467158706119441",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "tr & \\n"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "tr"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "tr"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/tr"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "tr"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "demo.sh"
+                  }
+                },
+                {
+                  "key": "code.lineno",
+                  "value": {
+                    "intValue": "9"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "08de7fe19702b11f",
+              "parentSpanId": "9d69728bb360260a",
+              "flags": 768,
+              "name": "grep ^page=",
+              "kind": 1,
+              "startTimeUnixNano": "1726467154923043768",
+              "endTimeUnixNano": "1726467158708462125",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "grep ^page="
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "grep"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "grep"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/grep"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "grep"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "demo.sh"
+                  }
+                },
+                {
+                  "key": "code.lineno",
+                  "value": {
+                    "intValue": "10"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "92a244e0637e204a",
+              "parentSpanId": "9d69728bb360260a",
+              "flags": 768,
+              "name": "cut -d = -f 2",
+              "kind": 1,
+              "startTimeUnixNano": "1726467154936229790",
+              "endTimeUnixNano": "1726467158710777578",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "cut -d = -f 2"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "cut"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "cut"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/cut"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "cut"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "demo.sh"
+                  }
+                },
+                {
+                  "key": "code.lineno",
+                  "value": {
+                    "intValue": "10"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "aad70d7aa55cdc4f",
+              "parentSpanId": "9d69728bb360260a",
+              "flags": 768,
+              "name": "xargs seq 1",
+              "kind": 1,
+              "startTimeUnixNano": "1726467154936051708",
+              "endTimeUnixNano": "1726467159338573950",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "xargs seq 1"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "xargs"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "xargs"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/xargs"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "xargs"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "demo.sh"
+                  }
+                },
+                {
+                  "key": "code.lineno",
+                  "value": {
+                    "intValue": "11"
+                  }
+                }
+              ],
+              "status": {}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "telemetry.sdk.language",
+            "value": {
+              "stringValue": "shell"
+            }
+          },
+          {
+            "key": "telemetry.sdk.name",
+            "value": {
+              "stringValue": "opentelemetry"
+            }
+          },
+          {
+            "key": "telemetry.sdk.version",
+            "value": {
+              "stringValue": "4.28.0"
+            }
+          },
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "unknown_service"
+            }
+          },
+          {
+            "key": "github.sha",
+            "value": {
+              "stringValue": "582e5a04b959fb87b5509940c0a6e84821332719"
+            }
+          },
+          {
+            "key": "github.repository.id",
+            "value": {
+              "stringValue": "692042935"
+            }
+          },
+          {
+            "key": "github.repository.name",
+            "value": {
+              "stringValue": "plengauer/opentelemetry-bash"
+            }
+          },
+          {
+            "key": "github.repository.owner.id",
+            "value": {
+              "stringValue": "100447901"
+            }
+          },
+          {
+            "key": "github.repository.owner.name",
+            "value": {
+              "stringValue": "plengauer"
+            }
+          },
+          {
+            "key": "github.event.ref",
+            "value": {
+              "stringValue": "refs/heads/main"
+            }
+          },
+          {
+            "key": "github.event.ref.sha",
+            "value": {
+              "stringValue": "582e5a04b959fb87b5509940c0a6e84821332719"
+            }
+          },
+          {
+            "key": "github.event.ref.name",
+            "value": {
+              "stringValue": "main"
+            }
+          },
+          {
+            "key": "github.event.actor.id",
+            "value": {
+              "stringValue": "170979611"
+            }
+          },
+          {
+            "key": "github.event.actor.name",
+            "value": {
+              "stringValue": "actions-bot-pl"
+            }
+          },
+          {
+            "key": "github.event.name",
+            "value": {
+              "stringValue": "push"
+            }
+          },
+          {
+            "key": "github.workflow.run.id",
+            "value": {
+              "stringValue": "10878133798"
+            }
+          },
+          {
+            "key": "github.workflow.run.attempt",
+            "value": {
+              "stringValue": "1"
+            }
+          },
+          {
+            "key": "github.workflow.ref",
+            "value": {
+              "stringValue": "plengauer/opentelemetry-bash/.github/workflows/publish_main.yaml@refs/heads/main"
+            }
+          },
+          {
+            "key": "github.workflow.sha",
+            "value": {
+              "stringValue": "582e5a04b959fb87b5509940c0a6e84821332719"
+            }
+          },
+          {
+            "key": "github.workflow.name",
+            "value": {
+              "stringValue": "Publish"
+            }
+          },
+          {
+            "key": "github.job.name",
+            "value": {
+              "stringValue": "demo-generate"
+            }
+          },
+          {
+            "key": "github.step.name",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "github.action.name",
+            "value": {
+              "stringValue": "demo"
+            }
+          },
+          {
+            "key": "process.pid",
+            "value": {
+              "intValue": "6371"
+            }
+          },
+          {
+            "key": "process.parent_pid",
+            "value": {
+              "intValue": "6305"
+            }
+          },
+          {
+            "key": "process.executable.name",
+            "value": {
+              "stringValue": "bash"
+            }
+          },
+          {
+            "key": "process.executable.path",
+            "value": {
+              "stringValue": "/usr/bin/bash"
+            }
+          },
+          {
+            "key": "process.command_line",
+            "value": {
+              "stringValue": "/usr/bin/perl /usr/bin/parallel -q curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page={} ::: 1 2 3"
+            }
+          },
+          {
+            "key": "process.command",
+            "value": {
+              "stringValue": "/usr/bin/perl"
+            }
+          },
+          {
+            "key": "process.owner",
+            "value": {
+              "stringValue": "runner"
+            }
+          },
+          {
+            "key": "process.runtime.name",
+            "value": {
+              "stringValue": "bash"
+            }
+          },
+          {
+            "key": "process.runtime.description",
+            "value": {
+              "stringValue": "Bourne Again Shell"
+            }
+          },
+          {
+            "key": "process.runtime.version",
+            "value": {
+              "stringValue": "5.1-6ubuntu1.1"
+            }
+          },
+          {
+            "key": "process.runtime.options",
+            "value": {
+              "stringValue": "hBc"
+            }
+          },
+          {
+            "key": "service.version",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "service.namespace",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "service.instance.id",
+            "value": {
+              "stringValue": ""
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "shell",
+            "version": "4.28.0"
+          },
+          "spans": [
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "d127cf9b50d81fb8",
+              "parentSpanId": "91ec9292bfd25699",
+              "flags": 768,
+              "name": "GET",
+              "kind": 3,
+              "startTimeUnixNano": "1726467161469979722",
+              "endTimeUnixNano": "1726467163004376782",
+              "attributes": [
+                {
+                  "key": "network.transport",
+                  "value": {
+                    "stringValue": "tcp"
+                  }
+                },
+                {
+                  "key": "network.protocol.name",
+                  "value": {
+                    "stringValue": "https"
+                  }
+                },
+                {
+                  "key": "network.protocol.version",
+                  "value": {
+                    "stringValue": "2"
+                  }
+                },
+                {
+                  "key": "network.peer.address",
+                  "value": {
+                    "stringValue": "140.82.116.6"
+                  }
+                },
+                {
+                  "key": "network.peer.port",
+                  "value": {
+                    "intValue": "443"
+                  }
+                },
+                {
+                  "key": "server.address",
+                  "value": {
+                    "stringValue": "api.github.com"
+                  }
+                },
+                {
+                  "key": "server.port",
+                  "value": {
+                    "intValue": "443"
+                  }
+                },
+                {
+                  "key": "url.full",
+                  "value": {
+                    "stringValue": "https://api.github.com:443/repos/plengauer/opentelemetry-bash/releases?per_page=100&page=3"
+                  }
+                },
+                {
+                  "key": "url.path",
+                  "value": {
+                    "stringValue": "/repos/plengauer/opentelemetry-bash/releases"
+                  }
+                },
+                {
+                  "key": "url.query",
+                  "value": {
+                    "stringValue": "per_page=100&page=3"
+                  }
+                },
+                {
+                  "key": "url.scheme",
+                  "value": {
+                    "stringValue": "https"
+                  }
+                },
+                {
+                  "key": "http.request.method",
+                  "value": {
+                    "stringValue": "GET"
+                  }
+                },
+                {
+                  "key": "http.request.header.host",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "api.github.com"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "user_agent.original",
+                  "value": {
+                    "stringValue": "curl/7.81.0"
+                  }
+                },
+                {
+                  "key": "http.request.header.user-agent",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "curl/7.81.0"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.request.header.accept",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "*/*"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.request.header.traceparent",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "00-935c2d9648a6b8ca944f551c7464ff2a-91ec9292bfd25699-01"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.request.body.size",
+                  "value": {
+                    "intValue": "5"
+                  }
+                },
+                {
+                  "key": "http.response.status_code",
+                  "value": {
+                    "intValue": "200"
+                  }
+                },
+                {
+                  "key": "http.response.header.date",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "Mon, 16 Sep 2024 06:12:41 GMT"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.content-type",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "application/json; charset=utf-8"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.cache-control",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "public, max-age=60, s-maxage=60"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.vary",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "Accept,Accept-Encoding, Accept, X-Requested-With"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.etag",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "W/\"2f78f27d72385b52a227115b8e2adedae1b08d849395ff43f1180f8ee5348604\""
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-github-media-type",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "github.v3; format=json"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.link",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "<https://api.github.com/repositories/692042935/releases?per_page=100&page=2>; rel=\"prev\", <https://api.github.com/repositories/692042935/releases?per_page=100&page=1>; rel=\"first\""
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-github-api-version-selected",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "2022-11-28"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.access-control-expose-headers",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.access-control-allow-origin",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "*"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.strict-transport-security",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "max-age=31536000; includeSubdomains; preload"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-frame-options",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "deny"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-content-type-options",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "nosniff"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-xss-protection",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "0"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.referrer-policy",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "origin-when-cross-origin, strict-origin-when-cross-origin"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.content-security-policy",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "default-src 'none'"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.server",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "github.com"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-ratelimit-limit",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "60"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-ratelimit-remaining",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "57"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-ratelimit-reset",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "1726470755"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-ratelimit-resource",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "core"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-ratelimit-used",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "3"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.accept-ranges",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "bytes"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-github-request-id",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "4C32:3A5FA5:768AAD7:7796ED8:66E7CC59"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.body.size",
+                  "value": {
+                    "intValue": "5"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "91ec9292bfd25699",
+              "parentSpanId": "aaceca58ae7a30f6",
+              "flags": 768,
+              "name": "curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page=3",
+              "kind": 1,
+              "startTimeUnixNano": "1726467161287440104",
+              "endTimeUnixNano": "1726467163008828485",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page=3"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "curl"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "curl"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/curl"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "curl"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.lineno",
+                  "value": {
+                    "intValue": "2"
+                  }
+                }
+              ],
+              "status": {}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "telemetry.sdk.language",
+            "value": {
+              "stringValue": "shell"
+            }
+          },
+          {
+            "key": "telemetry.sdk.name",
+            "value": {
+              "stringValue": "opentelemetry"
+            }
+          },
+          {
+            "key": "telemetry.sdk.version",
+            "value": {
+              "stringValue": "4.28.0"
+            }
+          },
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "unknown_service"
+            }
+          },
+          {
+            "key": "github.sha",
+            "value": {
+              "stringValue": "582e5a04b959fb87b5509940c0a6e84821332719"
+            }
+          },
+          {
+            "key": "github.repository.id",
+            "value": {
+              "stringValue": "692042935"
+            }
+          },
+          {
+            "key": "github.repository.name",
+            "value": {
+              "stringValue": "plengauer/opentelemetry-bash"
+            }
+          },
+          {
+            "key": "github.repository.owner.id",
+            "value": {
+              "stringValue": "100447901"
+            }
+          },
+          {
+            "key": "github.repository.owner.name",
+            "value": {
+              "stringValue": "plengauer"
+            }
+          },
+          {
+            "key": "github.event.ref",
+            "value": {
+              "stringValue": "refs/heads/main"
+            }
+          },
+          {
+            "key": "github.event.ref.sha",
+            "value": {
+              "stringValue": "582e5a04b959fb87b5509940c0a6e84821332719"
+            }
+          },
+          {
+            "key": "github.event.ref.name",
+            "value": {
+              "stringValue": "main"
+            }
+          },
+          {
+            "key": "github.event.actor.id",
+            "value": {
+              "stringValue": "170979611"
+            }
+          },
+          {
+            "key": "github.event.actor.name",
+            "value": {
+              "stringValue": "actions-bot-pl"
+            }
+          },
+          {
+            "key": "github.event.name",
+            "value": {
+              "stringValue": "push"
+            }
+          },
+          {
+            "key": "github.workflow.run.id",
+            "value": {
+              "stringValue": "10878133798"
+            }
+          },
+          {
+            "key": "github.workflow.run.attempt",
+            "value": {
+              "stringValue": "1"
+            }
+          },
+          {
+            "key": "github.workflow.ref",
+            "value": {
+              "stringValue": "plengauer/opentelemetry-bash/.github/workflows/publish_main.yaml@refs/heads/main"
+            }
+          },
+          {
+            "key": "github.workflow.sha",
+            "value": {
+              "stringValue": "582e5a04b959fb87b5509940c0a6e84821332719"
+            }
+          },
+          {
+            "key": "github.workflow.name",
+            "value": {
+              "stringValue": "Publish"
+            }
+          },
+          {
+            "key": "github.job.name",
+            "value": {
+              "stringValue": "demo-generate"
+            }
+          },
+          {
+            "key": "github.step.name",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "github.action.name",
+            "value": {
+              "stringValue": "demo"
+            }
+          },
+          {
+            "key": "process.pid",
+            "value": {
+              "intValue": "6366"
+            }
+          },
+          {
+            "key": "process.parent_pid",
+            "value": {
+              "intValue": "6305"
+            }
+          },
+          {
+            "key": "process.executable.name",
+            "value": {
+              "stringValue": "bash"
+            }
+          },
+          {
+            "key": "process.executable.path",
+            "value": {
+              "stringValue": "/usr/bin/bash"
+            }
+          },
+          {
+            "key": "process.command_line",
+            "value": {
+              "stringValue": "/usr/bin/perl /usr/bin/parallel -q curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page={} ::: 1 2 3"
+            }
+          },
+          {
+            "key": "process.command",
+            "value": {
+              "stringValue": "/usr/bin/perl"
+            }
+          },
+          {
+            "key": "process.owner",
+            "value": {
+              "stringValue": "runner"
+            }
+          },
+          {
+            "key": "process.runtime.name",
+            "value": {
+              "stringValue": "bash"
+            }
+          },
+          {
+            "key": "process.runtime.description",
+            "value": {
+              "stringValue": "Bourne Again Shell"
+            }
+          },
+          {
+            "key": "process.runtime.version",
+            "value": {
+              "stringValue": "5.1-6ubuntu1.1"
+            }
+          },
+          {
+            "key": "process.runtime.options",
+            "value": {
+              "stringValue": "hBc"
+            }
+          },
+          {
+            "key": "service.version",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "service.namespace",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "service.instance.id",
+            "value": {
+              "stringValue": ""
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "shell",
+            "version": "4.28.0"
+          },
+          "spans": [
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "519fd9227a8c7461",
+              "parentSpanId": "996a87c54da3081b",
+              "flags": 768,
+              "name": "GET",
+              "kind": 3,
+              "startTimeUnixNano": "1726467161471555599",
+              "endTimeUnixNano": "1726467165681055441",
+              "attributes": [
+                {
+                  "key": "network.transport",
+                  "value": {
+                    "stringValue": "tcp"
+                  }
+                },
+                {
+                  "key": "network.protocol.name",
+                  "value": {
+                    "stringValue": "https"
+                  }
+                },
+                {
+                  "key": "network.protocol.version",
+                  "value": {
+                    "stringValue": "2"
+                  }
+                },
+                {
+                  "key": "network.peer.address",
+                  "value": {
+                    "stringValue": "140.82.116.6"
+                  }
+                },
+                {
+                  "key": "network.peer.port",
+                  "value": {
+                    "intValue": "443"
+                  }
+                },
+                {
+                  "key": "server.address",
+                  "value": {
+                    "stringValue": "api.github.com"
+                  }
+                },
+                {
+                  "key": "server.port",
+                  "value": {
+                    "intValue": "443"
+                  }
+                },
+                {
+                  "key": "url.full",
+                  "value": {
+                    "stringValue": "https://api.github.com:443/repos/plengauer/opentelemetry-bash/releases?per_page=100&page=2"
+                  }
+                },
+                {
+                  "key": "url.path",
+                  "value": {
+                    "stringValue": "/repos/plengauer/opentelemetry-bash/releases"
+                  }
+                },
+                {
+                  "key": "url.query",
+                  "value": {
+                    "stringValue": "per_page=100&page=2"
+                  }
+                },
+                {
+                  "key": "url.scheme",
+                  "value": {
+                    "stringValue": "https"
+                  }
+                },
+                {
+                  "key": "http.request.method",
+                  "value": {
+                    "stringValue": "GET"
+                  }
+                },
+                {
+                  "key": "http.request.header.host",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "api.github.com"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "user_agent.original",
+                  "value": {
+                    "stringValue": "curl/7.81.0"
+                  }
+                },
+                {
+                  "key": "http.request.header.user-agent",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "curl/7.81.0"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.request.header.accept",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "*/*"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.request.header.traceparent",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "00-935c2d9648a6b8ca944f551c7464ff2a-996a87c54da3081b-01"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.request.body.size",
+                  "value": {
+                    "intValue": "5"
+                  }
+                },
+                {
+                  "key": "http.response.status_code",
+                  "value": {
+                    "intValue": "200"
+                  }
+                },
+                {
+                  "key": "http.response.header.date",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "Mon, 16 Sep 2024 06:12:41 GMT"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.content-type",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "application/json; charset=utf-8"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.cache-control",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "public, max-age=60, s-maxage=60"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.vary",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "Accept,Accept-Encoding, Accept, X-Requested-With"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.etag",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "W/\"74dca10aa89ad0d8071ff56a1a3dd1e22f04355d37306f562bf4544a3e837aa9\""
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-github-media-type",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "github.v3; format=json"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.link",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "<https://api.github.com/repositories/692042935/releases?per_page=100&page=1>; rel=\"prev\", <https://api.github.com/repositories/692042935/releases?per_page=100&page=3>; rel=\"next\", <https://api.github.com/repositories/692042935/releases?per_page=100&page=3>; rel=\"last\", <https://api.github.com/repositories/692042935/releases?per_page=100&page=1>; rel=\"first\""
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-github-api-version-selected",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "2022-11-28"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.access-control-expose-headers",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.access-control-allow-origin",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "*"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.strict-transport-security",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "max-age=31536000; includeSubdomains; preload"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-frame-options",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "deny"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-content-type-options",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "nosniff"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-xss-protection",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "0"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.referrer-policy",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "origin-when-cross-origin, strict-origin-when-cross-origin"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.content-security-policy",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "default-src 'none'"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.server",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "github.com"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-ratelimit-limit",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "60"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-ratelimit-remaining",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "56"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-ratelimit-reset",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "1726470755"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-ratelimit-resource",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "core"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-ratelimit-used",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "4"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.accept-ranges",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "bytes"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-github-request-id",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "4C33:908CE:2A5D99F:2ABD6FA:66E7CC59"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.body.size",
+                  "value": {
+                    "intValue": "5"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "996a87c54da3081b",
+              "parentSpanId": "aaceca58ae7a30f6",
+              "flags": 768,
+              "name": "curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page=2",
+              "kind": 1,
+              "startTimeUnixNano": "1726467161281912041",
+              "endTimeUnixNano": "1726467165685579892",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page=2"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "curl"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "curl"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/curl"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "curl"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.lineno",
+                  "value": {
+                    "intValue": "2"
+                  }
+                }
+              ],
+              "status": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "telemetry.sdk.language",
+            "value": {
+              "stringValue": "shell"
+            }
+          },
+          {
+            "key": "telemetry.sdk.name",
+            "value": {
+              "stringValue": "opentelemetry"
+            }
+          },
+          {
+            "key": "telemetry.sdk.version",
+            "value": {
+              "stringValue": "4.28.0"
+            }
+          },
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "unknown_service"
+            }
+          },
+          {
+            "key": "github.sha",
+            "value": {
+              "stringValue": "582e5a04b959fb87b5509940c0a6e84821332719"
+            }
+          },
+          {
+            "key": "github.repository.id",
+            "value": {
+              "stringValue": "692042935"
+            }
+          },
+          {
+            "key": "github.repository.name",
+            "value": {
+              "stringValue": "plengauer/opentelemetry-bash"
+            }
+          },
+          {
+            "key": "github.repository.owner.id",
+            "value": {
+              "stringValue": "100447901"
+            }
+          },
+          {
+            "key": "github.repository.owner.name",
+            "value": {
+              "stringValue": "plengauer"
+            }
+          },
+          {
+            "key": "github.event.ref",
+            "value": {
+              "stringValue": "refs/heads/main"
+            }
+          },
+          {
+            "key": "github.event.ref.sha",
+            "value": {
+              "stringValue": "582e5a04b959fb87b5509940c0a6e84821332719"
+            }
+          },
+          {
+            "key": "github.event.ref.name",
+            "value": {
+              "stringValue": "main"
+            }
+          },
+          {
+            "key": "github.event.actor.id",
+            "value": {
+              "stringValue": "170979611"
+            }
+          },
+          {
+            "key": "github.event.actor.name",
+            "value": {
+              "stringValue": "actions-bot-pl"
+            }
+          },
+          {
+            "key": "github.event.name",
+            "value": {
+              "stringValue": "push"
+            }
+          },
+          {
+            "key": "github.workflow.run.id",
+            "value": {
+              "stringValue": "10878133798"
+            }
+          },
+          {
+            "key": "github.workflow.run.attempt",
+            "value": {
+              "stringValue": "1"
+            }
+          },
+          {
+            "key": "github.workflow.ref",
+            "value": {
+              "stringValue": "plengauer/opentelemetry-bash/.github/workflows/publish_main.yaml@refs/heads/main"
+            }
+          },
+          {
+            "key": "github.workflow.sha",
+            "value": {
+              "stringValue": "582e5a04b959fb87b5509940c0a6e84821332719"
+            }
+          },
+          {
+            "key": "github.workflow.name",
+            "value": {
+              "stringValue": "Publish"
+            }
+          },
+          {
+            "key": "github.job.name",
+            "value": {
+              "stringValue": "demo-generate"
+            }
+          },
+          {
+            "key": "github.step.name",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "github.action.name",
+            "value": {
+              "stringValue": "demo"
+            }
+          },
+          {
+            "key": "process.pid",
+            "value": {
+              "intValue": "6365"
+            }
+          },
+          {
+            "key": "process.parent_pid",
+            "value": {
+              "intValue": "6305"
+            }
+          },
+          {
+            "key": "process.executable.name",
+            "value": {
+              "stringValue": "bash"
+            }
+          },
+          {
+            "key": "process.executable.path",
+            "value": {
+              "stringValue": "/usr/bin/bash"
+            }
+          },
+          {
+            "key": "process.command_line",
+            "value": {
+              "stringValue": "/usr/bin/perl /usr/bin/parallel -q curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page={} ::: 1 2 3"
+            }
+          },
+          {
+            "key": "process.command",
+            "value": {
+              "stringValue": "/usr/bin/perl"
+            }
+          },
+          {
+            "key": "process.owner",
+            "value": {
+              "stringValue": "runner"
+            }
+          },
+          {
+            "key": "process.runtime.name",
+            "value": {
+              "stringValue": "bash"
+            }
+          },
+          {
+            "key": "process.runtime.description",
+            "value": {
+              "stringValue": "Bourne Again Shell"
+            }
+          },
+          {
+            "key": "process.runtime.version",
+            "value": {
+              "stringValue": "5.1-6ubuntu1.1"
+            }
+          },
+          {
+            "key": "process.runtime.options",
+            "value": {
+              "stringValue": "hBc"
+            }
+          },
+          {
+            "key": "service.version",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "service.namespace",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "service.instance.id",
+            "value": {
+              "stringValue": ""
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "shell",
+            "version": "4.28.0"
+          },
+          "spans": [
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "a5a1b9b2ea1eac27",
+              "parentSpanId": "a5304eec5f3ce8d5",
+              "flags": 768,
+              "name": "GET",
+              "kind": 3,
+              "startTimeUnixNano": "1726467161393941780",
+              "endTimeUnixNano": "1726467165838804910",
+              "attributes": [
+                {
+                  "key": "network.transport",
+                  "value": {
+                    "stringValue": "tcp"
+                  }
+                },
+                {
+                  "key": "network.protocol.name",
+                  "value": {
+                    "stringValue": "https"
+                  }
+                },
+                {
+                  "key": "network.protocol.version",
+                  "value": {
+                    "stringValue": "2"
+                  }
+                },
+                {
+                  "key": "network.peer.address",
+                  "value": {
+                    "stringValue": "140.82.116.6"
+                  }
+                },
+                {
+                  "key": "network.peer.port",
+                  "value": {
+                    "intValue": "443"
+                  }
+                },
+                {
+                  "key": "server.address",
+                  "value": {
+                    "stringValue": "api.github.com"
+                  }
+                },
+                {
+                  "key": "server.port",
+                  "value": {
+                    "intValue": "443"
+                  }
+                },
+                {
+                  "key": "url.full",
+                  "value": {
+                    "stringValue": "https://api.github.com:443/repos/plengauer/opentelemetry-bash/releases?per_page=100&page=1"
+                  }
+                },
+                {
+                  "key": "url.path",
+                  "value": {
+                    "stringValue": "/repos/plengauer/opentelemetry-bash/releases"
+                  }
+                },
+                {
+                  "key": "url.query",
+                  "value": {
+                    "stringValue": "per_page=100&page=1"
+                  }
+                },
+                {
+                  "key": "url.scheme",
+                  "value": {
+                    "stringValue": "https"
+                  }
+                },
+                {
+                  "key": "http.request.method",
+                  "value": {
+                    "stringValue": "GET"
+                  }
+                },
+                {
+                  "key": "http.request.header.host",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "api.github.com"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "user_agent.original",
+                  "value": {
+                    "stringValue": "curl/7.81.0"
+                  }
+                },
+                {
+                  "key": "http.request.header.user-agent",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "curl/7.81.0"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.request.header.accept",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "*/*"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.request.header.traceparent",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "00-935c2d9648a6b8ca944f551c7464ff2a-a5304eec5f3ce8d5-01"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.request.body.size",
+                  "value": {
+                    "intValue": "5"
+                  }
+                },
+                {
+                  "key": "http.response.status_code",
+                  "value": {
+                    "intValue": "200"
+                  }
+                },
+                {
+                  "key": "http.response.header.date",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "Mon, 16 Sep 2024 06:12:41 GMT"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.content-type",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "application/json; charset=utf-8"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.cache-control",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "public, max-age=60, s-maxage=60"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.vary",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "Accept,Accept-Encoding, Accept, X-Requested-With"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.etag",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "W/\"0d491070a6f9f2e7e1cc325024a02bf312e43faae0a86557d10649f9de3d7504\""
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-github-media-type",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "github.v3; format=json"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.link",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "<https://api.github.com/repositories/692042935/releases?per_page=100&page=2>; rel=\"next\", <https://api.github.com/repositories/692042935/releases?per_page=100&page=3>; rel=\"last\""
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-github-api-version-selected",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "2022-11-28"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.access-control-expose-headers",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.access-control-allow-origin",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "*"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.strict-transport-security",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "max-age=31536000; includeSubdomains; preload"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-frame-options",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "deny"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-content-type-options",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "nosniff"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-xss-protection",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "0"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.referrer-policy",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "origin-when-cross-origin, strict-origin-when-cross-origin"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.content-security-policy",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "default-src 'none'"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.server",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "github.com"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-ratelimit-limit",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "60"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-ratelimit-remaining",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "58"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-ratelimit-reset",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "1726470755"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-ratelimit-resource",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "core"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-ratelimit-used",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "2"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.accept-ranges",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "bytes"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.x-github-request-id",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "4C31:14C69:1E1F8C7F:1E59CFB0:66E7CC59"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.body.size",
+                  "value": {
+                    "intValue": "5"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "a5304eec5f3ce8d5",
+              "parentSpanId": "aaceca58ae7a30f6",
+              "flags": 768,
+              "name": "curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page=1",
+              "kind": 1,
+              "startTimeUnixNano": "1726467161196302440",
+              "endTimeUnixNano": "1726467165842517795",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page=1"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "curl"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "curl"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/curl"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "curl"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.lineno",
+                  "value": {
+                    "intValue": "2"
+                  }
+                }
+              ],
+              "status": {}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "telemetry.sdk.language",
+            "value": {
+              "stringValue": "shell"
+            }
+          },
+          {
+            "key": "telemetry.sdk.name",
+            "value": {
+              "stringValue": "opentelemetry"
+            }
+          },
+          {
+            "key": "telemetry.sdk.version",
+            "value": {
+              "stringValue": "4.28.0"
+            }
+          },
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "unknown_service"
+            }
+          },
+          {
+            "key": "github.sha",
+            "value": {
+              "stringValue": "582e5a04b959fb87b5509940c0a6e84821332719"
+            }
+          },
+          {
+            "key": "github.repository.id",
+            "value": {
+              "stringValue": "692042935"
+            }
+          },
+          {
+            "key": "github.repository.name",
+            "value": {
+              "stringValue": "plengauer/opentelemetry-bash"
+            }
+          },
+          {
+            "key": "github.repository.owner.id",
+            "value": {
+              "stringValue": "100447901"
+            }
+          },
+          {
+            "key": "github.repository.owner.name",
+            "value": {
+              "stringValue": "plengauer"
+            }
+          },
+          {
+            "key": "github.event.ref",
+            "value": {
+              "stringValue": "refs/heads/main"
+            }
+          },
+          {
+            "key": "github.event.ref.sha",
+            "value": {
+              "stringValue": "582e5a04b959fb87b5509940c0a6e84821332719"
+            }
+          },
+          {
+            "key": "github.event.ref.name",
+            "value": {
+              "stringValue": "main"
+            }
+          },
+          {
+            "key": "github.event.actor.id",
+            "value": {
+              "stringValue": "170979611"
+            }
+          },
+          {
+            "key": "github.event.actor.name",
+            "value": {
+              "stringValue": "actions-bot-pl"
+            }
+          },
+          {
+            "key": "github.event.name",
+            "value": {
+              "stringValue": "push"
+            }
+          },
+          {
+            "key": "github.workflow.run.id",
+            "value": {
+              "stringValue": "10878133798"
+            }
+          },
+          {
+            "key": "github.workflow.run.attempt",
+            "value": {
+              "stringValue": "1"
+            }
+          },
+          {
+            "key": "github.workflow.ref",
+            "value": {
+              "stringValue": "plengauer/opentelemetry-bash/.github/workflows/publish_main.yaml@refs/heads/main"
+            }
+          },
+          {
+            "key": "github.workflow.sha",
+            "value": {
+              "stringValue": "582e5a04b959fb87b5509940c0a6e84821332719"
+            }
+          },
+          {
+            "key": "github.workflow.name",
+            "value": {
+              "stringValue": "Publish"
+            }
+          },
+          {
+            "key": "github.job.name",
+            "value": {
+              "stringValue": "demo-generate"
+            }
+          },
+          {
+            "key": "github.step.name",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "github.action.name",
+            "value": {
+              "stringValue": "demo"
+            }
+          },
+          {
+            "key": "process.pid",
+            "value": {
+              "intValue": "5575"
+            }
+          },
+          {
+            "key": "process.parent_pid",
+            "value": {
+              "intValue": "4344"
+            }
+          },
+          {
+            "key": "process.executable.name",
+            "value": {
+              "stringValue": "bash"
+            }
+          },
+          {
+            "key": "process.executable.path",
+            "value": {
+              "stringValue": "/usr/bin/bash"
+            }
+          },
+          {
+            "key": "process.command_line",
+            "value": {
+              "stringValue": "xargs parallel -q curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page={} :::"
+            }
+          },
+          {
+            "key": "process.command",
+            "value": {
+              "stringValue": "xargs"
+            }
+          },
+          {
+            "key": "process.owner",
+            "value": {
+              "stringValue": "runner"
+            }
+          },
+          {
+            "key": "process.runtime.name",
+            "value": {
+              "stringValue": "bash"
+            }
+          },
+          {
+            "key": "process.runtime.description",
+            "value": {
+              "stringValue": "Bourne Again Shell"
+            }
+          },
+          {
+            "key": "process.runtime.version",
+            "value": {
+              "stringValue": "5.1-6ubuntu1.1"
+            }
+          },
+          {
+            "key": "process.runtime.options",
+            "value": {
+              "stringValue": "hBc"
+            }
+          },
+          {
+            "key": "service.version",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "service.namespace",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "service.instance.id",
+            "value": {
+              "stringValue": ""
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "shell",
+            "version": "4.28.0"
+          },
+          "spans": [
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "aaceca58ae7a30f6",
+              "parentSpanId": "bf628e05fbdab02e",
+              "flags": 768,
+              "name": "/usr/bin/perl /usr/bin/parallel -q curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page={} ::: 1 2 3",
+              "kind": 1,
+              "startTimeUnixNano": "1726467159974070506",
+              "endTimeUnixNano": "1726467165857516429",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "/usr/bin/perl /usr/bin/parallel -q curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page={} ::: 1 2 3"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "/usr/bin/perl"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "perl"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/perl"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "perl"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.lineno",
+                  "value": {
+                    "intValue": "2"
+                  }
+                }
+              ],
+              "status": {}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "telemetry.sdk.language",
+            "value": {
+              "stringValue": "shell"
+            }
+          },
+          {
+            "key": "telemetry.sdk.name",
+            "value": {
+              "stringValue": "opentelemetry"
+            }
+          },
+          {
+            "key": "telemetry.sdk.version",
+            "value": {
+              "stringValue": "4.28.0"
+            }
+          },
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "unknown_service"
+            }
+          },
+          {
+            "key": "github.sha",
+            "value": {
+              "stringValue": "582e5a04b959fb87b5509940c0a6e84821332719"
+            }
+          },
+          {
+            "key": "github.repository.id",
+            "value": {
+              "stringValue": "692042935"
+            }
+          },
+          {
+            "key": "github.repository.name",
+            "value": {
+              "stringValue": "plengauer/opentelemetry-bash"
+            }
+          },
+          {
+            "key": "github.repository.owner.id",
+            "value": {
+              "stringValue": "100447901"
+            }
+          },
+          {
+            "key": "github.repository.owner.name",
+            "value": {
+              "stringValue": "plengauer"
+            }
+          },
+          {
+            "key": "github.event.ref",
+            "value": {
+              "stringValue": "refs/heads/main"
+            }
+          },
+          {
+            "key": "github.event.ref.sha",
+            "value": {
+              "stringValue": "582e5a04b959fb87b5509940c0a6e84821332719"
+            }
+          },
+          {
+            "key": "github.event.ref.name",
+            "value": {
+              "stringValue": "main"
+            }
+          },
+          {
+            "key": "github.event.actor.id",
+            "value": {
+              "stringValue": "170979611"
+            }
+          },
+          {
+            "key": "github.event.actor.name",
+            "value": {
+              "stringValue": "actions-bot-pl"
+            }
+          },
+          {
+            "key": "github.event.name",
+            "value": {
+              "stringValue": "push"
+            }
+          },
+          {
+            "key": "github.workflow.run.id",
+            "value": {
+              "stringValue": "10878133798"
+            }
+          },
+          {
+            "key": "github.workflow.run.attempt",
+            "value": {
+              "stringValue": "1"
+            }
+          },
+          {
+            "key": "github.workflow.ref",
+            "value": {
+              "stringValue": "plengauer/opentelemetry-bash/.github/workflows/publish_main.yaml@refs/heads/main"
+            }
+          },
+          {
+            "key": "github.workflow.sha",
+            "value": {
+              "stringValue": "582e5a04b959fb87b5509940c0a6e84821332719"
+            }
+          },
+          {
+            "key": "github.workflow.name",
+            "value": {
+              "stringValue": "Publish"
+            }
+          },
+          {
+            "key": "github.job.name",
+            "value": {
+              "stringValue": "demo-generate"
+            }
+          },
+          {
+            "key": "github.step.name",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "github.action.name",
+            "value": {
+              "stringValue": "demo"
+            }
+          },
+          {
+            "key": "process.pid",
+            "value": {
+              "intValue": "20304"
+            }
+          },
+          {
+            "key": "process.parent_pid",
+            "value": {
+              "intValue": "4271"
+            }
+          },
+          {
+            "key": "process.executable.name",
+            "value": {
+              "stringValue": "bash"
+            }
+          },
+          {
+            "key": "process.executable.path",
+            "value": {
+              "stringValue": "/usr/bin/bash"
+            }
+          },
+          {
+            "key": "process.command_line",
+            "value": {
+              "stringValue": "xargs wget"
+            }
+          },
+          {
+            "key": "process.command",
+            "value": {
+              "stringValue": "xargs"
+            }
+          },
+          {
+            "key": "process.owner",
+            "value": {
+              "stringValue": "runner"
+            }
+          },
+          {
+            "key": "process.runtime.name",
+            "value": {
+              "stringValue": "bash"
+            }
+          },
+          {
+            "key": "process.runtime.description",
+            "value": {
+              "stringValue": "Bourne Again Shell"
+            }
+          },
+          {
+            "key": "process.runtime.version",
+            "value": {
+              "stringValue": "5.1-6ubuntu1.1"
+            }
+          },
+          {
+            "key": "process.runtime.options",
+            "value": {
+              "stringValue": "hBc"
+            }
+          },
+          {
+            "key": "service.version",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "service.namespace",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "service.instance.id",
+            "value": {
+              "stringValue": ""
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "shell",
+            "version": "4.28.0"
+          },
+          "spans": [
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "6c4c5ec46d755f09",
+              "parentSpanId": "6c9316d8147d51fd",
+              "flags": 768,
+              "name": "GET",
+              "kind": 3,
+              "startTimeUnixNano": "1726467166572023951",
+              "endTimeUnixNano": "1726467166770321121",
+              "attributes": [
+                {
+                  "key": "network.protocol.name",
+                  "value": {
+                    "stringValue": "https"
+                  }
+                },
+                {
+                  "key": "network.transport",
+                  "value": {
+                    "stringValue": "tcp"
+                  }
+                },
+                {
+                  "key": "network.peer.address",
+                  "value": {
+                    "stringValue": "140.82.116.4"
+                  }
+                },
+                {
+                  "key": "network.peer.port",
+                  "value": {
+                    "intValue": "443"
+                  }
+                },
+                {
+                  "key": "server.address",
+                  "value": {
+                    "stringValue": "github.com"
+                  }
+                },
+                {
+                  "key": "server.port",
+                  "value": {
+                    "intValue": "443"
+                  }
+                },
+                {
+                  "key": "url.full",
+                  "value": {
+                    "stringValue": "https://github.com/plengauer/opentelemetry-bash/releases/download/v1.13.7/opentelemetry-shell_1.13.7.deb"
+                  }
+                },
+                {
+                  "key": "url.path",
+                  "value": {
+                    "stringValue": "/plengauer/opentelemetry-bash/releases/download/v1.13.7/opentelemetry-shell_1.13.7.deb"
+                  }
+                },
+                {
+                  "key": "url.scheme",
+                  "value": {
+                    "stringValue": "https"
+                  }
+                },
+                {
+                  "key": "user_agent.original",
+                  "value": {
+                    "stringValue": "wget"
+                  }
+                },
+                {
+                  "key": "http.request.method",
+                  "value": {
+                    "stringValue": "GET"
+                  }
+                },
+                {
+                  "key": "http.response.status_code",
+                  "value": {
+                    "intValue": "302"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "adfc853c7a713130",
+              "parentSpanId": "6c9316d8147d51fd",
+              "flags": 768,
+              "name": "GET",
+              "kind": 3,
+              "startTimeUnixNano": "1726467166755561856",
+              "endTimeUnixNano": "1726467167182796048",
+              "attributes": [
+                {
+                  "key": "network.protocol.name",
+                  "value": {
+                    "stringValue": "https"
+                  }
+                },
+                {
+                  "key": "network.transport",
+                  "value": {
+                    "stringValue": "tcp"
+                  }
+                },
+                {
+                  "key": "network.peer.address",
+                  "value": {
+                    "stringValue": "185.199.108.133"
+                  }
+                },
+                {
+                  "key": "network.peer.port",
+                  "value": {
+                    "intValue": "443"
+                  }
+                },
+                {
+                  "key": "server.address",
+                  "value": {
+                    "stringValue": "objects.githubusercontent.com"
+                  }
+                },
+                {
+                  "key": "server.port",
+                  "value": {
+                    "intValue": "443"
+                  }
+                },
+                {
+                  "key": "url.full",
+                  "value": {
+                    "stringValue": "https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/5544a935-3cf9-4f9b-b6ed-d668fd012e99?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240916%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240916T061246Z&X-Amz-Expires=300&X-Amz-Signature=0d59a86d32108804d8ca5bbc1be49a8289783af08ed08286f6d3dbbd3f0a6dc9&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=692042935&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.7.deb&response-content-type=application%2Foctet-stream"
+                  }
+                },
+                {
+                  "key": "url.path",
+                  "value": {
+                    "stringValue": "/github-production-release-asset-2e65be/692042935/5544a935-3cf9-4f9b-b6ed-d668fd012e99"
+                  }
+                },
+                {
+                  "key": "url.query",
+                  "value": {
+                    "stringValue": "X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240916%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240916T061246Z&X-Amz-Expires=300&X-Amz-Signature=0d59a86d32108804d8ca5bbc1be49a8289783af08ed08286f6d3dbbd3f0a6dc9&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=692042935&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.7.deb&response-content-type=application%2Foctet-stream"
+                  }
+                },
+                {
+                  "key": "url.scheme",
+                  "value": {
+                    "stringValue": "https"
+                  }
+                },
+                {
+                  "key": "user_agent.original",
+                  "value": {
+                    "stringValue": "wget"
+                  }
+                },
+                {
+                  "key": "http.request.method",
+                  "value": {
+                    "stringValue": "GET"
+                  }
+                },
+                {
+                  "key": "http.response.status_code",
+                  "value": {
+                    "intValue": "200"
+                  }
+                },
+                {
+                  "key": "http.response.header.content-type",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "application/octet-stream"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.content-length",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "7202"
+                        }
+                      ]
+                    }
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "6e520dced4c4eb44",
+              "parentSpanId": "6c9316d8147d51fd",
+              "flags": 768,
+              "name": "GET",
+              "kind": 3,
+              "startTimeUnixNano": "1726467167356633871",
+              "endTimeUnixNano": "1726467167764275465",
+              "attributes": [
+                {
+                  "key": "network.protocol.name",
+                  "value": {
+                    "stringValue": "https"
+                  }
+                },
+                {
+                  "key": "network.transport",
+                  "value": {
+                    "stringValue": "tcp"
+                  }
+                },
+                {
+                  "key": "network.peer.address",
+                  "value": {
+                    "stringValue": "185.199.108.133"
+                  }
+                },
+                {
+                  "key": "network.peer.port",
+                  "value": {
+                    "intValue": "443"
+                  }
+                },
+                {
+                  "key": "server.address",
+                  "value": {
+                    "stringValue": "objects.githubusercontent.com"
+                  }
+                },
+                {
+                  "key": "server.port",
+                  "value": {
+                    "intValue": "443"
+                  }
+                },
+                {
+                  "key": "url.full",
+                  "value": {
+                    "stringValue": "https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/e8091cbc-915a-4ba7-bca7-308817fe26c4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240916%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240916T061247Z&X-Amz-Expires=300&X-Amz-Signature=900c2b8b0f2e7a5ec455d41b2f0095e0c21a20a378a6be79d9b68614dad2b32e&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=692042935&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.6.deb&response-content-type=application%2Foctet-stream"
+                  }
+                },
+                {
+                  "key": "url.path",
+                  "value": {
+                    "stringValue": "/github-production-release-asset-2e65be/692042935/e8091cbc-915a-4ba7-bca7-308817fe26c4"
+                  }
+                },
+                {
+                  "key": "url.query",
+                  "value": {
+                    "stringValue": "X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240916%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240916T061247Z&X-Amz-Expires=300&X-Amz-Signature=900c2b8b0f2e7a5ec455d41b2f0095e0c21a20a378a6be79d9b68614dad2b32e&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=692042935&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.6.deb&response-content-type=application%2Foctet-stream"
+                  }
+                },
+                {
+                  "key": "url.scheme",
+                  "value": {
+                    "stringValue": "https"
+                  }
+                },
+                {
+                  "key": "user_agent.original",
+                  "value": {
+                    "stringValue": "wget"
+                  }
+                },
+                {
+                  "key": "http.request.method",
+                  "value": {
+                    "stringValue": "GET"
+                  }
+                },
+                {
+                  "key": "http.response.status_code",
+                  "value": {
+                    "intValue": "200"
+                  }
+                },
+                {
+                  "key": "http.response.header.content-type",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "application/octet-stream"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.content-length",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "7184"
+                        }
+                      ]
+                    }
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "affb1f456e92728d",
+              "parentSpanId": "6c9316d8147d51fd",
+              "flags": 768,
+              "name": "GET",
+              "kind": 3,
+              "startTimeUnixNano": "1726467167937714524",
+              "endTimeUnixNano": "1726467168296641854",
+              "attributes": [
+                {
+                  "key": "network.protocol.name",
+                  "value": {
+                    "stringValue": "https"
+                  }
+                },
+                {
+                  "key": "network.transport",
+                  "value": {
+                    "stringValue": "tcp"
+                  }
+                },
+                {
+                  "key": "network.peer.address",
+                  "value": {
+                    "stringValue": "185.199.108.133"
+                  }
+                },
+                {
+                  "key": "network.peer.port",
+                  "value": {
+                    "intValue": "443"
+                  }
+                },
+                {
+                  "key": "server.address",
+                  "value": {
+                    "stringValue": "objects.githubusercontent.com"
+                  }
+                },
+                {
+                  "key": "server.port",
+                  "value": {
+                    "intValue": "443"
+                  }
+                },
+                {
+                  "key": "url.full",
+                  "value": {
+                    "stringValue": "https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/25d95ab9-56aa-4a77-8e84-d4947ecef0fc?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240916%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240916T061247Z&X-Amz-Expires=300&X-Amz-Signature=2571567e30311030976a500416df653267d89907af92ba134597b97c3da8188c&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=692042935&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.5.deb&response-content-type=application%2Foctet-stream"
+                  }
+                },
+                {
+                  "key": "url.path",
+                  "value": {
+                    "stringValue": "/github-production-release-asset-2e65be/692042935/25d95ab9-56aa-4a77-8e84-d4947ecef0fc"
+                  }
+                },
+                {
+                  "key": "url.query",
+                  "value": {
+                    "stringValue": "X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240916%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240916T061247Z&X-Amz-Expires=300&X-Amz-Signature=2571567e30311030976a500416df653267d89907af92ba134597b97c3da8188c&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=692042935&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.5.deb&response-content-type=application%2Foctet-stream"
+                  }
+                },
+                {
+                  "key": "url.scheme",
+                  "value": {
+                    "stringValue": "https"
+                  }
+                },
+                {
+                  "key": "user_agent.original",
+                  "value": {
+                    "stringValue": "wget"
+                  }
+                },
+                {
+                  "key": "http.request.method",
+                  "value": {
+                    "stringValue": "GET"
+                  }
+                },
+                {
+                  "key": "http.response.status_code",
+                  "value": {
+                    "intValue": "200"
+                  }
+                },
+                {
+                  "key": "http.response.header.content-type",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "application/octet-stream"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "key": "http.response.header.content-length",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "7176"
+                        }
+                      ]
+                    }
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "6c9316d8147d51fd",
+              "parentSpanId": "98516eaf619805c2",
+              "flags": 768,
+              "name": "wget https://github.com/plengauer/opentelemetry-bash/releases/download/v1.13.7/opentelemetry-shell_1.13.7.deb https://github.com/plengauer/opentelemetry-bash/releases/download/v1.13.6/opentelemetry-shell_1.13.6.deb https://github.com/plengauer/opentelemetry-bash/releases/download/v1.13.5/opentelemetry-shell_1.13.5.deb",
+              "kind": 1,
+              "startTimeUnixNano": "1726467166461719369",
+              "endTimeUnixNano": "1726467168301785186",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "wget https://github.com/plengauer/opentelemetry-bash/releases/download/v1.13.7/opentelemetry-shell_1.13.7.deb https://github.com/plengauer/opentelemetry-bash/releases/download/v1.13.6/opentelemetry-shell_1.13.6.deb https://github.com/plengauer/opentelemetry-bash/releases/download/v1.13.5/opentelemetry-shell_1.13.5.deb"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "wget"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "wget"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/wget"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "wget"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.lineno",
+                  "value": {
+                    "intValue": "2"
+                  }
+                }
+              ],
+              "status": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "telemetry.sdk.language",
+            "value": {
+              "stringValue": "shell"
+            }
+          },
+          {
+            "key": "telemetry.sdk.name",
+            "value": {
+              "stringValue": "opentelemetry"
+            }
+          },
+          {
+            "key": "telemetry.sdk.version",
+            "value": {
+              "stringValue": "4.28.0"
+            }
+          },
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "unknown_service"
+            }
+          },
+          {
+            "key": "github.sha",
+            "value": {
+              "stringValue": "582e5a04b959fb87b5509940c0a6e84821332719"
+            }
+          },
+          {
+            "key": "github.repository.id",
+            "value": {
+              "stringValue": "692042935"
+            }
+          },
+          {
+            "key": "github.repository.name",
+            "value": {
+              "stringValue": "plengauer/opentelemetry-bash"
+            }
+          },
+          {
+            "key": "github.repository.owner.id",
+            "value": {
+              "stringValue": "100447901"
+            }
+          },
+          {
+            "key": "github.repository.owner.name",
+            "value": {
+              "stringValue": "plengauer"
+            }
+          },
+          {
+            "key": "github.event.ref",
+            "value": {
+              "stringValue": "refs/heads/main"
+            }
+          },
+          {
+            "key": "github.event.ref.sha",
+            "value": {
+              "stringValue": "582e5a04b959fb87b5509940c0a6e84821332719"
+            }
+          },
+          {
+            "key": "github.event.ref.name",
+            "value": {
+              "stringValue": "main"
+            }
+          },
+          {
+            "key": "github.event.actor.id",
+            "value": {
+              "stringValue": "170979611"
+            }
+          },
+          {
+            "key": "github.event.actor.name",
+            "value": {
+              "stringValue": "actions-bot-pl"
+            }
+          },
+          {
+            "key": "github.event.name",
+            "value": {
+              "stringValue": "push"
+            }
+          },
+          {
+            "key": "github.workflow.run.id",
+            "value": {
+              "stringValue": "10878133798"
+            }
+          },
+          {
+            "key": "github.workflow.run.attempt",
+            "value": {
+              "stringValue": "1"
+            }
+          },
+          {
+            "key": "github.workflow.ref",
+            "value": {
+              "stringValue": "plengauer/opentelemetry-bash/.github/workflows/publish_main.yaml@refs/heads/main"
+            }
+          },
+          {
+            "key": "github.workflow.sha",
+            "value": {
+              "stringValue": "582e5a04b959fb87b5509940c0a6e84821332719"
+            }
+          },
+          {
+            "key": "github.workflow.name",
+            "value": {
+              "stringValue": "Publish"
+            }
+          },
+          {
+            "key": "github.job.name",
+            "value": {
+              "stringValue": "demo-generate"
+            }
+          },
+          {
+            "key": "github.step.name",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "github.action.name",
+            "value": {
+              "stringValue": "demo"
+            }
+          },
+          {
+            "key": "process.pid",
+            "value": {
+              "intValue": "2933"
+            }
+          },
+          {
+            "key": "process.parent_pid",
+            "value": {
+              "intValue": "2723"
+            }
+          },
+          {
+            "key": "process.executable.name",
+            "value": {
+              "stringValue": "bash"
+            }
+          },
+          {
+            "key": "process.executable.path",
+            "value": {
+              "stringValue": "/usr/bin/bash"
+            }
+          },
+          {
+            "key": "process.command_line",
+            "value": {
+              "stringValue": "bash -e demo.sh"
+            }
+          },
+          {
+            "key": "process.command",
+            "value": {
+              "stringValue": "bash"
+            }
+          },
+          {
+            "key": "process.owner",
+            "value": {
+              "stringValue": "runner"
+            }
+          },
+          {
+            "key": "process.runtime.name",
+            "value": {
+              "stringValue": "bash"
+            }
+          },
+          {
+            "key": "process.runtime.description",
+            "value": {
+              "stringValue": "Bourne Again Shell"
+            }
+          },
+          {
+            "key": "process.runtime.version",
+            "value": {
+              "stringValue": "5.1-6ubuntu1.1"
+            }
+          },
+          {
+            "key": "process.runtime.options",
+            "value": {
+              "stringValue": "ehB"
+            }
+          },
+          {
+            "key": "service.version",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "service.namespace",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "service.instance.id",
+            "value": {
+              "stringValue": ""
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "shell",
+            "version": "4.28.0"
+          },
+          "spans": [
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "10f9723321c2bcf7",
+              "parentSpanId": "9d69728bb360260a",
+              "flags": 768,
+              "name": "head --lines=3",
+              "kind": 1,
+              "startTimeUnixNano": "1726467154955121025",
+              "endTimeUnixNano": "1726467165855977396",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "head --lines=3"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "head"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "head"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/head"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "head"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "demo.sh"
+                  }
+                },
+                {
+                  "key": "code.lineno",
+                  "value": {
+                    "intValue": "12"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "bf628e05fbdab02e",
+              "parentSpanId": "9d69728bb360260a",
+              "flags": 768,
+              "name": "xargs parallel -q curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page={} :::",
+              "kind": 1,
+              "startTimeUnixNano": "1726467154935873716",
+              "endTimeUnixNano": "1726467165897738717",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "xargs parallel -q curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page={} :::"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "xargs"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "xargs"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/xargs"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "xargs"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "demo.sh"
+                  }
+                },
+                {
+                  "key": "code.lineno",
+                  "value": {
+                    "intValue": "11"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "75c64619a46ff6ba",
+              "parentSpanId": "9d69728bb360260a",
+              "flags": 768,
+              "name": "jq .[] | .assets[] | .browser_download_url -r",
+              "kind": 1,
+              "startTimeUnixNano": "1726467154946618425",
+              "endTimeUnixNano": "1726467165900484917",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "jq .[] | .assets[] | .browser_download_url -r"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "jq"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "jq"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/jq"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "jq"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "demo.sh"
+                  }
+                },
+                {
+                  "key": "code.lineno",
+                  "value": {
+                    "intValue": "12"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "c166741c8c95c435",
+              "parentSpanId": "9d69728bb360260a",
+              "flags": 768,
+              "name": "grep .deb$",
+              "kind": 1,
+              "startTimeUnixNano": "1726467154938946457",
+              "endTimeUnixNano": "1726467165903433757",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "grep .deb$"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "grep"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "grep"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/grep"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "grep"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "demo.sh"
+                  }
+                },
+                {
+                  "key": "code.lineno",
+                  "value": {
+                    "intValue": "12"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "ba570049dde5e94c",
+              "parentSpanId": "9d69728bb360260a",
+              "flags": 768,
+              "name": "grep _1.",
+              "kind": 1,
+              "startTimeUnixNano": "1726467154955360100",
+              "endTimeUnixNano": "1726467165907234155",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "grep _1."
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "grep"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "grep"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/grep"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "grep"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "2"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "demo.sh"
+                  }
+                },
+                {
+                  "key": "code.lineno",
+                  "value": {
+                    "intValue": "12"
+                  }
+                }
+              ],
+              "status": {
+                "code": 2
+              }
+            },
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "98516eaf619805c2",
+              "parentSpanId": "9d69728bb360260a",
+              "flags": 768,
+              "name": "xargs wget",
+              "kind": 1,
+              "startTimeUnixNano": "1726467154939134477",
+              "endTimeUnixNano": "1726467168336013218",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "xargs wget"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "xargs"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "xargs"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/xargs"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "xargs"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "demo.sh"
+                  }
+                },
+                {
+                  "key": "code.lineno",
+                  "value": {
+                    "intValue": "13"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "935c2d9648a6b8ca944f551c7464ff2a",
+              "spanId": "9d69728bb360260a",
+              "parentSpanId": "",
+              "flags": 256,
+              "name": "bash -e demo.sh",
+              "kind": 2,
+              "startTimeUnixNano": "1726467154891999040",
+              "endTimeUnixNano": "1726467168336622965",
+              "status": {}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
