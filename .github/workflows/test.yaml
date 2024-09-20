@@ -88,6 +88,7 @@ jobs:
       - run: sudo apt-get -y remove ${{ matrix.dependency }}
       - run: sudo apt-get -y install ./package.deb
       - run: sudo apt-get -y install ${{ matrix.dependency }}
+      - run: sudo apt-get -y remove ${{ matrix.dependency }}
 
   os-shell:
     needs: smoke
