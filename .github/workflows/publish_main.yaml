@@ -53,6 +53,7 @@ jobs:
     needs: [ demo-prepare, publish ]
     runs-on: ubuntu-latest
     strategy: 
+      fail-fast: false
       matrix: ${{ fromJSON(needs.demo-prepare.outputs.matrix) }}
     steps:
       - uses: actions/download-artifact@v4
