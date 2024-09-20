@@ -1,6 +1,0 @@
-GET / HTTP/1.1
-Host: 127.0.0.1:12345
-User-Agent: curl/7.81.0
-Accept: */*
-traceparent: 00-da3b42144bc941828a6665665f413e43-7f25ac52fb24f2cc-01
-

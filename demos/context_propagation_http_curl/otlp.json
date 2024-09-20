@@ -18,7 +18,7 @@
           {
             "key": "telemetry.sdk.version",
             "value": {
-              "stringValue": "4.28.0"
+              "stringValue": "4.29.0"
             }
           },
           {
@@ -30,7 +30,7 @@
           {
             "key": "github.sha",
             "value": {
-              "stringValue": "582e5a04b959fb87b5509940c0a6e84821332719"
+              "stringValue": "06945f1b56e91c472774032b99438d5a3b0493e7"
             }
           },
           {
@@ -66,7 +66,7 @@
           {
             "key": "github.event.ref.sha",
             "value": {
-              "stringValue": "582e5a04b959fb87b5509940c0a6e84821332719"
+              "stringValue": "06945f1b56e91c472774032b99438d5a3b0493e7"
             }
           },
           {
@@ -96,13 +96,13 @@
           {
             "key": "github.workflow.run.id",
             "value": {
-              "stringValue": "10878133798"
+              "stringValue": "10947266783"
             }
           },
           {
             "key": "github.workflow.run.attempt",
             "value": {
-              "stringValue": "1"
+              "stringValue": "6"
             }
           },
           {
@@ -114,7 +114,7 @@
           {
             "key": "github.workflow.sha",
             "value": {
-              "stringValue": "582e5a04b959fb87b5509940c0a6e84821332719"
+              "stringValue": "06945f1b56e91c472774032b99438d5a3b0493e7"
             }
           },
           {
@@ -144,37 +144,37 @@
           {
             "key": "process.pid",
             "value": {
-              "intValue": "2786"
+              "intValue": "4282"
             }
           },
           {
             "key": "process.parent_pid",
             "value": {
-              "intValue": "2693"
+              "intValue": "4279"
             }
           },
           {
             "key": "process.executable.name",
             "value": {
-              "stringValue": "bash"
+              "stringValue": "dash"
             }
           },
           {
             "key": "process.executable.path",
             "value": {
-              "stringValue": "/usr/bin/bash"
+              "stringValue": "/usr/bin/dash"
             }
           },
           {
             "key": "process.command_line",
             "value": {
-              "stringValue": "bash -e demo.sh"
+              "stringValue": "ncat -l -c printf \"HTTP/1.1 418 I'm a teapot    \" 12345"
             }
           },
           {
             "key": "process.command",
             "value": {
-              "stringValue": "bash"
+              "stringValue": "ncat"
             }
           },
           {
@@ -186,25 +186,25 @@
           {
             "key": "process.runtime.name",
             "value": {
-              "stringValue": "bash"
+              "stringValue": "dash"
             }
           },
           {
             "key": "process.runtime.description",
             "value": {
-              "stringValue": "Bourne Again Shell"
+              "stringValue": "Debian Almquist Shell"
             }
           },
           {
             "key": "process.runtime.version",
             "value": {
-              "stringValue": "5.1-6ubuntu1.1"
+              "stringValue": "0.5.11+git20210903+057cd650a4ed-3build1"
             }
           },
           {
             "key": "process.runtime.options",
             "value": {
-              "stringValue": "ehB"
+              "stringValue": "e"
             }
           },
           {
@@ -231,60 +231,183 @@
         {
           "scope": {
             "name": "shell",
-            "version": "4.28.0"
+            "version": "4.29.0"
           },
           "spans": [
             {
-              "traceId": "da3b42144bc941828a6665665f413e43",
-              "spanId": "f7c7ff9e016e3c07",
-              "parentSpanId": "1a4725951c86073b",
+              "traceId": "b7145da0e7a18e63e7a210fa4bb934df",
+              "spanId": "7a71974552f63a02",
+              "parentSpanId": "795083d5e0b9a96c",
               "flags": 768,
-              "name": "printf HTTP/1.1 418 I'm a teapot\\r\\ncontent-length: 0\\r\\n\\r\\n",
-              "kind": 1,
-              "startTimeUnixNano": "1726467118779555448",
-              "endTimeUnixNano": "1726467118798815263",
+              "name": "GET",
+              "kind": 2,
+              "startTimeUnixNano": "1726821242781309709",
+              "endTimeUnixNano": "1726821242864268717",
               "attributes": [
                 {
-                  "key": "shell.command_line",
+                  "key": "network.transport",
                   "value": {
-                    "stringValue": "printf HTTP/1.1 418 I'm a teapot\\r\\ncontent-length: 0\\r\\n\\r\\n"
+                    "stringValue": "TCP"
                   }
                 },
                 {
-                  "key": "shell.command",
+                  "key": "network.peer.address",
                   "value": {
-                    "stringValue": "printf"
+                    "stringValue": "127.0.0.1"
                   }
                 },
                 {
-                  "key": "shell.command.type",
+                  "key": "network.peer.port",
                   "value": {
-                    "stringValue": "builtin"
+                    "intValue": "56218"
                   }
                 },
                 {
-                  "key": "shell.command.name",
+                  "key": "server.address",
                   "value": {
-                    "stringValue": "printf"
+                    "stringValue": "127.0.0.1"
                   }
                 },
                 {
-                  "key": "shell.command.exit_code",
+                  "key": "server.port",
+                  "value": {
+                    "intValue": "12345"
+                  }
+                },
+                {
+                  "key": "client.address",
+                  "value": {
+                    "stringValue": "127.0.0.1"
+                  }
+                },
+                {
+                  "key": "client.port",
+                  "value": {
+                    "intValue": "56218"
+                  }
+                },
+                {
+                  "key": "network.protocol.name",
+                  "value": {
+                    "stringValue": "http"
+                  }
+                },
+                {
+                  "key": "network.protocol.version",
+                  "value": {
+                    "stringValue": "1.1"
+                  }
+                },
+                {
+                  "key": "url.full",
+                  "value": {
+                    "stringValue": "http://:12345/"
+                  }
+                },
+                {
+                  "key": "url.path",
+                  "value": {
+                    "stringValue": "/"
+                  }
+                },
+                {
+                  "key": "url.scheme",
+                  "value": {
+                    "stringValue": "http"
+                  }
+                },
+                {
+                  "key": "http.request.method",
+                  "value": {
+                    "stringValue": "GET"
+                  }
+                },
+                {
+                  "key": "http.request.body.size",
                   "value": {
                     "intValue": "0"
                   }
                 },
                 {
-                  "key": "code.filepath",
+                  "key": "http.response.status_code",
                   "value": {
-                    "stringValue": "demo.sh"
+                    "intValue": "418"
                   }
                 },
                 {
-                  "key": "code.lineno",
+                  "key": "http.response.body.size",
                   "value": {
-                    "intValue": "2"
+                    "intValue": "0"
                   }
+                }
+              ],
+              "links": [
+                {
+                  "traceId": "b7145da0e7a18e63e7a210fa4bb934df",
+                  "spanId": "bc140803cbc9994f",
+                  "flags": 768
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "b7145da0e7a18e63e7a210fa4bb934df",
+              "spanId": "bc140803cbc9994f",
+              "parentSpanId": "fa615c82c0fd9603",
+              "flags": 768,
+              "name": "send/receive",
+              "kind": 5,
+              "startTimeUnixNano": "1726821242676522403",
+              "endTimeUnixNano": "1726821242866504734",
+              "attributes": [
+                {
+                  "key": "network.transport",
+                  "value": {
+                    "stringValue": "TCP"
+                  }
+                },
+                {
+                  "key": "network.peer.address",
+                  "value": {
+                    "stringValue": "127.0.0.1"
+                  }
+                },
+                {
+                  "key": "network.peer.port",
+                  "value": {
+                    "intValue": "56218"
+                  }
+                },
+                {
+                  "key": "server.address",
+                  "value": {
+                    "stringValue": "127.0.0.1"
+                  }
+                },
+                {
+                  "key": "server.port",
+                  "value": {
+                    "intValue": "12345"
+                  }
+                },
+                {
+                  "key": "client.address",
+                  "value": {
+                    "stringValue": "127.0.0.1"
+                  }
+                },
+                {
+                  "key": "client.port",
+                  "value": {
+                    "intValue": "56218"
+                  }
+                }
+              ],
+              "links": [
+                {
+                  "traceId": "b7145da0e7a18e63e7a210fa4bb934df",
+                  "spanId": "7a71974552f63a02",
+                  "flags": 768
                 }
               ],
               "status": {}
@@ -292,11 +415,7 @@
           ]
         }
       ]
-    }
-  ]
-}
-{
-  "resourceSpans": [
+    },
     {
       "resource": {
         "attributes": [
@@ -315,7 +434,7 @@
           {
             "key": "telemetry.sdk.version",
             "value": {
-              "stringValue": "4.28.0"
+              "stringValue": "4.29.0"
             }
           },
           {
@@ -327,7 +446,7 @@
           {
             "key": "github.sha",
             "value": {
-              "stringValue": "582e5a04b959fb87b5509940c0a6e84821332719"
+              "stringValue": "06945f1b56e91c472774032b99438d5a3b0493e7"
             }
           },
           {
@@ -363,7 +482,7 @@
           {
             "key": "github.event.ref.sha",
             "value": {
-              "stringValue": "582e5a04b959fb87b5509940c0a6e84821332719"
+              "stringValue": "06945f1b56e91c472774032b99438d5a3b0493e7"
             }
           },
           {
@@ -393,13 +512,13 @@
           {
             "key": "github.workflow.run.id",
             "value": {
-              "stringValue": "10878133798"
+              "stringValue": "10947266783"
             }
           },
           {
             "key": "github.workflow.run.attempt",
             "value": {
-              "stringValue": "1"
+              "stringValue": "6"
             }
           },
           {
@@ -411,7 +530,7 @@
           {
             "key": "github.workflow.sha",
             "value": {
-              "stringValue": "582e5a04b959fb87b5509940c0a6e84821332719"
+              "stringValue": "06945f1b56e91c472774032b99438d5a3b0493e7"
             }
           },
           {
@@ -441,13 +560,13 @@
           {
             "key": "process.pid",
             "value": {
-              "intValue": "2786"
+              "intValue": "3382"
             }
           },
           {
             "key": "process.parent_pid",
             "value": {
-              "intValue": "2693"
+              "intValue": "2643"
             }
           },
           {
@@ -528,18 +647,18 @@
         {
           "scope": {
             "name": "shell",
-            "version": "4.28.0"
+            "version": "4.29.0"
           },
           "spans": [
             {
-              "traceId": "da3b42144bc941828a6665665f413e43",
-              "spanId": "4b7b8e7005ae6569",
-              "parentSpanId": "1a4725951c86073b",
+              "traceId": "b7145da0e7a18e63e7a210fa4bb934df",
+              "spanId": "c6525744a2b2c44c",
+              "parentSpanId": "fa615c82c0fd9603",
               "flags": 768,
               "name": "sleep 5",
               "kind": 1,
-              "startTimeUnixNano": "1726467118780475139",
-              "endTimeUnixNano": "1726467123803077434",
+              "startTimeUnixNano": "1726821237166593376",
+              "endTimeUnixNano": "1726821242187541387",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -599,125 +718,14 @@
               "status": {}
             },
             {
-              "traceId": "da3b42144bc941828a6665665f413e43",
-              "spanId": "61c5280d5f4458ab",
-              "parentSpanId": "9e4a707f9c60a56b",
-              "flags": 768,
-              "name": "send/receive",
-              "kind": 5,
-              "startTimeUnixNano": "1726467118808147853",
-              "endTimeUnixNano": "1726467124011499169",
-              "attributes": [
-                {
-                  "key": "network.transport",
-                  "value": {
-                    "stringValue": "tcp"
-                  }
-                },
-                {
-                  "key": "network.peer.port",
-                  "value": {
-                    "intValue": "12345"
-                  }
-                },
-                {
-                  "key": "server.address",
-                  "value": {
-                    "stringValue": "\\netcat"
-                  }
-                },
-                {
-                  "key": "server.port",
-                  "value": {
-                    "intValue": "12345"
-                  }
-                }
-              ],
-              "links": [
-                {
-                  "traceId": "da3b42144bc941828a6665665f413e43",
-                  "spanId": "76146fc1b0ebd998",
-                  "flags": 768
-                }
-              ],
-              "status": {}
-            },
-            {
-              "traceId": "da3b42144bc941828a6665665f413e43",
-              "spanId": "9e4a707f9c60a56b",
-              "parentSpanId": "1a4725951c86073b",
-              "flags": 768,
-              "name": "netcat -l 12345",
-              "kind": 1,
-              "startTimeUnixNano": "1726467118781009237",
-              "endTimeUnixNano": "1726467124016592917",
-              "attributes": [
-                {
-                  "key": "shell.command_line",
-                  "value": {
-                    "stringValue": "netcat -l 12345"
-                  }
-                },
-                {
-                  "key": "shell.command",
-                  "value": {
-                    "stringValue": "netcat"
-                  }
-                },
-                {
-                  "key": "shell.command.type",
-                  "value": {
-                    "stringValue": "file"
-                  }
-                },
-                {
-                  "key": "shell.command.name",
-                  "value": {
-                    "stringValue": "netcat"
-                  }
-                },
-                {
-                  "key": "subprocess.executable.path",
-                  "value": {
-                    "stringValue": "/usr/bin/netcat"
-                  }
-                },
-                {
-                  "key": "subprocess.executable.name",
-                  "value": {
-                    "stringValue": "netcat"
-                  }
-                },
-                {
-                  "key": "shell.command.exit_code",
-                  "value": {
-                    "intValue": "0"
-                  }
-                },
-                {
-                  "key": "code.filepath",
-                  "value": {
-                    "stringValue": "demo.sh"
-                  }
-                },
-                {
-                  "key": "code.lineno",
-                  "value": {
-                    "intValue": "2"
-                  }
-                }
-              ],
-              "status": {}
-            },
-            {
-              "traceId": "da3b42144bc941828a6665665f413e43",
-              "spanId": "7f25ac52fb24f2cc",
-              "parentSpanId": "ed8dbc24921c316b",
+              "traceId": "b7145da0e7a18e63e7a210fa4bb934df",
+              "spanId": "795083d5e0b9a96c",
+              "parentSpanId": "f996ce7c7bc98577",
               "flags": 768,
               "name": "GET",
               "kind": 3,
-              "startTimeUnixNano": "1726467123844521758",
-              "endTimeUnixNano": "1726467124023894385",
+              "startTimeUnixNano": "1726821242225785752",
+              "endTimeUnixNano": "1726821242907443471",
               "attributes": [
                 {
                   "key": "network.transport",
@@ -833,7 +841,7 @@
                     "arrayValue": {
                       "values": [
                         {
-                          "stringValue": "00-da3b42144bc941828a6665665f413e43-7f25ac52fb24f2cc-01"
+                          "stringValue": "00-b7145da0e7a18e63e7a210fa4bb934df-795083d5e0b9a96c-01"
                         }
                       ]
                     }
@@ -850,18 +858,6 @@
                   "value": {
                     "intValue": "0"
                   }
-                },
-                {
-                  "key": "http.response.header.content-length",
-                  "value": {
-                    "arrayValue": {
-                      "values": [
-                        {
-                          "stringValue": "0"
-                        }
-                      ]
-                    }
-                  }
                 }
               ],
               "status": {
@@ -869,14 +865,14 @@
               }
             },
             {
-              "traceId": "da3b42144bc941828a6665665f413e43",
-              "spanId": "ed8dbc24921c316b",
-              "parentSpanId": "1a4725951c86073b",
+              "traceId": "b7145da0e7a18e63e7a210fa4bb934df",
+              "spanId": "f996ce7c7bc98577",
+              "parentSpanId": "fa615c82c0fd9603",
               "flags": 768,
               "name": "curl http://127.0.0.1:12345",
               "kind": 1,
-              "startTimeUnixNano": "1726467123808174230",
-              "endTimeUnixNano": "1726467124027390873",
+              "startTimeUnixNano": "1726821242192102862",
+              "endTimeUnixNano": "1726821242910885674",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -936,14 +932,14 @@
               "status": {}
             },
             {
-              "traceId": "da3b42144bc941828a6665665f413e43",
-              "spanId": "1a4725951c86073b",
+              "traceId": "b7145da0e7a18e63e7a210fa4bb934df",
+              "spanId": "fa615c82c0fd9603",
               "parentSpanId": "",
               "flags": 256,
               "name": "bash -e demo.sh",
               "kind": 2,
-              "startTimeUnixNano": "1726467118765280951",
-              "endTimeUnixNano": "1726467124027514165",
+              "startTimeUnixNano": "1726821237153157033",
+              "endTimeUnixNano": "1726821242911037518",
               "status": {}
             }
           ]
