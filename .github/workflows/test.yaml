@@ -60,6 +60,34 @@ jobs:
           name: package.deb
       - run: sudo apt-get -y install ./package.deb
 
+  system-upgrade:
+    needs: [smoke]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: package.deb
+      - run: sudo apt-get -y install ./package.deb
+      - run: sudo apt-get update && sudo apt-get -y dist-upgrade
+      - run: sudo sed -i '/Prompt/d' /etc/update-manager/release-upgrades
+      - run: sudo sh -c 'echo "Prompt=normal" >> /etc/update-manager/release-upgrades'
+      - run: RELEASE_UPGRADER_ALLOW_THIRD_PARTY=1 sudo -E do-release-upgrade -f DistUpgradeViewNonInteractive
+
+  dependency:
+    needs: [smoke]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dependency: ['npm', 'gcc']
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: package.deb
+      - run: sudo apt-get update
+      - run: sudo apt-get -y remove ${{ matrix.dependency }}
+      - run: sudo apt-get -y install ./package.deb
+      - run: sudo apt-get -y install ${{ matrix.dependency }}
+
   os-shell:
     needs: smoke
     runs-on: ubuntu-latest
@@ -173,7 +201,7 @@ jobs:
           retention-days: 1
 
   join:
-    needs: [install, upgrade, os-shell, action, performance]
+    needs: [install, upgrade, system-upgrade, dependency, os-shell, action, performance]
     runs-on: ubuntu-latest
     outputs:
       success: ${{ steps.tests.outputs.success }}
