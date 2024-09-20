@@ -70,6 +70,7 @@ jobs:
       - run: sudo apt-get -y install ./package.deb
       - run: sudo apt-get update && sudo apt-get -y dist-upgrade
       - run: sudo apt-get update && sudo apt-get -y dist-upgrade
+      - run: sudo apt-get -y install $(sudo apt-mark showhold)
       - run: sudo sed -i '/Prompt/d' /etc/update-manager/release-upgrades
       - run: sudo sh -c 'echo "Prompt=normal" >> /etc/update-manager/release-upgrades'
       - run: RELEASE_UPGRADER_ALLOW_THIRD_PARTY=1 sudo -E do-release-upgrade -f DistUpgradeViewNonInteractive
