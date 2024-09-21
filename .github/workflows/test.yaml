@@ -65,7 +65,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dependency: ['ubuntu:stable', 'ubuntu:latest', 'ubuntu:rolling']
+        image: ['ubuntu:stable', 'ubuntu:latest', 'ubuntu:rolling']
     steps:
       - uses: actions/download-artifact@v4
         with:
