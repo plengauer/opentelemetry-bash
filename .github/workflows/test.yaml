@@ -82,6 +82,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
+        image: ['debian:oldstable', 'debian:stable', 'debian:testing', 'debian:oldstable-slim', 'debian:stable-slim', 'debian:testing-slim', 'ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling']
         dependency: ['npm', 'gcc']
     steps:
       - uses: actions/download-artifact@v4
@@ -94,7 +95,7 @@ jobs:
             echo 'apt-get -y install /root/package.deb'
             echo 'apt-get -y install ${{ matrix.dependency }}'
             echo 'apt-get -y remove ${{ matrix.dependency }}'
-          } | sudo docker run -v $(pwd)/package.deb:/root/package.deb --rm --network=host -i --entrypoint=/bin/sh ubuntu:latest -e
+          } | sudo docker run -v $(pwd)/package.deb:/root/package.deb --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
 
   os-shell:
     needs: smoke
