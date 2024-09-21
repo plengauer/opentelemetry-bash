@@ -1,6 +1,4 @@
 Failed to export logs batch code: 404, reason: 404 page not found
 
-0.0.1:12345... connected.
-HTTP request sent, awaiting response... 418 I'm a teapot
-2024-09-16 06:12:39 ERROR 418: I'm a teapot.
+ 08:32:42 ERROR 418: I'm a teapot.
 
