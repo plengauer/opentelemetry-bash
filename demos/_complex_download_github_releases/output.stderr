@@ -3,23 +3,23 @@ Failed to export logs batch code: 404, reason: 404 page not found
 Failed to export logs batch code: 404, reason: 404 page not found
 
 hub.com/plengauer/opentelemetry-bash/releases/download/v1.13.7/opentelemetry-shell_1.13.7.deb
-Resolving github.com (github.com)... 140.82.116.4
-Connecting to github.com (github.com)|140.82.116.4|:443... connected.
+Resolving github.com (github.com)... 140.82.114.3
+Connecting to github.com (github.com)|140.82.114.3|:443... connected.
 HTTP request sent, awaiting response... 302 Found
-Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/5544a935-3cf9-4f9b-b6ed-d668fd012e99?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240920%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240920T071953Z&X-Amz-Expires=300&X-Amz-Signature=9a6d27d295e7ccffa14db3379e9b9fb5013e739a6b8f78040567975020bfb408&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.7.deb&response-content-type=application%2Foctet-stream [following]
---2024-09-20 07:19:53--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/5544a935-3cf9-4f9b-b6ed-d668fd012e99?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240920%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240920T071953Z&X-Amz-Expires=300&X-Amz-Signature=9a6d27d295e7ccffa14db3379e9b9fb5013e739a6b8f78040567975020bfb408&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.7.deb&response-content-type=application%2Foctet-stream
-Resolving objects.githubusercontent.com (objects.githubusercontent.com)... 185.199.111.133, 185.199.108.133, 185.199.110.133, ...
+Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/5544a935-3cf9-4f9b-b6ed-d668fd012e99?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240921%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240921T083243Z&X-Amz-Expires=300&X-Amz-Signature=0952302e92fd8ef437895388d46570c1b232408d0386ba82d7b4ab6500e595b0&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.7.deb&response-content-type=application%2Foctet-stream [following]
+--2024-09-21 08:32:43--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/5544a935-3cf9-4f9b-b6ed-d668fd012e99?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240921%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240921T083243Z&X-Amz-Expires=300&X-Amz-Signature=0952302e92fd8ef437895388d46570c1b232408d0386ba82d7b4ab6500e595b0&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.7.deb&response-content-type=application%2Foctet-stream
+Resolving objects.githubusercontent.com (objects.githubusercontent.com)... 185.199.111.133, 185.199.108.133, 185.199.109.133, ...
 Connecting to objects.githubusercontent.com (objects.githubusercontent.com)|185.199.111.133|:443... connected.
 HTTP request sent, awaiting response... 200 OK
 Length: 7202 (7.0K) [application/octet-stream]
 Saving to: ‘opentelemetry-shell_1.13.7.deb’
 
-0K .......                                               100% 73.4M=0s
+0K .......                                               100% 81.8M=0s
 
-2024-09-20 07:19:53 (73.4 MB/s) - ‘opentelemetry-shell_1.13.7.deb’ saved [7202/7202]
+2024-09-21 08:32:43 (81.8 MB/s) - ‘opentelemetry-shell_1.13.7.deb’ saved [7202/7202]
 
---2024-09-20 07:19:53--  https://github.com/plengauer/opentelemetry-bash/releases/download/v1.13.6/opentelemetry-shell_1.13.6.deb
-Connecting to github.com (github.com)|140.82.116.4|:443... connected.
+--2024-09-21 08:32:43--  https://github.com/plengauer/opentelemetry-bash/releases/download/v1.13.6/opentelemetry-shell_1.13.6.deb
+Connecting to github.com (github.com)|140.82.114.3|:443... connected.
 SDK Error: SPAN_NAME 3 GET
 Traceback (most recent call last):
   File "/usr/bin/otelsdk", line 122, in main
@@ -41,7 +41,7 @@ Traceback (most recent call last):
   File "/usr/bin/otelsdk", line 276, in handle
     span : Span = spans[span_id]
 KeyError: '3'
-SDK Error: SPAN_ATTRIBUTE 3 string network.peer.address=140.82.116.4
+SDK Error: SPAN_ATTRIBUTE 3 string network.peer.address=140.82.114.3
 Traceback (most recent call last):
   File "/usr/bin/otelsdk", line 122, in main
     handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
@@ -112,8 +112,8 @@ Traceback (most recent call last):
   File "/usr/bin/otelsdk", line 276, in handle
     span : Span = spans[span_id]
 KeyError: '3'
-Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/e8091cbc-915a-4ba7-bca7-308817fe26c4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240920%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240920T071953Z&X-Amz-Expires=300&X-Amz-Signature=c453ef32e5654826eb12d1e36311806d7bce9f257ce46af7669682fe02f58b4f&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.6.deb&response-content-type=application%2Foctet-stream [following]
---2024-09-20 07:19:53--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/e8091cbc-915a-4ba7-bca7-308817fe26c4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240920%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240920T071953Z&X-Amz-Expires=300&X-Amz-Signature=c453ef32e5654826eb12d1e36311806d7bce9f257ce46af7669682fe02f58b4f&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.6.deb&response-content-type=application%2Foctet-stream
+Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/e8091cbc-915a-4ba7-bca7-308817fe26c4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240921%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240921T083243Z&X-Amz-Expires=300&X-Amz-Signature=24933a1a26a46791843b4c8591f711a2efad0b17d4079f81e9c6f91b3a8c4c53&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.6.deb&response-content-type=application%2Foctet-stream [following]
+--2024-09-21 08:32:43--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/e8091cbc-915a-4ba7-bca7-308817fe26c4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240921%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240921T083243Z&X-Amz-Expires=300&X-Amz-Signature=24933a1a26a46791843b4c8591f711a2efad0b17d4079f81e9c6f91b3a8c4c53&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.6.deb&response-content-type=application%2Foctet-stream
 Connecting to objects.githubusercontent.com (objects.githubusercontent.com)|185.199.111.133|:443... connected.
 SDK Error: SPAN_END 3
 Traceback (most recent call last):
@@ -126,12 +126,12 @@ HTTP request sent, awaiting response... 200 OK
 Length: 7184 (7.0K) [application/octet-stream]
 Saving to: ‘opentelemetry-shell_1.13.6.deb’
 
-0K .......                                               100% 61.5M=0s
+0K .......                                               100% 87.5M=0s
 
-2024-09-20 07:19:53 (61.5 MB/s) - ‘opentelemetry-shell_1.13.6.deb’ saved [7184/7184]
+2024-09-21 08:32:44 (87.5 MB/s) - ‘opentelemetry-shell_1.13.6.deb’ saved [7184/7184]
 
---2024-09-20 07:19:53--  https://github.com/plengauer/opentelemetry-bash/releases/download/v1.13.5/opentelemetry-shell_1.13.5.deb
-Connecting to github.com (github.com)|140.82.116.4|:443... connected.
+--2024-09-21 08:32:44--  https://github.com/plengauer/opentelemetry-bash/releases/download/v1.13.5/opentelemetry-shell_1.13.5.deb
+Connecting to github.com (github.com)|140.82.114.3|:443... connected.
 SDK Error: SPAN_NAME 5 GET
 Traceback (most recent call last):
   File "/usr/bin/otelsdk", line 122, in main
@@ -153,7 +153,7 @@ Traceback (most recent call last):
   File "/usr/bin/otelsdk", line 276, in handle
     span : Span = spans[span_id]
 KeyError: '5'
-SDK Error: SPAN_ATTRIBUTE 5 string network.peer.address=140.82.116.4
+SDK Error: SPAN_ATTRIBUTE 5 string network.peer.address=140.82.114.3
 Traceback (most recent call last):
   File "/usr/bin/otelsdk", line 122, in main
     handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
@@ -224,8 +224,8 @@ Traceback (most recent call last):
   File "/usr/bin/otelsdk", line 276, in handle
     span : Span = spans[span_id]
 KeyError: '5'
-Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/25d95ab9-56aa-4a77-8e84-d4947ecef0fc?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240920%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240920T071954Z&X-Amz-Expires=300&X-Amz-Signature=18442d8033afdd745d9add5efc0f7270f061b3c868a82c3f84b712cac21ece0c&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.5.deb&response-content-type=application%2Foctet-stream [following]
---2024-09-20 07:19:54--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/25d95ab9-56aa-4a77-8e84-d4947ecef0fc?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240920%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240920T071954Z&X-Amz-Expires=300&X-Amz-Signature=18442d8033afdd745d9add5efc0f7270f061b3c868a82c3f84b712cac21ece0c&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.5.deb&response-content-type=application%2Foctet-stream
+Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/25d95ab9-56aa-4a77-8e84-d4947ecef0fc?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240921%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240921T083244Z&X-Amz-Expires=300&X-Amz-Signature=9303acbb4e8169b965e8838331e807c5bf09891d43d463bcb5e889c4cb12bc56&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.5.deb&response-content-type=application%2Foctet-stream [following]
+--2024-09-21 08:32:44--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/25d95ab9-56aa-4a77-8e84-d4947ecef0fc?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240921%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240921T083244Z&X-Amz-Expires=300&X-Amz-Signature=9303acbb4e8169b965e8838331e807c5bf09891d43d463bcb5e889c4cb12bc56&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.5.deb&response-content-type=application%2Foctet-stream
 Connecting to objects.githubusercontent.com (objects.githubusercontent.com)|185.199.111.133|:443... connected.
 SDK Error: SPAN_END 5
 Traceback (most recent call last):
@@ -238,12 +238,12 @@ HTTP request sent, awaiting response... 200 OK
 Length: 7176 (7.0K) [application/octet-stream]
 Saving to: ‘opentelemetry-shell_1.13.5.deb’
 
-0K .......                                               100% 92.7M=0s
+0K .......                                               100% 51.7M=0s
 
-2024-09-20 07:19:54 (92.7 MB/s) - ‘opentelemetry-shell_1.13.5.deb’ saved [7176/7176]
+2024-09-21 08:32:44 (51.7 MB/s) - ‘opentelemetry-shell_1.13.5.deb’ saved [7176/7176]
 
-FINISHED --2024-09-20 07:19:54--
-Total wall clock time: 1.6s
-Downloaded: 3 files, 21K in 0s (73.8 MB/s)
+FINISHED --2024-09-21 08:32:44--
+Total wall clock time: 0.9s
+Downloaded: 3 files, 21K in 0s (69.8 MB/s)
 Failed to export logs batch code: 404, reason: 404 page not found
 
