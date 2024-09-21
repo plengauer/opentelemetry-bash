@@ -74,7 +74,7 @@ jobs:
           {
             echo 'apt-get -y install /root/package.deb'
             echo 'apt-get update && apt-get -y dist-upgrade'
-            echo 'apt-get -y install update-manager-core && sed -i "/Prompt/d" /etc/update-manager/release-upgrades && echo "Prompt=normal" >> /etc/update-manager/release-upgrades'
+            echo 'apt-get -y install update-manager-core systemctl && sed -i "/Prompt/d" /etc/update-manager/release-upgrades && echo "Prompt=normal" >> /etc/update-manager/release-upgrades'
             echo 'RELEASE_UPGRADER_ALLOW_THIRD_PARTY=1 do-release-upgrade -f DistUpgradeViewNonInteractive'
           } | sudo docker run -v $(pwd)/package.deb:/root/package.deb --rm --network=host --entrypoint=/bin/sh ${{ matrix.image }} -e
 
