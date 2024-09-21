@@ -87,11 +87,14 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: package.deb
-      - run: sudo apt-get update
-      - run: sudo apt-get -y remove ${{ matrix.dependency }}
-      - run: sudo apt-get -y install ./package.deb
-      - run: sudo apt-get -y install ${{ matrix.dependency }}
-      - run: sudo apt-get -y remove ${{ matrix.dependency }}
+      - run: |
+          {
+            echo 'apt-get update'
+            echo 'apt-get -y remove ${{ matrix.dependency }}'
+            echo 'apt-get -y install /root/package.deb'
+            echo 'apt-get -y install ${{ matrix.dependency }}'
+            echo 'apt-get -y remove ${{ matrix.dependency }}'
+          } | sudo docker run -v $(pwd)/package.deb:/root/package.deb --rm --network=host -i --entrypoint=/bin/sh ubuntu:latest -e
 
   os-shell:
     needs: smoke
