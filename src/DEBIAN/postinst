@@ -15,7 +15,7 @@ elif [ "$1" = 'configure' ] || [ "$1" = 'triggered' ] || [ "$1" = 'reconfigure' 
   if type npm; then
     cache="$(npm config list -l | grep -E '^cache = ' | cut -d '=' -f 2- | tr -d '" ')"
     user="$(echo "$cache" | rev | cut -d / -f 2- | rev | xargs stat -c '%U')"
-    find "$cache" -exec chown "$user" {} '+'
+    find "$cache" -exec chown "$user" {} '+' || true
     cache="$(runuser -l "$user" -c 'npm config list -l' | grep -E '^cache = ' | cut -d '=' -f 2- | tr -d '" ')"
     runuser -l "$user" -c 'npm config set cache="$1"' runuser "$(mktemp -d)"
     (cd /usr/share/opentelemetry_shell && npm install --package-lock=false)
