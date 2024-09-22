@@ -340,7 +340,7 @@ otel_observe() {
   otel_span_activate "$span_handle"
   local exit_code=0
   local call_command=_otel_call
-#  if ! \[ -t 2 ] && ! _otel_string_contains "$-" x; then local call_command="_otel_call_and_record_logs $call_command"; fi
+  if ! \[ -t 2 ] && ! _otel_string_contains "$-" x; then local call_command="_otel_call_and_record_logs $call_command"; fi
   if ! \[ -t 0 ] && ! \[ -t 1 ] && ! \[ -t 2 ] && ! _otel_string_contains "$-" x && \[ "$OTEL_SHELL_CONFIG_OBSERVE_PIPES" = TRUE ]; then local call_command="_otel_call_and_record_pipes $span_handle $command_type $call_command"; fi
   $call_command "$@" || local exit_code="$?"
   otel_span_deactivate "$span_handle"
