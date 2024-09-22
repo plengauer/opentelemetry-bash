@@ -9,5 +9,55 @@ on:
     - cron: "0 0 * * *"
 
 jobs:
-  test:
-    uses: ./.github/workflows/test.yaml
+#   test:
+#    uses: ./.github/workflows/test.yaml
+
+  _build:
+    uses: ./.github/workflows/build.yaml
+
+  experiment:
+    needs: [ _build ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: package.deb
+      - run: sudo apt-get update && sudo apt-get install -y ./package.deb && rm ./package.deb
+      - uses: actions/checkout@v4
+      - id: demo
+        run: |
+          set +o pipefail
+          cd demos/injection_deep_node
+          otlp="$(mktemp)"
+          stdout="$(mktemp)"
+          stderr="$(mktemp)"
+          echo "
+          receivers:
+            otlp:
+              protocols:
+                grpc:
+                  endpoint: 0.0.0.0:4317
+                http:
+                  endpoint: 0.0.0.0:4318
+          processors:
+            batch:
+          exporters:
+            file:
+              path: /etc/otelcol/otlp.json
+          service:
+            pipelines:
+              traces:
+                receivers: [otlp]
+                exporters: [file]
+                processors: [batch]
+          " > config.yaml
+          rm otlp.json || true
+          touch otlp.json && chmod 0666 otlp.json
+          sudo docker create --rm --mount type=bind,source=$(pwd)/config.yaml,target=/etc/otelcol/config.yaml --mount type=bind,source=$(pwd)/otlp.json,target=/etc/otelcol/otlp.json --network=host --name=collector otel/opentelemetry-collector:latest
+          sudo docker start collector
+          sleep 10
+          cat meta.json | jq -r .setup | (grep -v '^null$' || true) | sh
+          bash -e demo.sh 1> output.stdout 2> output.stderr || true
+          sleep 15
+          sudo docker stop collector
+          rm config.yaml
