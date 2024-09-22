@@ -11,3 +11,51 @@ on:
 jobs:
   test:
     uses: ./.github/workflows/test.yaml
+
+  temporary:
+    runs-on: ubuntu-latest
+    steps:
+      - run: wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh
+      - run: sudo apt-get update && sudo apt-get install -y ./package.deb && rm ./package.deb
+      - uses: actions/checkout@v4
+      - id: demo
+        run: |
+          set +o pipefail
+          cd demos/injection_docker_renovate
+          otlp="$(mktemp)"
+          stdout="$(mktemp)"
+          stderr="$(mktemp)"
+          echo "
+          receivers:
+            otlp:
+              protocols:
+                grpc:
+                  endpoint: 0.0.0.0:4317
+                http:
+                  endpoint: 0.0.0.0:4318
+          processors:
+            batch:
+          exporters:
+            file:
+              path: /etc/otelcol/otlp.json
+          service:
+            pipelines:
+              traces:
+                receivers: [otlp]
+                exporters: [file]
+                processors: [batch]
+              logs:
+                receivers: [otlp]
+                exporters: [file]
+                processors: [batch]
+          " > config.yaml
+          rm otlp.json || true
+          touch otlp.json && chmod 0666 otlp.json
+          sudo docker create --rm --mount type=bind,source=$(pwd)/config.yaml,target=/etc/otelcol/config.yaml --mount type=bind,source=$(pwd)/otlp.json,target=/etc/otelcol/otlp.json --network=host --name=collector otel/opentelemetry-collector:latest
+          sudo docker start collector
+          sleep 10
+          cat meta.json | jq -r .setup | (grep -v '^null$' || true) | sh
+          bash -e demo.sh
+          sleep 15
+          sudo docker stop collector
+          rm config.yaml
