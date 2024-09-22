@@ -13,7 +13,6 @@ elif [ "$1" = 'configure' ] || [ "$1" = 'triggered' ] || [ "$1" = 'reconfigure' 
   fi
   export PATH="$PATH":/usr/local/bin
   if type npm; then
-    npm config list -l >&2
     cache="$(npm config list -l | grep -E '^cache = ' | cut -d '=' -f 2- | tr -d '" ')"
     if [-f "$cache" ]; then
       user="$(echo "$cache" | rev | cut -d / -f 2- | rev | xargs stat -c '%U')"
