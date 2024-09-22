@@ -65,3 +65,5 @@ jobs:
           sleep 15
           sudo docker stop collector
           rm config.yaml
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
