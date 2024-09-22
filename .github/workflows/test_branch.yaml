@@ -9,13 +9,20 @@ on:
     - cron: "0 0 * * *"
 
 jobs:
-  test:
-    uses: ./.github/workflows/test.yaml
+  #test:
+  #  uses: ./.github/workflows/test.yaml
+
+  _build:
+    uses: ./.github/workflows/build.yaml
 
   temporary:
+    needs: _build
     runs-on: ubuntu-latest
     steps:
-      - run: wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh
+      - uses: actions/download-artifact@v4
+        with:
+          name: package.deb
+      - run: sudo apt-get -y install ./package.deb
       - uses: actions/checkout@v4
       - id: demo
         run: |
