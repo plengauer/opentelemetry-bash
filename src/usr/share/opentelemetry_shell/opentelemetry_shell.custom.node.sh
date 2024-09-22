@@ -30,7 +30,7 @@ _otel_inject_node_args() {
       if \[ "$OTEL_SHELL_CONFIG_INJECT_DEEP" = TRUE ] && \[ -d "/usr/share/opentelemetry_shell/node_modules" ]; then
         local dir="$(\echo "$1" | \rev | \cut -d / -f 2- | \rev)"
         while [ -n "$dir" ] && ! \[ -d "$dir"/node_modules ] && ! \[ -f "$dir"/package.json ] && ! \[ -f "$dir"/package-lock.json ]; do
-          local dir="$(\echo "$dir" | \rev | \cut -d / -f 2- | \rev)"
+          local dir="$(\echo "$dir" | \rev | \cut -sd / -f 2- | \rev)"
         done
         if \[ -z "$dir" ]; then local dir="$(\echo "$1" | \rev | \cut -d / -f 2- | \rev)"; fi
         if _otel_is_node_injected "$dir"; then
