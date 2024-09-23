@@ -24,6 +24,7 @@ for element in libraries:
   print(element["instrumentation"])
 ' | python3 | xargs pip3 install
     deactivate
+    ln --symbolic /usr/share/opentelemetry_shell/opentelemetry_shell.custom.python.deep.link.py /opt/opentelemetry_shell/venv/lib/python3.*/site-packages/sitecustomize.py
   fi
   export PATH="$PATH":/usr/local/bin
   if type npm; then
