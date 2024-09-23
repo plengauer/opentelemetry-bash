@@ -21,7 +21,7 @@ from opentelemetry.instrumentation.bootstrap_gen import (default_instrumentation
 for element in default_instrumentations:
   print(element)
 for element in libraries:
-  print(element['instrumentation'])
+  print(element["instrumentation"])
 ' | python3 | xargs pip3 install
     deactivate
   fi
