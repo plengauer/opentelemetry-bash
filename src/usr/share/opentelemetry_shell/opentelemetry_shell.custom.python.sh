@@ -1,7 +1,7 @@
 #!/bin/false
 
 _otel_inject_python_args() {
-  _otel_escape_arg /opt/opentelemetry_shell/venv/bin/opentelemetry-instrument
+  _otel_escape_args "$1" /opt/opentelemetry_shell/venv/bin/opentelemetry-instrument
   \echo -n ' '
   while \[ "$#" -gt 0 ]; do \echo -n ' '; _otel_escape_arg "$1"; shift; done
 }
