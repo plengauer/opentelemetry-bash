@@ -7,9 +7,13 @@ _otel_inject_python_args() {
 }
 
 _otel_inject_python() {
-  local cmdline="$(_otel_dollar_star "$@")"
-  local cmdline="${cmdline#\\}"
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE PYTHONPATH=/opt/opentelemetry_shell/venv/lib/python3.*/site-packages/ \eval _otel_call "$(_otel_inject_python_args "$@")"
+  if \[ "$OTEL_SHELL_CONFIG_INJECT_DEEP" = TRUE ] && \[ -d "/opt/opentelemetry_shell/venv" ]
+    local cmdline="$(_otel_dollar_star "$@")"
+    local cmdline="${cmdline#\\}"
+    OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE PYTHONPATH=/opt/opentelemetry_shell/venv/lib/python3.*/site-packages/ \eval _otel_call "$(_otel_inject_python_args "$@")"
+  else
+    _otel_call "$@"
+  fi
 }
 
 _otel_alias_prepend python3 _otel_inject_python
