@@ -1,0 +1,6 @@
+if ! which python3; then exit 0; fi
+. ./assert.sh
+
+. otel.sh
+
+echo 'print("hello world")' | python3
