@@ -22,7 +22,7 @@ for element in default_instrumentations:
   print(element)
 for element in libraries:
   print(element['instrumentation'])
-' | python3 | xargs pip install
+' | python3 | xargs pip3 install
     deactivate
   fi
   export PATH="$PATH":/usr/local/bin
