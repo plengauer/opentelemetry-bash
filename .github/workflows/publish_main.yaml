@@ -62,12 +62,11 @@ jobs:
       - run: sudo apt-get update && sudo apt-get install -y ./package.deb && rm ./package.deb
       - uses: actions/checkout@v4
       - id: demo
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
         run: |
           set +o pipefail
           cd demos/${{ matrix.demo_directory }}
-          otlp="$(mktemp)"
-          stdout="$(mktemp)"
-          stderr="$(mktemp)"
           echo "
           receivers:
             otlp:
@@ -83,6 +82,14 @@ jobs:
               path: /etc/otelcol/otlp.json
           service:
             pipelines:
+              metrics:
+                receivers: [otlp]
+                exporters: [file]
+                processors: [batch]
+              logs:
+                receivers: [otlp]
+                exporters: [file]
+                processors: [batch]
               traces:
                 receivers: [otlp]
                 exporters: [file]

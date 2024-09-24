@@ -2,11 +2,9 @@
 rm -rf /opt/opentelemetry_bash 1> /dev/null 2> /dev/null || true # clean the old install directory
 if [ "$1" = 'abort-configure' ] || [ "$1" = 'abort-upgrade' ] || [ "$1" = 'abort-remove' ] || [ "$1" = 'abort-deconfigure' ]; then
   true
-elif [ "$1" = 'triggered' ] || [ "$1" = 'reconfigure' ]; then
-  true
-elif [ "$1" = 'configure' ]; then
+elif [ "$1" = 'configure' ] || [ "$1" = 'triggered' ] || [ "$1" = 'reconfigure' ]; then
   python3 -m venv /opt/opentelemetry_shell/venv_sdk
-  source /opt/opentelemetry_shell/venv_sdk/bin/activate
+  source /opt/opentelemetry_shell/venv/bin_sdk/activate
   pip3 install -r /opt/opentelemetry_shell/requirements_sdk.txt
   deactivate
   if type gcc; then
@@ -24,17 +22,19 @@ for element in libraries:
   print(element["instrumentation"])
 ' | python3 | xargs pip3 install
     deactivate
-    (cd /opt/opentelemetry_shell/venv/lib/python3.*/site-packages && ln --symbolic /usr/share/opentelemetry_shell/opentelemetry_shell.custom.python.deep.link.py sitecustomize.py)
+    (cd /opt/opentelemetry_shell/venv/lib/python3.*/site-packages && ln --symbolic /usr/share/opentelemetry_shell/opentelemetry_shell.custom.python.deep.link.py sitecustomize.py || true)
   fi
   export PATH="$PATH":/usr/local/bin
   if type npm; then
     cache="$(npm config list -l | grep -E '^cache = ' | cut -d '=' -f 2- | tr -d '" ')"
-    user="$(echo "$cache" | rev | cut -d / -f 2- | rev | xargs stat -c '%U')"
-    find "$cache" -exec chown "$user" {} '+'
-    cache="$(runuser -l "$user" -c 'npm config list -l' | grep -E '^cache = ' | cut -d '=' -f 2- | tr -d '" ')"
-    runuser -l "$user" -c 'npm config set cache="$1"' runuser "$(mktemp -d)"
-    (cd /usr/share/opentelemetry_shell && npm install --package-lock=false)
-    runuser -l "$user" -c 'npm config set cache="$1"' runuser "$cache"
+    if [ -d "$cache" ]; then
+      user="$(echo "$cache" | rev | cut -d / -f 2- | rev | xargs stat -c '%U')"
+      find "$cache" -exec chown "$user" {} '+'
+      cache="$(runuser -l "$user" -c 'npm config list -l' | grep -E '^cache = ' | cut -d '=' -f 2- | tr -d '" ')"
+      runuser -l "$user" -c 'npm config set cache="$1"' runuser "$(mktemp -d)"
+      (cd /opt/opentelemetry_shell && npm install --package-lock=false)
+      runuser -l "$user" -c 'npm config set cache="$1"' runuser "$cache"
+    fi
   fi
   true
 else
