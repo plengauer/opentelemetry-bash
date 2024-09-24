@@ -15,7 +15,7 @@ print(response.status_code)
 dir=$(mktemp -d)
 python3 -m venv "$dir"/venv
 . "$dir"/venv/bin/activate
-pip install --force-reinstall requests
+pip install requests
 echo '
 import requests
 response = requests.get("http://www.example.com/bar")
