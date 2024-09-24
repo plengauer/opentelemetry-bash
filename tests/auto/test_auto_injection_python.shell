@@ -1,9 +1,6 @@
 if ! which python3; then exit 0; fi
 . ./assert.sh
 
-ls -la /home/runner/.cache/pip
-whoami
-
 . otel.sh
 
 assert_equals "hello world" "$(echo 'print("hello world")' | python3)"
@@ -18,23 +15,23 @@ print(response.status_code)
 dir=$(mktemp -d)
 python3 -m venv "$dir"/venv
 . "$dir"/venv/bin/activate
-pip install requests
+pip3 install requests
 echo '
 import requests
 response = requests.get("http://www.example.com/bar")
 print(response.status_code)
-' | python
+' | python3
 deactivate
 
 dir=$(mktemp -d)
 python3 -m venv "$dir"/venv
 . "$dir"/venv/bin/activate
-pip install requests
-pip install opentelemetry-distro opentelemetry-exporter-otlp
+pip3 install requests
+pip3 install opentelemetry-distro opentelemetry-exporter-otlp
 opentelemetry-bootstrap -a
 echo '
 import requests
 response = requests.get("http://www.example.com/baz")
 print(response.status_code)
-' | opentelemetry-instrument python
+' | opentelemetry-instrument python3
 deactivate
