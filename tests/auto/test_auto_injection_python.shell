@@ -12,7 +12,7 @@ requests.get("http://www.example.com/foo")
 
 dir=$(mktemp -d)
 python3 -m venv "$dir"/venv
-"$dir"/venv/bin/activate
+. "$dir"/venv/bin/activate
 echo '
 import requests
 requests.get("http://www.example.com/bar")
@@ -21,7 +21,7 @@ deactivate
 
 dir=$(mktemp -d)
 python3 -m venv "$dir"/venv
-"$dir"/venv/bin/activate
+. "$dir"/venv/bin/activate
 pip3 install opentelemetry-distro opentelemetry-exporter-otlp
 echo '
 import requests
