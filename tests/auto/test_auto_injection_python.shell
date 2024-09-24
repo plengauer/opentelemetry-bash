@@ -10,18 +10,18 @@ import requests
 requests.get("http://www.example.com/foo")
 ' | python3
 
-venv=$(mktemp -d)
-python3 -m venv "$venv"
-"$venv"/bin/activate
+dir=$(mktemp -d)
+python3 -m venv "$dir"/venv
+"$dir"/venv/bin/activate
 echo '
 import requests
 requests.get("http://www.example.com/bar")
 ' | python3
 deactivate
 
-venv=$(mktemp -d)
-python3 -m venv "$venv"
-"$venv"/bin/activate
+dir=$(mktemp -d)
+python3 -m venv "$dir"/venv
+"$dir"/venv/bin/activate
 pip3 install opentelemetry-distro opentelemetry-exporter-otlp
 echo '
 import requests
