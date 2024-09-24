@@ -1,6 +1,9 @@
 if ! which python3; then exit 0; fi
 . ./assert.sh
 
+ls -la /home/runner/.cache/pip
+whoami
+
 . otel.sh
 
 assert_equals "hello world" "$(echo 'print("hello world")' | python3)"
