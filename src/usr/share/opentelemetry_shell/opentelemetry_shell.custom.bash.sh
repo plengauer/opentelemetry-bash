@@ -41,7 +41,7 @@ _otel_inject_shell_with_c_flag() {
   local injected_command_string="$(_otel_inject_shell_args_with_c_flag "$@")"
   local exit_code=0
   if \[ "$#" -eq 1 ] && ! [ -t 0 ]; then
-    { \echo ". otel.sh"; \cat; } | OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$$" OTEL_SHELL_AUTO_INJECTED=TRUE \eval _otel_call "$injected_command_string" || local exit_code=$?
+    { \echo ". otel.sh"; \cat; } | OTEL_SHELL_IS_DYNAMIC=TRUE OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$$" OTEL_SHELL_AUTO_INJECTED=TRUE \eval _otel_call "$injected_command_string" || local exit_code=$?
   else
     OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$$" OTEL_SHELL_AUTO_INJECTED=TRUE \eval _otel_call "$injected_command_string" || local exit_code=$?
   fi
