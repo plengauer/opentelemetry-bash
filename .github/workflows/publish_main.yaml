@@ -83,6 +83,14 @@ jobs:
               path: /etc/otelcol/otlp.json
           service:
             pipelines:
+              metrics:
+                receivers: [otlp]
+                exporters: [file]
+                processors: [batch]
+              logs:
+                receivers: [otlp]
+                exporters: [file]
+                processors: [batch]
               traces:
                 receivers: [otlp]
                 exporters: [file]
