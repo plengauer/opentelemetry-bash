@@ -5,6 +5,7 @@ if ! which python3; then exit 0; fi
 
 assert_equals "hello world" "$(echo 'print("hello world")' | python3)"
 
+pip3 install requests
 echo '
 import requests
 requests.get("http://www.example.com/foo")
@@ -13,6 +14,7 @@ requests.get("http://www.example.com/foo")
 dir=$(mktemp -d)
 python3 -m venv "$dir"/venv
 . "$dir"/venv/bin/activate
+pip3 install requests
 echo '
 import requests
 requests.get("http://www.example.com/bar")
@@ -22,6 +24,7 @@ deactivate
 dir=$(mktemp -d)
 python3 -m venv "$dir"/venv
 . "$dir"/venv/bin/activate
+pip3 install requests
 pip3 install opentelemetry-distro opentelemetry-exporter-otlp
 echo '
 import requests
