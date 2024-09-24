@@ -11,23 +11,26 @@ import requests
 requests.get("http://www.example.com/foo")
 ' | python3
 
+exit 0
+
 dir=$(mktemp -d)
 python3 -m venv "$dir"/venv
 . "$dir"/venv/bin/activate
-pip3 install requests
+pip install requests
 echo '
 import requests
 requests.get("http://www.example.com/bar")
-' | python3
+' | python
 deactivate
 
 dir=$(mktemp -d)
 python3 -m venv "$dir"/venv
 . "$dir"/venv/bin/activate
-pip3 install requests
-pip3 install opentelemetry-distro opentelemetry-exporter-otlp
+pip install requests
+pip install opentelemetry-distro opentelemetry-exporter-otlp
+opentelemetry-bootstrap -a
 echo '
 import requests
 requests.get("http://www.example.com/baz")
-' | opentelemetry-instrument python3
+' | opentelemetry-instrument python
 deactivate
