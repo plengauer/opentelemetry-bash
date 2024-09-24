@@ -18,3 +18,9 @@ _otel_inject_python() {
 
 _otel_alias_prepend python _otel_inject_python
 _otel_alias_prepend python3 _otel_inject_python
+
+_otel_inject_python_opentelemetry_instrument() {
+  _otel_call "$@" # TODO
+}
+
+_otel_alias_prepend opentelemetry-instrument _otel_inject_python_opentelemetry_instrument
