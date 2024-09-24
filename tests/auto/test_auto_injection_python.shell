@@ -15,23 +15,26 @@ print(response.status_code)
 dir=$(mktemp -d)
 python3 -m venv "$dir"/venv
 . "$dir"/venv/bin/activate
-pip3 install requests
+which python
+which pip
+pip install requests
+pip show requests
 echo '
 import requests
 response = requests.get("http://www.example.com/bar")
 print(response.status_code)
-' | python3
+' | python
 deactivate
 
 dir=$(mktemp -d)
 python3 -m venv "$dir"/venv
 . "$dir"/venv/bin/activate
-pip3 install requests
-pip3 install opentelemetry-distro opentelemetry-exporter-otlp
+pip install requests
+pip install opentelemetry-distro opentelemetry-exporter-otlp
 opentelemetry-bootstrap -a
 echo '
 import requests
 response = requests.get("http://www.example.com/baz")
 print(response.status_code)
-' | opentelemetry-instrument python3
+' | opentelemetry-instrument python
 deactivate
