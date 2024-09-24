@@ -8,10 +8,9 @@ assert_equals "hello world" "$(echo 'print("hello world")' | python3)"
 pip3 install requests
 echo '
 import requests
-requests.get("http://www.example.com/foo")
+response = requests.get("http://www.example.com/foo")
+print(response.status_code)
 ' | python3
-
-exit 0
 
 dir=$(mktemp -d)
 python3 -m venv "$dir"/venv
@@ -19,7 +18,8 @@ python3 -m venv "$dir"/venv
 pip install requests
 echo '
 import requests
-requests.get("http://www.example.com/bar")
+response = requests.get("http://www.example.com/bar")
+print(response.status_code)
 ' | python
 deactivate
 
@@ -31,6 +31,7 @@ pip install opentelemetry-distro opentelemetry-exporter-otlp
 opentelemetry-bootstrap -a
 echo '
 import requests
-requests.get("http://www.example.com/baz")
+response = requests.get("http://www.example.com/baz")
+print(response.status_code)
 ' | opentelemetry-instrument python
 deactivate
