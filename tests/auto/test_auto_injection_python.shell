@@ -3,4 +3,28 @@ if ! which python3; then exit 0; fi
 
 . otel.sh
 
-echo 'print("hello world")' | python3
+assert_equals "hello world" "$(echo 'print("hello world")' | python3)"
+
+echo '
+import requests
+requests.get('http://www.example.com/foo')
+' | python3
+
+venv=$(mktemp -d)
+python3 -m venv "$venv"
+"$venv"/bin/activate
+echo '
+import requests
+requests.get('http://www.example.com/bar')
+' | python3
+deactivate
+
+venv=$(mktemp -d)
+python3 -m venv "$venv"
+"$venv"/bin/activate
+pip3 install opentelemetry-distro opentelemetry-exporter-otlp
+echo '
+import requests
+requests.get('http://www.example.com/baz')
+' | opentelemetry-instrument python3
+deactivate
