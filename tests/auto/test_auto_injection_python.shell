@@ -23,7 +23,7 @@ echo '
 import requests
 response = requests.get("http://www.example.com/bar")
 print(response.status_code)
-' | python
+' | \python
 deactivate
 
 dir=$(mktemp -d)
