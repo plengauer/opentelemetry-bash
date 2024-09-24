@@ -27,7 +27,7 @@ jobs:
         with:
           name: package.deb
       - run: sudo -E apt-get -y install ./package.deb
-      - run: bash -c "cd tests && sudo -E bash run_tests.sh bash"
+      - run: bash -c "cd tests && sudo -H -E bash run_tests.sh bash"
 
   upgrade-prepare:
     runs-on: ubuntu-latest
