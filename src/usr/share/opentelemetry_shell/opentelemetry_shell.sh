@@ -36,6 +36,9 @@ if \[ -n "$OTEL_SHELL_AUTO_INSTRUMENTATION_HINT" ]; then
 elif \[ "$_otel_is_interactive" = "TRUE" ]; then
   \echo "WARNING When using OpenTelemetry in an interactive shell for the first time after startup, it may take some time to create the instrumentation cache! Subsequent interactive shells will start faster. This performance impact does not apply in non-interactive shells, like scripts or invocations with -c." >&2
   _otel_shell_auto_instrumentation_hint=""
+elif \[ "$OTEL_SHELL_IS_DYNAMIC" = TRUE ]; then
+  _otel_shell_auto_instrumentation_hint=""
+  unset OTEL_SHELL_IS_DYNAMIC
 elif \[ -f "$0" ] && \[ "$(\readlink -f "$0" | \rev | \cut -d / -f 1 | \rev)" != "$(\readlink -f "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)" ]; then
   _otel_shell_auto_instrumentation_hint="$0"
 else
@@ -207,7 +210,9 @@ _otel_resolve_shebang() {
   if \[ -z "$path" ] || ! \[ -x "$path" ]; then return 1; fi
   read -r first_line < "$path"
   if ! _otel_string_starts_with "$first_line" "#!"; then return 2; fi
-  \echo "${first_line#"#!"}"
+  local shebang="${first_line#\#!}"
+  local shebang="${shebang#"${shebang%%[![:space:]]*}"}"
+  \echo "$shebang"
 }
 
 _otel_dealiasify() {

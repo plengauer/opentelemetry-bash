@@ -67,9 +67,6 @@ jobs:
         run: |
           set +o pipefail
           cd demos/${{ matrix.demo_directory }}
-          otlp="$(mktemp)"
-          stdout="$(mktemp)"
-          stderr="$(mktemp)"
           echo "
           receivers:
             otlp:
@@ -85,6 +82,14 @@ jobs:
               path: /etc/otelcol/otlp.json
           service:
             pipelines:
+              metrics:
+                receivers: [otlp]
+                exporters: [file]
+                processors: [batch]
+              logs:
+                receivers: [otlp]
+                exporters: [file]
+                processors: [batch]
               traces:
                 receivers: [otlp]
                 exporters: [file]
