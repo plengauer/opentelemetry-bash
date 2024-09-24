@@ -62,6 +62,8 @@ jobs:
       - run: sudo apt-get update && sudo apt-get install -y ./package.deb && rm ./package.deb
       - uses: actions/checkout@v4
       - id: demo
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
         run: |
           set +o pipefail
           cd demos/${{ matrix.demo_directory }}
