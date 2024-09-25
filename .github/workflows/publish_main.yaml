@@ -112,7 +112,7 @@ jobs:
           cd demos/${{ matrix.demo_directory }}
 
           spans() {
-            jq '.resourceSpans[].scopeSpans[].spans[]' < otlp.json
+            jq '. | select(.resourceSpans != null) | .resourceSpans[].scopeSpans[].spans[]' < otlp.json
           }
 
           convert_span_id_to_name() {
@@ -188,9 +188,9 @@ jobs:
           }
 
           pretty_print_trace() {
-            cat otlp.json | jq -r '.resourceSpans[].scopeSpans[].spans[].spanId' | while read -r span_id; do
-              span="$(jq '.resourceSpans[].scopeSpans[].spans[] | select(.spanId == "'$span_id'")' < otlp.json)"
-              resource_attributes="$(jq '.resourceSpans[] | select(.scopeSpans[].spans[].spanId == "'$span_id'")' < otlp.json | jq .resource.attributes)"
+            cat otlp.json | jq -r '. | select(.resourceSpans != null) | .resourceSpans[].scopeSpans[].spans[].spanId' | while read -r span_id; do
+              span="$(jq '. | select(.resourceSpans != null) | .resourceSpans[].scopeSpans[].spans[] | select(.spanId == "'$span_id'")' < otlp.json)"
+              resource_attributes="$(jq '. | select(.resourceSpans != null) | .resourceSpans[] | select(.scopeSpans[].spans[].spanId == "'$span_id'")' < otlp.json | jq .resource.attributes)"
               jq -n \
                 --argjson trace_id "$(printf '%s' "$span" | jq .traceId)" \
                 --argjson span_id "$(printf '%s' "$span" | jq .spanId)" \
