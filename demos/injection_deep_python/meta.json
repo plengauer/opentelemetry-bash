@@ -1,0 +1,5 @@
+{
+  "title": "Deep injection into a Python app",
+  "description": "This script uses a python app and configures opentelemetry to inject into the app and continue tracing.",
+  "setup": "sudo apt-get update && sudo apt-get install -y python3 python3-venv python3-pip"
+}
