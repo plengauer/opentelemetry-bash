@@ -228,7 +228,7 @@ jobs:
             echo '```'
             echo '## Trace Structure Overview'
             echo '```'
-            print_span_name_tree "$(get_root_span_id)" ""
+            get_root_span_id | while read -r root_span_id; do print_span_name_tree "$root_span_id" ""; done
             echo '```'
             echo '## Full Trace'
             echo '```'
