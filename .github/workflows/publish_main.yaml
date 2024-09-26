@@ -105,6 +105,7 @@ jobs:
           sleep 15
           sudo docker stop collector
           rm config.yaml
+          sed -i s/$GITHUB_TOKEN/***/g otlp.json
       - env:
           GITHUB_TOKEN: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
         run: |
