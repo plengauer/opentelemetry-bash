@@ -11,10 +11,11 @@ const opentelemetry_resources_alibaba_cloud = require('@opentelemetry/resource-d
 const context_async_hooks = require("@opentelemetry/context-async-hooks");
 const semver = require("semver");
 
+// lets wrap the default context manager with our custom one that provides the context based on the parent env var instead of the default root context
 class CustomRootContextManager {
   inner;
   custom_context;
-  
+
   constructor(inner, custom_context) {
     this.inner = inner;
     this.custom_context = custom_context;
@@ -33,9 +34,14 @@ class CustomRootContextManager {
     return context;
   }
 }
-
 const MY_ROOT_CONTEXT = new opentelemetry_sdk.core.W3CTraceContextPropagator().extract(opentelemetry_api.ROOT_CONTEXT, { traceparent: process.env.TRACEPARENT, tracestate: process.env.TRACESTATE }, opentelemetry_api.defaultTextMapGetter);
 const context_manager = new CustomRootContextManager(semver.gte(process.version, '14.8.0') ? new context_async_hooks.AsyncLocalStorageContextManager() : new context_async_hooks.AsyncHooksContextManager(), MY_ROOT_CONTEXT);
+
+// node.js terminates when event loop is empty and flushing the SDK (below) is unfortunately async.
+// creating a simple span processor manually is a pain because all the exporter creation anc configuration logic is not publicly accessible.
+// so lets give the BatchSpanProcessor an identity crisis and demote him to a SimpleSpanProcessor that will start flushing synchronously on every span getting queued
+process.env.OTEL_BSP_MAX_EXPORT_BATCH_SIZE=1
+
 const sdk = new opentelemetry_sdk.NodeSDK({
   contextManager: context_manager.enable(),
   instrumentations: [ opentelemetry_auto_instrumentations.getNodeAutoInstrumentations() ],
