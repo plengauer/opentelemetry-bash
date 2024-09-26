@@ -38,7 +38,7 @@ const MY_ROOT_CONTEXT = new opentelemetry_sdk.core.W3CTraceContextPropagator().e
 const context_manager = new CustomRootContextManager(semver.gte(process.version, '14.8.0') ? new context_async_hooks.AsyncLocalStorageContextManager() : new context_async_hooks.AsyncHooksContextManager(), MY_ROOT_CONTEXT);
 
 // node.js terminates when event loop is empty and flushing the SDK (below) is unfortunately async.
-// creating a simple span processor manually is a pain because all the exporter creation anc configuration logic is not publicly accessible.
+// creating a simple span processor manually is a pain because all the exporter creation and configuration logic is not publicly accessible.
 // so lets give the BatchSpanProcessor an identity crisis and demote him to a SimpleSpanProcessor that will start flushing synchronously on every span getting queued
 process.env.OTEL_BSP_MAX_EXPORT_BATCH_SIZE=1
 
