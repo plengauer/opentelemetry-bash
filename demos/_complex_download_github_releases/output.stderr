@@ -1,249 +1,48 @@
-Failed to export logs batch code: 404, reason: 404 page not found
-
-Failed to export logs batch code: 404, reason: 404 page not found
-
-hub.com/plengauer/opentelemetry-bash/releases/download/v1.13.7/opentelemetry-shell_1.13.7.deb
+Ncat: Idle timeout expired (3000 ms).
+--2024-09-24 20:25:30--  https://github.com/plengauer/opentelemetry-bash/releases/download/v1.13.7/opentelemetry-shell_1.13.7.deb
 Resolving github.com (github.com)... 140.82.114.3
 Connecting to github.com (github.com)|140.82.114.3|:443... connected.
 HTTP request sent, awaiting response... 302 Found
-Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/5544a935-3cf9-4f9b-b6ed-d668fd012e99?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240921%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240921T083243Z&X-Amz-Expires=300&X-Amz-Signature=0952302e92fd8ef437895388d46570c1b232408d0386ba82d7b4ab6500e595b0&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.7.deb&response-content-type=application%2Foctet-stream [following]
---2024-09-21 08:32:43--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/5544a935-3cf9-4f9b-b6ed-d668fd012e99?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240921%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240921T083243Z&X-Amz-Expires=300&X-Amz-Signature=0952302e92fd8ef437895388d46570c1b232408d0386ba82d7b4ab6500e595b0&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.7.deb&response-content-type=application%2Foctet-stream
-Resolving objects.githubusercontent.com (objects.githubusercontent.com)... 185.199.111.133, 185.199.108.133, 185.199.109.133, ...
-Connecting to objects.githubusercontent.com (objects.githubusercontent.com)|185.199.111.133|:443... connected.
+Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/5544a935-3cf9-4f9b-b6ed-d668fd012e99?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240924%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240924T202530Z&X-Amz-Expires=300&X-Amz-Signature=64bef54562afd84f67e0d9c8fbd72ca7e9bb32b928cc2e3bc734b05628ebffa2&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.7.deb&response-content-type=application%2Foctet-stream [following]
+--2024-09-24 20:25:30--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/5544a935-3cf9-4f9b-b6ed-d668fd012e99?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240924%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240924T202530Z&X-Amz-Expires=300&X-Amz-Signature=64bef54562afd84f67e0d9c8fbd72ca7e9bb32b928cc2e3bc734b05628ebffa2&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.7.deb&response-content-type=application%2Foctet-stream
+Resolving objects.githubusercontent.com (objects.githubusercontent.com)... 185.199.110.133, 185.199.111.133, 185.199.108.133, ...
+Connecting to objects.githubusercontent.com (objects.githubusercontent.com)|185.199.110.133|:443... connected.
 HTTP request sent, awaiting response... 200 OK
 Length: 7202 (7.0K) [application/octet-stream]
 Saving to: ‘opentelemetry-shell_1.13.7.deb’
 
-0K .......                                               100% 81.8M=0s
+0K .......                                               100% 80.7M=0s
 
-2024-09-21 08:32:43 (81.8 MB/s) - ‘opentelemetry-shell_1.13.7.deb’ saved [7202/7202]
+2024-09-24 20:25:31 (80.7 MB/s) - ‘opentelemetry-shell_1.13.7.deb’ saved [7202/7202]
 
---2024-09-21 08:32:43--  https://github.com/plengauer/opentelemetry-bash/releases/download/v1.13.6/opentelemetry-shell_1.13.6.deb
+--2024-09-24 20:25:31--  https://github.com/plengauer/opentelemetry-bash/releases/download/v1.13.6/opentelemetry-shell_1.13.6.deb
 Connecting to github.com (github.com)|140.82.114.3|:443... connected.
-SDK Error: SPAN_NAME 3 GET
-Traceback (most recent call last):
-  File "/usr/bin/otelsdk", line 122, in main
-    handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-  File "/usr/bin/otelsdk", line 261, in handle
-    span : Span = spans[span_id]
-KeyError: '3'
-SDK Error: SPAN_ATTRIBUTE 3 string network.protocol.name=https
-Traceback (most recent call last):
-  File "/usr/bin/otelsdk", line 122, in main
-    handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-  File "/usr/bin/otelsdk", line 276, in handle
-    span : Span = spans[span_id]
-KeyError: '3'
-SDK Error: SPAN_ATTRIBUTE 3 string network.transport=tcp
-Traceback (most recent call last):
-  File "/usr/bin/otelsdk", line 122, in main
-    handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-  File "/usr/bin/otelsdk", line 276, in handle
-    span : Span = spans[span_id]
-KeyError: '3'
-SDK Error: SPAN_ATTRIBUTE 3 string network.peer.address=140.82.114.3
-Traceback (most recent call last):
-  File "/usr/bin/otelsdk", line 122, in main
-    handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-  File "/usr/bin/otelsdk", line 276, in handle
-    span : Span = spans[span_id]
-KeyError: '3'
-SDK Error: SPAN_ATTRIBUTE 3 int network.peer.port=443
-Traceback (most recent call last):
-  File "/usr/bin/otelsdk", line 122, in main
-    handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-  File "/usr/bin/otelsdk", line 276, in handle
-    span : Span = spans[span_id]
-KeyError: '3'
-SDK Error: SPAN_ATTRIBUTE 3 string server.address=github.com
-Traceback (most recent call last):
-  File "/usr/bin/otelsdk", line 122, in main
-    handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-  File "/usr/bin/otelsdk", line 276, in handle
-    span : Span = spans[span_id]
-KeyError: '3'
-SDK Error: SPAN_ATTRIBUTE 3 int server.port=443
-Traceback (most recent call last):
-  File "/usr/bin/otelsdk", line 122, in main
-    handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-  File "/usr/bin/otelsdk", line 276, in handle
-    span : Span = spans[span_id]
-KeyError: '3'
-SDK Error: SPAN_ATTRIBUTE 3 string url.full=https://github.com/plengauer/opentelemetry-bash/releases/download/v1.13.6/opentelemetry-shell_1.13.6.deb
-Traceback (most recent call last):
-  File "/usr/bin/otelsdk", line 122, in main
-    handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-  File "/usr/bin/otelsdk", line 276, in handle
-    span : Span = spans[span_id]
-KeyError: '3'
-SDK Error: SPAN_ATTRIBUTE 3 string url.path=/plengauer/opentelemetry-bash/releases/download/v1.13.6/opentelemetry-shell_1.13.6.deb
-Traceback (most recent call last):
-  File "/usr/bin/otelsdk", line 122, in main
-    handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-  File "/usr/bin/otelsdk", line 276, in handle
-    span : Span = spans[span_id]
-KeyError: '3'
-SDK Error: SPAN_ATTRIBUTE 3 string url.scheme=https
-Traceback (most recent call last):
-  File "/usr/bin/otelsdk", line 122, in main
-    handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-  File "/usr/bin/otelsdk", line 276, in handle
-    span : Span = spans[span_id]
-KeyError: '3'
-SDK Error: SPAN_ATTRIBUTE 3 string user_agent.original=wget
-Traceback (most recent call last):
-  File "/usr/bin/otelsdk", line 122, in main
-    handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-  File "/usr/bin/otelsdk", line 276, in handle
-    span : Span = spans[span_id]
-KeyError: '3'
-SDK Error: SPAN_ATTRIBUTE 3 string http.request.method=GET
-Traceback (most recent call last):
-  File "/usr/bin/otelsdk", line 122, in main
-    handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-  File "/usr/bin/otelsdk", line 276, in handle
-    span : Span = spans[span_id]
-KeyError: '3'
 HTTP request sent, awaiting response... 302 Found
-SDK Error: SPAN_ATTRIBUTE 3 int http.response.status_code=302
-Traceback (most recent call last):
-  File "/usr/bin/otelsdk", line 122, in main
-    handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-  File "/usr/bin/otelsdk", line 276, in handle
-    span : Span = spans[span_id]
-KeyError: '3'
-Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/e8091cbc-915a-4ba7-bca7-308817fe26c4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240921%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240921T083243Z&X-Amz-Expires=300&X-Amz-Signature=24933a1a26a46791843b4c8591f711a2efad0b17d4079f81e9c6f91b3a8c4c53&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.6.deb&response-content-type=application%2Foctet-stream [following]
---2024-09-21 08:32:43--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/e8091cbc-915a-4ba7-bca7-308817fe26c4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240921%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240921T083243Z&X-Amz-Expires=300&X-Amz-Signature=24933a1a26a46791843b4c8591f711a2efad0b17d4079f81e9c6f91b3a8c4c53&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.6.deb&response-content-type=application%2Foctet-stream
-Connecting to objects.githubusercontent.com (objects.githubusercontent.com)|185.199.111.133|:443... connected.
-SDK Error: SPAN_END 3
-Traceback (most recent call last):
-  File "/usr/bin/otelsdk", line 122, in main
-    handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-  File "/usr/bin/otelsdk", line 242, in handle
-    span : Span = spans[span_id]
-KeyError: '3'
+Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/e8091cbc-915a-4ba7-bca7-308817fe26c4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240924%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240924T202531Z&X-Amz-Expires=300&X-Amz-Signature=e4d0d3b0756ce57a3efc27e6b4ce55cbabffd556a1f3223af91d2412a1933f3c&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.6.deb&response-content-type=application%2Foctet-stream [following]
+--2024-09-24 20:25:31--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/e8091cbc-915a-4ba7-bca7-308817fe26c4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240924%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240924T202531Z&X-Amz-Expires=300&X-Amz-Signature=e4d0d3b0756ce57a3efc27e6b4ce55cbabffd556a1f3223af91d2412a1933f3c&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.6.deb&response-content-type=application%2Foctet-stream
+Connecting to objects.githubusercontent.com (objects.githubusercontent.com)|185.199.110.133|:443... connected.
 HTTP request sent, awaiting response... 200 OK
 Length: 7184 (7.0K) [application/octet-stream]
 Saving to: ‘opentelemetry-shell_1.13.6.deb’
 
-0K .......                                               100% 87.5M=0s
+0K .......                                               100% 69.2M=0s
 
-2024-09-21 08:32:44 (87.5 MB/s) - ‘opentelemetry-shell_1.13.6.deb’ saved [7184/7184]
+2024-09-24 20:25:31 (69.2 MB/s) - ‘opentelemetry-shell_1.13.6.deb’ saved [7184/7184]
 
---2024-09-21 08:32:44--  https://github.com/plengauer/opentelemetry-bash/releases/download/v1.13.5/opentelemetry-shell_1.13.5.deb
+--2024-09-24 20:25:31--  https://github.com/plengauer/opentelemetry-bash/releases/download/v1.13.5/opentelemetry-shell_1.13.5.deb
 Connecting to github.com (github.com)|140.82.114.3|:443... connected.
-SDK Error: SPAN_NAME 5 GET
-Traceback (most recent call last):
-  File "/usr/bin/otelsdk", line 122, in main
-    handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-  File "/usr/bin/otelsdk", line 261, in handle
-    span : Span = spans[span_id]
-KeyError: '5'
-SDK Error: SPAN_ATTRIBUTE 5 string network.protocol.name=https
-Traceback (most recent call last):
-  File "/usr/bin/otelsdk", line 122, in main
-    handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-  File "/usr/bin/otelsdk", line 276, in handle
-    span : Span = spans[span_id]
-KeyError: '5'
-SDK Error: SPAN_ATTRIBUTE 5 string network.transport=tcp
-Traceback (most recent call last):
-  File "/usr/bin/otelsdk", line 122, in main
-    handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-  File "/usr/bin/otelsdk", line 276, in handle
-    span : Span = spans[span_id]
-KeyError: '5'
-SDK Error: SPAN_ATTRIBUTE 5 string network.peer.address=140.82.114.3
-Traceback (most recent call last):
-  File "/usr/bin/otelsdk", line 122, in main
-    handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-  File "/usr/bin/otelsdk", line 276, in handle
-    span : Span = spans[span_id]
-KeyError: '5'
-SDK Error: SPAN_ATTRIBUTE 5 int network.peer.port=443
-Traceback (most recent call last):
-  File "/usr/bin/otelsdk", line 122, in main
-    handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-  File "/usr/bin/otelsdk", line 276, in handle
-    span : Span = spans[span_id]
-KeyError: '5'
-SDK Error: SPAN_ATTRIBUTE 5 string server.address=github.com
-Traceback (most recent call last):
-  File "/usr/bin/otelsdk", line 122, in main
-    handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-  File "/usr/bin/otelsdk", line 276, in handle
-    span : Span = spans[span_id]
-KeyError: '5'
-SDK Error: SPAN_ATTRIBUTE 5 int server.port=443
-Traceback (most recent call last):
-  File "/usr/bin/otelsdk", line 122, in main
-    handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-  File "/usr/bin/otelsdk", line 276, in handle
-    span : Span = spans[span_id]
-KeyError: '5'
-SDK Error: SPAN_ATTRIBUTE 5 string url.full=https://github.com/plengauer/opentelemetry-bash/releases/download/v1.13.5/opentelemetry-shell_1.13.5.deb
-Traceback (most recent call last):
-  File "/usr/bin/otelsdk", line 122, in main
-    handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-  File "/usr/bin/otelsdk", line 276, in handle
-    span : Span = spans[span_id]
-KeyError: '5'
-SDK Error: SPAN_ATTRIBUTE 5 string url.path=/plengauer/opentelemetry-bash/releases/download/v1.13.5/opentelemetry-shell_1.13.5.deb
-Traceback (most recent call last):
-  File "/usr/bin/otelsdk", line 122, in main
-    handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-  File "/usr/bin/otelsdk", line 276, in handle
-    span : Span = spans[span_id]
-KeyError: '5'
-SDK Error: SPAN_ATTRIBUTE 5 string url.scheme=https
-Traceback (most recent call last):
-  File "/usr/bin/otelsdk", line 122, in main
-    handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-  File "/usr/bin/otelsdk", line 276, in handle
-    span : Span = spans[span_id]
-KeyError: '5'
-SDK Error: SPAN_ATTRIBUTE 5 string user_agent.original=wget
-Traceback (most recent call last):
-  File "/usr/bin/otelsdk", line 122, in main
-    handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-  File "/usr/bin/otelsdk", line 276, in handle
-    span : Span = spans[span_id]
-KeyError: '5'
-SDK Error: SPAN_ATTRIBUTE 5 string http.request.method=GET
-Traceback (most recent call last):
-  File "/usr/bin/otelsdk", line 122, in main
-    handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-  File "/usr/bin/otelsdk", line 276, in handle
-    span : Span = spans[span_id]
-KeyError: '5'
 HTTP request sent, awaiting response... 302 Found
-SDK Error: SPAN_ATTRIBUTE 5 int http.response.status_code=302
-Traceback (most recent call last):
-  File "/usr/bin/otelsdk", line 122, in main
-    handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-  File "/usr/bin/otelsdk", line 276, in handle
-    span : Span = spans[span_id]
-KeyError: '5'
-Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/25d95ab9-56aa-4a77-8e84-d4947ecef0fc?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240921%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240921T083244Z&X-Amz-Expires=300&X-Amz-Signature=9303acbb4e8169b965e8838331e807c5bf09891d43d463bcb5e889c4cb12bc56&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.5.deb&response-content-type=application%2Foctet-stream [following]
---2024-09-21 08:32:44--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/25d95ab9-56aa-4a77-8e84-d4947ecef0fc?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240921%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240921T083244Z&X-Amz-Expires=300&X-Amz-Signature=9303acbb4e8169b965e8838331e807c5bf09891d43d463bcb5e889c4cb12bc56&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.5.deb&response-content-type=application%2Foctet-stream
-Connecting to objects.githubusercontent.com (objects.githubusercontent.com)|185.199.111.133|:443... connected.
-SDK Error: SPAN_END 5
-Traceback (most recent call last):
-  File "/usr/bin/otelsdk", line 122, in main
-    handle(scope, version, tokens[0], tokens[1] if len(tokens) > 1 else None)
-  File "/usr/bin/otelsdk", line 242, in handle
-    span : Span = spans[span_id]
-KeyError: '5'
+Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/25d95ab9-56aa-4a77-8e84-d4947ecef0fc?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240924%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240924T202531Z&X-Amz-Expires=300&X-Amz-Signature=737352a62c736dec1b2da93f7d4cb8f4657a84590a3c3c2aa427807b449c26e7&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.5.deb&response-content-type=application%2Foctet-stream [following]
+--2024-09-24 20:25:31--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/25d95ab9-56aa-4a77-8e84-d4947ecef0fc?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240924%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240924T202531Z&X-Amz-Expires=300&X-Amz-Signature=737352a62c736dec1b2da93f7d4cb8f4657a84590a3c3c2aa427807b449c26e7&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.5.deb&response-content-type=application%2Foctet-stream
+Connecting to objects.githubusercontent.com (objects.githubusercontent.com)|185.199.110.133|:443... connected.
 HTTP request sent, awaiting response... 200 OK
 Length: 7176 (7.0K) [application/octet-stream]
 Saving to: ‘opentelemetry-shell_1.13.5.deb’
 
-0K .......                                               100% 51.7M=0s
+0K .......                                               100% 91.7M=0s
 
-2024-09-21 08:32:44 (51.7 MB/s) - ‘opentelemetry-shell_1.13.5.deb’ saved [7176/7176]
+2024-09-24 20:25:31 (91.7 MB/s) - ‘opentelemetry-shell_1.13.5.deb’ saved [7176/7176]
 
-FINISHED --2024-09-21 08:32:44--
-Total wall clock time: 0.9s
-Downloaded: 3 files, 21K in 0s (69.8 MB/s)
-Failed to export logs batch code: 404, reason: 404 page not found
-
+FINISHED --2024-09-24 20:25:31--
+Total wall clock time: 0.4s
+Downloaded: 3 files, 21K in 0s (79.5 MB/s)

@@ -144,13 +144,13 @@
           {
             "key": "process.pid",
             "value": {
-              "intValue": "2738"
+              "intValue": "5354"
             }
           },
           {
             "key": "process.parent_pid",
             "value": {
-              "intValue": "2649"
+              "intValue": "2663"
             }
           },
           {
@@ -235,37 +235,49 @@
           },
           "spans": [
             {
-              "traceId": "9e014ed7e8c05fc38ca9ab03ee6dc0eb",
-              "spanId": "d4211c7ad5cebe8f",
-              "parentSpanId": "34835d73d7d71009",
+              "traceId": "ce874195d57f00bf24ec2c5cd91abcf6",
+              "spanId": "f7ced39f24fa3096",
+              "parentSpanId": "958bf5f0df234f21",
               "flags": 768,
-              "name": "echo hello world",
+              "name": "node index.js",
               "kind": 1,
-              "startTimeUnixNano": "1727209517183578660",
-              "endTimeUnixNano": "1727209517199338372",
+              "startTimeUnixNano": "1727209566744875585",
+              "endTimeUnixNano": "1727209566876029833",
               "attributes": [
                 {
                   "key": "shell.command_line",
                   "value": {
-                    "stringValue": "echo hello world"
+                    "stringValue": "node index.js"
                   }
                 },
                 {
                   "key": "shell.command",
                   "value": {
-                    "stringValue": "echo"
+                    "stringValue": "node"
                   }
                 },
                 {
                   "key": "shell.command.type",
                   "value": {
-                    "stringValue": "builtin"
+                    "stringValue": "file"
                   }
                 },
                 {
                   "key": "shell.command.name",
                   "value": {
-                    "stringValue": "echo"
+                    "stringValue": "node"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/local/bin/node"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "node"
                   }
                 },
                 {
@@ -290,14 +302,14 @@
               "status": {}
             },
             {
-              "traceId": "9e014ed7e8c05fc38ca9ab03ee6dc0eb",
-              "spanId": "34835d73d7d71009",
+              "traceId": "ce874195d57f00bf24ec2c5cd91abcf6",
+              "spanId": "958bf5f0df234f21",
               "parentSpanId": "",
               "flags": 256,
               "name": "bash -e demo.sh",
               "kind": 2,
-              "startTimeUnixNano": "1727209517171316987",
-              "endTimeUnixNano": "1727209517199517546",
+              "startTimeUnixNano": "1727209566732039883",
+              "endTimeUnixNano": "1727209566876194270",
               "status": {}
             }
           ]

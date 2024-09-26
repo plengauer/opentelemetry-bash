@@ -1,31 +1,33 @@
-# Demo "Hello world"
-This is a script as easy as it gets, i.e., a simple hello world. It shows some very simple span with the default attributes.
+# Demo "Deep injection into a Node.js app"
+This script uses a node.js app and configures opentelemetry to inject into the app and continue tracing.
 ## Script
 ```sh
 . otel.sh
-echo hello world
+OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE node index.js
 ```
 ## Trace Structure Overview
 ```
 bash -e demo.sh
-  echo hello world
+  node index.js
 ```
 ## Full Trace
 ```
 {
-  "trace_id": "9e014ed7e8c05fc38ca9ab03ee6dc0eb",
-  "span_id": "d4211c7ad5cebe8f",
-  "parent_span_id": "34835d73d7d71009",
-  "name": "echo hello world",
+  "trace_id": "ce874195d57f00bf24ec2c5cd91abcf6",
+  "span_id": "f7ced39f24fa3096",
+  "parent_span_id": "958bf5f0df234f21",
+  "name": "node index.js",
   "kind": "INTERNAL",
   "status": "UNSET",
-  "time_start": 1727209517183578600,
-  "time_end": 1727209517199338500,
+  "time_start": 1727209566744875500,
+  "time_end": 1727209566876030000,
   "attributes": {
-    "shell.command_line": "echo hello world",
-    "shell.command": "echo",
-    "shell.command.type": "builtin",
-    "shell.command.name": "echo",
+    "shell.command_line": "node index.js",
+    "shell.command": "node",
+    "shell.command.type": "file",
+    "shell.command.name": "node",
+    "subprocess.executable.path": "/usr/local/bin/node",
+    "subprocess.executable.name": "node",
     "shell.command.exit_code": 0,
     "code.filepath": "demo.sh",
     "code.lineno": 2
@@ -54,8 +56,8 @@ bash -e demo.sh
     "github.job.name": "demo-generate",
     "github.step.name": "",
     "github.action.name": "demo",
-    "process.pid": 2738,
-    "process.parent_pid": 2649,
+    "process.pid": 5354,
+    "process.parent_pid": 2663,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "bash -e demo.sh",
@@ -73,14 +75,14 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "9e014ed7e8c05fc38ca9ab03ee6dc0eb",
-  "span_id": "34835d73d7d71009",
+  "trace_id": "ce874195d57f00bf24ec2c5cd91abcf6",
+  "span_id": "958bf5f0df234f21",
   "parent_span_id": "",
   "name": "bash -e demo.sh",
   "kind": "SERVER",
   "status": "UNSET",
-  "time_start": 1727209517171317000,
-  "time_end": 1727209517199517400,
+  "time_start": 1727209566732040000,
+  "time_end": 1727209566876194300,
   "attributes": {},
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
@@ -106,8 +108,8 @@ bash -e demo.sh
     "github.job.name": "demo-generate",
     "github.step.name": "",
     "github.action.name": "demo",
-    "process.pid": 2738,
-    "process.parent_pid": 2649,
+    "process.pid": 5354,
+    "process.parent_pid": 2663,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "bash -e demo.sh",
