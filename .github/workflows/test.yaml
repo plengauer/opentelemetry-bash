@@ -72,6 +72,7 @@ jobs:
           name: package.deb
       - run: |
           echo '
+            apt-get update
             apt-get -y install /root/package.deb 
             apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade && apt-get -y autoremove && apt-get -y autoclean
             case "$(cat /etc/os-release | grep '^NAME=' | cut -d = -f 2 | tr -d "\"")" in
