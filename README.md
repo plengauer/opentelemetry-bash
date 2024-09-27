@@ -112,6 +112,8 @@ export OTEL_TRACES_EXPORTER=console
 Finally, run your script and see traces, metrics, and logs printed to stderr.
 
 # Installation
+This project currently supports and is actively tested on debian-based operating systems. The code also works on other Linux-based operating systems and should, in theory, even work on the Linux Subsystem for Windows. However, there are no readily available installation packages for non-debian systems. Mac-based operating systems are currently not supported.
+
 Install either via
 ```bash
 wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh
@@ -123,7 +125,7 @@ sudo apt-get update
 sudo apt-get install opentelemetry-shell
 ```
 
-Note: the apt repo only acts as a facade to offer a better unix-native installation option, internally it redirects the apt client to the releases of this repository.
+Note: the apt repo only acts as a facade to offer a better debian-native installation option, internally it redirects the apt client to the releases of this repository.
 
 # Documentation
 You can either use the fully automatic instrumentation (recommended) or just import the API to do everything manually. In both cases, you can use the API to manually create customized spans and metrics. However, the automatic approach creates rich spans and logs fully automatically. We recommend to use the manual approach only to augment the automatic approach where necessary.

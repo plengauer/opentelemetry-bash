@@ -105,6 +105,7 @@ jobs:
           sleep 15
           sudo docker stop collector
           rm config.yaml
+          sed -i s/$GITHUB_TOKEN/***/g otlp.json
       - env:
           GITHUB_TOKEN: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
         run: |
@@ -112,7 +113,7 @@ jobs:
           cd demos/${{ matrix.demo_directory }}
 
           spans() {
-            jq '.resourceSpans[].scopeSpans[].spans[]' < otlp.json
+            jq '. | select(.resourceSpans != null) | .resourceSpans[].scopeSpans[].spans[]' < otlp.json
           }
 
           convert_span_id_to_name() {
@@ -143,9 +144,9 @@ jobs:
               value="$(printf '%s' "$attributes" | jq 'select(.key == "'"$key"'")' | jq .value)"
               if printf '%s' "$value" | grep -q arrayValue; then
                 if printf '%s' "$value" | grep -q stringValue; then
-                  value="$(printf '%s' "$value" | jq .arrayValue.values.[].stringValue | tr '\n' ',')"
+                  value="$(printf '%s' "$value" | jq .arrayValue.values[].stringValue | tr '\n' ',')"
                 elif printf '%s' "$value" | grep -q intValue; then
-                  value="$(printf '%s', "$value" | jq -r .arrayValue.values.[].intValue | tr '\n' ',')"
+                  value="$(printf '%s', "$value" | jq -r .arrayValue.values[].intValue | tr '\n' ',')"
                 else
                   value=","
                 fi
@@ -188,9 +189,9 @@ jobs:
           }
 
           pretty_print_trace() {
-            cat otlp.json | jq -r '.resourceSpans[].scopeSpans[].spans[].spanId' | while read -r span_id; do
-              span="$(jq '.resourceSpans[].scopeSpans[].spans[] | select(.spanId == "'$span_id'")' < otlp.json)"
-              resource_attributes="$(jq '.resourceSpans[] | select(.scopeSpans[].spans[].spanId == "'$span_id'")' < otlp.json | jq .resource.attributes)"
+            cat otlp.json | jq -r '. | select(.resourceSpans != null) | .resourceSpans[].scopeSpans[].spans[].spanId' | while read -r span_id; do
+              span="$(jq '. | select(.resourceSpans != null) | .resourceSpans[].scopeSpans[].spans[] | select(.spanId == "'$span_id'")' < otlp.json)"
+              resource_attributes="$(jq '. | select(.resourceSpans != null) | .resourceSpans[] | select(.scopeSpans[].spans[].spanId == "'$span_id'")' < otlp.json | jq .resource.attributes)"
               jq -n \
                 --argjson trace_id "$(printf '%s' "$span" | jq .traceId)" \
                 --argjson span_id "$(printf '%s' "$span" | jq .spanId)" \
@@ -227,7 +228,7 @@ jobs:
             echo '```'
             echo '## Trace Structure Overview'
             echo '```'
-            print_span_name_tree "$(get_root_span_id)" ""
+            get_root_span_id | while read -r root_span_id; do print_span_name_tree "$root_span_id" ""; done
             echo '```'
             echo '## Full Trace'
             echo '```'
@@ -242,7 +243,7 @@ jobs:
           cd demos/${{ matrix.demo_directory }}
           git add --intent-to-add README.md output.stdout output.stderr otlp.json
           git diff
-          git diff README.md | grep -v '^+++' | grep -v '^---' | grep -v Id | grep -v _id | grep -v .id | grep -v Time | grep -v _time | grep -v timestamp | grep -v github. | grep -v telemetry.sdk.version | grep -v process.pid | grep -v process.parent_pid | grep -q '^+' && echo dirty=true >> "$GITHUB_OUTPUT" || true
+          git diff README.md | grep -v '^+++' | grep -v '^---' | grep -v Id | grep -v _id | grep -v .id | grep -v Time | grep -v time | grep -v timestamp | grep -v github. | grep -v telemetry.sdk.version | grep -v .port | grep -v process.pid | grep -v process.parent_pid | grep -q '^+' && echo dirty=true >> "$GITHUB_OUTPUT" || true
         id: diff
       - name: "Resolve Reviewers"
         if: steps.diff.outputs.dirty
