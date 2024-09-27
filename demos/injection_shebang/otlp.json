@@ -18,7 +18,7 @@
           {
             "key": "telemetry.sdk.version",
             "value": {
-              "stringValue": "4.31.0"
+              "stringValue": "4.31.1"
             }
           },
           {
@@ -30,7 +30,7 @@
           {
             "key": "github.sha",
             "value": {
-              "stringValue": "06480097787a1b628db865d4301706b24d38ddfc"
+              "stringValue": "e98e7ed40fca3243d4bdf5a66f5f54e3867dc58b"
             }
           },
           {
@@ -66,7 +66,7 @@
           {
             "key": "github.event.ref.sha",
             "value": {
-              "stringValue": "06480097787a1b628db865d4301706b24d38ddfc"
+              "stringValue": "e98e7ed40fca3243d4bdf5a66f5f54e3867dc58b"
             }
           },
           {
@@ -78,13 +78,13 @@
           {
             "key": "github.event.actor.id",
             "value": {
-              "stringValue": "170979611"
+              "stringValue": "100447901"
             }
           },
           {
             "key": "github.event.actor.name",
             "value": {
-              "stringValue": "actions-bot-pl"
+              "stringValue": "plengauer"
             }
           },
           {
@@ -96,7 +96,7 @@
           {
             "key": "github.workflow.run.id",
             "value": {
-              "stringValue": "11020913815"
+              "stringValue": "11068449473"
             }
           },
           {
@@ -114,7 +114,7 @@
           {
             "key": "github.workflow.sha",
             "value": {
-              "stringValue": "06480097787a1b628db865d4301706b24d38ddfc"
+              "stringValue": "e98e7ed40fca3243d4bdf5a66f5f54e3867dc58b"
             }
           },
           {
@@ -144,13 +144,13 @@
           {
             "key": "process.pid",
             "value": {
-              "intValue": "3516"
+              "intValue": "3409"
             }
           },
           {
             "key": "process.parent_pid",
             "value": {
-              "intValue": "2809"
+              "intValue": "2702"
             }
           },
           {
@@ -198,7 +198,7 @@
           {
             "key": "process.runtime.version",
             "value": {
-              "stringValue": "0.5.11+git20210903+057cd650a4ed-3build1"
+              "stringValue": "0.5.12-6ubuntu5"
             }
           },
           {
@@ -231,18 +231,18 @@
         {
           "scope": {
             "name": "shell",
-            "version": "4.31.0"
+            "version": "4.31.1"
           },
           "spans": [
             {
-              "traceId": "17b5889f97e92dd237367faa38dc0d03",
-              "spanId": "1e8d06c78ecdfe20",
-              "parentSpanId": "61f5b46f91c76eca",
+              "traceId": "34d3eb559f8b58c7814d853c0c971a27",
+              "spanId": "ba7d4b6f1958f6f4",
+              "parentSpanId": "de1ad667b47e87ca",
               "flags": 768,
               "name": "test -n",
               "kind": 1,
-              "startTimeUnixNano": "1727209526539321236",
-              "endTimeUnixNano": "1727209526556600665",
+              "startTimeUnixNano": "1727437473181043735",
+              "endTimeUnixNano": "1727437473200749232",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -286,14 +286,14 @@
               }
             },
             {
-              "traceId": "17b5889f97e92dd237367faa38dc0d03",
-              "spanId": "58d45a1d881eae2e",
-              "parentSpanId": "61f5b46f91c76eca",
+              "traceId": "34d3eb559f8b58c7814d853c0c971a27",
+              "spanId": "7a3fadfe359c1cbf",
+              "parentSpanId": "de1ad667b47e87ca",
               "flags": 768,
               "name": "[ 1 -eq 0 ]",
               "kind": 1,
-              "startTimeUnixNano": "1727209526559379732",
-              "endTimeUnixNano": "1727209526574214512",
+              "startTimeUnixNano": "1727437473203377554",
+              "endTimeUnixNano": "1727437473217829369",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -337,14 +337,14 @@
               }
             },
             {
-              "traceId": "17b5889f97e92dd237367faa38dc0d03",
-              "spanId": "7e39b01db935c1c7",
-              "parentSpanId": "61f5b46f91c76eca",
+              "traceId": "34d3eb559f8b58c7814d853c0c971a27",
+              "spanId": "68b4df1a3b4b9749",
+              "parentSpanId": "de1ad667b47e87ca",
               "flags": 768,
               "name": "[ -z /snap/bin ]",
               "kind": 1,
-              "startTimeUnixNano": "1727209526576981536",
-              "endTimeUnixNano": "1727209526591524259",
+              "startTimeUnixNano": "1727437473220470518",
+              "endTimeUnixNano": "1727437473234737212",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -388,14 +388,14 @@
               }
             },
             {
-              "traceId": "17b5889f97e92dd237367faa38dc0d03",
-              "spanId": "bd0a9960a376ecbb",
-              "parentSpanId": "61f5b46f91c76eca",
+              "traceId": "34d3eb559f8b58c7814d853c0c971a27",
+              "spanId": "39ceba0b6bb2f51d",
+              "parentSpanId": "de1ad667b47e87ca",
               "flags": 768,
               "name": "[ -f /snap/bin/bash ]",
               "kind": 1,
-              "startTimeUnixNano": "1727209526594313937",
-              "endTimeUnixNano": "1727209526609501472",
+              "startTimeUnixNano": "1727437473237464574",
+              "endTimeUnixNano": "1727437473251726205",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -439,14 +439,14 @@
               }
             },
             {
-              "traceId": "17b5889f97e92dd237367faa38dc0d03",
-              "spanId": "184e44159869171b",
-              "parentSpanId": "61f5b46f91c76eca",
+              "traceId": "34d3eb559f8b58c7814d853c0c971a27",
+              "spanId": "1b5a40fb32baafd3",
+              "parentSpanId": "de1ad667b47e87ca",
               "flags": 768,
               "name": "[ -z /home/runner/.local/bin ]",
               "kind": 1,
-              "startTimeUnixNano": "1727209526612478312",
-              "endTimeUnixNano": "1727209526627641282",
+              "startTimeUnixNano": "1727437473254336076",
+              "endTimeUnixNano": "1727437473268945524",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -490,14 +490,14 @@
               }
             },
             {
-              "traceId": "17b5889f97e92dd237367faa38dc0d03",
-              "spanId": "3dc47402e1cb87d1",
-              "parentSpanId": "61f5b46f91c76eca",
+              "traceId": "34d3eb559f8b58c7814d853c0c971a27",
+              "spanId": "cc7c2042859568e0",
+              "parentSpanId": "de1ad667b47e87ca",
               "flags": 768,
               "name": "[ -f /home/runner/.local/bin/bash ]",
               "kind": 1,
-              "startTimeUnixNano": "1727209526630563008",
-              "endTimeUnixNano": "1727209526645142517",
+              "startTimeUnixNano": "1727437473271681582",
+              "endTimeUnixNano": "1727437473285978132",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -541,14 +541,14 @@
               }
             },
             {
-              "traceId": "17b5889f97e92dd237367faa38dc0d03",
-              "spanId": "1592d01bcfe0ea7c",
-              "parentSpanId": "61f5b46f91c76eca",
+              "traceId": "34d3eb559f8b58c7814d853c0c971a27",
+              "spanId": "c110ccb06bc6d032",
+              "parentSpanId": "de1ad667b47e87ca",
               "flags": 768,
               "name": "[ -z /opt/pipx_bin ]",
               "kind": 1,
-              "startTimeUnixNano": "1727209526647955220",
-              "endTimeUnixNano": "1727209526662857071",
+              "startTimeUnixNano": "1727437473288575292",
+              "endTimeUnixNano": "1727437473303341883",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -592,14 +592,14 @@
               }
             },
             {
-              "traceId": "17b5889f97e92dd237367faa38dc0d03",
-              "spanId": "584d0273c4da78f0",
-              "parentSpanId": "61f5b46f91c76eca",
+              "traceId": "34d3eb559f8b58c7814d853c0c971a27",
+              "spanId": "7db89ce9b7b64cbb",
+              "parentSpanId": "de1ad667b47e87ca",
               "flags": 768,
               "name": "[ -f /opt/pipx_bin/bash ]",
               "kind": 1,
-              "startTimeUnixNano": "1727209526665644075",
-              "endTimeUnixNano": "1727209526680656125",
+              "startTimeUnixNano": "1727437473305907580",
+              "endTimeUnixNano": "1727437473320276159",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -643,14 +643,14 @@
               }
             },
             {
-              "traceId": "17b5889f97e92dd237367faa38dc0d03",
-              "spanId": "966d1cb2b62d8e09",
-              "parentSpanId": "61f5b46f91c76eca",
+              "traceId": "34d3eb559f8b58c7814d853c0c971a27",
+              "spanId": "5f9ef0e2cebcc6ce",
+              "parentSpanId": "de1ad667b47e87ca",
               "flags": 768,
               "name": "[ -z /home/runner/.cargo/bin ]",
               "kind": 1,
-              "startTimeUnixNano": "1727209526683582677",
-              "endTimeUnixNano": "1727209526699038166",
+              "startTimeUnixNano": "1727437473322878562",
+              "endTimeUnixNano": "1727437473337208518",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -694,14 +694,14 @@
               }
             },
             {
-              "traceId": "17b5889f97e92dd237367faa38dc0d03",
-              "spanId": "9c2be5285ae115b2",
-              "parentSpanId": "61f5b46f91c76eca",
+              "traceId": "34d3eb559f8b58c7814d853c0c971a27",
+              "spanId": "2c9f223251d960bc",
+              "parentSpanId": "de1ad667b47e87ca",
               "flags": 768,
               "name": "[ -f /home/runner/.cargo/bin/bash ]",
               "kind": 1,
-              "startTimeUnixNano": "1727209526701764727",
-              "endTimeUnixNano": "1727209526717525064",
+              "startTimeUnixNano": "1727437473339898005",
+              "endTimeUnixNano": "1727437473354464005",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -745,14 +745,14 @@
               }
             },
             {
-              "traceId": "17b5889f97e92dd237367faa38dc0d03",
-              "spanId": "61e8d62ab178adcb",
-              "parentSpanId": "61f5b46f91c76eca",
+              "traceId": "34d3eb559f8b58c7814d853c0c971a27",
+              "spanId": "add0ee53e9e27969",
+              "parentSpanId": "de1ad667b47e87ca",
               "flags": 768,
               "name": "[ -z /home/runner/.config/composer/vendor/bin ]",
               "kind": 1,
-              "startTimeUnixNano": "1727209526720297590",
-              "endTimeUnixNano": "1727209526734595645",
+              "startTimeUnixNano": "1727437473357160596",
+              "endTimeUnixNano": "1727437473371302678",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -796,14 +796,14 @@
               }
             },
             {
-              "traceId": "17b5889f97e92dd237367faa38dc0d03",
-              "spanId": "39090a2d2129dcd9",
-              "parentSpanId": "61f5b46f91c76eca",
+              "traceId": "34d3eb559f8b58c7814d853c0c971a27",
+              "spanId": "5aa9dcd726f1dc10",
+              "parentSpanId": "de1ad667b47e87ca",
               "flags": 768,
               "name": "[ -f /home/runner/.config/composer/vendor/bin/bash ]",
               "kind": 1,
-              "startTimeUnixNano": "1727209526737414187",
-              "endTimeUnixNano": "1727209526751980972",
+              "startTimeUnixNano": "1727437473373911687",
+              "endTimeUnixNano": "1727437473388749335",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -847,14 +847,14 @@
               }
             },
             {
-              "traceId": "17b5889f97e92dd237367faa38dc0d03",
-              "spanId": "856e088de500c291",
-              "parentSpanId": "61f5b46f91c76eca",
+              "traceId": "34d3eb559f8b58c7814d853c0c971a27",
+              "spanId": "a36ccc19a5227e05",
+              "parentSpanId": "de1ad667b47e87ca",
               "flags": 768,
               "name": "[ -z /usr/local/.ghcup/bin ]",
               "kind": 1,
-              "startTimeUnixNano": "1727209526754824121",
-              "endTimeUnixNano": "1727209526769562499",
+              "startTimeUnixNano": "1727437473391489808",
+              "endTimeUnixNano": "1727437473406036502",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -898,14 +898,14 @@
               }
             },
             {
-              "traceId": "17b5889f97e92dd237367faa38dc0d03",
-              "spanId": "0d33ce313168db3a",
-              "parentSpanId": "61f5b46f91c76eca",
+              "traceId": "34d3eb559f8b58c7814d853c0c971a27",
+              "spanId": "9901faa7c32ef379",
+              "parentSpanId": "de1ad667b47e87ca",
               "flags": 768,
               "name": "[ -f /usr/local/.ghcup/bin/bash ]",
               "kind": 1,
-              "startTimeUnixNano": "1727209526772356603",
-              "endTimeUnixNano": "1727209526787228723",
+              "startTimeUnixNano": "1727437473408697115",
+              "endTimeUnixNano": "1727437473423462647",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -949,14 +949,14 @@
               }
             },
             {
-              "traceId": "17b5889f97e92dd237367faa38dc0d03",
-              "spanId": "68e41c5619d49fcd",
-              "parentSpanId": "61f5b46f91c76eca",
+              "traceId": "34d3eb559f8b58c7814d853c0c971a27",
+              "spanId": "0a56b5d9bdfd7e95",
+              "parentSpanId": "de1ad667b47e87ca",
               "flags": 768,
               "name": "[ -z /home/runner/.dotnet/tools ]",
               "kind": 1,
-              "startTimeUnixNano": "1727209526789985217",
-              "endTimeUnixNano": "1727209526804716673",
+              "startTimeUnixNano": "1727437473426138612",
+              "endTimeUnixNano": "1727437473440514053",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -1000,14 +1000,14 @@
               }
             },
             {
-              "traceId": "17b5889f97e92dd237367faa38dc0d03",
-              "spanId": "fd191e54267b78b0",
-              "parentSpanId": "61f5b46f91c76eca",
+              "traceId": "34d3eb559f8b58c7814d853c0c971a27",
+              "spanId": "83be2a802dbc3327",
+              "parentSpanId": "de1ad667b47e87ca",
               "flags": 768,
               "name": "[ -f /home/runner/.dotnet/tools/bash ]",
               "kind": 1,
-              "startTimeUnixNano": "1727209526807660391",
-              "endTimeUnixNano": "1727209526822321549",
+              "startTimeUnixNano": "1727437473443097254",
+              "endTimeUnixNano": "1727437473457621221",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -1051,14 +1051,14 @@
               }
             },
             {
-              "traceId": "17b5889f97e92dd237367faa38dc0d03",
-              "spanId": "f7fa13e531c7e164",
-              "parentSpanId": "61f5b46f91c76eca",
+              "traceId": "34d3eb559f8b58c7814d853c0c971a27",
+              "spanId": "168d8c7c8c7739d5",
+              "parentSpanId": "de1ad667b47e87ca",
               "flags": 768,
               "name": "[ -z /usr/local/sbin ]",
               "kind": 1,
-              "startTimeUnixNano": "1727209526825210813",
-              "endTimeUnixNano": "1727209526839926389",
+              "startTimeUnixNano": "1727437473460225809",
+              "endTimeUnixNano": "1727437473474677791",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -1102,14 +1102,14 @@
               }
             },
             {
-              "traceId": "17b5889f97e92dd237367faa38dc0d03",
-              "spanId": "70975624e8d4cfe3",
-              "parentSpanId": "61f5b46f91c76eca",
+              "traceId": "34d3eb559f8b58c7814d853c0c971a27",
+              "spanId": "2767d4ca79ba2691",
+              "parentSpanId": "de1ad667b47e87ca",
               "flags": 768,
               "name": "[ -f /usr/local/sbin/bash ]",
               "kind": 1,
-              "startTimeUnixNano": "1727209526842754891",
-              "endTimeUnixNano": "1727209526857429872",
+              "startTimeUnixNano": "1727437473477304584",
+              "endTimeUnixNano": "1727437473491385387",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -1153,14 +1153,14 @@
               }
             },
             {
-              "traceId": "17b5889f97e92dd237367faa38dc0d03",
-              "spanId": "f6168be3a0d13b20",
-              "parentSpanId": "61f5b46f91c76eca",
+              "traceId": "34d3eb559f8b58c7814d853c0c971a27",
+              "spanId": "49e3013c6d090b29",
+              "parentSpanId": "de1ad667b47e87ca",
               "flags": 768,
               "name": "[ -z /usr/local/bin ]",
               "kind": 1,
-              "startTimeUnixNano": "1727209526860262559",
-              "endTimeUnixNano": "1727209526874846053",
+              "startTimeUnixNano": "1727437473494008643",
+              "endTimeUnixNano": "1727437473508287302",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -1204,14 +1204,14 @@
               }
             },
             {
-              "traceId": "17b5889f97e92dd237367faa38dc0d03",
-              "spanId": "d178c243d46e49ae",
-              "parentSpanId": "61f5b46f91c76eca",
+              "traceId": "34d3eb559f8b58c7814d853c0c971a27",
+              "spanId": "08ee53d569b1d9df",
+              "parentSpanId": "de1ad667b47e87ca",
               "flags": 768,
               "name": "[ -f /usr/local/bin/bash ]",
               "kind": 1,
-              "startTimeUnixNano": "1727209526877579555",
-              "endTimeUnixNano": "1727209526892302787",
+              "startTimeUnixNano": "1727437473510921987",
+              "endTimeUnixNano": "1727437473525205191",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -1255,14 +1255,14 @@
               }
             },
             {
-              "traceId": "17b5889f97e92dd237367faa38dc0d03",
-              "spanId": "10e7c07dbc4ccd61",
-              "parentSpanId": "61f5b46f91c76eca",
+              "traceId": "34d3eb559f8b58c7814d853c0c971a27",
+              "spanId": "89159df6def923de",
+              "parentSpanId": "de1ad667b47e87ca",
               "flags": 768,
               "name": "[ -z /usr/sbin ]",
               "kind": 1,
-              "startTimeUnixNano": "1727209526894997757",
-              "endTimeUnixNano": "1727209526909702526",
+              "startTimeUnixNano": "1727437473527779395",
+              "endTimeUnixNano": "1727437473542187970",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -1306,14 +1306,14 @@
               }
             },
             {
-              "traceId": "17b5889f97e92dd237367faa38dc0d03",
-              "spanId": "595cc94a8296a852",
-              "parentSpanId": "61f5b46f91c76eca",
+              "traceId": "34d3eb559f8b58c7814d853c0c971a27",
+              "spanId": "bfffb17a53220668",
+              "parentSpanId": "de1ad667b47e87ca",
               "flags": 768,
               "name": "[ -f /usr/sbin/bash ]",
               "kind": 1,
-              "startTimeUnixNano": "1727209526912417433",
-              "endTimeUnixNano": "1727209526927389312",
+              "startTimeUnixNano": "1727437473544788228",
+              "endTimeUnixNano": "1727437473559384475",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -1357,14 +1357,14 @@
               }
             },
             {
-              "traceId": "17b5889f97e92dd237367faa38dc0d03",
-              "spanId": "dfe5257cca617609",
-              "parentSpanId": "61f5b46f91c76eca",
+              "traceId": "34d3eb559f8b58c7814d853c0c971a27",
+              "spanId": "3ae2045ccbe0d041",
+              "parentSpanId": "de1ad667b47e87ca",
               "flags": 768,
               "name": "[ -z /usr/bin ]",
               "kind": 1,
-              "startTimeUnixNano": "1727209526930238579",
-              "endTimeUnixNano": "1727209526945121731",
+              "startTimeUnixNano": "1727437473561993395",
+              "endTimeUnixNano": "1727437473576236403",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -1408,14 +1408,14 @@
               }
             },
             {
-              "traceId": "17b5889f97e92dd237367faa38dc0d03",
-              "spanId": "f07784eccc695391",
-              "parentSpanId": "61f5b46f91c76eca",
+              "traceId": "34d3eb559f8b58c7814d853c0c971a27",
+              "spanId": "ed72c8f88c00fec0",
+              "parentSpanId": "de1ad667b47e87ca",
               "flags": 768,
               "name": "[ -f /usr/bin/bash ]",
               "kind": 1,
-              "startTimeUnixNano": "1727209526947970188",
-              "endTimeUnixNano": "1727209526962526310",
+              "startTimeUnixNano": "1727437473578796070",
+              "endTimeUnixNano": "1727437473592910611",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -1457,14 +1457,14 @@
               "status": {}
             },
             {
-              "traceId": "17b5889f97e92dd237367faa38dc0d03",
-              "spanId": "b34e6ca363e16297",
-              "parentSpanId": "61f5b46f91c76eca",
+              "traceId": "34d3eb559f8b58c7814d853c0c971a27",
+              "spanId": "2e99430464b2d275",
+              "parentSpanId": "de1ad667b47e87ca",
               "flags": 768,
               "name": "[ -x /usr/bin/bash ]",
               "kind": 1,
-              "startTimeUnixNano": "1727209526965401065",
-              "endTimeUnixNano": "1727209526980269087",
+              "startTimeUnixNano": "1727437473595520106",
+              "endTimeUnixNano": "1727437473609963564",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -1506,14 +1506,14 @@
               "status": {}
             },
             {
-              "traceId": "17b5889f97e92dd237367faa38dc0d03",
-              "spanId": "824f5726b8d4cc71",
-              "parentSpanId": "61f5b46f91c76eca",
+              "traceId": "34d3eb559f8b58c7814d853c0c971a27",
+              "spanId": "e990297497d07079",
+              "parentSpanId": "de1ad667b47e87ca",
               "flags": 768,
               "name": "[ 0 -eq 1 ]",
               "kind": 1,
-              "startTimeUnixNano": "1727209526983061080",
-              "endTimeUnixNano": "1727209526998124797",
+              "startTimeUnixNano": "1727437473612668328",
+              "endTimeUnixNano": "1727437473627413916",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -1557,14 +1557,65 @@
               }
             },
             {
-              "traceId": "17b5889f97e92dd237367faa38dc0d03",
-              "spanId": "6ce2d9711d4c4b8e",
-              "parentSpanId": "61f5b46f91c76eca",
+              "traceId": "34d3eb559f8b58c7814d853c0c971a27",
+              "spanId": "a794c18663b28435",
+              "parentSpanId": "de1ad667b47e87ca",
+              "flags": 768,
+              "name": "[ 0 -eq 1 ]",
+              "kind": 1,
+              "startTimeUnixNano": "1727437473630026002",
+              "endTimeUnixNano": "1727437473644535593",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "[ 0 -eq 1 ]"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "["
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "builtin"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "["
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "1"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "/usr/bin/which"
+                  }
+                }
+              ],
+              "status": {
+                "code": 2
+              }
+            },
+            {
+              "traceId": "34d3eb559f8b58c7814d853c0c971a27",
+              "spanId": "5abdd9eba0f9b159",
+              "parentSpanId": "de1ad667b47e87ca",
               "flags": 768,
               "name": "[ 0 -ne 0 ]",
               "kind": 1,
-              "startTimeUnixNano": "1727209527001069463",
-              "endTimeUnixNano": "1727209527016250132",
+              "startTimeUnixNano": "1727437473647255719",
+              "endTimeUnixNano": "1727437473662145382",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -1633,7 +1684,7 @@
           {
             "key": "telemetry.sdk.version",
             "value": {
-              "stringValue": "4.31.0"
+              "stringValue": "4.31.1"
             }
           },
           {
@@ -1645,7 +1696,7 @@
           {
             "key": "github.sha",
             "value": {
-              "stringValue": "06480097787a1b628db865d4301706b24d38ddfc"
+              "stringValue": "e98e7ed40fca3243d4bdf5a66f5f54e3867dc58b"
             }
           },
           {
@@ -1681,7 +1732,7 @@
           {
             "key": "github.event.ref.sha",
             "value": {
-              "stringValue": "06480097787a1b628db865d4301706b24d38ddfc"
+              "stringValue": "e98e7ed40fca3243d4bdf5a66f5f54e3867dc58b"
             }
           },
           {
@@ -1693,13 +1744,13 @@
           {
             "key": "github.event.actor.id",
             "value": {
-              "stringValue": "170979611"
+              "stringValue": "100447901"
             }
           },
           {
             "key": "github.event.actor.name",
             "value": {
-              "stringValue": "actions-bot-pl"
+              "stringValue": "plengauer"
             }
           },
           {
@@ -1711,7 +1762,7 @@
           {
             "key": "github.workflow.run.id",
             "value": {
-              "stringValue": "11020913815"
+              "stringValue": "11068449473"
             }
           },
           {
@@ -1729,7 +1780,7 @@
           {
             "key": "github.workflow.sha",
             "value": {
-              "stringValue": "06480097787a1b628db865d4301706b24d38ddfc"
+              "stringValue": "e98e7ed40fca3243d4bdf5a66f5f54e3867dc58b"
             }
           },
           {
@@ -1759,13 +1810,13 @@
           {
             "key": "process.pid",
             "value": {
-              "intValue": "2809"
+              "intValue": "2702"
             }
           },
           {
             "key": "process.parent_pid",
             "value": {
-              "intValue": "2714"
+              "intValue": "2605"
             }
           },
           {
@@ -1813,7 +1864,7 @@
           {
             "key": "process.runtime.version",
             "value": {
-              "stringValue": "5.1-6ubuntu1.1"
+              "stringValue": "5.2.21-2ubuntu4"
             }
           },
           {
@@ -1846,18 +1897,18 @@
         {
           "scope": {
             "name": "shell",
-            "version": "4.31.0"
+            "version": "4.31.1"
           },
           "spans": [
             {
-              "traceId": "17b5889f97e92dd237367faa38dc0d03",
-              "spanId": "61f5b46f91c76eca",
-              "parentSpanId": "77a93e346704d2cf",
+              "traceId": "34d3eb559f8b58c7814d853c0c971a27",
+              "spanId": "de1ad667b47e87ca",
+              "parentSpanId": "13b617b5890d22db",
               "flags": 768,
               "name": "/bin/sh /usr/bin/which bash",
               "kind": 1,
-              "startTimeUnixNano": "1727209525916938718",
-              "endTimeUnixNano": "1727209527052887889",
+              "startTimeUnixNano": "1727437472565057100",
+              "endTimeUnixNano": "1727437473696314601",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -1917,14 +1968,14 @@
               "status": {}
             },
             {
-              "traceId": "17b5889f97e92dd237367faa38dc0d03",
-              "spanId": "77a93e346704d2cf",
+              "traceId": "34d3eb559f8b58c7814d853c0c971a27",
+              "spanId": "13b617b5890d22db",
               "parentSpanId": "",
               "flags": 256,
               "name": "bash -e demo.sh",
               "kind": 2,
-              "startTimeUnixNano": "1727209525904116982",
-              "endTimeUnixNano": "1727209527053007102",
+              "startTimeUnixNano": "1727437472552722256",
+              "endTimeUnixNano": "1727437473696431321",
               "status": {}
             }
           ]
