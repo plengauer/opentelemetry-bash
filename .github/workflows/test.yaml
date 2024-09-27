@@ -77,8 +77,7 @@ jobs:
             case "$(cat /etc/os-release | grep '^NAME=' | cut -d = -f 2 | tr -d '"')"
               Ubuntu)
                 DEBIAN_FRONTEND=noninteractive apt-get -y install systemctl update-manager-core
-                sed -i "/Prompt/d" /etc/update-manager/release-upgrades
-                echo "Prompt=normal" >> /etc/update-manager/release-upgrades
+                sed -i "/Prompt/d" /etc/update-manager/release-upgrades && echo "Prompt=normal" >> /etc/update-manager/release-upgrades
                 do-release-upgrade -c || exit 0 && RELEASE_UPGRADER_ALLOW_THIRD_PARTY=1 do-release-upgrade -f DistUpgradeViewNonInteractive
                 ;;
               Debian*)
