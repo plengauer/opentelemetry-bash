@@ -1,0 +1,3 @@
+# lsb_release uses set -u and then fails because of unset variables
+. otel.sh
+lsb_release -a
