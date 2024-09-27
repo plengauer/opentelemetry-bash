@@ -72,8 +72,8 @@ jobs:
           name: package.deb
       - run: |
           echo '
-            DEBIAN_FRONTEND=noninteractive apt-get -y install /root/package.deb 
-            apt-get update && apt-get -y dist-upgrade && apt-get -y autoremove && apt-get -y autoclean
+            apt-get -y install /root/package.deb 
+            apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade && apt-get -y autoremove && apt-get -y autoclean
             case "$(cat /etc/os-release | grep '^NAME=' | cut -d = -f 2 | tr -d '"')" in
               Ubuntu)
                 DEBIAN_FRONTEND=noninteractive apt-get -y install systemctl update-manager-core
@@ -87,7 +87,7 @@ jobs:
                 ;;
               *) exit 1;;
             esac
-            apt-get update && apt-get -y dist-upgrade && apt-get -y autoremove && apt-get -y autoclean
+            apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade && apt-get -y autoremove && apt-get -y autoclean
           ' | sudo docker run -v $(pwd)/package.deb:/root/package.deb --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
 
   dependency:
