@@ -86,8 +86,8 @@ jobs:
                 sed -i "s/$version_source/$version_destination/g" /etc/apt/sources.list /etc/apt/sources.list.d/*
                 ;;
               *) exit 1;;
-              apt-get update && apt-get -y dist-upgrade && apt-get -y autoremove && apt-get -y autoclean
             esac
+            apt-get update && apt-get -y dist-upgrade && apt-get -y autoremove && apt-get -y autoclean
           ' | sudo docker run -v $(pwd)/package.deb:/root/package.deb --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
 
   dependency:
