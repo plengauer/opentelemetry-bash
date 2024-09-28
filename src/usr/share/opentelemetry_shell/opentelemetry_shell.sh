@@ -50,8 +50,8 @@ if \[ "$_otel_shell" = "bash" ]; then
 else
   _otel_source_file_resolver='$0'
 fi
-_otel_source_line_resolver='$LINENO'
-_otel_source_func_resolver='$FUNCNAME'
+_otel_source_line_resolver='${LINENO+}'
+_otel_source_func_resolver='${FUNCNAME+}'
 
 if \[ "$_otel_shell" = "bash" ]; then
   shopt -s expand_aliases 1> /dev/null 2> /dev/null
@@ -93,7 +93,7 @@ _otel_auto_instrument() {
   \alias .='_otel_instrument_and_source "$#" "$@" .'
   if \[ "$_otel_shell" = bash ]; then \alias source='_otel_instrument_and_source "$#" "$@" source'; fi
   if \[ "$_otel_shell_conservative_exec" = TRUE ]; then
-    if \[ -n "$LINENO" ]; then
+    if \[ -n "${LINENO+}" ]; then
       \alias exec='eval "$(_otel_inject_and_exec_by_location "'$_otel_source_file_resolver'" "'$_otel_source_line_resolver'")"; exec'
     else
       \alias exec='_otel_record_exec; exec'
@@ -405,13 +405,13 @@ _otel_inject() {
 
 _otel_start_script() {
   otel_init || return $?
-  if \[ -n "$SSH_CLIENT"  ] && \[ -n "$SSH_CONNECTION" ] && \[ "$PPID" != 0 ] && \[ "$(\cat /proc/$PPID/cmdline | \tr -d '\000' | \cut -d ' ' -f 1)" = "sshd:" ]; then
+  if \[ -n "${SSH_CLIENT+}"  ] && \[ -n "${SSH_CONNECTION+}" ] && \[ "$PPID" != 0 ] && \[ "$(\cat /proc/$PPID/cmdline | \tr -d '\000' | \cut -d ' ' -f 1)" = "sshd:" ]; then
     _root_span_handle="$(otel_span_start SERVER ssh)"
     otel_span_attribute_typed $_root_span_handle string ssh.ip="$(\echo $SSH_CONNECTION | \cut -d ' ' -f 3)"
     otel_span_attribute_typed $_root_span_handle int ssh.port="$(\echo $SSH_CONNECTION | \cut -d ' ' -f 4)"
     otel_span_attribute_typed $_root_span_handle string network.peer.ip="$(\echo $SSH_CLIENT | \cut -d ' ' -f 1)"
     otel_span_attribute_typed $_root_span_handle int network.peer.port="$(\echo $SSH_CLIENT | \cut -d ' ' -f 2)"
-  elif \[ -n "$SERVER_SOFTWARE"  ] && \[ -n "$SCRIPT_NAME" ] && \[ -n "$SERVER_NAME" ] && \[ -n "$SERVER_PROTOCOL" ] && ! \[ "$OTEL_SHELL_AUTO_INJECTED" = "TRUE" ] && \[ "$PPID" != 0 ] && \[ "$(\cat "/proc/$PPID/cmdline" | \tr '\000' ' ' | \cut -d ' ' -f 1 | \rev | \cut -d / -f 1 | \rev)" = "python3" ]; then
+  elif \[ -n "${SERVER_SOFTWARE+}"  ] && \[ -n "${SCRIPT_NAME+}" ] && \[ -n "${SERVER_NAME+}" ] && \[ -n "${SERVER_PROTOCOL+}" ] && ! \[ "$OTEL_SHELL_AUTO_INJECTED" = "TRUE" ] && \[ "$PPID" != 0 ] && \[ "$(\cat "/proc/$PPID/cmdline" | \tr '\000' ' ' | \cut -d ' ' -f 1 | \rev | \cut -d / -f 1 | \rev)" = "python3" ]; then
     _root_span_handle="$(otel_span_start SERVER GET)"
     otel_span_attribute_typed $_root_span_handle string network.protocol.name=http
     otel_span_attribute_typed $_root_span_handle string network.transport=tcp
@@ -430,7 +430,7 @@ _otel_start_script() {
     _root_span_handle="$(otel_span_start SERVER "$(\echo "$cmdline" | \cut -d . -f 2- | \cut -d ' ' -f 1)")"
     otel_span_attribute_typed $_root_span_handle string debian.package.name="$(\echo "$cmdline" | \rev | \cut -d / -f 1 | \rev | \cut -d . -f 1)"
     otel_span_attribute_typed $_root_span_handle string debian.package.operation="$(\echo "$cmdline" | \cut -d . -f 2-)"
-  elif \[ "$GITHUB_ACTIONS" = true ] && \[ -n "$GITHUB_RUN_ID" ] && \[ -n "$GITHUB_WORKFLOW" ] && ( \[ "$OTEL_SHELL_IS_GITHUB_ACTION_ROOT" = TRUE ] || \[ "$PPID" != 0 ] && \[ "$(\cat /proc/$PPID/cmdline | \tr '\000-\037' ' ' | \cut -d ' ' -f 1 | \rev | \cut -d / -f 1 | \rev)" = "Runner.Worker" ] ); then
+  elif \[ "${GITHUB_ACTIONS+false}" = true ] && \[ -n "${GITHUB_RUN_ID+}" ] && \[ -n "${GITHUB_WORKFLOW+}" ] && ( \[ "$OTEL_SHELL_IS_GITHUB_ACTION_ROOT" = TRUE ] || \[ "$PPID" != 0 ] && \[ "$(\cat /proc/$PPID/cmdline | \tr '\000-\037' ' ' | \cut -d ' ' -f 1 | \rev | \cut -d / -f 1 | \rev)" = "Runner.Worker" ] ); then
     unset OTEL_SHELL_IS_GITHUB_ACTION_ROOT
     local name="$GITHUB_WORKFLOW"
     local kind=CONSUMER
@@ -438,18 +438,18 @@ _otel_start_script() {
     if \[ -n "$GITHUB_STEP" ]; then local name="$name / $GITHUB_STEP"; local kind=SERVER
     elif \[ -n "$GITHUB_ACTION" ]; then local name="$name / $GITHUB_ACTION"; local kind=INTERNAL; fi
     _root_span_handle="$(otel_span_start "$kind" "$name")"
-  elif ! \[ "$OTEL_SHELL_AUTO_INJECTED" = TRUE ] && \[ -z "$TRACEPARENT" ]; then
+  elif ! \[ "${OTEL_SHELL_AUTO_INJECTED+FALSE}" = TRUE ] && \[ -z "${TRACEPARENT+}" ]; then
     _root_span_handle="$(otel_span_start SERVER "$(_otel_command_self)")"
-  elif ! \[ "$OTEL_SHELL_AUTO_INJECTED" = TRUE ] && \[ -n "$TRACEPARENT" ]; then
+  elif ! \[ "${OTEL_SHELL_AUTO_INJECTED+FALSE}" = TRUE ] && \[ -n "${TRACEPARENT+}" ]; then
     _root_span_handle="$(otel_span_start INTERNAL "$(_otel_command_self)")"
   fi
-  if \[ -n "$_root_span_handle" ]; then otel_span_activate "$_root_span_handle"; fi
+  if \[ -n "${_root_span_handle+}" ]; then otel_span_activate "$_root_span_handle"; fi
   unset OTEL_SHELL_AUTO_INJECTED
 }
 
 _otel_end_script() {
   local exit_code="$?"
-  if \[ -n "$_root_span_handle" ]; then
+  if \[ -n "${_root_span_handle+}" ]; then
     if \[ "$exit_code" -ne 0 ]; then
       otel_span_error "$_root_span_handle"
     fi
