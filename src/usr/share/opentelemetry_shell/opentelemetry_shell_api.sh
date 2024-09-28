@@ -520,18 +520,18 @@ _otel_record_subprocesses() {
   while read -r line; do
     local pid="$(\printf '%s' "$line" | \cut -d ' ' -f 1)"
     case "$line" in
-      $pid' '*' (To be restarted)') ;;
-      $pid' clone'*'('*' <unfinished ...>') ;;
-      $pid' '*'fork('*' <unfinished ...>') ;;
-      $pid' clone'*'('*)
+      *' '*' (To be restarted)') ;;
+      *' clone'*'('*' <unfinished ...>') ;;
+      *' '*'fork('*' <unfinished ...>') ;;
+      *' clone'*'('*)
         local new_pid="$(\printf '%s' "$line" | \rev | \cut -d ' ' -f 1 | \rev)";
         \eval "local parent_pid_$new_pid=$pid"
         ;;
-      $pid' '*'fork('*)
+      *' '*'fork('*)
         local new_pid="$(\printf '%s' "$line" | \rev | \cut -d ' ' -f 1 | \rev)";
         \eval "local parent_pid_$new_pid=$pid"
         ;;
-      $pid' <... clone'*' resumed>'*)
+      *' <... clone'*' resumed>'*)
         local new_pid="$(\printf '%s' "$line" | \rev | \cut -d ' ' -f 1 | \rev)";
         \eval "local new_pid_span_name=\"\$span_name_$new_pid\""
         if \[ -n "${new_pid_span_name:-}" ]; then
@@ -544,7 +544,7 @@ _otel_record_subprocesses() {
           \eval "local parent_pid_$new_pid=$pid"
         fi
         ;;
-      $pid' <... '*'fork resumed>'*)
+      *' <... '*'fork resumed>'*)
         local new_pid="$(\printf '%s' "$line" | \rev | \cut -d ' ' -f 1 | \rev)";
         \eval "local new_pid_span_name=\"\$span_name_$new_pid\""
         if \[ -n "${new_pid_span_name:-}" ]; then
@@ -557,7 +557,7 @@ _otel_record_subprocesses() {
           \eval "local parent_pid_$new_pid=$pid"
         fi
         ;;
-      $pid' 'execve'('*)
+      *' 'execve'('*)
         local name="$(\printf '%s' "$line" | \cut -d '[' -f 2- | \rev | \cut -d ']' -f 2- | \rev)"
         local name="$(\printf '%s' "$name" | \tr -d '",')" # TODO this is super simplified, we should properly parse!
         \eval "local parent_pid=\$parent_pid_$pid"
@@ -571,7 +571,7 @@ _otel_record_subprocesses() {
           if \[ -n "${parent_span_handle:-}" ]; then otel_span_deactivate "$parent_span_handle"; fi
         fi
         ;;
-      $pid' +++ '*)
+      *' +++ '*)
         \eval "local span_handle=\$span_handle_$pid"
         if \[ -z "${span_handle:-}" ]; then continue; fi
         if _otel_string_starts_with "$line" "$pid +++ killed by " || (_otel_string_starts_with "$line" "$pid +++ exited with " && \[ "$line" != "$pid +++ exited with 0 +++" ]); then
@@ -579,7 +579,7 @@ _otel_record_subprocesses() {
         fi
         otel_span_end "$span_handle"
         ;;
-      $pid' --- '*)
+      *' --- '*)
         \eval "local span_handle=\$span_handle_$pid"
         if \[ -z "${span_handle:-}" ]; then local span_handle="$root_span_handle"; fi
         local event_handle="$(otel_event_create "$(\printf '%s' "$line" | \cut -d ' ' -f 3)")"
