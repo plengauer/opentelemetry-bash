@@ -71,11 +71,28 @@ jobs:
         with:
           name: package.deb
       - run: |
-          {
-            echo 'apt-get update && apt-get -y dist-upgrade'
-            echo 'DEBIAN_FRONTEND=noninteractive apt-get -y install /root/package.deb systemctl update-manager-core && sed -i "/Prompt/d" /etc/update-manager/release-upgrades && echo "Prompt=normal" >> /etc/update-manager/release-upgrades'
-            echo 'do-release-upgrade -c || exit 0 && RELEASE_UPGRADER_ALLOW_THIRD_PARTY=1 do-release-upgrade -f DistUpgradeViewNonInteractive'
-          } | sudo docker run -v $(pwd)/package.deb:/root/package.deb --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
+          echo '
+            apt-get update
+            apt-get -y install /root/package.deb 
+            apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade && apt-get -y autoremove && apt-get -y autoclean
+            case "$(cat /etc/os-release | grep '^NAME=' | cut -d = -f 2 | tr -d "\"")" in
+              Ubuntu)
+                DEBIAN_FRONTEND=noninteractive apt-get -y install sed systemctl update-manager-core
+                sed -i "/Prompt/d" /etc/update-manager/release-upgrades && echo "Prompt=normal" >> /etc/update-manager/release-upgrades
+                do-release-upgrade -c || exit 0 && RELEASE_UPGRADER_ALLOW_THIRD_PARTY=1 do-release-upgrade -f DistUpgradeViewNonInteractive
+                ;;
+              Debian*)
+                DEBIAN_FRONTEND=noninteractive apt-get -y install curl sed
+                version_destination="$(curl -sL https://deb.debian.org/debian/dists/testing/InRelease | grep "^Codename:" | cut -d " " -f 2)"
+                version_source="$(cat /etc/os-release | grep '^VERSION_CODENAME' | cut -d = -f 2)"
+                sed -i "s/$version_source/$version_destination/g" /etc/apt/sources.list /etc/apt/sources.list.d/*
+                sed -i "s/oldstable/testing/g" /etc/apt/sources.list /etc/apt/sources.list.d/*
+                sed -i "s/stable/testing/g" /etc/apt/sources.list /etc/apt/sources.list.d/*
+                ;;
+              *) exit 1;;
+            esac
+            apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade && apt-get -y autoremove && apt-get -y autoclean
+          ' | sudo docker run -v $(pwd)/package.deb:/root/package.deb --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
 
   dependency:
     needs: [smoke]
