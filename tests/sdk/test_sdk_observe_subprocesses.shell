@@ -1,3 +1,5 @@
+if ! type strace; then exit 0; fi
+
 . ./assert.sh
 export OTEL_SHELL_CONFIG_OBSERVE_SUBPROCESSES=TRUE
 . otelapi.sh
