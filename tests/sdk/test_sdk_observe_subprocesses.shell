@@ -8,6 +8,8 @@ export OTEL_SHELL_CONFIG_OBSERVE_SUBPROCESSES=TRUE
 sudo apt-get update
 # otel_shutdown
 
+exit 1
+
 span="$(resolve_span '.name == "touch /var/lib/apt/periodic/update-success-stamp"')"
 while [ -n "$span" ] && [ "$(printf '%s' "$span" | jq -r '.name')" != "sudo apt-get update" ]; do
   span_id="$(printf '%s' "$span" | jq -r '.parent_id')"
