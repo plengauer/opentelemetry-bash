@@ -545,7 +545,7 @@ _otel_record_subprocesses() {
         \eval "local span_handle=\$span_handle_$pid"
         if \[ -z "${span_handle:+}" ]; then local span_handle="$(otel_span_current)"; fi
         local event_handle="$(otel_event_create "$(\printf '%s' "$line" | \cut -d ' ' -f 3)")"
-        \printf '%s' "$line" | \cut -d '{' -f 2- | \rev | \cut -d '}' -f 2- | \rev | \tr ',' '\n' | \tr -d ' ' | while read -r kvp; do otel_event_attribute "$event_handle" "$kvp"; done
+        \printf '%s' "$line" | \cut -d '{' -f 2- | \rev | \cut -d '}' -f 2- | \rev | \tr ',' '\n' | \tr -d ' ' | \tr '_' '.' | while read -r kvp; do otel_event_attribute "$event_handle" "$kvp"; done
         otel_event_add "$event_handle" "$span_handle"
         ;;
       *);;
