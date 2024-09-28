@@ -340,7 +340,7 @@ otel_observe() {
   otel_span_activate "$span_handle"
   local exit_code=0
   local call_command=_otel_call
-  if \[ "${OTEL_SHELL_CONFIG_OBSERVE_SUBPROCESSES:-FALSE}" = TRUE ] && ! _otel_string_starts_with "$1" _otel_ && \type strace 1> /dev/null 2> /dev/null; then local call_command="_otel_call_and_record_subprocesses $call_command"; fi # TODO check if there is no manual injection
+  if \[ "${OTEL_SHELL_CONFIG_OBSERVE_SUBPROCESSES:-FALSE}" = TRUE ] && ! _otel_string_starts_with "$1" _otel_ && \type strace 1> /dev/null 2> /dev/null; then local call_command="_otel_call_and_record_subprocesses $span_handle $call_command"; fi
   if ! \[ -t 2 ] && ! _otel_string_contains "$-" x; then local call_command="_otel_call_and_record_logs $call_command"; fi
   if ! \[ -t 0 ] && ! \[ -t 1 ] && ! \[ -t 2 ] && ! _otel_string_contains "$-" x && \[ "$OTEL_SHELL_CONFIG_OBSERVE_PIPES" = TRUE ]; then local call_command="_otel_call_and_record_pipes $span_handle $command_type $call_command"; fi
   $call_command "$@" || local exit_code="$?"
@@ -488,14 +488,15 @@ _otel_call_and_record_pipes() {
 }
 
 _otel_call_and_record_subprocesses() {
+  local span_handle="$1"; shift
   local call_command="$1"; shift
   local command="$1"; shift
   local strace="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.strace.pipe"
   \mkfifo "$strace"
-  _otel_record_subprocesses < "$strace" &
+  _otel_record_subprocesses "$span_handle" < "$strace" &
   local parse_pid="$!"
   local exit_code=0
-  $call_command \strace -f -e trace=process -o "$strace" -s 4096 "${command#\\}" "$@" || local exit_code="$?"
+  $call_command \strace -f -e trace=process -o "$strace" -s 8192 "${command#\\}" "$@" || local exit_code="$?"
   \wait "$parse_pid"
   \rm "$strace" 2> /dev/null
   return "$exit_code"
@@ -515,10 +516,17 @@ _otel_call_and_record_subprocesses() {
 # 582398 wait4(582400,  <unfinished ...>
 # 582400 +++ killed by SIGINT +++
 _otel_record_subprocesses() {
+  local root_span_handle="$1"
   while read -r line; do
     local pid="$(\printf '%s' "$line" | \cut -d ' ' -f 1)"
     case "$line" in
+      *' 'clone'('*' <unfinished ...>')
+        ;;
       *' 'clone'('*)
+        local new_pid="$(\printf '%s' "$line" | \rev | \cut -d ' ' -f 1 | \rev)";
+        \eval "local parent_pid_$new_pid=$pid"
+        ;;
+      *' <... clone resumed>'*)
         local new_pid="$(\printf '%s' "$line" | \rev | \cut -d ' ' -f 1 | \rev)";
         \eval "local parent_pid_$new_pid=$pid"
         ;;
@@ -545,7 +553,7 @@ _otel_record_subprocesses() {
         ;;
       *' '---' '*)
         \eval "local span_handle=\$span_handle_$pid"
-        if \[ -z "${span_handle:-}" ]; then local span_handle="$(otel_span_current)"; fi
+        if \[ -z "${span_handle:-}" ]; then local span_handle="$root_span_handle"; fi
         local event_handle="$(otel_event_create "$(\printf '%s' "$line" | \cut -d ' ' -f 3)")"
         \printf '%s' "$line" | \cut -d '{' -f 2- | \rev | \cut -d '}' -f 2- | \rev | \tr ',' '\n' | \tr -d ' ' | \tr '_' '.' | while read -r kvp; do otel_event_attribute "$event_handle" "$kvp"; done
         otel_event_add "$event_handle" "$span_handle"
