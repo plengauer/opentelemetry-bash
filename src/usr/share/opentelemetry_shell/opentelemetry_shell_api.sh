@@ -586,7 +586,7 @@ _otel_record_subprocesses() {
         \printf '%s' "$line" | \cut -d '{' -f 2- | \rev | \cut -d '}' -f 2- | \rev | \tr ',' '\n' | \tr -d ' ' | \tr '_' '.' | while read -r kvp; do otel_event_attribute "$event_handle" "$kvp"; done
         otel_event_add "$event_handle" "$span_handle"
         ;;
-      *) \echo "DEBUG IGNORING $line" ;;
+      *) ;;
     esac
   done
 }
