@@ -10,7 +10,7 @@ sudo apt-get update
 
 span="$(resolve_span '.name == "touch /var/lib/apt/periodic/update-success-stamp"')"
 while [ -n "$span" ] && [ "$(printf '%s' "$span" | jq -r '.name')" != "sudo apt-get update" ]; do
-  span_id="$(printf '%s' "$span" | jq -r '.context.span_id')"
+  span_id="$(printf '%s' "$span" | jq -r '.parent_id')"
   span="$(resolve span '.context.span_id == "'"$span_id"'"')"
 done
 [ -n "$span" ]
