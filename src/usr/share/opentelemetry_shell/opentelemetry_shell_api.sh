@@ -518,6 +518,7 @@ _otel_call_and_record_subprocesses() {
 _otel_record_subprocesses() {
   local root_span_handle="$1"
   while read -r line; do
+    \echo "$line"
     local pid="$(\printf '%s' "$line" | \cut -d ' ' -f 1)"
     case "$line" in
       $pid' '*' (To be restarted)') ;;
