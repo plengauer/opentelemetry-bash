@@ -2,11 +2,11 @@ if ! type strace; then exit 0; fi
 
 . ./assert.sh
 export OTEL_SHELL_CONFIG_OBSERVE_SUBPROCESSES=TRUE
-. otelapi.sh
+. otel.sh
 
-otel_init
-otel_observe sudo apt-get update
-otel_shutdown
+# otel_init
+sudo apt-get update
+# otel_shutdown
 
 span="$(resolve_span '.name == "touch /var/lib/apt/periodic/update-success-stamp"')"
 while [ -n "$span" ] && [ "$(printf '%s' "$span" | jq -r '.name')" != "sudo apt-get update" ]; do
