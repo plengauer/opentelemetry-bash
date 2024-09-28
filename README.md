@@ -193,6 +193,7 @@ You can configure the underlying SDK with the same variables as any other OpenTe
 | OTEL_SHELL_CONFIG_INSTRUMENT_MINIMALLY      | `TRUE`, `FALSE` | `FALSE`                                      | Only create `SERVER`, `CONSUMER`, `CLIENT` and `PRODUCER` spans, mute all `INTERNAL` spans. | stable       |
 | OTEL_SHELL_CONFIG_INJECT_DEEP               | `TRUE`, `FALSE` | `TRUE` for GitHub Actions, `FALSE` otherwise | Inject native OpenTelemetry into scripting languages like node.js.                          | stable       |
 | OTEL_SHELL_CONFIG_INSTRUMENT_ABSOLUTE_PATHS | `TRUE`, `FALSE` | `FALSE`                                      | Create spans for commands with an absolute path to the executable.                          | experimental |
+| OTEL_SHELL_CONFIG_OBSERVE_SUBPROCESSES      | `TRUE`, `FALSE` | `FALSE`                                      | Create minimal spans for all subprocesses.                                                  | experimental |
 
 ## Traces
 The API described below is for manually creating and customizing spans. We recommend to do this only if the automatic instrumentation is not sufficient.
