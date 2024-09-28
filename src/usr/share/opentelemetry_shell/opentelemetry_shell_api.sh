@@ -340,7 +340,7 @@ otel_observe() {
   otel_span_activate "$span_handle"
   local exit_code=0
   local call_command=_otel_call
-  if \[ "${OTEL_SHELL_CONFIG_OBSERVE_SUBPROCESSES:+FALSE}" = TRUE ] && ! _otel_string_starts_with "$1" _otel_ && \type strace 1> /dev/null 2> /dev/null; then local call_command="_otel_call_and_record_subprocesses $call_command"; fi # TODO check if there is no manual injection
+  if \[ "${OTEL_SHELL_CONFIG_OBSERVE_SUBPROCESSES:-FALSE}" = TRUE ] && ! _otel_string_starts_with "$1" _otel_ && \type strace 1> /dev/null 2> /dev/null; then local call_command="_otel_call_and_record_subprocesses $call_command"; fi # TODO check if there is no manual injection
   if ! \[ -t 2 ] && ! _otel_string_contains "$-" x; then local call_command="_otel_call_and_record_logs $call_command"; fi
   if ! \[ -t 0 ] && ! \[ -t 1 ] && ! \[ -t 2 ] && ! _otel_string_contains "$-" x && \[ "$OTEL_SHELL_CONFIG_OBSERVE_PIPES" = TRUE ]; then local call_command="_otel_call_and_record_pipes $span_handle $command_type $call_command"; fi
   $call_command "$@" || local exit_code="$?"
@@ -522,19 +522,19 @@ _otel_record_subprocesses() {
         ;;
       *' 'execve'('*)
         \eval "local parent_pid=\$parent_pid_$pid"
-        if \[ -z "${parent_pid:+}" ]; then continue; fi
+        if \[ -z "${parent_pid:-}" ]; then continue; fi
         \eval "local parent_span_handle=\$span_handle_$parent_pid"
-        if \[ -n "${parent_span_handle:+}" ]; then otel_span_activate "$parent_span_handle"; fi
+        if \[ -n "${parent_span_handle:-}" ]; then otel_span_activate "$parent_span_handle"; fi
         local name="$(\printf '%s' "$line" | \cut -d '[' -f 2- | \rev | \cut -d ']' -f 2- | \rev)"
         local name="$(\printf '%s' "$name" | \tr -d '",')" # TODO this is super simplified, we should properly parse!
         local span_handle="$(otel_span_start INTERNAL "$name")"
         \eval "local span_handle_$pid=$span_handle"
-        if \[ -n "${parent_span_handle:+}" ]; then otel_span_deactivate "$parent_span_handle"; fi
+        if \[ -n "${parent_span_handle:-}" ]; then otel_span_deactivate "$parent_span_handle"; fi
         \eval "unset \$parent_pid_$pid"
         ;;
       *' '+++' '*)
         \eval "local span_handle=\$span_handle_$pid"
-        if \[ -z "${span_handle:+}" ]; then continue; fi
+        if \[ -z "${span_handle:-}" ]; then continue; fi
         if _otel_string_starts_with "$line" "$pid +++ killed by " || (_otel_string_starts_with "$line" "$pid +++ exited with " && \[ "$line" != "$pid +++ exited with 0 +++" ]); then
           otel_span_error "$span_handle"
         fi
@@ -543,7 +543,7 @@ _otel_record_subprocesses() {
         ;;
       *' '---' '*)
         \eval "local span_handle=\$span_handle_$pid"
-        if \[ -z "${span_handle:+}" ]; then local span_handle="$(otel_span_current)"; fi
+        if \[ -z "${span_handle:-}" ]; then local span_handle="$(otel_span_current)"; fi
         local event_handle="$(otel_event_create "$(\printf '%s' "$line" | \cut -d ' ' -f 3)")"
         \printf '%s' "$line" | \cut -d '{' -f 2- | \rev | \cut -d '}' -f 2- | \rev | \tr ',' '\n' | \tr -d ' ' | \tr '_' '.' | while read -r kvp; do otel_event_attribute "$event_handle" "$kvp"; done
         otel_event_add "$event_handle" "$span_handle"
