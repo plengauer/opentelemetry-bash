@@ -1,0 +1,4 @@
+{
+  "title": "apt-get",
+  "description": "This is a script that updates the system using apt-get. It observes all subprocesses recursively, even though they are not shells."
+}
