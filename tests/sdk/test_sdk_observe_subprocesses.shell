@@ -1,6 +1,6 @@
 . ./assert.sh
 export OTEL_SHELL_CONFIG_OBSERVE_SUBPROCESSES=TRUE
-. otel.sh
+. otelapi.sh
 
 otel_init
 otel_observe sudo apt-get update
