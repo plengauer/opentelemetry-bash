@@ -572,7 +572,7 @@ _otel_record_subprocesses() {
           if \[ -n "${parent_span_handle:-}" ]; then otel_span_deactivate "$parent_span_handle"; fi
         fi
         ;;
-      $pid' '+++' '*)
+      $pid' +++ '*)
         \eval "local span_handle=\$span_handle_$pid"
         if \[ -z "${span_handle:-}" ]; then continue; fi
         if _otel_string_starts_with "$line" "$pid +++ killed by " || (_otel_string_starts_with "$line" "$pid +++ exited with " && \[ "$line" != "$pid +++ exited with 0 +++" ]); then
@@ -580,14 +580,14 @@ _otel_record_subprocesses() {
         fi
         otel_span_end "$span_handle"
         ;;
-      $pid' '---' '*)
+      $pid' --- '*)
         \eval "local span_handle=\$span_handle_$pid"
         if \[ -z "${span_handle:-}" ]; then local span_handle="$root_span_handle"; fi
         local event_handle="$(otel_event_create "$(\printf '%s' "$line" | \cut -d ' ' -f 3)")"
         \printf '%s' "$line" | \cut -d '{' -f 2- | \rev | \cut -d '}' -f 2- | \rev | \tr ',' '\n' | \tr -d ' ' | \tr '_' '.' | while read -r kvp; do otel_event_attribute "$event_handle" "$kvp"; done
         otel_event_add "$event_handle" "$span_handle"
         ;;
-      *);;
+      *) \echo "DEBUG IGNORING $line" ;;
     esac
   done
 }
