@@ -489,11 +489,13 @@ _otel_call_and_record_pipes() {
 
 _otel_call_and_record_subprocesses() {
   local call_command="$1"; shift
+  local command="$1"; shift
   local strace="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.strace.pipe"
-  local exit_code=0
+  \mkfifo "$strace"
   _otel_record_subprocesses < "$strace" &
   local parse_pid="$!"
-  $call_command \strace -f -e trace=process -o "$strace" -s 4096 "$@" || local exit_code="$?"
+  local exit_code=0
+  $call_command \strace -f -e trace=process -o "$strace" -s 4096 "${command#\\}" "$@" || local exit_code="$?"
   \wait "$parse_pid"
   \rm "$strace" 2> /dev/null
   return "$exit_code"
