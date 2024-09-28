@@ -340,7 +340,7 @@ otel_observe() {
   otel_span_activate "$span_handle"
   local exit_code=0
   local call_command=_otel_call
-  if \[ "${OTEL_SHELL_CONFIG_OBSERVE_SUBPROCESSES:+FALSE}" = TRUE ] && ! _otel_string_starts_with "$1" _otel_ && \type strace 1> /dev/null 2> /dev/null; then local call_command="_otel_call_and_record_subprocesses $span_handle $call_command"; fi # TODO check if there is no manual injection
+  if \[ "${OTEL_SHELL_CONFIG_OBSERVE_SUBPROCESSES:+FALSE}" = TRUE ] && ! _otel_string_starts_with "$1" _otel_ && \type strace 1> /dev/null 2> /dev/null; then local call_command="_otel_call_and_record_subprocesses $call_command"; fi # TODO check if there is no manual injection
   if ! \[ -t 2 ] && ! _otel_string_contains "$-" x; then local call_command="_otel_call_and_record_logs $call_command"; fi
   if ! \[ -t 0 ] && ! \[ -t 1 ] && ! \[ -t 2 ] && ! _otel_string_contains "$-" x && \[ "$OTEL_SHELL_CONFIG_OBSERVE_PIPES" = TRUE ]; then local call_command="_otel_call_and_record_pipes $span_handle $command_type $call_command"; fi
   $call_command "$@" || local exit_code="$?"
@@ -488,11 +488,10 @@ _otel_call_and_record_pipes() {
 }
 
 _otel_call_and_record_subprocesses() {
-  span_handle="$1"; shift
   call_command="$1"; shift
   local strace="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.strace.pipe"
   local exit_code=0
-  _otel_record_subprocesses "$span_handle" < "$strace" &
+  _otel_record_subprocesses < "$strace" &
   local parse_pid="$!"
   $call_command \strace -f -e trace=process -o "$strace" -s 4096 "$@" || local exit_code="$?"
   \wait "$parse_pid"
