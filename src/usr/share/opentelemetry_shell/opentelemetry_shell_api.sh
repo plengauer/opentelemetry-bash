@@ -517,7 +517,7 @@ _otel_call_and_record_subprocesses() {
 # 582400 +++ killed by SIGINT +++
 _otel_record_subprocesses() {
   local root_span_handle="$1"
-  while read -r line; do
+  \tee /dev/stderr | while read -r line; do
     local pid="$(\printf '%s' "$line" | \cut -d ' ' -f 1)"
     case "$line" in
       $pid' '*' (To be restarted)') ;;
