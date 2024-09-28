@@ -525,7 +525,7 @@ _otel_record_subprocesses() {
         if \[ -z "${parent_pid:+}" ]; then continue; fi
         \eval "local parent_span_handle=\$span_handle_$parent_pid"
         if \[ -n "${parent_span_handle:+}" ]; then otel_span_activate "$parent_span_handle"; fi
-        local name="$(\printf '%s' "$line" | \cut -d '[' -f 2 | \rev | \cut -d ']' -f 2 | \rev)"
+        local name="$(\printf '%s' "$line" | \cut -d '[' -f 2- | \rev | \cut -d ']' -f 2- | \rev)"
         local name="$(\printf '%s' "$name" | \tr -d '",')" # TODO this is super simplified, we should properly parse!
         local span_handle="$(otel_span_start INTERNAL "$name")"
         \eval "local span_handle_$pid=$span_handle"
@@ -535,9 +535,18 @@ _otel_record_subprocesses() {
       *' '+++' '*)
         \eval "local span_handle=\$span_handle_$pid"
         if \[ -z "${span_handle:+}" ]; then continue; fi
-        # TODO set error
+        if _otel_string_starts_with "$line" "$pid +++ killed by " || (_otel_string_starts_with "$line" "$pid +++ exited with " && \[ "$line" != "$pid +++ exited with 0 +++" ]; then
+          otel_span_error "$span_handle"
+        fi
         otel_span_end "$span_handle"
         \eval "unset \$span_handle_$pid"
+        ;;
+      *' '---' '*)
+        \eval "local span_handle=\$span_handle_$pid"
+        if \[ -z "${span_handle:+}" ]; then local span_handle="$(otel_span_current)"; fi
+        local event_handle="$(otel_event_create "$(\printf '%s' "$line" | \cut -d ' ' -f 3)")"
+        \printf '%s' "$line" | \cut -d '{' -f 2- | \rev | \cut -d '}' -f 2- | \rev | \tr ',' '\n' | \tr -d ' ' | while read -r kvp; do otel_event_attribute "$event_handle" "$kvp"; done
+        otel_event_add "$event_handle" "$span_handle"
         ;;
       *);;
     esac
