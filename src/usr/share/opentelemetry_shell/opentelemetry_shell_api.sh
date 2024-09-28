@@ -520,29 +520,61 @@ _otel_record_subprocesses() {
   while read -r line; do
     local pid="$(\printf '%s' "$line" | \cut -d ' ' -f 1)"
     case "$line" in
-      *' 'clone'('*' <unfinished ...>')
-        ;;
-      *' 'clone'('*)
+      $pid' '*' (To be restarted)') ;;
+      $pid' clone'*'('*' <unfinished ...>') ;;
+      $pid' '*'fork('*' <unfinished ...>') ;;
+      $pid' clone'*'('*)
         local new_pid="$(\printf '%s' "$line" | \rev | \cut -d ' ' -f 1 | \rev)";
         \eval "local parent_pid_$new_pid=$pid"
         ;;
-      *' <... clone resumed>'*)
+      $pid' '*'fork('*)
         local new_pid="$(\printf '%s' "$line" | \rev | \cut -d ' ' -f 1 | \rev)";
         \eval "local parent_pid_$new_pid=$pid"
         ;;
-      *' 'execve'('*)
-        \eval "local parent_pid=\$parent_pid_$pid"
-        if \[ -z "${parent_pid:-}" ]; then continue; fi
-        \eval "local parent_span_handle=\$span_handle_$parent_pid"
-        if \[ -n "${parent_span_handle:-}" ]; then otel_span_activate "$parent_span_handle"; fi
+      $pid' <... clone'*' resumed>'*)
+        local new_pid="$(\printf '%s' "$line" | \rev | \cut -d ' ' -f 1 | \rev)";
+        \eval "local new_pid_span_name=\"\$span_name_$new_pid\""
+        if \[ -n "${new_pid_span_name:-}" ]; then
+          \eval "local parent_span_handle=\$span_handle_$pid"
+          if \[ -n "${parent_span_handle:-}" ]; then otel_span_activate "$parent_span_handle"; fi
+          local span_handle="$(otel_span_start INTERNAL "$name")"
+          \eval "local span_handle_$pid=$span_handle"
+          if \[ -n "${parent_span_handle:-}" ]; then otel_span_deactivate "$parent_span_handle"; fi
+          \eval "unset \$parent_pid_$pid"
+        else
+          \eval "local parent_pid_$new_pid=$pid"
+        fi
+        ;;
+      $pid' <... '*'fork resumed>'*)
+        local new_pid="$(\printf '%s' "$line" | \rev | \cut -d ' ' -f 1 | \rev)";
+        \eval "local new_pid_span_name=\"\$span_name_$new_pid\""
+        if \[ -n "${new_pid_span_name:-}" ]; then
+          \eval "local parent_span_handle=\$span_handle_$pid"
+          if \[ -n "${parent_span_handle:-}" ]; then otel_span_activate "$parent_span_handle"; fi
+          local span_handle="$(otel_span_start INTERNAL "$name")"
+          \eval "local span_handle_$pid=$span_handle"
+          if \[ -n "${parent_span_handle:-}" ]; then otel_span_deactivate "$parent_span_handle"; fi
+          \eval "unset \$parent_pid_$pid"
+        else
+          \eval "local parent_pid_$new_pid=$pid"
+        fi
+        ;;
+      $pid' 'execve'('*)
         local name="$(\printf '%s' "$line" | \cut -d '[' -f 2- | \rev | \cut -d ']' -f 2- | \rev)"
         local name="$(\printf '%s' "$name" | \tr -d '",')" # TODO this is super simplified, we should properly parse!
-        local span_handle="$(otel_span_start INTERNAL "$name")"
-        \eval "local span_handle_$pid=$span_handle"
-        if \[ -n "${parent_span_handle:-}" ]; then otel_span_deactivate "$parent_span_handle"; fi
-        \eval "unset \$parent_pid_$pid"
+        \eval "local parent_pid=\$parent_pid_$pid"
+        if \[ -z "${parent_pid:-}" ]; then
+          \eval "local span_name_$pid=\"\$name\""
+        else
+          \eval "local parent_span_handle=\$span_handle_$parent_pid"
+          if \[ -n "${parent_span_handle:-}" ]; then otel_span_activate "$parent_span_handle"; fi
+          local span_handle="$(otel_span_start INTERNAL "$name")"
+          \eval "local span_handle_$pid=$span_handle"
+          if \[ -n "${parent_span_handle:-}" ]; then otel_span_deactivate "$parent_span_handle"; fi
+          \eval "unset \$parent_pid_$pid"
+        fi
         ;;
-      *' '+++' '*)
+      $pid' '+++' '*)
         \eval "local span_handle=\$span_handle_$pid"
         if \[ -z "${span_handle:-}" ]; then continue; fi
         if _otel_string_starts_with "$line" "$pid +++ killed by " || (_otel_string_starts_with "$line" "$pid +++ exited with " && \[ "$line" != "$pid +++ exited with 0 +++" ]); then
@@ -551,7 +583,7 @@ _otel_record_subprocesses() {
         otel_span_end "$span_handle"
         \eval "unset \$span_handle_$pid"
         ;;
-      *' '---' '*)
+      $pid' '---' '*)
         \eval "local span_handle=\$span_handle_$pid"
         if \[ -z "${span_handle:-}" ]; then local span_handle="$root_span_handle"; fi
         local event_handle="$(otel_event_create "$(\printf '%s' "$line" | \cut -d ' ' -f 3)")"
