@@ -538,9 +538,8 @@ _otel_record_subprocesses() {
           \eval "local parent_span_handle=\$span_handle_$pid"
           if \[ -n "${parent_span_handle:-}" ]; then otel_span_activate "$parent_span_handle"; fi
           local span_handle="$(otel_span_start INTERNAL "$name")"
-          \eval "local span_handle_$pid=$span_handle"
+          \eval "local span_handle_$new_pid=$span_handle"
           if \[ -n "${parent_span_handle:-}" ]; then otel_span_deactivate "$parent_span_handle"; fi
-          \eval "unset \$parent_pid_$pid"
         else
           \eval "local parent_pid_$new_pid=$pid"
         fi
@@ -552,9 +551,8 @@ _otel_record_subprocesses() {
           \eval "local parent_span_handle=\$span_handle_$pid"
           if \[ -n "${parent_span_handle:-}" ]; then otel_span_activate "$parent_span_handle"; fi
           local span_handle="$(otel_span_start INTERNAL "$name")"
-          \eval "local span_handle_$pid=$span_handle"
+          \eval "local span_handle_$new_pid=$span_handle"
           if \[ -n "${parent_span_handle:-}" ]; then otel_span_deactivate "$parent_span_handle"; fi
-          \eval "unset \$parent_pid_$pid"
         else
           \eval "local parent_pid_$new_pid=$pid"
         fi
@@ -571,7 +569,6 @@ _otel_record_subprocesses() {
           local span_handle="$(otel_span_start INTERNAL "$name")"
           \eval "local span_handle_$pid=$span_handle"
           if \[ -n "${parent_span_handle:-}" ]; then otel_span_deactivate "$parent_span_handle"; fi
-          \eval "unset \$parent_pid_$pid"
         fi
         ;;
       $pid' '+++' '*)
@@ -581,7 +578,6 @@ _otel_record_subprocesses() {
           otel_span_error "$span_handle"
         fi
         otel_span_end "$span_handle"
-        \eval "unset \$span_handle_$pid"
         ;;
       $pid' '---' '*)
         \eval "local span_handle=\$span_handle_$pid"
