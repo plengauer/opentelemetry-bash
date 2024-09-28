@@ -515,7 +515,7 @@ _otel_call_and_record_subprocesses() {
 # 582398 wait4(582400,  <unfinished ...>
 # 582400 +++ killed by SIGINT +++
 _otel_record_subprocesses() {
-  while read -r "$line"; do
+  while read -r line; do
     local pid="$(\printf '%s' "$line" | \cut -d ' ' -f 1)"
     case "$line" in
       *' 'clone'('*)
