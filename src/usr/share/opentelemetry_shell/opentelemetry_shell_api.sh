@@ -340,6 +340,7 @@ otel_observe() {
   otel_span_activate "$span_handle"
   local exit_code=0
   local call_command=_otel_call
+  if \[ "${OTEL_SHELL_CONFIG_OBSERVE_SUBPROCESSES:+FALSE}" = TRUE ] && ! _otel_string_starts_with "$1" _otel_ && \type strace 1> /dev/null 2> /dev/null; then local call_command="_otel_call_and_record_subprocesses $span_handle $call_command"; fi # TODO check if there is no manual injection
   if ! \[ -t 2 ] && ! _otel_string_contains "$-" x; then local call_command="_otel_call_and_record_logs $call_command"; fi
   if ! \[ -t 0 ] && ! \[ -t 1 ] && ! \[ -t 2 ] && ! _otel_string_contains "$-" x && \[ "$OTEL_SHELL_CONFIG_OBSERVE_PIPES" = TRUE ]; then local call_command="_otel_call_and_record_pipes $span_handle $command_type $call_command"; fi
   $call_command "$@" || local exit_code="$?"
@@ -484,6 +485,64 @@ _otel_call_and_record_pipes() {
   \rm "$stdin_bytes_result" "$stdin_lines_result" "$stdout_bytes_result" "$stdout_lines_result" "$stderr_bytes_result" "$stderr_lines_result" 2> /dev/null
   if \[ "$job_control" = 1 ]; then \set -m; fi
   return "$exit_code"
+}
+
+_otel_call_and_record_subprocesses() {
+  span_handle="$1"; shift
+  call_command="$1"; shift
+  local strace="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.strace.pipe"
+  local exit_code=0
+  _otel_record_subprocesses "$span_handle" < "$strace" &
+  local parse_pid="$!"
+  $call_command \strace -f -e trace=process -o "$strace" -s 4096 "$@" || local exit_code="$?"
+  \wait "$parse_pid"
+  \rm "$strace" 2> /dev/null
+  return "$exit_code"
+}
+
+# 582398 execve("/usr/bin/apt-get", ["apt-get", "update"], 0x7fff13614290 /* 35 vars */) = 0
+# 582398 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7ae277075b50) = 582399
+# 582399 execve("/usr/bin/dpkg", ["/usr/bin/dpkg", "--print-foreign-architectures"], 0x7fff7b7e0180 /* 35 vars */) = 0
+# 582399 exit_group(0)                    = ?
+# 582399 +++ exited with 0 +++
+# 582398 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=582399, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+# 582398 wait4(582399, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 582399
+# 582398 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7ae277075b50) = 582400
+# 582400 execve("/usr/lib/apt/methods/http", ["/usr/lib/apt/methods/http"], 0x7fff7b7e0180 /* 35 vars */) = 0
+# 582398 kill(582400, SIGINT)             = 0
+# 582400 --- SIGINT {si_signo=SIGINT, si_code=SI_USER, si_pid=582398, si_uid=0} ---
+# 582398 wait4(582400,  <unfinished ...>
+# 582400 +++ killed by SIGINT +++
+_otel_record_subprocesses() {
+  while read -r "$line"; do
+    local pid="$(\printf '%s' "$line" | \cut -d ' ' -f 1)"
+    case "$line" in
+      *' 'clone'('*)
+        local new_pid="$(\printf '%s' "$line" | \rev | \cut -d ' ' -f 1 | \rev)";
+        \eval "local parent_pid_$new_pid=$pid"
+        ;;
+      *' 'execve'('*)
+        \eval "local parent_pid=\$parent_pid_$pid"
+        if \[ -z "${parent_pid:+}" ]; then continue; fi
+        \eval "local parent_span_handle=\$span_handle_$parent_pid"
+        if \[ -n "${parent_span_handle:+}" ]; then otel_span_activate "$parent_span_handle"; fi
+        local name="$(\printf '%s' "$line" | \cut -d '[' -f 2 | \rev | \cut -d ']' -f 2 | \rev)"
+        local name="$(\printf '%s' "$name" | \tr -d '",')" # TODO this is super simplified, we should properly parse!
+        local span_handle="$(otel_span_start INTERNAL "$name")"
+        \eval "local span_handle_$pid=$span_handle"
+        if \[ -n "${parent_span_handle:+}" ]; then otel_span_deactivate "$parent_span_handle"; fi
+        \eval "unset \$parent_pid_$pid"
+        ;;
+      *' '+++' '*)
+        \eval "local span_handle=\$span_handle_$pid"
+        if \[ -z "${span_handle:+}" ]; then continue; fi
+        # TODO set error
+        otel_span_end "$span_handle"
+        \eval "unset \$span_handle_$pid"
+        ;;
+      *);;
+    esac
+  done
 }
 
 if \[ "$_otel_shell" = bash ]; then
