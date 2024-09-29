@@ -1,0 +1,39 @@
+if ! which python3; then exit 0; fi
+. ./assert.sh
+
+. otel.sh
+
+assert_equals "hello world" "$(echo 'print("hello world")' | python3)"
+
+# pip3 install requests
+# echo '
+# import requests
+# response = requests.get("http://www.example.com/foo")
+# print(response.status_code)
+# ' | python3
+
+dir=$(mktemp -d)
+python3 -m venv "$dir"/venv
+. "$dir"/venv/bin/activate
+which pip3
+which python3
+pip3 install requests
+echo '
+import requests
+response = requests.get("http://www.example.com/bar")
+print(response.status_code)
+' | python3
+deactivate
+
+# dir=$(mktemp -d)
+# python3 -m venv "$dir"/venv
+# . "$dir"/venv/bin/activate
+# pip3 install requests
+# pip3 install opentelemetry-distro opentelemetry-exporter-otlp
+# opentelemetry-bootstrap --action install
+# echo '
+# import requests
+# response = requests.get("http://www.example.com/baz")
+# print(response.status_code)
+# ' | opentelemetry-instrument python3
+# deactivate
