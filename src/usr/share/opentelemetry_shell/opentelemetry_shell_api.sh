@@ -559,9 +559,11 @@ _otel_record_subprocesses() {
         ;;
       *' 'execve'('*)
         if \[ "${OTEL_SHELL_CONFIG_OBSERVE_SIGNALS:-FALSE}" != TRUE ]; then continue; fi
-        local name="$(\printf '%s' "$line" | \cut -d '[' -f 2- | \rev | \cut -d ']' -f 2- | \rev)"
-        local name="$(\printf '%s' "$name" | \tr -d '",')" # TODO this is super simplified, we should properly parse!
         \eval "local parent_pid=\$parent_pid_$pid"
+        local name="$(\printf '%s' "$line" | \cut -sd '[' -f 2- | \rev | \cut -sd ']' -f 2- | \rev | \sed 's/", "/ /g')"
+        local name="${name#\"}"
+        local name="${name%\"}"
+        local name="${name:-<unknown>}"
         if \[ -z "${parent_pid:-}" ]; then
           \eval "local span_name_$pid=\"\$name\""
         else
@@ -584,7 +586,7 @@ _otel_record_subprocesses() {
         if \[ "${OTEL_SHELL_CONFIG_OBSERVE_SIGNALS:-FALSE}" != TRUE ]; then continue; fi
         \eval "local span_handle=\$span_handle_$pid"
         if \[ -z "${span_handle:-}" ]; then local span_handle="$root_span_handle"; fi
-        local event_handle="$(otel_event_create "$(\printf '%s' "$line" | \cut -d ' ' -f 3)")"
+        local event_handle="$(otel_event_create "$(\printf '%s' "$line" | \awk '{ print $3 }')")"
         \printf '%s' "$line" | \cut -d '{' -f 2- | \rev | \cut -d '}' -f 2- | \rev | \tr ',' '\n' | \tr -d ' ' | \tr '_' '.' | while read -r kvp; do otel_event_attribute "$event_handle" "$kvp"; done
         otel_event_add "$event_handle" "$span_handle"
         ;;
@@ -649,7 +651,7 @@ _otel_escape_arg() {
       *) local do_escape=0 ;;
     esac
   fi
-  if \[ "$do_escape" = 1 ]; then    
+  if \[ "$do_escape" = 1 ]; then
     if \[ "$no_quote" = 1 ]; then local format_string='%s'; else local format_string="'%s'"; fi
     _otel_escape_arg_format "$format_string" "$1"
   else
