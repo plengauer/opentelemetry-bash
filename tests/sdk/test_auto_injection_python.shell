@@ -3,7 +3,7 @@ if ! which python3; then exit 0; fi
 
 . otel.sh
 
-assert_equals "hello world" "$(echo 'print("hello world")' | { set -x; python3; set +x; })"
+assert_equals "hello world" "$(echo 'print("hello world")' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE python3 )"
 
 #\pip3 install requests
 #echo '
@@ -23,7 +23,7 @@ echo '
 import requests
 response = requests.get("http://example.com/bar")
 print(response.status_code)
-' | python3
+' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE python3
 deactivate
 resolve_span '.attributes."url.path" == "/bar"'
 
@@ -37,6 +37,6 @@ echo '
 import requests
 response = requests.get("http://example.com/baz")
 print(response.status_code)
-' | opentelemetry-instrument python3
+' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE opentelemetry-instrument python3
 deactivate
 resolve_span '.attributes."url.path" == "/baz"'
