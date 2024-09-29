@@ -340,7 +340,7 @@ otel_observe() {
   otel_span_activate "$span_handle"
   local exit_code=0
   local call_command=_otel_call
-  if \[ "${OTEL_SHELL_CONFIG_OBSERVE_SUBPROCESSES:-FALSE}" = TRUE ] && ! _otel_string_starts_with "$1" _otel_ && \type strace 1> /dev/null 2> /dev/null; then local call_command="_otel_call_and_record_subprocesses $span_handle $call_command"; fi
+  if \[ "${OTEL_SHELL_CONFIG_OBSERVE_SUBPROCESSES:-FALSE}" = TRUE ] || \[ "${OTEL_SHELL_CONFIG_OBSERVE_SIGNALS:-FALSE}" = TRUE ]; then if ! _otel_string_starts_with "$1" _otel_ && \type strace 1> /dev/null 2> /dev/null; then local call_command="_otel_call_and_record_subprocesses $span_handle $call_command"; fi; fi
   if ! \[ -t 2 ] && ! _otel_string_contains "$-" x; then local call_command="_otel_call_and_record_logs $call_command"; fi
   if ! \[ -t 0 ] && ! \[ -t 1 ] && ! \[ -t 2 ] && ! _otel_string_contains "$-" x && \[ "$OTEL_SHELL_CONFIG_OBSERVE_PIPES" = TRUE ]; then local call_command="_otel_call_and_record_pipes $span_handle $command_type $call_command"; fi
   $call_command "$@" || local exit_code="$?"
@@ -532,6 +532,7 @@ _otel_record_subprocesses() {
         \eval "local parent_pid_$new_pid=$pid"
         ;;
       *' <... clone'*' resumed>'*)
+        if \[ "${OTEL_SHELL_CONFIG_OBSERVE_SIGNALS:-FALSE}" != TRUE ]; then continue; fi
         local new_pid="$(\printf '%s' "$line" | \rev | \cut -d ' ' -f 1 | \rev)";
         \eval "local new_pid_span_name=\"\$span_name_$new_pid\""
         if \[ -n "${new_pid_span_name:-}" ]; then
@@ -545,6 +546,7 @@ _otel_record_subprocesses() {
         fi
         ;;
       *' <... '*'fork resumed>'*)
+        if \[ "${OTEL_SHELL_CONFIG_OBSERVE_SIGNALS:-FALSE}" != TRUE ]; then continue; fi
         local new_pid="$(\printf '%s' "$line" | \rev | \cut -d ' ' -f 1 | \rev)";
         \eval "local new_pid_span_name=\"\$span_name_$new_pid\""
         if \[ -n "${new_pid_span_name:-}" ]; then
@@ -558,6 +560,7 @@ _otel_record_subprocesses() {
         fi
         ;;
       *' 'execve'('*)
+        if \[ "${OTEL_SHELL_CONFIG_OBSERVE_SIGNALS:-FALSE}" != TRUE ]; then continue; fi
         local name="$(\printf '%s' "$line" | \cut -d '[' -f 2- | \rev | \cut -d ']' -f 2- | \rev)"
         local name="$(\printf '%s' "$name" | \tr -d '",')" # TODO this is super simplified, we should properly parse!
         \eval "local parent_pid=\$parent_pid_$pid"
@@ -580,6 +583,7 @@ _otel_record_subprocesses() {
         otel_span_end "$span_handle"
         ;;
       *' --- '*)
+        if \[ "${OTEL_SHELL_CONFIG_OBSERVE_SIGNALS:-FALSE}" != TRUE ]; then continue; fi
         \eval "local span_handle=\$span_handle_$pid"
         if \[ -z "${span_handle:-}" ]; then local span_handle="$root_span_handle"; fi
         local event_handle="$(otel_event_create "$(\printf '%s' "$line" | \cut -d ' ' -f 3)")"
