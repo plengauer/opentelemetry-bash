@@ -4,6 +4,7 @@ if ! which python3; then exit 0; fi
 . otel.sh
 
 #TODO test subprocesses
+export PYTHONVERBOSE=1 # TODO remove
 
 assert_equals "hello world" "$(echo 'print("hello world")' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE python3 )"
 
