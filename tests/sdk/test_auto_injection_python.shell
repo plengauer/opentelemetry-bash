@@ -17,7 +17,7 @@ deactivate
 
 #TODO test subprocesses
 
-assert_equals "hello world" "$(echo 'print("hello world")' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE python3 )"
+assert_equals "hello world" "$(echo 'print("hello world")' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE python3)"
 
 # TODO only if not externally managed
 #\pip3 install requests
@@ -31,8 +31,6 @@ assert_equals "hello world" "$(echo 'print("hello world")' | OTEL_SHELL_CONFIG_I
 dir=$(mktemp -d)
 python3 -m venv "$dir"/venv
 . "$dir"/venv/bin/activate
-which pip3
-which python3
 \pip3 install requests # TODO why does this need to be escaped, its not even deeply injected! also fix other pips
 echo '
 import requests
