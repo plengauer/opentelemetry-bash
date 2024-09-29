@@ -11,6 +11,8 @@ resolve_span '.name == "sudo apt-get update"'
 # \sleep 30
 # \cat "$OTEL_EXPORT_LOCATION"
 
+set -x
+
 assert_equals 0 "$(\cat "$OTEL_EXPORT_LOCATION" | \jq '. | select(.name != null) | .events[] | select(.name | startswith("SIG") | not) | .name' | \wc -l)"
 assert_equals 0 "$(\cat "$OTEL_EXPORT_LOCATION" | \jq '. | select(.name != null) | select(.name | contains("execve(")) | .name' | \wc -l)"
 \cat "$OTEL_EXPORT_LOCATION" | \jq -r '. | select(.name != null) | .name' | \cut -d ' ' -f 1 | while read -r command; do
