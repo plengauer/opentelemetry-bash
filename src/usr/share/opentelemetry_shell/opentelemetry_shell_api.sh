@@ -532,7 +532,6 @@ _otel_record_subprocesses() {
         \eval "local parent_pid_$new_pid=$pid"
         ;;
       *' <... clone'*' resumed>'*)
-        if \[ "${OTEL_SHELL_CONFIG_OBSERVE_SIGNALS:-FALSE}" != TRUE ]; then continue; fi
         local new_pid="$(\printf '%s' "$line" | \rev | \cut -d ' ' -f 1 | \rev)";
         \eval "local new_pid_span_name=\"\$span_name_$new_pid\""
         if \[ -n "${new_pid_span_name:-}" ]; then
@@ -546,7 +545,6 @@ _otel_record_subprocesses() {
         fi
         ;;
       *' <... '*'fork resumed>'*)
-        if \[ "${OTEL_SHELL_CONFIG_OBSERVE_SIGNALS:-FALSE}" != TRUE ]; then continue; fi
         local new_pid="$(\printf '%s' "$line" | \rev | \cut -d ' ' -f 1 | \rev)";
         \eval "local new_pid_span_name=\"\$span_name_$new_pid\""
         if \[ -n "${new_pid_span_name:-}" ]; then
