@@ -10,7 +10,7 @@ python3 -m venv ./venv
 . ./venv/bin/activate
 pip3 install requests
 export PYTHONPATH=/opt/opentelemetry_shell/venv/lib/python3.12/site-packages
-./venv/bin/python3 /opt/opentelemetry_shell/venv/bin/opentelemetry-instrument -c 'print ("hello world 2")' || exit 1
+./venv/bin/python3 /opt/opentelemetry_shell/venv/bin/opentelemetry-instrument python3 -c 'print ("hello world 2")' || exit 1
 unset PYTHONPATH
 deactivate
 
