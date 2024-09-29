@@ -2,6 +2,7 @@ if ! type strace; then exit 0; fi
 
 . ./assert.sh
 export OTEL_SHELL_CONFIG_OBSERVE_SUBPROCESSES=TRUE
+export OTEL_SHELL_CONFIG_OBSERVE_SIGNALS=TRUE
 . otel.sh
 
 sudo apt-get update
@@ -11,4 +12,7 @@ while \[ -n "$span" ] && \[ "$(\printf '%s' "$span" | \jq -r '.name')" != "sudo 
   span_id="$(\printf '%s' "$span" | \jq -r '.parent_id')"
   span="$(resolve_span '.context.span_id == "'"$span_id"'"')"
 done
-\[ -n "$span" ]
+\[ -n "$span" ] || exit 1
+
+assert_equals 0 "$(cat "$OTEL_EXPORT_LOCATION" | jq '. | select(.name != null) | .events[] | select(.name | startswith("SIG") | not) | .name' | wc -l)"
+assert_equals 0 "$(cat "$OTEL_EXPORT_LOCATION" | jq '. | select(.name != null) | select(.name | contains("execve(") | not) | .name' | wc -l)"
