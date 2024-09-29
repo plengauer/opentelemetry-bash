@@ -11,8 +11,6 @@ resolve_span '.name == "sudo apt-get update"'
 # \sleep 30
 # \cat "$OTEL_EXPORT_LOCATION"
 
-set -x
-
 assert_equals 0 "$(\cat "$OTEL_EXPORT_LOCATION" | \jq '. | select(.name != null) | .events[] | select(.name | startswith("SIG") | not) | .name' | \wc -l)"
 assert_equals 0 "$(\cat "$OTEL_EXPORT_LOCATION" | \jq '. | select(.name != null) | select(.name | contains("execve(")) | .name' | \wc -l)"
 \cat "$OTEL_EXPORT_LOCATION" | \jq -r '. | select(.name != null) | .name' | \cut -d ' ' -f 1 | while read -r command; do
@@ -26,4 +24,4 @@ done
     span="$(\cat "$OTEL_EXPORT_LOCATION" | \jq '. | select(.context.span_id == "'"$span_id"'")')"
   done
   \[ -n "$span" ] || (\echo FAILED && \echo "FAILED tracing $span_id" >&2)
-done | \grep -v 'FAILED' || exit 1
+done | \grep 'FAILED' && exit 1 || exit 0
