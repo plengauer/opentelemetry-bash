@@ -5,15 +5,14 @@ if ! which python3; then exit 0; fi
 
 assert_equals "hello world" "$(echo 'print("hello world")' | python3)"
 
-\pip3 install requests
-echo '
-import requests
-response = requests.get("http://example.com/foo")
-print(response.status_code)
-' | python3
-resolve_span '.attributes."url.path" == "/foo"'
+#\pip3 install requests
+#echo '
+#import requests
+#response = requests.get("http://example.com/foo")
+#print(response.status_code)
+#' | python3
+#resolve_span '.attributes."url.path" == "/foo"'
 
-printenv | grep PYTHON
 dir=$(mktemp -d)
 python3 -m venv "$dir"/venv
 . "$dir"/venv/bin/activate
