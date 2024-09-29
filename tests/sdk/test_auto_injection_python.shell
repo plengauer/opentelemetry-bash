@@ -20,7 +20,7 @@ deactivate
 dir=$(mktemp -d)
 python3 -m venv "$dir"/venv
 . "$dir"/venv/bin/activate
-\pip3 install requests # TODO why does this need to be escaped, its not even deeply injected! also fix other pips
+pip3 install requests # TODO why does this need to be escaped, its not even deeply injected! also fix other pips
 echo '
 import requests
 requests.get("http://example.com/foo")
@@ -43,8 +43,8 @@ python3 -m venv "$dir"/venv
 \pip3 install requests
 \pip3 install opentelemetry-distro opentelemetry-exporter-otlp
 opentelemetry-bootstrap --action install
-echo '
+OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE opentelemetry-instrument python3 -c '
 import requests
 requests.get("http://example.com/baz")
-' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE opentelemetry-instrument python3 | grep -- '/baz' || exit 1
+' | grep -- '/baz' || exit 1
 deactivate
