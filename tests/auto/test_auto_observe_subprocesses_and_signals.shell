@@ -7,8 +7,9 @@ export OTEL_SHELL_CONFIG_OBSERVE_SIGNALS=TRUE
 
 sudo apt-get update
 
-\sleep 30
-\cat "$OTEL_EXPORT_LOCATION"
+resolve_span '.name == "sudo apt-get update"'
+# \sleep 30
+# \cat "$OTEL_EXPORT_LOCATION"
 
 assert_equals 0 "$(\cat "$OTEL_EXPORT_LOCATION" | \jq '. | select(.name != null) | .events[] | select(.name | startswith("SIG") | not) | .name' | \wc -l)"
 assert_equals 0 "$(\cat "$OTEL_EXPORT_LOCATION" | \jq '. | select(.name != null) | select(.name | contains("execve(")) | .name' | \wc -l)"
@@ -16,9 +17,11 @@ assert_equals 0 "$(\cat "$OTEL_EXPORT_LOCATION" | \jq '. | select(.name != null)
   assert_not_equals "" "$(\which "$command")"
 done
 
-span="$(resolve_span '.name == "touch /var/lib/apt/periodic/update-success-stamp"')"
-while \[ -n "$span" ] && \[ "$(\printf '%s' "$span" | \jq -r '.name')" != "sudo apt-get update" ]; do
-  span_id="$(\printf '%s' "$span" | \jq -r '.parent_id')"
-  span="$(resolve_span '.context.span_id == "'"$span_id"'"')"
-done
-\[ -n "$span" ] || exit 1
+\cat "$OTEL_EXPORT_LOCATION" | \jq -r '. | select(.name != null) | .context.span_id' | while read -r span_id; do
+  span="$(\cat "$OTEL_EXPORT_LOCATION" | \jq '. | select(.context.span_id == "'"$span_id"'")')"
+  while \[ -n "$span" ] && \[ "$(\printf '%s' "$span" | \jq -r '.name')" != "sudo apt-get update" ]; do
+    span_id="$(\printf '%s' "$span" | \jq -r '.parent_id')"
+    span="$(\cat "$OTEL_EXPORT_LOCATION" | \jq '. | select(.context.span_id == "'"$span_id"'")')"
+  done
+  \[ -n "$span" ] || \echo FAILED
+done | \grep -v 'FAILED' || exit 1
