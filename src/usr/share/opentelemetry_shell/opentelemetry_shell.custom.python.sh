@@ -1,7 +1,6 @@
 #!/bin/false
 
 _otel_inject_python() {
-  set -x
   if \[ "$OTEL_SHELL_CONFIG_INJECT_DEEP" = TRUE ] && \[ -d "/opt/opentelemetry_shell/venv" ] && _otel_string_starts_with "$(\eval "$1 -V" | \cut -d ' ' -f 2)" "3."; then
     local cmdline="$(_otel_dollar_star "$@")"
     local cmdline="${cmdline#\\}"
@@ -13,7 +12,6 @@ _otel_inject_python() {
   else
     _otel_call "$@"
   fi
-  set +x
 }
 
 _otel_alias_prepend python _otel_inject_python
