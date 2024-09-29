@@ -16,11 +16,12 @@ deactivate
 . otel.sh
 
 #TODO test subprocesses
+#TODO check for parent being external
 
 dir=$(mktemp -d)
 python3 -m venv "$dir"/venv
 . "$dir"/venv/bin/activate
-pip3 install requests # TODO why does this need to be escaped, its not even deeply injected! also fix other pips
+\pip3 install requests # TODO why does this need to be escaped, its not even deeply injected! also fix other pips
 echo '
 import requests
 requests.get("http://example.com/foo")
