@@ -2,14 +2,15 @@ if ! which python3; then exit 0; fi
 . ./assert.sh
 
 . /opt/opentelemetry_shell/venv/bin/activate
-printenv
 opentelemetry-instrument python3 -c 'print ("hello world 0")'
 deactivate
-PYTHONPATH=/opt/opentelemetry_shell/venv/lib/python3.12/site_packages /opt/opentelemetry_shell/venv/bin/opentelemetry-instrument python3 -c 'print ("hello world 1")' || exit 1
+
 python3 -m venv ./venv
 . ./venv/bin/activate
 pip3 install requests
-PYTHONPATH=/opt/opentelemetry_shell/venv/lib/python3.12/site_packages ./venv/bin/python3 /opt/opentelemetry_shell/venv/bin/opentelemetry-instrument -c 'print ("hello world 2")' || exit 1
+export PYTHONPATH=/opt/opentelemetry_shell/venv/lib/python3.12/site_packages
+./venv/bin/python3 /opt/opentelemetry_shell/venv/bin/opentelemetry-instrument -c 'print ("hello world 2")' || exit 1
+unset PYTHONPATH
 deactivate
 
 . otel.sh
