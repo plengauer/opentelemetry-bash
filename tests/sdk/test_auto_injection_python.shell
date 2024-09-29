@@ -3,7 +3,7 @@ if ! which python3; then exit 0; fi
 
 . otel.sh
 
-assert_equals "hello world" "$(echo 'print("hello world")' | python3)"
+assert_equals "hello world" "$(echo 'print("hello world")' | { set -x; python3; set +x; })"
 
 #\pip3 install requests
 #echo '
