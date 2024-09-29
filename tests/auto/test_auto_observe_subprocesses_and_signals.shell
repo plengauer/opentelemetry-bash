@@ -23,5 +23,5 @@ done
     span_id="$(\printf '%s' "$span" | \jq -r '.parent_id')"
     span="$(\cat "$OTEL_EXPORT_LOCATION" | \jq '. | select(.context.span_id == "'"$span_id"'")')"
   done
-  \[ -n "$span" ] || \echo FAILED && \echo "FAILED tracing $span_id" >&2
+  \[ -n "$span" ] || (\echo FAILED && \echo "FAILED tracing $span_id" >&2)
 done | \grep -v 'FAILED' || exit 1
