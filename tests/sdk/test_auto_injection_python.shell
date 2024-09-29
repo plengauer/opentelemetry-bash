@@ -12,6 +12,7 @@ assert_equals "hello world" "$(echo 'print("hello world")' | python3)"
 # print(response.status_code)
 # ' | python3
 
+printenv | grep PYTHON
 dir=$(mktemp -d)
 python3 -m venv "$dir"/venv
 . "$dir"/venv/bin/activate
