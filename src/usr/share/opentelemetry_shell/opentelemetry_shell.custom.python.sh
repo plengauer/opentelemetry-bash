@@ -6,7 +6,8 @@ _otel_inject_python() {
     local cmdline="$(_otel_dollar_star "$@")"
     local cmdline="${cmdline#\\}"
     if \[ "$1" != opentelemetry-instrument ] && ! _otel_string_ends_with "$1" /opentelemetry-instrument; then
-      set -- /opt/opentelemetry_shell/venv/bin/opentelemetry-instrument "$@"
+      local command="$1"; shift
+      set -- /opt/opentelemetry_shell/venv/bin/opentelemetry-instrument "${command##\\}" "$@"
     fi
     OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE PYTHONPATH=/opt/opentelemetry_shell/venv/lib/python3.*/site-packages/ _otel_call "$@"
   else
