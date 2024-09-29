@@ -45,7 +45,6 @@ python3 -m venv "$dir"/venv
 opentelemetry-bootstrap --action install
 echo '
 import requests
-response = requests.get("http://example.com/baz")
-print(response.status_code)
+requests.get("http://example.com/baz")
 ' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE opentelemetry-instrument python3 | grep -- '/baz' || exit 1
 deactivate
