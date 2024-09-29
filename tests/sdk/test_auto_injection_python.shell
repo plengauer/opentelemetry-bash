@@ -1,7 +1,6 @@
 if ! which python3; then exit 0; fi
 . ./assert.sh
 
-ls /opt/opentelemetry_shell/venv/lib/python3.12/site-packages/
 . /opt/opentelemetry_shell/venv/bin/activate
 opentelemetry-instrument python3 -c 'print ("hello world 0")'
 deactivate
@@ -10,14 +9,13 @@ python3 -m venv ./venv
 . ./venv/bin/activate
 pip3 install requests
 export PYTHONPATH=/opt/opentelemetry_shell/venv/lib/python3.12/site-packages
-./venv/bin/python3 /opt/opentelemetry_shell/venv/bin/opentelemetry-instrument python3 -c 'print ("hello world 2")' || exit 1
+./venv/bin/python3 /opt/opentelemetry_shell/venv/bin/opentelemetry-instrument python3 -c 'print ("hello world 1")' || exit 1
 unset PYTHONPATH
 deactivate
 
 . otel.sh
 
 #TODO test subprocesses
-export PYTHONVERBOSE=1 # TODO remove
 
 assert_equals "hello world" "$(echo 'print("hello world")' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE python3 )"
 
