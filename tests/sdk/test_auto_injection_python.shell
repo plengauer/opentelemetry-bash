@@ -23,11 +23,9 @@ python3 -m venv "$dir"/venv
 \pip3 install requests # TODO why does this need to be escaped, its not even deeply injected! also fix other pips
 echo '
 import requests
-response = requests.get("http://example.com/foo")
-print(response.status_code)
-' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE python3
+requests.get("http://example.com/foo")
+' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE python3 | grep -- '/foo' || exit 1
 deactivate
-resolve_span '.attributes."url.path" == "/foo"'
 
 dir=$(mktemp -d)
 python3 -m venv "$dir"/venv
@@ -35,11 +33,9 @@ python3 -m venv "$dir"/venv
 \pip install requests
 echo '
 import requests
-response = requests.get("http://example.com/bar")
-print(response.status_code)
-' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE python
+requests.get("http://example.com/bar")
+' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE python | grep -- '/bar' || exit 1
 deactivate
-resolve_span '.attributes."url.path" == "/bar"'
 
 dir=$(mktemp -d)
 python3 -m venv "$dir"/venv
@@ -51,6 +47,5 @@ echo '
 import requests
 response = requests.get("http://example.com/baz")
 print(response.status_code)
-' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE opentelemetry-instrument python3
+' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE opentelemetry-instrument python3 | grep -- '/baz' || exit 1
 deactivate
-resolve_span '.attributes."url.path" == "/baz"'
