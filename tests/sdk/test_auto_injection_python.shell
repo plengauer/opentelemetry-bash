@@ -3,6 +3,8 @@ if ! which python3; then exit 0; fi
 
 . otel.sh
 
+#TODO test subprocesses
+
 assert_equals "hello world" "$(echo 'print("hello world")' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE python3 )"
 
 #\pip3 install requests
@@ -18,7 +20,7 @@ python3 -m venv "$dir"/venv
 . "$dir"/venv/bin/activate
 which pip3
 which python3
-\pip3 install requests
+\pip3 install requests # TODO why does this need to be escaped, its not even deeply injected!
 echo '
 import requests
 response = requests.get("http://example.com/bar")
