@@ -17,7 +17,7 @@ deactivate
 
 #TODO test subprocesses
 
-assert_equals "hello world" "$(echo 'print("hello world")' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE python3)"
+assert_equals "$(echo hello world | xxd -p)" "$(echo 'print("hello world")' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE python3 | xxd -p)"
 
 # TODO only if not externally managed
 #\pip3 install requests
