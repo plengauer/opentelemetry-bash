@@ -558,7 +558,7 @@ _otel_record_subprocesses() {
         fi
         ;;
       *' 'execve'('*)
-        if \[ "${OTEL_SHELL_CONFIG_OBSERVE_SIGNALS:-FALSE}" != TRUE ]; then continue; fi
+        if \[ "${OTEL_SHELL_CONFIG_OBSERVE_SUBPROCESSES:-FALSE}" != TRUE ]; then continue; fi
         \eval "local parent_pid=\$parent_pid_$pid"
         local name="$(\printf '%s' "$line" | \cut -sd '[' -f 2- | \rev | \cut -sd ']' -f 2- | \rev | \sed 's/", "/ /g')"
         local name="${name#\"}"
