@@ -18,7 +18,7 @@
           {
             "key": "telemetry.sdk.version",
             "value": {
-              "stringValue": "4.31.0"
+              "stringValue": "4.31.2"
             }
           },
           {
@@ -30,7 +30,7 @@
           {
             "key": "github.sha",
             "value": {
-              "stringValue": "06480097787a1b628db865d4301706b24d38ddfc"
+              "stringValue": "72c1e8bf0e19a2595e88116e30fe96e5d1a98b39"
             }
           },
           {
@@ -66,7 +66,7 @@
           {
             "key": "github.event.ref.sha",
             "value": {
-              "stringValue": "06480097787a1b628db865d4301706b24d38ddfc"
+              "stringValue": "72c1e8bf0e19a2595e88116e30fe96e5d1a98b39"
             }
           },
           {
@@ -96,7 +96,7 @@
           {
             "key": "github.workflow.run.id",
             "value": {
-              "stringValue": "11020913815"
+              "stringValue": "11101791154"
             }
           },
           {
@@ -114,7 +114,7 @@
           {
             "key": "github.workflow.sha",
             "value": {
-              "stringValue": "06480097787a1b628db865d4301706b24d38ddfc"
+              "stringValue": "72c1e8bf0e19a2595e88116e30fe96e5d1a98b39"
             }
           },
           {
@@ -144,13 +144,13 @@
           {
             "key": "process.pid",
             "value": {
-              "intValue": "4704"
+              "intValue": "4491"
             }
           },
           {
             "key": "process.parent_pid",
             "value": {
-              "intValue": "4644"
+              "intValue": "4447"
             }
           },
           {
@@ -198,7 +198,7 @@
           {
             "key": "process.runtime.version",
             "value": {
-              "stringValue": "5.1-6ubuntu1.1"
+              "stringValue": "5.2.21-2ubuntu4"
             }
           },
           {
@@ -231,23 +231,23 @@
         {
           "scope": {
             "name": "shell",
-            "version": "4.31.0"
+            "version": "4.31.2"
           },
           "spans": [
             {
-              "traceId": "a222ae8b3305410061bd276a416b8e22",
-              "spanId": "aa7016497f038de8",
-              "parentSpanId": "e35beb38eb3f45f6",
+              "traceId": "9a1ceefcff9095594b86613b1e728bca",
+              "spanId": "f53f022945b51881",
+              "parentSpanId": "e3f801776daf74c9",
               "flags": 768,
-              "name": "echo foo",
+              "name": "echo baz",
               "kind": 1,
-              "startTimeUnixNano": "1727209538255138480",
-              "endTimeUnixNano": "1727209538270709400",
+              "startTimeUnixNano": "1727686349355319061",
+              "endTimeUnixNano": "1727686349371314058",
               "attributes": [
                 {
                   "key": "shell.command_line",
                   "value": {
-                    "stringValue": "echo foo"
+                    "stringValue": "echo baz"
                   }
                 },
                 {
@@ -309,7 +309,7 @@
           {
             "key": "telemetry.sdk.version",
             "value": {
-              "stringValue": "4.31.0"
+              "stringValue": "4.31.2"
             }
           },
           {
@@ -321,7 +321,7 @@
           {
             "key": "github.sha",
             "value": {
-              "stringValue": "06480097787a1b628db865d4301706b24d38ddfc"
+              "stringValue": "72c1e8bf0e19a2595e88116e30fe96e5d1a98b39"
             }
           },
           {
@@ -357,7 +357,7 @@
           {
             "key": "github.event.ref.sha",
             "value": {
-              "stringValue": "06480097787a1b628db865d4301706b24d38ddfc"
+              "stringValue": "72c1e8bf0e19a2595e88116e30fe96e5d1a98b39"
             }
           },
           {
@@ -387,7 +387,7 @@
           {
             "key": "github.workflow.run.id",
             "value": {
-              "stringValue": "11020913815"
+              "stringValue": "11101791154"
             }
           },
           {
@@ -405,7 +405,7 @@
           {
             "key": "github.workflow.sha",
             "value": {
-              "stringValue": "06480097787a1b628db865d4301706b24d38ddfc"
+              "stringValue": "72c1e8bf0e19a2595e88116e30fe96e5d1a98b39"
             }
           },
           {
@@ -435,13 +435,13 @@
           {
             "key": "process.pid",
             "value": {
-              "intValue": "4799"
+              "intValue": "4488"
             }
           },
           {
             "key": "process.parent_pid",
             "value": {
-              "intValue": "4644"
+              "intValue": "4447"
             }
           },
           {
@@ -489,7 +489,7 @@
           {
             "key": "process.runtime.version",
             "value": {
-              "stringValue": "5.1-6ubuntu1.1"
+              "stringValue": "5.2.21-2ubuntu4"
             }
           },
           {
@@ -522,23 +522,23 @@
         {
           "scope": {
             "name": "shell",
-            "version": "4.31.0"
+            "version": "4.31.2"
           },
           "spans": [
             {
-              "traceId": "a222ae8b3305410061bd276a416b8e22",
-              "spanId": "8b513c46a1910336",
-              "parentSpanId": "e35beb38eb3f45f6",
+              "traceId": "9a1ceefcff9095594b86613b1e728bca",
+              "spanId": "d8fcbe4b10316c2b",
+              "parentSpanId": "e3f801776daf74c9",
               "flags": 768,
-              "name": "echo baz",
+              "name": "echo foo",
               "kind": 1,
-              "startTimeUnixNano": "1727209538380372070",
-              "endTimeUnixNano": "1727209538397309198",
+              "startTimeUnixNano": "1727686349429397768",
+              "endTimeUnixNano": "1727686349446428318",
               "attributes": [
                 {
                   "key": "shell.command_line",
                   "value": {
-                    "stringValue": "echo baz"
+                    "stringValue": "echo foo"
                   }
                 },
                 {
@@ -596,7 +596,7 @@
           {
             "key": "telemetry.sdk.version",
             "value": {
-              "stringValue": "4.31.0"
+              "stringValue": "4.31.2"
             }
           },
           {
@@ -608,7 +608,7 @@
           {
             "key": "github.sha",
             "value": {
-              "stringValue": "06480097787a1b628db865d4301706b24d38ddfc"
+              "stringValue": "72c1e8bf0e19a2595e88116e30fe96e5d1a98b39"
             }
           },
           {
@@ -644,7 +644,7 @@
           {
             "key": "github.event.ref.sha",
             "value": {
-              "stringValue": "06480097787a1b628db865d4301706b24d38ddfc"
+              "stringValue": "72c1e8bf0e19a2595e88116e30fe96e5d1a98b39"
             }
           },
           {
@@ -674,7 +674,7 @@
           {
             "key": "github.workflow.run.id",
             "value": {
-              "stringValue": "11020913815"
+              "stringValue": "11101791154"
             }
           },
           {
@@ -692,7 +692,7 @@
           {
             "key": "github.workflow.sha",
             "value": {
-              "stringValue": "06480097787a1b628db865d4301706b24d38ddfc"
+              "stringValue": "72c1e8bf0e19a2595e88116e30fe96e5d1a98b39"
             }
           },
           {
@@ -722,13 +722,13 @@
           {
             "key": "process.pid",
             "value": {
-              "intValue": "4796"
+              "intValue": "4489"
             }
           },
           {
             "key": "process.parent_pid",
             "value": {
-              "intValue": "4644"
+              "intValue": "4447"
             }
           },
           {
@@ -776,7 +776,7 @@
           {
             "key": "process.runtime.version",
             "value": {
-              "stringValue": "5.1-6ubuntu1.1"
+              "stringValue": "5.2.21-2ubuntu4"
             }
           },
           {
@@ -809,18 +809,18 @@
         {
           "scope": {
             "name": "shell",
-            "version": "4.31.0"
+            "version": "4.31.2"
           },
           "spans": [
             {
-              "traceId": "a222ae8b3305410061bd276a416b8e22",
-              "spanId": "0d1b2278567e4e8c",
-              "parentSpanId": "e35beb38eb3f45f6",
+              "traceId": "9a1ceefcff9095594b86613b1e728bca",
+              "spanId": "5dd3aef7756485fa",
+              "parentSpanId": "e3f801776daf74c9",
               "flags": 768,
               "name": "echo bar",
               "kind": 1,
-              "startTimeUnixNano": "1727209538404811092",
-              "endTimeUnixNano": "1727209538421321515",
+              "startTimeUnixNano": "1727686349442599288",
+              "endTimeUnixNano": "1727686349458484611",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -883,7 +883,7 @@
           {
             "key": "telemetry.sdk.version",
             "value": {
-              "stringValue": "4.31.0"
+              "stringValue": "4.31.2"
             }
           },
           {
@@ -895,7 +895,7 @@
           {
             "key": "github.sha",
             "value": {
-              "stringValue": "06480097787a1b628db865d4301706b24d38ddfc"
+              "stringValue": "72c1e8bf0e19a2595e88116e30fe96e5d1a98b39"
             }
           },
           {
@@ -931,7 +931,7 @@
           {
             "key": "github.event.ref.sha",
             "value": {
-              "stringValue": "06480097787a1b628db865d4301706b24d38ddfc"
+              "stringValue": "72c1e8bf0e19a2595e88116e30fe96e5d1a98b39"
             }
           },
           {
@@ -961,7 +961,7 @@
           {
             "key": "github.workflow.run.id",
             "value": {
-              "stringValue": "11020913815"
+              "stringValue": "11101791154"
             }
           },
           {
@@ -979,7 +979,7 @@
           {
             "key": "github.workflow.sha",
             "value": {
-              "stringValue": "06480097787a1b628db865d4301706b24d38ddfc"
+              "stringValue": "72c1e8bf0e19a2595e88116e30fe96e5d1a98b39"
             }
           },
           {
@@ -1009,13 +1009,13 @@
           {
             "key": "process.pid",
             "value": {
-              "intValue": "3963"
+              "intValue": "3766"
             }
           },
           {
             "key": "process.parent_pid",
             "value": {
-              "intValue": "3962"
+              "intValue": "3765"
             }
           },
           {
@@ -1063,7 +1063,7 @@
           {
             "key": "process.runtime.version",
             "value": {
-              "stringValue": "5.1-6ubuntu1.1"
+              "stringValue": "5.2.21-2ubuntu4"
             }
           },
           {
@@ -1096,18 +1096,18 @@
         {
           "scope": {
             "name": "shell",
-            "version": "4.31.0"
+            "version": "4.31.2"
           },
           "spans": [
             {
-              "traceId": "a222ae8b3305410061bd276a416b8e22",
-              "spanId": "e35beb38eb3f45f6",
-              "parentSpanId": "049bd5484c601b78",
+              "traceId": "9a1ceefcff9095594b86613b1e728bca",
+              "spanId": "e3f801776daf74c9",
+              "parentSpanId": "e2cfe7f3ae0f1523",
               "flags": 768,
               "name": "/usr/bin/perl /usr/bin/parallel echo ::: foo bar baz",
               "kind": 1,
-              "startTimeUnixNano": "1727209536980632649",
-              "endTimeUnixNano": "1727209538430816959",
+              "startTimeUnixNano": "1727686348123590041",
+              "endTimeUnixNano": "1727686349465803942",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -1182,7 +1182,7 @@
           {
             "key": "telemetry.sdk.version",
             "value": {
-              "stringValue": "4.31.0"
+              "stringValue": "4.31.2"
             }
           },
           {
@@ -1194,7 +1194,7 @@
           {
             "key": "github.sha",
             "value": {
-              "stringValue": "06480097787a1b628db865d4301706b24d38ddfc"
+              "stringValue": "72c1e8bf0e19a2595e88116e30fe96e5d1a98b39"
             }
           },
           {
@@ -1230,7 +1230,7 @@
           {
             "key": "github.event.ref.sha",
             "value": {
-              "stringValue": "06480097787a1b628db865d4301706b24d38ddfc"
+              "stringValue": "72c1e8bf0e19a2595e88116e30fe96e5d1a98b39"
             }
           },
           {
@@ -1260,7 +1260,7 @@
           {
             "key": "github.workflow.run.id",
             "value": {
-              "stringValue": "11020913815"
+              "stringValue": "11101791154"
             }
           },
           {
@@ -1278,7 +1278,7 @@
           {
             "key": "github.workflow.sha",
             "value": {
-              "stringValue": "06480097787a1b628db865d4301706b24d38ddfc"
+              "stringValue": "72c1e8bf0e19a2595e88116e30fe96e5d1a98b39"
             }
           },
           {
@@ -1308,13 +1308,13 @@
           {
             "key": "process.pid",
             "value": {
-              "intValue": "3259"
+              "intValue": "3062"
             }
           },
           {
             "key": "process.parent_pid",
             "value": {
-              "intValue": "2631"
+              "intValue": "2627"
             }
           },
           {
@@ -1362,7 +1362,7 @@
           {
             "key": "process.runtime.version",
             "value": {
-              "stringValue": "5.1-6ubuntu1.1"
+              "stringValue": "5.2.21-2ubuntu4"
             }
           },
           {
@@ -1395,18 +1395,18 @@
         {
           "scope": {
             "name": "shell",
-            "version": "4.31.0"
+            "version": "4.31.2"
           },
           "spans": [
             {
-              "traceId": "a222ae8b3305410061bd276a416b8e22",
-              "spanId": "530257efaeed8d22",
-              "parentSpanId": "066fab0b100b5a0b",
+              "traceId": "9a1ceefcff9095594b86613b1e728bca",
+              "spanId": "a2e6827bc650a994",
+              "parentSpanId": "3bff9464e22ca4b7",
               "flags": 768,
               "name": "echo foo bar baz",
               "kind": 1,
-              "startTimeUnixNano": "1727209536340034582",
-              "endTimeUnixNano": "1727209536357284432",
+              "startTimeUnixNano": "1727686347479598491",
+              "endTimeUnixNano": "1727686347496147093",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -1454,14 +1454,14 @@
               "status": {}
             },
             {
-              "traceId": "a222ae8b3305410061bd276a416b8e22",
-              "spanId": "049bd5484c601b78",
-              "parentSpanId": "066fab0b100b5a0b",
+              "traceId": "9a1ceefcff9095594b86613b1e728bca",
+              "spanId": "e2cfe7f3ae0f1523",
+              "parentSpanId": "3bff9464e22ca4b7",
               "flags": 768,
               "name": "xargs parallel echo :::",
               "kind": 1,
-              "startTimeUnixNano": "1727209536341083083",
-              "endTimeUnixNano": "1727209538465568036",
+              "startTimeUnixNano": "1727686347480637231",
+              "endTimeUnixNano": "1727686349504728002",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -1521,14 +1521,14 @@
               "status": {}
             },
             {
-              "traceId": "a222ae8b3305410061bd276a416b8e22",
-              "spanId": "066fab0b100b5a0b",
+              "traceId": "9a1ceefcff9095594b86613b1e728bca",
+              "spanId": "3bff9464e22ca4b7",
               "parentSpanId": "",
               "flags": 256,
               "name": "bash -e demo.sh",
               "kind": 2,
-              "startTimeUnixNano": "1727209536326592913",
-              "endTimeUnixNano": "1727209538466149917",
+              "startTimeUnixNano": "1727686347466670787",
+              "endTimeUnixNano": "1727686349505306838",
               "status": {}
             }
           ]
