@@ -562,7 +562,7 @@ _otel_record_subprocesses() {
         ;;
       exit)
         if \[ -z "${span_handle:-}" ]; then continue; fi
-        if _otel_string_starts_with "$line" "$pid +++ killed by " || (_otel_string_starts_with "$line" "$pid +++ exited with " && \[ "$line" != "$pid +++ exited with 0 +++" ]); then
+        if _otel_string_contains "$line" " +++ killed by " || (_otel_string_contains "$line" " +++ exited with " && ! _otel_string_contains "$line" " +++ exited with 0 +++"); then
           otel_span_error "$span_handle"
         fi
         otel_span_end "$span_handle"
