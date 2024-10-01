@@ -255,7 +255,7 @@ def handle(scope, version, command, arguments):
     elif command == 'SPAN_AUTO_END':
         auto_end = True
     elif command == 'SPAN_NAME':
-        tokens = arguments.split(' ', 2)
+        tokens = arguments.split(' ', 1)
         span_id = tokens[0]
         name = tokens[1]
         span : Span = spans[span_id]
