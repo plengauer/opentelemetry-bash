@@ -542,12 +542,8 @@ _otel_record_subprocesses() {
         local new_pid="$(\printf '%s' "$line" | \rev | \cut -d ' ' -f 1 | \rev)";
         \eval "local parent_pid_$new_pid=$pid"
         \eval "local span_name=\"\$span_name_$new_pid\""
-        if \[ -z "${span_name:-}" ]; then
-          \eval "local span_name=\"\$span_name_$pid\""
-        fi
-        if \[ -z "${span_name:-}" ]; then
-          \eval "local span_name=\"\$span_name_$parent_pid\""
-        fi
+        if \[ -z "${span_name:-}" ]; then \eval "local span_name=\"\$span_name_$pid\""; fi
+        if \[ -z "${span_name:-}" ]; then \eval "local span_name=\"\$span_name_$parent_pid\""; fi
         local span_name="${span_name:-<unknown>}"
         otel_span_activate "${parent_span_handle:-$root_span_handle}"
         local span_handle="$(otel_span_start INTERNAL "$span_name")"
