@@ -279,6 +279,10 @@ def handle(scope, version, command, arguments):
         tokens = arguments.split(' ', 1)
         response_path = tokens[0]
         span_id = tokens[1]
+        if not span_id in spans:
+            with open(response_path, 'w') as response:
+                response.write('')
+                return
         span : Span = spans[span_id]
         carrier = {}
         TraceContextTextMapPropagator().inject(carrier, opentelemetry.trace.set_span_in_context(span, None))
