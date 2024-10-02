@@ -44,8 +44,10 @@ python3 -m venv "$dir"/venv
 \pip3 install requests
 \pip3 install opentelemetry-distro opentelemetry-exporter-otlp
 opentelemetry-bootstrap --action install
-OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE opentelemetry-instrument python3 -c '
+script=$(mktemp -u).py
+echo '
 import requests
 requests.get("http://example.com/baz")
-' | grep -- '/baz' || exit 1
+' > "$script"
+OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE opentelemetry-instrument python3 "$script" | grep -- '/baz' || exit 1
 deactivate
