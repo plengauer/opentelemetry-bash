@@ -554,8 +554,7 @@ _otel_record_subprocesses() {
         otel_span_deactivate
         \eval "local span_handle_$new_pid=$span_handle"
         \eval "local span_name_$new_pid=\"\$span_name\""
-        # TODO activate new span  and store traceparent for later use
-        # TODO immediately end span if stored due to premature exit
+        # TODO immediately end span if stored due to very fast exit (faster than the fork syscall of the parent can actually be finished) 
         ;;
       exec)
         local name="$(\printf '%s' "$line" | \cut -sd '[' -f 2- | \rev | \cut -sd ']' -f 2- | \rev | \sed 's/", "/ /g')"
