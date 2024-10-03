@@ -25,7 +25,7 @@ python3 -m venv "$dir"/venv
 echo '
 import requests
 requests.get("http://example.com/foo")
-' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE python3 | grep -- '/foo' || exit 1
+' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE python3 | tee /dev/stderr | grep -- '/foo' || exit 1
 deactivate
 
 dir=$(mktemp -d)
@@ -35,7 +35,7 @@ python3 -m venv "$dir"/venv
 echo '
 import requests
 requests.get("http://example.com/bar")
-' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE python | grep -- '/bar' || exit 1
+' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE python | tee /dev/stderr | grep -- '/bar' || exit 1
 deactivate
 
 dir=$(mktemp -d)
@@ -49,9 +49,7 @@ echo '
 import requests
 requests.get("http://example.com/baz")
 ' > "$script"
-set -x
-OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE opentelemetry-instrument python3 "$script" | grep -- '/baz' || exit 1
-set +x
+OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE opentelemetry-instrument python3 "$script" | tee /dev/stderr | grep -- '/baz' || exit 1
 deactivate
 
 exit 1
