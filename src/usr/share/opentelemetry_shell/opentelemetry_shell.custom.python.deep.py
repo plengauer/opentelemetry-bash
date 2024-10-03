@@ -8,6 +8,7 @@ if traceparent:
     carrier = { "traceparent": traceparent }
     new_context = propagator.extract(carrier=carrier)
     attach(new_context)
+    print('DEBUG DEBUG attached')
 
 import subprocess
 import functools
