@@ -53,3 +53,5 @@ set -x
 OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE opentelemetry-instrument python3 "$script" | grep -- '/baz' || exit 1
 set +x
 deactivate
+
+exit 1
