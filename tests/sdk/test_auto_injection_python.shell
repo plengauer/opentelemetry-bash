@@ -21,17 +21,14 @@ deactivate
 #TODO check for parent being external
 
 dir=$(mktemp -d)
-python3 -m venv "$dir"/venv
-. "$dir"/venv/bin/activate
 \pip3 install requests # TODO why does this need to be escaped, its not even deeply injected! also fix other pips
 echo '
 import requests
 requests.get("http://example.com/foo")
 ' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE python3 | grep -- '/foo' || exit 1
-deactivate
 
 dir=$(mktemp -d)
-python3 -m venv "$dir"/venv
+python3 -m venv --system-site-packages "$dir"/venv # TODO the -- should not be necessary
 . "$dir"/venv/bin/activate
 \pip install requests
 echo '
@@ -41,7 +38,7 @@ requests.get("http://example.com/bar")
 deactivate
 
 dir=$(mktemp -d)
-python3 -m venv "$dir"/venv
+python3 -m venv --system-site-packages "$dir"/venv
 . "$dir"/venv/bin/activate
 \pip3 install requests
 \pip3 install opentelemetry-distro opentelemetry-exporter-otlp
