@@ -6,7 +6,6 @@ if ! which python3; then exit 0; fi
 #TODO test subprocesses
 
 dir=$(mktemp -d)
-pip3 install requests # TODO why does this need to be escaped, its not even deeply injected! also fix other pips
 echo '
 import requests
 requests.get("http://example.com/foo")
