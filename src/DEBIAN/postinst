@@ -22,7 +22,7 @@ for element in libraries:
   print(element["instrumentation"])
 ' | python3 | xargs pip3 install
     deactivate
-    (cd /opt/opentelemetry_shell/venv/lib/python3.*/site-packages && ln --symbolic /usr/share/opentelemetry_shell/opentelemetry_shell.custom.python.deep.py sitecustomize.py || true)
+    (cd /opt/opentelemetry_shell/venv/lib/python3.*/site-packages && ln --symbolic /usr/share/opentelemetry_shell/opentelemetry_shell.custom.python.deep.py usercustomize.py || true)
   fi
   export PATH="$PATH":/usr/local/bin
   if type npm; then
