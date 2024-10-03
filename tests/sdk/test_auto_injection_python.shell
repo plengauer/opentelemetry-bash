@@ -1,6 +1,8 @@
 if ! which python3; then exit 0; fi
 . ./assert.sh
 
+ls -la /opt/opentelemetry_shell/venv/lib/python3.*/site-packages/sitecustomize.py
+
 . /opt/opentelemetry_shell/venv/bin/activate
 opentelemetry-instrument python3 -c 'print ("hello world 0")'
 deactivate
