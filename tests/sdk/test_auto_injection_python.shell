@@ -18,14 +18,13 @@ deactivate
 . otel.sh
 
 #TODO test subprocesses
-#TODO check for parent being external
 
 dir=$(mktemp -d)
 \pip3 install requests # TODO why does this need to be escaped, its not even deeply injected! also fix other pips
 echo '
 import requests
 requests.get("http://example.com/foo")
-' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE python3 | grep -- '/foo' || exit 1
+' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE python3 | grep -v -F '"parent_id": null,' | grep -- '/foo' || exit 1
 
 dir=$(mktemp -d)
 python3 -m venv --system-site-packages "$dir"/venv # TODO the -- should not be necessary
@@ -34,7 +33,7 @@ python3 -m venv --system-site-packages "$dir"/venv # TODO the -- should not be n
 echo '
 import requests
 requests.get("http://example.com/bar")
-' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE python | tee /dev/stderr | grep -- '/bar' || exit 1
+' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE python | grep -v -F '"parent_id": null,' | grep -- '/bar' || exit 1
 deactivate
 
 dir=$(mktemp -d)
@@ -48,7 +47,7 @@ echo '
 import requests
 requests.get("http://example.com/baz")
 ' > "$script"
-OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE opentelemetry-instrument python3 "$script" | grep -- '/baz' || exit 1
+OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE opentelemetry-instrument python3 "$script" | grep -v -F '"parent_id": null,' | grep -- '/baz' || exit 1
 deactivate
 
 exit 1
