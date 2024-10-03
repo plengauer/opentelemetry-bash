@@ -5,7 +5,7 @@ if ! which python3; then exit 0; fi
 
 #TODO test subprocesses
 
-dir=$(mktemp -d)
+\pip3 install requests
 echo '
 import requests
 requests.get("http://example.com/foo")
