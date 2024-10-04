@@ -80,7 +80,7 @@ _otel_auto_instrument() {
   _otel_alias_prepend unalias _otel_unalias_and_reinstrument
   _otel_alias_prepend . _otel_instrument_and_source
   if \[ "$_otel_shell" = bash ]; then _otel_alias_prepend source _otel_instrument_and_source; fi
-  # _otel_alias_prepend hash _otel_hash_and_reinstrument
+  _otel_alias_prepend hash _otel_hash_and_reinstrument
 
   # deshebangify commands, do special instrumentations, propagate special instrumentations into aliases, instrument all commands
   ## (both otel_filter_commands_by_file and _otel_filter_commands_by_instrumentation are functionally optional, but helps optimizing time because the following loop AND otel_instrument itself is expensive!)
@@ -381,10 +381,6 @@ _otel_record_exec() {
   otel_span_end "$span_id"
   _otel_sdk_communicate 'SPAN_AUTO_END'
   export TRACEPARENT="$my_traceparent"
-}
-
-hash() {
-  _otel_hash_and_reinstrument hash "$@"
 }
 
 _otel_hash_and_reinstrument() {
