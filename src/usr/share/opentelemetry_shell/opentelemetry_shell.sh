@@ -59,7 +59,6 @@ fi
 
 _otel_auto_instrument() {
   local hint="$1"
-\echo "DEBUG auto instrument $hint $(\alias | \wc -l) $PATH $OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE"
   local IFS=' 
 '
 
@@ -71,7 +70,6 @@ _otel_auto_instrument() {
   local cache_key="$({ _otel_list_path_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_hint "$hint" | \sort -u; \alias; \echo "$PATH" "$_otel_shell_conservative_exec" "$OTEL_SHELL_CONFIG_INSTRUMENT_MINIMALLY"; } | \md5sum | \cut -d ' ' -f 1)"
   local cache_file="$(\mktemp -u | \rev | \cut -d / -f 2- | \rev)/opentelemetry_shell_$(_otel_package_version opentelemetry-shell)"_"$_otel_shell"_instrumentation_cache_"$cache_key".aliases
   if \[ -f "$cache_file" ]; then
-\echo "DEBUG auto instrument using cache $(\alias | \wc -l)"
     \eval "$(\grep -vh '_otel_alias_prepend ' $(_otel_list_special_auto_instrument_files))"
     \. "$cache_file"
     return $?
@@ -107,7 +105,6 @@ _otel_auto_instrument() {
 
   # cache
   \[ "$(\alias | \wc -l)" -gt 25 ] && \alias | \sed 's/^alias //' | { \[ -n "$hint" ] && \grep "$(_otel_resolve_instrumentation_hint "$hint" | \sed 's/[]\.^*[]/\\&/g' | \awk '$0="^"$0"="')" || \cat; } | \awk '{print "\\alias " $0 }'  > "$cache_file" || \true
-\echo "DEBUG auto instrumented $(\alias | \wc -l)"
 }
 
 _otel_list_special_auto_instrument_files() {
@@ -388,11 +385,9 @@ _otel_record_exec() {
 
 _otel_hash_and_reinstrument() {
   shift
-\echo "DEBUG hash_and_reinstrument $PATH <$OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE>"
   local exit_code=0
   \hash "$@" || local exit_code="$?"
   if \[ "$1" = -r ]; then
-    \unalias -a
     _otel_auto_instrument "$_otel_shell_auto_instrumentation_hint"
   fi
   return "$exit_code"
