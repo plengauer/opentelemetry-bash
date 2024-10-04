@@ -18,7 +18,7 @@ _otel_python_is_venv_active() {
 }
 
 _otel_python_is_venv_path_injectable() {
-  \[ -d "${VIRTUAL_ENV:-}" ] && \cat "$VIRTUAL_ENV"/pyvenv.cfg | \grep -q -- '^include-system-site-packages = true$'
+  \[ -d "${VIRTUAL_ENV:-}" ] && \cat "$VIRTUAL_ENV"/pyvenv.cfg | \tee /dev/stderr | \grep -q -- '^include-system-site-packages = true$'
 }
 
 _otel_inject_opentelemetry_instrument() {
