@@ -12,7 +12,7 @@ if _otel_python_is_venv_path_injectable; then \echo "DEBUG DEBUG venv is injecta
 \echo "DEBUG DEBUG $cmdline => $*" >&2
     OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE PYTHONPATH=/opt/opentelemetry_shell/venv/lib/"$(\ls /opt/opentelemetry_shell/venv/lib/)"/site-packages/:"$PYTHONPATH" OTEL_BSP_MAX_EXPORT_BATCH_SIZE=1 _otel_call "$@"
   else
-\echo "DEBUG DEBUG $cmdline => $cmdline" >&2
+\echo "DEBUG DEBUG $* => $*" >&2
     _otel_call "$@"
   fi
 }
