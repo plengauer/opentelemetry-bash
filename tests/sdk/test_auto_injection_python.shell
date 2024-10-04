@@ -11,10 +11,12 @@ requests.get("http://example.com/foo")
 ' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE python3 | grep -v -F '"parent_id": null,' | grep -- '/foo' || exit 1
 
 dir=$(mktemp -d)
-python3 -m venv "$dir"/venv # TODO the -- should not be necessary--system-site-packages 
+python3 -m venv --system-site-packages "$dir"/venv # TODO the -- should not be necessary
 . "$dir"/venv/bin/activate
 which pip
+set -x
 pip install requests || exit 1
+set +x
 echo '
 import requests
 requests.get("http://example.com/bar")
