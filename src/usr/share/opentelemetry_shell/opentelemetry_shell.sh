@@ -80,6 +80,7 @@ _otel_auto_instrument() {
   _otel_alias_prepend unalias _otel_unalias_and_reinstrument
   _otel_alias_prepend . _otel_instrument_and_source
   if \[ "$_otel_shell" = bash ]; then _otel_alias_prepend source _otel_instrument_and_source; fi
+  _otel_alias_prepend hash _otel_hash_and_reinstrument
 
   # deshebangify commands, do special instrumentations, propagate special instrumentations into aliases, instrument all commands
   ## (both otel_filter_commands_by_file and _otel_filter_commands_by_instrumentation are functionally optional, but helps optimizing time because the following loop AND otel_instrument itself is expensive!)
@@ -382,21 +383,22 @@ _otel_record_exec() {
   export TRACEPARENT="$my_traceparent"
 }
 
+_otel_hash_and_reinstrument() {
+  shift
+  local exit_code=0
+  \hash "$@" || local exit_code="$?"
+  if \[ "$1" = -r ]; then
+    unalias -a
+  fi
+  return "$exit_code"
+}
+
 command() {
   if \[ "$#" = 2 ] && \[ "$1" = -v ] && _otel_string_contains "$(\alias "$2")" " OTEL_SHELL_COMMAND_TYPE_OVERRIDE=file "; then
     \which "$2"
   else
     \command "$@"
   fi
-}
-
-hash() {
-  local exit_code=0
-  \command hash "$@" || local exit_code="$?"
-  if \[ "$1" = -r ]; then
-    unalias -a
-  fi
-  return "$exit_code"
 }
 
 _otel_inject() {
