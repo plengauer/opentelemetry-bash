@@ -1,7 +1,7 @@
 #!/bin/false
 
 _otel_inject_python() {
-  if \[ "$OTEL_SHELL_CONFIG_INJECT_DEEP" = TRUE ] && \[ -d "/opt/opentelemetry_shell/venv" ] && _otel_string_starts_with "$(\eval "$1 -V" | \cut -d ' ' -f 2)" "3." && ! \[ "$2" != /usr/bin/pip ] && ! \[ "$2" != /usr/bin/pip3 ]; then # TODO support pip
+  if \[ "$OTEL_SHELL_CONFIG_INJECT_DEEP" = TRUE ] && \[ -d "/opt/opentelemetry_shell/venv" ] && _otel_string_starts_with "$(\eval "$1 -V" | \cut -d ' ' -f 2)" "3." && (! _otel_python_is_venv_active || _otel_python_is_venv_path_injectable) && ! _otel_string_ends_with "$2" /pip; then # TODO support pip
     local cmdline="$(_otel_dollar_star "$@")"
     local cmdline="${cmdline#\\}"
     local command="$1"; shift
@@ -10,6 +10,14 @@ _otel_inject_python() {
   else
     _otel_call "$@"
   fi
+}
+
+_otel_python_is_venv_active() {
+  \[ -n "${VIRTUAL_ENV:-}" ]
+}
+
+_otel_python_is_venv_path_injectable() {
+  \[ -d "${VIRTUAL_ENV:-}" ] && \cat "$VIRTUAL_ENV"/pyvenv.cfg | \grep -q -- '^include-system-site-packages = true$'
 }
 
 _otel_inject_opentelemetry_instrument() {
