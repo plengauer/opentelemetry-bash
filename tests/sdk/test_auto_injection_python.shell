@@ -7,8 +7,6 @@ if ! which python3; then exit 0; fi
 
 export OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE
 
-pip3 install requests
-
 echo '
 import requests
 requests.get("http://example.com/foo")
