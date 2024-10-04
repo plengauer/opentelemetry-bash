@@ -19,6 +19,7 @@ echo "DEBUG 2"
 echo "DEBUG 3"
 pip install requests
 echo "DEBUG 4"
+type python
 echo '
 import requests
 requests.get("http://example.com/bar")
