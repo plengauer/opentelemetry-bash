@@ -388,7 +388,9 @@ _otel_hash_and_reinstrument() {
   local exit_code=0
   \hash "$@" || local exit_code="$?"
   if \[ "$1" = -r ]; then
+    set -x
     unalias -a
+    set +x
   fi
   return "$exit_code"
 }
