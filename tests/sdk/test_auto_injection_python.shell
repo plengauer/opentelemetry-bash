@@ -14,8 +14,10 @@ echo "DEBUG 0"
 dir=$(mktemp -d)
 echo "DEBUG 1"
 python3 -m venv --system-site-packages "$dir"/venv
+alias
 echo "DEBUG 2"
 . "$dir"/venv/bin/activate
+alias
 echo "DEBUG 3"
 pip install requests
 echo "DEBUG 4 $_otel_shell_auto_instrumentation_hint"
