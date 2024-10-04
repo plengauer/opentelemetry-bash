@@ -18,7 +18,7 @@ echo "DEBUG 2"
 . "$dir"/venv/bin/activate
 echo "DEBUG 3"
 pip install requests
-echo "DEBUG 4"
+echo "DEBUG 4 $_otel_shell_auto_instrumentation_hint"
 type python
 alias
 echo '
