@@ -388,9 +388,16 @@ _otel_hash_and_reinstrument() {
   local exit_code=0
   \hash "$@" || local exit_code="$?"
   if \[ "$1" = -r ]; then
-    \unalias -a # TODO this is hella inaccurate! if hash -r is used within a sourced file (which is likely like python venv activate), then we will only reinstrument based on the root script and we miss the rest of the content
-    # TODO possible solution is remember aliases, and add ones we are missing after!
+    local aliases_pre="$(\mktemp)"
+    local aliases_new="$(\mktemp)"
+    \alias | \sed 's/^alias //' | \awk '{print "\\alias " $0 }' > "$aliases_pre"
+    \unalias -a
     _otel_auto_instrument "$_otel_shell_auto_instrumentation_hint"
+    \alias | \sed 's/^alias //' | \awk '{print "\\alias " $0 }' > "$aliases_new"
+    \unalias -a
+    \. "$aliases_pre"
+    \. "$aliases_new"
+    \rm "$aliases_pre" "$aliases_new"
   fi
   return "$exit_code"
 }
