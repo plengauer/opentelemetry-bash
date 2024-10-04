@@ -388,7 +388,7 @@ _otel_record_exec() {
 
 _otel_hash_and_reinstrument() {
   shift
-\echo "$PATH $OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE"
+\echo "DEBUG hash_and_reinstrument $PATH $OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE"
   local exit_code=0
   \hash "$@" || local exit_code="$?"
   if \[ "$1" = -r ]; then
