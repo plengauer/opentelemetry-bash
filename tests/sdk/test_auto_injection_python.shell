@@ -24,7 +24,7 @@ requests.get("http://example.com/baz")
 python3 script.py | grep -v -F '"parent_id": null,' | grep -- '/baz' || exit 1
 
 dir=$(mktemp -d)
-python3 -m venv --system-site-packages "$dir"/venv
+python3 -m venv --system-site-packages "$dir"/venv || exit 1
 echo "$PATH"
 alias
 . "$dir"/venv/bin/activate
@@ -40,7 +40,7 @@ requests.get("http://example.com/venv")
 deactivate
 
 dir=$(mktemp -d)
-python3 -m venv --system-site-packages "$dir"/venv
+python3 -m venv --system-site-packages "$dir"/venv || exit 1
 . "$dir"/venv/bin/activate
 pip3 install requests
 pip3 install opentelemetry-distro opentelemetry-exporter-otlp
