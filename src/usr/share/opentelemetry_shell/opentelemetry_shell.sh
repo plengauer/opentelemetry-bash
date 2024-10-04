@@ -390,6 +390,15 @@ command() {
   fi
 }
 
+hash() {
+  local exit_code=0
+  \command hash "$@" || local exit_code="$?"
+  if \[ "$1" = -r ]; then
+    unalias -a
+  fi
+  return "$exit_code"
+}
+
 _otel_inject() {
   if _otel_string_contains "$1" /; then
     local command="$(\readlink -f "$1" | \rev | \cut -d / -f 1 | \rev)"
