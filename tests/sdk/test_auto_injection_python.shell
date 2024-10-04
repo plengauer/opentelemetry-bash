@@ -16,7 +16,9 @@ echo "DEBUG 1"
 python3 -m venv --system-site-packages "$dir"/venv
 alias
 echo "DEBUG 2"
+set -x
 . "$dir"/venv/bin/activate
+set +x
 alias
 echo "DEBUG 3"
 pip install requests
