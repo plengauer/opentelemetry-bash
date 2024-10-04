@@ -10,28 +10,19 @@ import requests
 requests.get("http://example.com/foo")
 ' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE python3 | grep -v -F '"parent_id": null,' | grep -- '/foo' || exit 1
 
-echo "DEBUG 0"
 dir=$(mktemp -d)
 echo "DEBUG 1"
 python3 -m venv --system-site-packages "$dir"/venv
 alias
 echo "DEBUG 2"
-set -x
 . "$dir"/venv/bin/activate
-set +x
 alias
-echo "DEBUG 3"
 pip install requests
-echo "DEBUG 4 $_otel_shell_auto_instrumentation_hint"
-type python
-alias
 echo '
 import requests
 requests.get("http://example.com/bar")
 ' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE python | grep -v -F '"parent_id": null,' | grep -- '/bar' || exit 1
-echo "DEBUG 5"
 deactivate
-echo "DEBUG 6"
 
 dir=$(mktemp -d)
 python3 -m venv --system-site-packages "$dir"/venv
