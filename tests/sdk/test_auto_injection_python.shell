@@ -13,6 +13,7 @@ requests.get("http://example.com/foo")
 dir=$(mktemp -d)
 python3 -m venv --system-site-packages "$dir"/venv # TODO the -- should not be necessary
 . "$dir"/venv/bin/activate
+which pip
 pip install requests || exit 1
 echo '
 import requests
