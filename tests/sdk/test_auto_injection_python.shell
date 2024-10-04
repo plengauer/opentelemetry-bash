@@ -26,6 +26,8 @@ python3 script.py | grep -v -F '"parent_id": null,' | grep -- '/baz' || exit 1
 dir=$(mktemp -d)
 python3 -m venv --system-site-packages "$dir"/venv
 . "$dir"/venv/bin/activate
+which pip
+alias pip
 pip install requests
 echo '
 import requests
