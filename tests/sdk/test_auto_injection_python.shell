@@ -13,7 +13,7 @@ requests.get("http://example.com/foo")
 dir=$(mktemp -d)
 python3 -m venv --system-site-packages "$dir"/venv # TODO the -- should not be necessary
 . "$dir"/venv/bin/activate
-pip install requests
+pip install requests || exit 1
 echo '
 import requests
 requests.get("http://example.com/bar")
@@ -23,9 +23,9 @@ deactivate
 dir=$(mktemp -d)
 python3 -m venv --system-site-packages "$dir"/venv
 . "$dir"/venv/bin/activate
-pip3 install requests
-pip3 install opentelemetry-distro opentelemetry-exporter-otlp
-opentelemetry-bootstrap --action install
+pip3 install requests || exit 1
+pip3 install opentelemetry-distro opentelemetry-exporter-otlp || exit 1
+opentelemetry-bootstrap --action install || exit 1
 script=$(mktemp -u).py
 echo '
 import requests
