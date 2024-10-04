@@ -25,18 +25,14 @@ requests.get("http://example.com/baz")
 ' > script.py
 python3 script.py | grep -v -F '"parent_id": null,' | grep -- '/baz' || exit 1
 
-exit 0
-
-# TODO right now venvs are not supported
-
 dir=$(mktemp -d)
 python3 -m venv --system-site-packages "$dir"/venv
 . "$dir"/venv/bin/activate
 pip install requests
 echo '
 import requests
-requests.get("http://example.com/bar")
-' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE python | grep -v -F '"parent_id": null,' | grep -- '/bar' || exit 1
+requests.get("http://example.com/venv")
+' | python | grep -v -F '"parent_id": null,' | grep -- '/venv' || exit 1
 deactivate
 
 dir=$(mktemp -d)
@@ -48,7 +44,8 @@ opentelemetry-bootstrap --action install || exit 1
 script=$(mktemp -u).py
 echo '
 import requests
-requests.get("http://example.com/baz")
-' > "$script"
-OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE opentelemetry-instrument python3 "$script" | grep -v -F '"parent_id": null,' | grep -- '/baz' || exit 1
+requests.get("http://example.com/instrumented")
+' | opentelemetry-instrument python3 | grep -v -F '"parent_id": null,' | grep -- '/instrumented' || exit 1
 deactivate
+
+exit 1
