@@ -5,18 +5,33 @@ if ! which python3; then exit 0; fi
 
 #TODO test subprocesses
 
+export OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE
+
+pip3 install requests
+
 echo '
 import requests
 requests.get("http://example.com/foo")
-' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE python3 | grep -v -F '"parent_id": null,' | grep -- '/foo' || exit 1
+' | python3 | grep -v -F '"parent_id": null,' | grep -- '/foo' || exit 1
+
+python3 -c '
+import requests
+requests.get("http://example.com/bar")
+' | grep -v -F '"parent_id": null,' | grep -- '/bar' || exit 1
+
+echo '
+import requests
+requests.get("http://example.com/baz")
+' > script.py
+python3 script.py | grep -v -F '"parent_id": null,' | grep -- '/baz' || exit 1
+
+exit 0
+
+# TODO right now venvs are not supported
 
 dir=$(mktemp -d)
 python3 -m venv --system-site-packages "$dir"/venv
-echo "$PATH"
-alias
 . "$dir"/venv/bin/activate
-echo "$PATH"
-alias
 pip install requests
 echo '
 import requests
@@ -37,5 +52,3 @@ requests.get("http://example.com/baz")
 ' > "$script"
 OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE opentelemetry-instrument python3 "$script" | grep -v -F '"parent_id": null,' | grep -- '/baz' || exit 1
 deactivate
-
-exit 1
