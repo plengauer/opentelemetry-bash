@@ -385,14 +385,13 @@ _otel_record_exec() {
 }
 
 _otel_hash_and_reinstrument() {
-set -x
   shift
   local exit_code=0
   \hash "$@" || local exit_code="$?"
   if \[ "$1" = -r ]; then
-    unalias -a
+    \unalias -a
+    _otel_auto_instrument "$_otel_shell_auto_instrumentation_hint"
   fi
-set +x
   return "$exit_code"
 }
 
