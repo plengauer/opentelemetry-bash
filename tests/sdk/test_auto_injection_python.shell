@@ -11,10 +11,9 @@ requests.get("http://example.com/foo")
 ' | OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE python3 | grep -v -F '"parent_id": null,' | grep -- '/foo' || exit 1
 
 dir=$(mktemp -d)
-echo "DEBUG 1"
 python3 -m venv --system-site-packages "$dir"/venv
+echo "$PATH"
 alias
-echo "DEBUG 2"
 . "$dir"/venv/bin/activate
 echo "$PATH"
 alias
