@@ -2,15 +2,12 @@ import os
 from opentelemetry.context import attach
 from opentelemetry.trace.propagation import tracecontext
 
-print('DEBUG DEBUG attaching')
-
 traceparent = os.getenv("TRACEPARENT")
 if traceparent:
     propagator = tracecontext.TraceContextTextMapPropagator()
     carrier = { "traceparent": traceparent }
     new_context = propagator.extract(carrier=carrier)
     attach(new_context)
-    print('DEBUG DEBUG attached')
 
 import subprocess
 import functools
