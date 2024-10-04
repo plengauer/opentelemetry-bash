@@ -59,6 +59,7 @@ fi
 
 _otel_auto_instrument() {
   local hint="$1"
+\echo "DEBUG auto instrument $hint" >&2
   local IFS=' 
 '
 
