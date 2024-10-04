@@ -388,6 +388,7 @@ _otel_record_exec() {
 
 _otel_hash_and_reinstrument() {
   shift
+  \echo "$PATH"
   local exit_code=0
   \hash "$@" || local exit_code="$?"
   if \[ "$1" = -r ]; then
