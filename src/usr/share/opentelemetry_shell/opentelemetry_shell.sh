@@ -59,7 +59,7 @@ fi
 
 _otel_auto_instrument() {
   local hint="$1"
-\echo "DEBUG auto instrument $hint $(\alias | wc -l) $PATH"
+\echo "DEBUG auto instrument $hint $(\alias | wc -l) $PATH $OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE"
   local IFS=' 
 '
 
