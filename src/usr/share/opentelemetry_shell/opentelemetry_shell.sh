@@ -194,7 +194,7 @@ _otel_filter_commands_by_mode() {
 }
 
 _otel_filter_commands_by_special() {
-  \grep -vE '^(alias|unalias|\.|source|exec)$' | \grep -vE '^(OTEL_|_otel_|otel_)'
+  \grep -vE '^(alias|unalias|\.|source|exec|hash)$' | \grep -vE '^(OTEL_|_otel_|otel_)'
 }
 
 _otel_filter_by_validity() {
