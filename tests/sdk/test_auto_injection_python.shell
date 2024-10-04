@@ -20,6 +20,7 @@ echo "DEBUG 3"
 pip install requests
 echo "DEBUG 4"
 type python
+alias
 echo '
 import requests
 requests.get("http://example.com/bar")
