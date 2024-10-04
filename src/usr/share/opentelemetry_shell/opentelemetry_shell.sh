@@ -59,7 +59,7 @@ fi
 
 _otel_auto_instrument() {
   local hint="$1"
-\echo "DEBUG auto instrument $hint $(\alias | wc -l)"
+\echo "DEBUG auto instrument $hint $(\alias | wc -l) $PATH"
   local IFS=' 
 '
 
