@@ -14,7 +14,9 @@ dir=$(mktemp -d)
 python3 -m venv --system-site-packages "$dir"/venv
 echo "$PATH"
 alias
+set -x
 . "$dir"/venv/bin/activate
+set +x
 echo "$PATH"
 alias
 pip install requests
