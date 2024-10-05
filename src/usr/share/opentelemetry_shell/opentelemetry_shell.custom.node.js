@@ -24,7 +24,7 @@ function otel_spawn(command, args, options, original) {
   }
   if (options && options.stdio && Array.isArray(options.stdio) && options.stdio.length > 3) return _spawn(command, args, options);
   options = options ? options : {};
-  options.env = options.env ? options.env { ... process.env };
+  options.env = options.env ? options.env : { ... process.env };
   if (command.includes('/')) command = '_otel_inject ' + command;
   shell_propagator_inject(options.env);
   if (options.shell) {
