@@ -9,15 +9,15 @@ if traceparent:
     new_context = propagator.extract(carrier=carrier)
     attach(new_context)
 
-import subprocess
-import functools
-
-def inject_arguments(*args):
-    return [ '/bin/sh', '-c', '. otel.sh\n' + args[0] + ' "$@"', 'python' ] + args[1:]
-
+# import subprocess
+# import functools
+# 
+# def inject_arguments(*args):
+#     return [ '/bin/sh', '-c', '. otel.sh\n' + args[0] + ' "$@"', 'python' ] + args[1:]
+#
 # TODO get current span and set traceparent and tracestate as env var
 # TODO set additional env var like auto injection, ...
-
+#
 # def observed_subprocess_run(original_subprocess_run, *args, **kwargs):
 #     if len(args) > 0:
 #         args = inject_arguments(args)
