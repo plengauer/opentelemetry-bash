@@ -377,9 +377,10 @@ if \[ "$_otel_shell" = dash ] || \[ "$_otel_shell" = 'busybox sh' ]; then # TODO
   }
 else
   _otel_call() {
-    local command="$1"; shift
-    if ! _otel_string_starts_with "$command" "\\"; then local command="$(_otel_escape_arg "$command")"; fi
-    \eval "$command" "$(_otel_escape_args "$@")"
+    # local command="$1"; shift
+    # if ! _otel_string_starts_with "$command" "\\"; then local command="$(_otel_escape_arg "$command")"; fi
+    # \eval "$command" "$(_otel_escape_args "$@")"
+    "$@"
   }
 fi
 
