@@ -319,16 +319,21 @@ _otel_hash_and_reinstrument() {
   local exit_code=0
   \hash "$@" || local exit_code="$?"
   if \[ "$1" = -r ]; then
+\echo "DEBUG DEBUG > hash_and_reinstrument"
     local aliases_pre="$(\mktemp)"
     local aliases_new="$(\mktemp)"
     \alias | \sed 's/^alias //' | \awk '{print "\\alias " $0 }' > "$aliases_pre"
+\cat "$alias_pre" | \grep pip
     \unalias -a
     _otel_auto_instrument "$_otel_shell_auto_instrumentation_hint"
     \alias | \sed 's/^alias //' | \awk '{print "\\alias " $0 }' > "$aliases_new"
+\cat "$alias_new" | \grep pip
     \unalias -a
     \. "$aliases_pre"
     \. "$aliases_new"
     \rm "$aliases_pre" "$aliases_new"
+\alias | \grep pip
+\echo "DEBUG DEBUG < hash_and_reinstrument"
   fi
   return "$exit_code"
 }
