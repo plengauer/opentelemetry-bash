@@ -29,6 +29,7 @@ _otel_inject_opentelemetry_instrument() {
     local cmdline="$(_otel_dollar_star "$@")"
     local cmdline="${cmdline#\\}"
     \eval "set -- $(_otel_python_inject_args "$@")"
+\echo "DEBUG DEBUG DEBUG $cmdline => $*" >&2
     if \[ "$_otel_python_code_source" = stdin ]; then
       unset _otel_python_code_source
       { \cat /usr/share/opentelemetry_shell/opentelemetry_shell.custom.python.deep.py; \cat; } | OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_BSP_MAX_EXPORT_BATCH_SIZE="${OTEL_BSP_MAX_EXPORT_BATCH_SIZE:-1}" _otel_call "$@"
@@ -53,11 +54,9 @@ _otel_python_is_venv_customize_injectable() {
 }
 
 _otel_python_inject_args() {
-  if \[ "$#" -gt 0 ]; then
-    if \[ "$1" = opentelemetry-instrument ] || _otel_string_ends_with "$1" /opentelemetry-instrument; then
-      _otel_escape_arg "$1"; shift
-      \echo -n ' '
-    fi
+  if \[ "$1" = opentelemetry-instrument ] || _otel_string_ends_with "$1" /opentelemetry-instrument; then
+    _otel_escape_arg "$1"; shift
+    \echo -n ' '
   fi
   _otel_escape_arg "$1"; shift
   while \[ "$#" -gt 0 ]; do
