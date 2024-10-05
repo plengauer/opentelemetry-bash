@@ -20,7 +20,7 @@ requests.get("http://example.com/bar")
 echo '
 import requests
 requests.get("http://example.com/baz")
-' > "$dir"/script.py
+' > script.py
 python3 "$dir"/script.py | grep -v -F '"parent_id": null,' | grep -- '/baz' || exit 1
 
 dir=$(mktemp -d)
