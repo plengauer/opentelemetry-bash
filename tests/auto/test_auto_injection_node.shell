@@ -54,6 +54,10 @@ assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
 assert_not_equals null $(\echo "$span" | jq -r '.parent_id')
 # assert_equals $(resolve_span '.name == "echo hello world 6"' | jq -r .parent_id) $(resolve_span '.name == "TODO"' | jq -r .id)
 
+# lets check with the above test if it works on any node version, but lets not rely on instrumentations actually working
+
+[ "$(node -v | tr -d v | cut -d . -f 1)" -ge 14 ] || exit 0
+
 directory="$(mktemp -d)"
 echo "
 const https = require('https');
