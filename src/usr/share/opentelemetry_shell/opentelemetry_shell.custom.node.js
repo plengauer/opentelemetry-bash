@@ -32,9 +32,9 @@ function otel_spawn(command, args, options, original) {
     options.env['OTEL_SHELL_COMMANDLINE_OVERRIDE'] = options.shell + ' -c ' + command + ' ' + args.join(' ');
     options.env['OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE'] = process.pid;
     options.env['OTEL_SHELL_AUTO_INJECTED'] = 'FALSE'
-    return original(options.shell, [ '-c', '. otel.sh\n' + command + ' "$@"', options.shell ].concat(args ?? []), { ... options, shell: false });
+    return original(options.shell, [ '-c', '. otel.sh\n' + command + ' "$@"', options.shell ].concat(args ? args : []), { ... options, shell: false });
   } else {
-    return original('/bin/sh', [ '-c', '. otel.sh\n' + command + ' "$@"', 'node' ].concat(args ?? []), options);
+    return original('/bin/sh', [ '-c', '. otel.sh\n' + command + ' "$@"', 'node' ].concat(args ? args : []), options);
   }
 }
 
@@ -56,7 +56,7 @@ function otel_exec(command, options, callback, original) {
   options = options ? options : {};
   options.env = options.env ? options.env : { ... process.env };
   shell_propagator_inject(options.env);
-  options.env['OTEL_SHELL_COMMANDLINE_OVERRIDE'] = (options.shell ?? '/bin/sh') + ' -c ' + command;
+  options.env['OTEL_SHELL_COMMANDLINE_OVERRIDE'] = (options.shell ? options.shell : '/bin/sh') + ' -c ' + command;
   options.env['OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE'] = process.pid;
   options.env['OTEL_SHELL_AUTO_INJECTED'] = 'FALSE'
   return original('. otel.sh\n' + command, options, callback);
@@ -64,9 +64,9 @@ function otel_exec(command, options, callback, original) {
 
 /*
 child_process.execFile = function(file, args, options, callback) {
-  options = options ?? {};
-  options.env = options.env ?? { ... process.env };
-  return _execFile('/bin/sh', [ '-c', '. otel.sh\n' + file + ' "$@"', 'node' ].concat(args ?? []), options, callback);
+  options = options ? options : {};
+  options.env = options.env ? options.env : { ... process.env };
+  return _execFile('/bin/sh', [ '-c', '. otel.sh\n' + file + ' "$@"', 'node' ].concat(args ? args : []), options, callback);
 }
 */
 
@@ -76,14 +76,14 @@ function shell_propagator_inject(env) {
     let opentelemetry_sdk = require('@opentelemetry/sdk-node');
     let carrier = {};
     new opentelemetry_sdk.core.W3CTraceContextPropagator().inject(opentelemetry_api.context.active(), carrier, opentelemetry_api.defaultTextMapSetter);
-    env.TRACEPARENT = carrier.traceparent ?? process.env.TRACEPARENT ?? '';
-    env.TRACESTATE = carrier.tracestate ?? process.env.TRACESTATE ?? '';
+    env.TRACEPARENT = carrier.traceparent ? carrier.traceparent : (process.env.TRACEPARENT ? process.env.TRACEPARENT : '');
+    env.TRACESTATE = carrier.tracestate ? carrier.tracestate : (process.env.TRACESTATE ? process.env.TRACESTATE : '');
   } catch (err) {
     if (err.code != 'MODULE_NOT_FOUND') {
       throw err;
     }
-    env.TRACEPARENT = process.env.TRACEPARENT ?? '';
-    env.TRACESTATE = process.env.TRACESTATE ?? '';      
+    env.TRACEPARENT = process.env.TRACEPARENT ? process.env.TRACEPARENT : '';
+    env.TRACESTATE = process.env.TRACESTATE ? process.env.TRACESTATE : '';
   }
 }
 
