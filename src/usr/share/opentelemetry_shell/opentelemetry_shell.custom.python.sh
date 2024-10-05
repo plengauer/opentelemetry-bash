@@ -54,7 +54,7 @@ _otel_python_is_venv_customize_injectable() {
 }
 
 _otel_python_inject_args() {
-  if \[ "$1" = opentelemetry-instrument ] || _otel_string_ends_with "$1" /opentelemetry-instrument; then
+  if \[ "${1#\\}" = opentelemetry-instrument ] || _otel_string_ends_with "$1" /opentelemetry-instrument; then
     _otel_escape_arg "$1"; shift
     \echo -n ' '
   fi
