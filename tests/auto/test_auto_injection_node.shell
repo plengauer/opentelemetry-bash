@@ -87,7 +87,6 @@ const sdk = new NodeSDK({
   resourceDetectors: []
 });
 sdk.start();
-process.on('exit', () => sdk.shutdown());
 const https = require('https');
 const options = {
   hostname: 'example.com',
@@ -116,8 +115,7 @@ const sdk = new NodeSDK({
   resourceDetectors: []
 });
 sdk.start();
-process.on('exit', () => sdk.shutdown());
-const child_process = require('node:child_process');
+const child_process = require('child_process');
 const opentelemetry_api = require('@opentelemetry/api');
 opentelemetry_api.trace.getTracerProvider().getTracer('my-tracer').startActiveSpan('my-span', {}, opentelemetry_api.context.active(), span => {
   let proc = child_process.spawn('echo', [ 'hello', 'world', '7' ], { stdio: 'inherit' });
