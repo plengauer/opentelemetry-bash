@@ -1,6 +1,8 @@
 if ! which node; then exit 0; fi
 . ./assert.sh
 
+# TODO set deep injection globally to test npm
+# TODO rre-add "known bug in otel"
 . otel.sh
 
 node -e "const child_process = require('child_process'); child_process.exec('echo hello world 0', {}, (error, stdout, stderr) => { console.log(stdout); console.error(stderr); });"
