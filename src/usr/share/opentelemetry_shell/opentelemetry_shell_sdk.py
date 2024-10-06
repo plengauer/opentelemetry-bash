@@ -129,6 +129,8 @@ def main():
         handle(scope, version, 'SHUTDOWN', None)
     except EOFError:
         sys.exit(0)
+    except:
+        pass
 
 def handle(scope, version, command, arguments):
     global auto_end
