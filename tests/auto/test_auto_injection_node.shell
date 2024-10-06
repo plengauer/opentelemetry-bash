@@ -130,6 +130,9 @@ opentelemetry_api.trace.getTracerProvider().getTracer('my-tracer').startActiveSp
 span="$(OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE node "$directory"/index.js 2>&1)"
 assert_equals 0 $?
 \echo "$span"
+echo "DEBUG DEBUG DEBUG 0"
 cat "$OTEL_EXPORT_LOCATION" | grep -F "echo hello world 7" || true
-cat "$OTEL_EXPORT_LCOATION" | jq '. | select(.name != null) | select(.name == "echo hello world 7")' || true
+echo "DEBUG DEBUG DEBUG 1"
+cat "$OTEL_EXPORT_LOCATION" | jq '. | select(.name != null) | select(.name == "echo hello world 7")' || true
+echo "DEBUG DEBUG DEBUG 2"
 assert_equals $(resolve_span '.name == "echo hello world 7"' | jq -r .parent_id) 0x$(\echo "$span" | grep -E '^  id:' | cut -d ':' -f 2- | tr -d \''" ,')
