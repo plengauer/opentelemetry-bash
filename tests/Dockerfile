@@ -9,12 +9,12 @@ WORKDIR /tests
 
 RUN apt-get update
 COPY . ./
-RUN apt-get install -y ./package.deb && rm ./package.deb
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y ./package.deb && rm ./package.deb
 
-RUN [ "$update" = TRUE ] && apt-get dist-upgrade -y || true
-RUN type "$shell" || apt-get install -y "$shell"
+RUN [ "$update" = TRUE ] && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y || true
+RUN type "$shell" || DEBIAN_FRONTEND=noninteractive apt-get install -y "$shell"
 
-RUN apt-get install -y jq psmisc wget curl debconf debconf-utils time sudo parallel moreutils ncat wget2 strace nodejs npm python3 python3-pip python3-venv
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y jq psmisc wget curl debconf debconf-utils time sudo parallel moreutils ncat wget2 strace nodejs npm python3 python3-pip python3-venv
 
 ENV shell="$shell"
 
