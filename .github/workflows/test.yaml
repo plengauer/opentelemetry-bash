@@ -109,7 +109,7 @@ jobs:
           {
             echo 'apt-get update'
             echo 'apt-get -y remove ${{ matrix.dependency }}'
-            echo 'apt-get -y install /root/package.deb'
+            echo 'DEBIAN_FRONTEND=noninteractive apt-get -y install /root/package.deb'
             echo 'DEBIAN_FRONTEND=noninteractive apt-get -y install ${{ matrix.dependency }}'
             echo 'apt-get -y remove ${{ matrix.dependency }}'
           } | sudo docker run -v $(pwd)/package.deb:/root/package.deb --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
