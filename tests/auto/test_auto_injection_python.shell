@@ -23,7 +23,7 @@ requests.get("http://example.com/baz")
 ' > script.py
 python3 script.py | grep -v -F '"parent_id": null,' | grep -- '/baz' || exit 1
 
-\[ "$SHELL" = bash ] && exit 0 # TODO dashes on debian:stable (not oldstable, not testing or newer) seem to have a bug and not re-hash commands properly and therefore not reinstrument properly.
+\[ "$SHELL" = bash ] || exit 0 # TODO dashes on debian:stable (not oldstable, not testing or newer) seem to have a bug and not re-hash commands properly and therefore not reinstrument properly.
 
 dir=$(mktemp -d)
 python3 -m venv --system-site-packages "$dir"/venv || exit 1
