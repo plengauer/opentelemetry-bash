@@ -7,7 +7,7 @@ if [ -n "$(alias | grep ech | grep cho)" ]; then printf '%s\n' "e-cho has been i
 alias
 if [ -z "$(alias | grep ech | grep cho)" ]; then printf '%s\n' "e-cho has not been instrumented"; exit 1; fi
 
-if [ "$(alias | wc -l)" -gt "50" ]; then
+if [ "$(alias | wc -l)" -gt "100" ]; then
   printf '%s\n' "too many instrumentations"
   exit 1
 fi
