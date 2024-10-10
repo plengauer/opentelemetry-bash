@@ -9,6 +9,6 @@
     "@opentelemetry/resource-detector-container": "0.4.3",
     "@opentelemetry/resource-detector-aws": "1.6.2",
     "@opentelemetry/resource-detector-gcp": "0.29.12",
-    "@opentelemetry/resource-detector-alibaba-cloud": "0.29.2"
+    "@opentelemetry/resource-detector-alibaba-cloud": "0.29.3"
   }
 }
