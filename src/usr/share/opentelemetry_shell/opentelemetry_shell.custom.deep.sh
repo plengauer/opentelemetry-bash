@@ -1,7 +1,11 @@
 #!/bin/false
 
 _otel_inject_deep() {
-  _otel_call_and_record_subprocesses "$(otel_span_current)" _otel_call "$@"
+  if \type strace 1> /dev/null 2> /dev/null; then
+    _otel_call_and_record_subprocesses "$(otel_span_current)" _otel_call "$@"
+  else
+    _otel_call "$@"
+  fi
 }
 
 _otel_alias_prepend perl _otel_inject_deep
