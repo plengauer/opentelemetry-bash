@@ -7,8 +7,13 @@ jobs:
   _build:
     uses: ./.github/workflows/build.yaml
 
+  __experiment:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo hello world
+
   install:
-    needs: _build
+    needs: __experiment
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
