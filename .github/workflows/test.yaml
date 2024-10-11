@@ -8,10 +8,16 @@ jobs:
     uses: ./.github/workflows/build.yaml
 
   _experiment:
+    needs: _build
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    - uses: actions/download-artifact@v4
+      with:
+        name: package.deb
+    - run: sudo apt-get -y install ./package.deb
     - run: |
+        . otel.sh
         list_version_files() {
           find . | grep -E '/VERSION$|/DEBIAN/control$|/package.json$|.toml$|.gemspec$'
         }
