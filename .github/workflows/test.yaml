@@ -14,6 +14,9 @@ jobs:
     - uses: actions/download-artifact@v4
       with:
         name: package.deb
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
     - run: sudo apt-get -y install ./package.deb
     - run: |
         export OTEL_SHELL_SDK_OUTPUT_REDIRECT=/dev/null
