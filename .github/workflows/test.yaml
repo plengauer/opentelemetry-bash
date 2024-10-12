@@ -114,7 +114,7 @@ jobs:
               IFS=' '
               if [ "$skip" = 1 ]; then continue; fi
             fi
-            if ! git diff-tree --no-commit-id --name-only -r "$commit_id" | grep -qE '^'"${directory#./}"; echo "skipping $commit_id" >&2; then continue; fi
+            if ! git diff-tree --no-commit-id --name-only -r "$commit_id" | grep -qE '^'"${directory#./}"; then echo "skipping $commit_id" >&2; continue; fi
             if git diff-tree --no-commit-id --name-only -r "$commit_id" | grep -qF "${version_file#./}" && is_version_touched "$version_file" "$commit_id"; then echo "stopping at $commit_id" >&2; break; fi
             echo "including $commit_id" >&2
             echo "$commit_id"
