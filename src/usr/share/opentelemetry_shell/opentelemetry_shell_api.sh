@@ -460,6 +460,8 @@ _otel_call_and_record_pipes() {
     \echo -n '' > "$stdin_lines"
     $call_command "$@" 1> "$stdout" 2> "$stderr" || local exit_code="$?"
   else
+    # this is inherently unsafe because tee will consume stdin even when command never reads from it, so killing it will eventually cause data to be lost
+    # this ONLY ever works when the actual command guarantees by definiton to consume all of stdin, like simple invocations of grep
     local observe_stdin=TRUE
     local exit_code_file="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.exit_code"
     \tee "$stdin_bytes" "$stdin_lines" 2> /dev/null | {
