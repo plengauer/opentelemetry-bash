@@ -116,7 +116,7 @@ jobs:
             if git diff-tree --no-commit-id --name-only -r "$commit_id" | grep -qF "${version_file#./}" && is_version_touched "$version_file" "$commit_id"; then echo "stopping at $commit_id" >&2; break; fi
             echo "including $commit_id" >&2
             echo "$commit_id"
-          done | while read -r commit_id; do git log -1 --format=%B "$commit_id"; done | grep -vE '^$' | xargs -r -0 ai | sort -u -r | while read -r change_type; do
+          done | while read -r commit_id; do git log -1 --format=%B "$commit_id"; done | grep -vE '^$' | xargs -r -0 sh -c 'echo minor' sh | sort -u -r | while read -r change_type; do
             if [ "$change_type" = none ]; then continue; fi
             echo "bumping $change_type version in $version_file" >&2
             version_string="$(read_version "$version_file" || true)"
