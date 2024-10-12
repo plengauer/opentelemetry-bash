@@ -26,7 +26,7 @@ jobs:
         . otel.sh
         
         list_version_files() {
-          find . | grep -E '/VERSION$|/DEBIAN/control$|/package.json$|.toml$|.gemspec$'
+          \find . | \grep -E '/VERSION$|/DEBIAN/control$|/package.json$|.toml$|.gemspec$'
         }
 
         is_version_touched() {
