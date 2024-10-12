@@ -95,7 +95,7 @@ jobs:
             */package.json) if jq '.version' "$version_file" | grep -q null; then continue; fi;;
             *) true;;
           esac
-          git log --oneline | cut -d ' ' -f 1 | \tee /dev/stderr | while read -r commit_id; do
+          git log --oneline | cut -d ' ' -f 1 | while read -r commit_id; do
             if [ -n "$PATH_INCLUDE" ]; then
               skip=0
               IFS=:
@@ -126,7 +126,9 @@ jobs:
             version_string_new="$(increment_version "$version_string" "$change_type" || true)"
             if [ -z "$version_string_new" ]; then break; fi
             write_version "$version_file" "$version_string" "$version_string_new" || true
+            echo "bumped $change_type" >&2
           done
+          echo "processed $version_file ..." >&2
         done
     - run: git status
     - run: exit 1
