@@ -131,6 +131,7 @@ jobs:
             echo "bumped $change_type" >&2
           done
           echo "processed $version_file" >&2
+          ps -ef | grep tee
           set -x
         done
     - run: git status
