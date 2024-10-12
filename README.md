@@ -196,8 +196,7 @@ You can configure the underlying SDK with the same variables as any other OpenTe
 | OTEL_SHELL_CONFIG_INSTRUMENT_ABSOLUTE_PATHS | `TRUE`, `FALSE` | `FALSE`                                      | Create spans for commands with an absolute path to the executable.                          | experimental |
 | OTEL_SHELL_CONFIG_OBSERVE_SIGNALS           | `TRUE`, `FALSE` | `FALSE`                                      | Create events for received signals.                                                         | experimental |
 | OTEL_SHELL_CONFIG_OBSERVE_SUBPROCESSES      | `TRUE`, `FALSE` | `FALSE`                                      | Create additional minimal spans for all indirect subprocesses.                              | experimental |
-
-Flags that are marked as `stable` are tested and verified in multiple tests and real-world scenarios. Flags marked as `experimental` are new features that are tested but still lack long-term verification in real-world applications. They will eventually reach `stable` or `unsafe`. Flags marked as `unsafe` have implicit assumptions about the nature of the instrumented scripts and will therefore never reach `stable`.
+Flags that are marked as `stable` are tested and verified in tests and real-world scenarios. Flags marked as `experimental` are new features that are tested but still lack long-term verification in real-world applications. They will eventually reach `stable` or `unsafe`. Flags marked as `unsafe` have implicit assumptions about the nature of the instrumented scripts and will therefore never reach `stable`.
 
 ## Traces
 The API described below is for manually creating and customizing spans. We recommend to do this only if the automatic instrumentation is not sufficient.
