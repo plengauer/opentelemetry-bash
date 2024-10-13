@@ -133,10 +133,12 @@ _otel_netcat_parse_response() {
   local is_server_side="$1"; shift
   local span_handle_file="$1"; shift  
   if ! _otel_binary_read line; then
+    \cat "$span_handle_file" > /dev/null 2> /dev/null
     \printf '%s' "$line" | _otel_binary_write
     return 0
   fi
   if _otel_binary_contains_null "$line" || ! _otel_string_starts_with "$(\printf '%s' "$line" | _otel_binary_write)" HTTP/; then
+    \cat "$span_handle_file" > /dev/null 2> /dev/null
     \printf '%s' "$line" | _otel_binary_write
     \printf '\n'
     \cat
