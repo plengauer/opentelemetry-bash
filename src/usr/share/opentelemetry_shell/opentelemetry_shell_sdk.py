@@ -280,6 +280,10 @@ def handle(scope, version, command, arguments):
     elif command == 'SPAN_TRACEPARENT':
         tokens = arguments.split(' ', 1)
         response_path = tokens[0]
+        if len(tokens) == 1:
+            with open(response_path, 'w') as response:
+                response.write('')
+                return
         span_id = tokens[1]
         if not span_id in spans:
             with open(response_path, 'w') as response:
