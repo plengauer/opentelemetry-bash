@@ -16,6 +16,7 @@ github_workflow() {
   github repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/"$1"
 }
 
+export OTEL_SHELL_CONFIG_INSTALL_DEEP=FALSE
 if [ -z "$GITHUB_ACTION_REPOSITORY" ]; then export GITHUB_ACTION_REPOSITORY="$GITHUB_REPOSITORY"; fi
 action_tag_name="$(echo "$GITHUB_ACTION_REF" | cut -sd @ -f 2-)"
 if [ -n "$action_tag_name" ]; then
@@ -26,6 +27,7 @@ if [ -n "$action_tag_name" ]; then
 else
   wget -O - https://raw.githubusercontent.com/"$GITHUB_ACTION_REPOSITORY"/main/INSTALL.sh | sh
 fi
+unset OTEL_SHELL_CONFIG_INSTALL_DEEP
 npm install '@actions/artifact'
 
 if [ -z "$OTEL_SERVICE_NAME" ]; then
