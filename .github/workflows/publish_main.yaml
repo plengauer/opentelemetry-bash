@@ -113,7 +113,7 @@ jobs:
           cd demos/${{ matrix.demo_directory }}
 
           spans() {
-            jq '. | select(.resourceSpans != null) | .resourceSpans[].scopeSpans[].spans[]' | jq -s '. | sort_by(.startTimeUnixNano)' < otlp.json
+            jq '. | select(.resourceSpans != null) | .resourceSpans[].scopeSpans[].spans[]' | jq -s '. | sort_by(.startTimeUnixNano) | .[]' < otlp.json
           }
 
           convert_span_id_to_name() {
