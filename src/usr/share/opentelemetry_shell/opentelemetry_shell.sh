@@ -131,6 +131,7 @@ _otel_list_aliased_commands() {
 }
 
 _otel_list_builtin_commands() {
+  \echo printf
   \echo type
   \echo printenv
   \echo cd
