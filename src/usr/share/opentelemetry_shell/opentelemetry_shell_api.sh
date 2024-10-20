@@ -587,7 +587,7 @@ _otel_record_subprocesses() {
         local event_handle="$(otel_event_create "$(\printf '%s' "$line" | \awk '{ print $3 }')")"
         local kvps="$line"
         local kvps="${kvps%\}*}"
-        local kvps="${kvps#*\}}"
+        local kvps="${kvps#*\{}"
         if \[ "$_otel_shell" = bash ]; then
           local kvps="${kvps// //}"
           local kvps="${kvps//_/./}"
