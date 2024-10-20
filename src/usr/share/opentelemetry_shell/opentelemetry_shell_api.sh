@@ -559,17 +559,22 @@ _otel_record_subprocesses() {
         # TODO immediately end span if stored due to very fast exit (faster than the fork syscall of the parent can actually be finished) 
         ;;
       exec)
-        local name="$line"
-        local name="${name%\]*}"
-        local name="${name#*\[}"
-        if \[ "$_otel_shell" = bash ]; then
-          local name="${name//\", \"/ }"
-        else
-          local name="$(\printf '%s' "$name" | \sed 's/", "/ /g')"  
-        fi
-        local name="${name#\"}"
-        local name="${name%\"}"
-        local name="${name:-<unknown>}"
+        case "$line" in
+          *'['*']*)
+            local name="$line"
+            local name="${name%\]*}"
+            local name="${name#*\[}"
+            if \[ "$_otel_shell" = bash ]; then
+              local name="${name//\", \"/ }"
+            else
+              local name="$(\printf '%s' "$name" | \sed 's/", "/ /g')"  
+            fi
+            local name="${name#\"}"
+            local name="${name%\"}"
+            local name="${name:-<unknown>}"
+            ;;
+          *) local name="";;
+        esac
         \eval "local span_name_$pid=\"\$name\""
         if \[ -n "${span_handle:-}" ]; then
           otel_span_name "$span_handle" "$name"
