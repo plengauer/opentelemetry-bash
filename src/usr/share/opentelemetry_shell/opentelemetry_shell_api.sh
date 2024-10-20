@@ -320,7 +320,7 @@ otel_observe() {
   # create span, set initial attributes
   local span_handle="$(otel_span_start "$kind" "$command")"
   otel_span_attribute_typed "$span_handle" string shell.command_line="$command"
-  if _otel_string_contains "$command" " "; then local command_name="${command%% *}"; else  local command_name="$command"; fi # "$(\printf '%s' "$command" | \cut -sd ' ' -f 2-)" # this returns the command if there are no args, its the cut -s that cant be done via expansion alone
+  if _otel_string_contains "$command" " "; then local command_name="${command%% *}"; else local command_name="$command"; fi # "$(\printf '%s' "$command" | \cut -sd ' ' -f 2-)" # this returns the command if there are no args, its the cut -s that cant be done via expansion alone
   if \[ -z "$command_type" ]; then local command_type="$(_otel_command_type "$command_name")"; fi
   otel_span_attribute_typed "$span_handle" string shell.command="$command_name"
   otel_span_attribute_typed "$span_handle" string shell.command.type="$command_type"
