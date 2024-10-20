@@ -584,7 +584,14 @@ _otel_record_subprocesses() {
         ;;
       signal)
         if \[ "${OTEL_SHELL_CONFIG_OBSERVE_SIGNALS:-FALSE}" != TRUE ]; then continue; fi
-        local event_handle="$(otel_event_create "$(\printf '%s' "$line" | \awk '{ print $3 }')")"
+        if \[ "$_otel_shell" = bash ]; then
+          local name="$line"
+          local name=SIG"${name#* --- SIG}"
+          local name="${name%% *}"
+        else
+          local name="$(\printf '%s' "$line" | \awk '{ print $3 }')"
+        fi
+        local event_handle="$(otel_event_create "$name")"
         local kvps="$line"
         local kvps="${kvps%\}*}"
         local kvps="${kvps#*\{}"
