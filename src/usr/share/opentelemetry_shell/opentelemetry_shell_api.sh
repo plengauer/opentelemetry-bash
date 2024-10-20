@@ -560,7 +560,7 @@ _otel_record_subprocesses() {
         ;;
       exec)
         case "$line" in
-          *'['*']*)
+          *'['*']'*)
             local name="$line"
             local name="${name%\]*}"
             local name="${name#*\[}"
