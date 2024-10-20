@@ -538,14 +538,14 @@ _otel_record_subprocesses() {
       *' --- '*) local operation=signal;;
       *) ;;
     esac
-    local pid="$(\printf '%s' "$line" | \cut -d ' ' -f 1)"
+    local pid="${line%% *}"
     \eval "local parent_pid=\$parent_pid_$pid"
     \eval "local span_handle=\$span_handle_$pid"
     \eval "local parent_span_handle=\$span_handle_$parent_pid"
     case "$operation" in
       fork)
         if \[ "${OTEL_SHELL_CONFIG_OBSERVE_SUBPROCESSES:-FALSE}" != TRUE ]; then continue; fi
-        local new_pid="$(\printf '%s' "$line" | \rev | \cut -d ' ' -f 1 | \rev)";
+        local new_pid="${line##* }"
         \eval "local parent_pid_$new_pid=$pid"
         \eval "local span_name=\"\$span_name_$new_pid\""
         if \[ -z "${span_name:-}" ]; then \eval "local span_name=\"\$span_name_$pid\""; fi
@@ -559,10 +559,21 @@ _otel_record_subprocesses() {
         # TODO immediately end span if stored due to very fast exit (faster than the fork syscall of the parent can actually be finished) 
         ;;
       exec)
-        local name="$(\printf '%s' "$line" | \cut -sd '[' -f 2- | \rev | \cut -sd ']' -f 2- | \rev | \sed 's/", "/ /g')"
-        local name="${name#\"}"
-        local name="${name%\"}"
-        local name="${name:-<unknown>}"
+        case "$line" in
+          *'['*']'*)
+            local name="$line"
+            local name="${name%\]*}"
+            local name="${name#*\[}"
+            if \[ "$_otel_shell" = bash ]; then
+              local name="${name//\", \"/ }"
+            else
+              local name="$(\printf '%s' "$name" | \sed 's/", "/ /g')"  
+            fi
+            local name="${name#\"}"
+            local name="${name%\"}"
+            ;;
+          *) local name="<unknown>";;
+        esac
         \eval "local span_name_$pid=\"\$name\""
         if \[ -n "${span_handle:-}" ]; then
           otel_span_name "$span_handle" "$name"
@@ -577,8 +588,26 @@ _otel_record_subprocesses() {
         ;;
       signal)
         if \[ "${OTEL_SHELL_CONFIG_OBSERVE_SIGNALS:-FALSE}" != TRUE ]; then continue; fi
-        local event_handle="$(otel_event_create "$(\printf '%s' "$line" | \awk '{ print $3 }')")"
-        \printf '%s' "$line" | \cut -d '{' -f 2- | \rev | \cut -d '}' -f 2- | \rev | \tr ',' '\n' | \tr -d ' ' | \tr '_' '.' | while read -r kvp; do otel_event_attribute "$event_handle" "$kvp"; done
+        if \[ "$_otel_shell" = bash ]; then
+          local name="$line"
+          local name=SIG"${name#* --- SIG}"
+          local name="${name%% *}"
+        else
+          local name="$(\printf '%s' "$line" | \awk '{ print $3 }')"
+        fi
+        local event_handle="$(otel_event_create "$name")"
+        local kvps="$line"
+        local kvps="${kvps%\}*}"
+        local kvps="${kvps#*\{}"
+        if \[ "$_otel_shell" = bash ]; then
+          local kvps="${kvps// /}"
+          local kvps="${kvps//_/.}"
+          local kvps="${kvps//,/
+}"
+          \printf '%s' "$kvps"
+        else
+          \printf '%s' "$kvps" | \tr -d ' ' | \tr '_' '.' | \tr ',' '\n'
+        fi | while read -r kvp; do otel_event_attribute "$event_handle" "$kvp"; done
         otel_event_add "$event_handle" "${span_handle:-$root_span_handle}"
         ;;
       *) ;;
