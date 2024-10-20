@@ -591,9 +591,12 @@ _otel_record_subprocesses() {
         if \[ "$_otel_shell" = bash ]; then
           local kvps="${kvps// /}"
           local kvps="${kvps//_/.}"
+          local kvps="${kvps//,/
+}"
           \printf '%s' "$kvps"
-        else \printf '%s' "$kvps" | \tr -d ' ' | \tr '_' '.'
-        fi | \tr ',' '\n' | while read -r kvp; do otel_event_attribute "$event_handle" "$kvp"; done
+        else
+          \printf '%s' "$kvps" | \tr -d ' ' | \tr '_' '.' | \tr ',' '\n'
+        fi | while read -r kvp; do otel_event_attribute "$event_handle" "$kvp"; done
         otel_event_add "$event_handle" "${span_handle:-$root_span_handle}"
         ;;
       *) ;;
