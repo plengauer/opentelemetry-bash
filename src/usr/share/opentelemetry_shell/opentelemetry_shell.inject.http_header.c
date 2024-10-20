@@ -77,6 +77,7 @@ int inject(char *buffer, size_t length) {
       if (!sdk) return 4;
       int span_handle = otel_span_start(sdk, "CLIENT", "HTTP");
       if (span_handle < 0) return 5;
+      for (int i = 0; i < 1000 && access(getenv("OTEL_SHELL_INJECT_HTTP_HANDLE_FILE"), F_OK) == 0; i++) usleep(10 * 1000);
       {
         char span_handle_string[16];
         memset(span_handle_string, 0, 16);
@@ -166,6 +167,7 @@ int nghttp2_submit_request(void *session, void *pri_spec, void *nva, size_t nvle
       if (!sdk) break;
       int span_handle = otel_span_start(sdk, "CLIENT", "HTTP");
       if (span_handle < 0) break;
+      for (int i = 0; i < 1000 && access(getenv("OTEL_SHELL_INJECT_HTTP_HANDLE_FILE"), F_OK) == 0; i++) usleep(10 * 1000);
       {
         char span_handle_string[16];
         memset(span_handle_string, 0, 16);
