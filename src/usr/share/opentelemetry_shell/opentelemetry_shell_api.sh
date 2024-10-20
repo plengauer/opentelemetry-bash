@@ -571,9 +571,8 @@ _otel_record_subprocesses() {
             fi
             local name="${name#\"}"
             local name="${name%\"}"
-            local name="${name:-<unknown>}"
             ;;
-          *) local name="";;
+          *) local name="<unknown>";;
         esac
         \eval "local span_name_$pid=\"\$name\""
         if \[ -n "${span_handle:-}" ]; then
