@@ -3,31 +3,43 @@ rm -rf /opt/opentelemetry_bash 1> /dev/null 2> /dev/null || true # clean the old
 if [ "$1" = 'abort-configure' ] || [ "$1" = 'abort-upgrade' ] || [ "$1" = 'abort-remove' ] || [ "$1" = 'abort-deconfigure' ]; then
   true
 elif [ "$1" = 'configure' ] || [ "$1" = 'triggered' ] || [ "$1" = 'reconfigure' ]; then
-  rm -rf /opt/opentelemetry_shell/venv || true
-  python3 -m venv /opt/opentelemetry_shell/venv
-  source /opt/opentelemetry_shell/venv/bin/activate
-  pip3 install -r /opt/opentelemetry_shell/requirements.txt
+  python3 -m venv /opt/opentelemetry_shell/venv_sdk
+  source /opt/opentelemetry_shell/venv_sdk/bin/activate
+  pip3 install -r /opt/opentelemetry_shell/requirements_sdk.txt
   deactivate
-  if type gcc; then
-    gcc -shared -fPIC -o /opt/opentelemetry_shell/libinjecthttpheader.so /usr/share/opentelemetry_shell/opentelemetry_shell.inject.http_header.c -ldl
-  fi
-  export PATH="$PATH":/usr/local/bin
-  if type npm; then
-    cache="$(npm config list -l | grep -E '^cache = ' | cut -d '=' -f 2- | tr -d '" ')"
-    if [ -d "$cache" ]; then
-      user="$(echo "$cache" | rev | cut -d / -f 2- | rev | xargs stat -c '%U')"
-      find "$cache" -exec chown "$user" {} '+'
-      cache="$(runuser -l "$user" -c 'npm config list -l' | grep -E '^cache = ' | cut -d '=' -f 2- | tr -d '" ')"
-      runuser -l "$user" -c 'npm config set cache="$1"' runuser "$(mktemp -d)"
-      (cd /opt/opentelemetry_shell && npm install --package-lock=false)
-      runuser -l "$user" -c 'npm config set cache="$1"' runuser "$cache"
-      (cd /usr/share/opentelemetry_shell/ && ln --symbolic ../../../opt/opentelemetry_shell/node_modules node_modules || true)
-    else
-      true
+  if [ "${OTEL_SHELL_CONFIG_INSTALL_DEEP:-TRUE}" = TRUE ]; then
+    if type gcc; then
+      gcc -shared -fPIC -o /opt/opentelemetry_shell/libinjecthttpheader.so /usr/share/opentelemetry_shell/opentelemetry_shell.inject.http_header.c -ldl
     fi
-  else
-    true
+    if type python3; then
+      python3 -m venv /opt/opentelemetry_shell/venv
+      source /opt/opentelemetry_shell/venv/bin/activate
+      pip3 install -r /opt/opentelemetry_shell/requirements.txt
+      echo '
+from opentelemetry.instrumentation.bootstrap_gen import (default_instrumentations, libraries)
+for element in default_instrumentations:
+  print(element)
+for element in libraries:
+  print(element["instrumentation"])
+' | python3 | xargs pip3 install
+      deactivate
+      (cd /opt/opentelemetry_shell/venv/lib/python3.*/site-packages && ln --symbolic /usr/share/opentelemetry_shell/opentelemetry_shell.custom.python.deep.py usercustomize.py || true)
+    fi
+    export PATH="$PATH":/usr/local/bin
+    if type npm; then
+      cache="$(npm config list -l | grep -E '^cache = ' | cut -d '=' -f 2- | tr -d '" ')"
+      if [ -d "$cache" ]; then
+        user="$(echo "$cache" | rev | cut -d / -f 2- | rev | xargs stat -c '%U')"
+        find "$cache" -exec chown "$user" {} '+'
+        cache="$(runuser -l "$user" -c 'npm config list -l' | grep -E '^cache = ' | cut -d '=' -f 2- | tr -d '" ')"
+        runuser -l "$user" -c 'npm config set cache="$1"' runuser "$(mktemp -d)"
+        (cd /opt/opentelemetry_shell && npm install --package-lock=false)
+        runuser -l "$user" -c 'npm config set cache="$1"' runuser "$cache"
+        (cd /usr/share/opentelemetry_shell/ && ln --symbolic ../../../opt/opentelemetry_shell/node_modules node_modules || true)
+      fi
+    fi
   fi
+  true
 else
   exit 1
 fi

@@ -12,12 +12,11 @@ if \[ -n "$OTEL_SHELL_TRACES_ENABLE" ] || \[ -n "$OTEL_SHELL_METRICS_ENABLE" ] |
   \[ "$OTEL_SHELL_LOGS_ENABLE" = TRUE ] && export OTEL_LOGS_EXPORTER=otlp || export OTEL_LOGS_EXPORTER=""
   export OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=delta
 fi
-export OTEL_SHELL_CONFIG_OBSERVE_PIPES="${OTEL_SHELL_CONFIG_OBSERVE_PIPES:-${OTEL_SHELL_EXPERIMENTAL_OBSERVE_PIPES:-FALSE}}"
 
 # basic setup
-_otel_remote_sdk_pipe="${OTEL_REMOTE_SDK_PIPE:-$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.pipe}"
 if \[ -z "$TMPDIR" ]; then TMPDIR=/tmp; fi
 _otel_shell_pipe_dir="${OTEL_SHELL_PIPE_DIR:-$TMPDIR}"
+_otel_remote_sdk_pipe="${OTEL_REMOTE_SDK_PIPE:-$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.pipe}"
 _otel_shell="$(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)"
 if \[ "$_otel_shell" = busybox ]; then _otel_shell="busybox sh"; fi
 if \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = 0 ] || \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "$PPID" ] || \[ "$PPID" = 0 ] || \[ "$(\tr '\000-\037' ' ' < /proc/$PPID/cmdline)" = "$(\tr '\000-\037' ' ' < /proc/$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE/cmdline)" ]; then _otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"; fi
@@ -321,7 +320,7 @@ otel_observe() {
   # create span, set initial attributes
   local span_handle="$(otel_span_start "$kind" "$command")"
   otel_span_attribute_typed "$span_handle" string shell.command_line="$command"
-  if _otel_string_contains "$command" " "; then local command_name="${command%% *}"; else  local command_name="$command"; fi # "$(\printf '%s' "$command" | \cut -sd ' ' -f 2-)" # this returns the command if there are no args, its the cut -s that cant be done via expansion alone
+  if _otel_string_contains "$command" " "; then local command_name="${command%% *}"; else local command_name="$command"; fi # "$(\printf '%s' "$command" | \cut -sd ' ' -f 2-)" # this returns the command if there are no args, its the cut -s that cant be done via expansion alone
   if \[ -z "$command_type" ]; then local command_type="$(_otel_command_type "$command_name")"; fi
   otel_span_attribute_typed "$span_handle" string shell.command="$command_name"
   otel_span_attribute_typed "$span_handle" string shell.command.type="$command_type"
@@ -373,7 +372,7 @@ if \[ "$_otel_shell" = dash ] || \[ "$_otel_shell" = 'busybox sh' ]; then # TODO
   _otel_call() {
     local command="$1"; shift
     if ! _otel_string_starts_with "$command" "\\"; then local command="$(_otel_escape_arg "$command")"; fi
-    \eval "$( { \printenv; \set; } | \grep '^OTEL_' | \cut -d = -f 1 | \sort -u | \awk '{ print $1 "=\"$" $1 "\"" }' | _otel_line_join)" "$command" "$(_otel_escape_args "$@")"
+    \eval "$( { \printenv; \set; } | \grep -E '^OTEL_|^PYTHONPATH=' | \cut -d = -f 1 | \sort -u | \awk '{ print $1 "=\"$" $1 "\"" }' | _otel_line_join)" "$command" "$(_otel_escape_args "$@")"
   }
 else
   _otel_call() {
@@ -460,6 +459,8 @@ _otel_call_and_record_pipes() {
     \echo -n '' > "$stdin_lines"
     $call_command "$@" 1> "$stdout" 2> "$stderr" || local exit_code="$?"
   else
+    # this is inherently unsafe because tee will consume stdin even when command never reads from it, so killing it will eventually cause data to be lost
+    # this ONLY ever works when the actual command guarantees by definiton to consume all of stdin, like simple invocations of grep
     local observe_stdin=TRUE
     local exit_code_file="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.exit_code"
     \tee "$stdin_bytes" "$stdin_lines" 2> /dev/null | {
@@ -488,6 +489,10 @@ _otel_call_and_record_pipes() {
 }
 
 _otel_call_and_record_subprocesses() {
+  case "$-" in
+    *m*) local job_control=1; \set +m;;
+    *) local job_control=0;;
+  esac
   local span_handle="$1"; shift
   local call_command="$1"; shift
   local command="$1"; shift
@@ -496,9 +501,10 @@ _otel_call_and_record_subprocesses() {
   _otel_record_subprocesses "$span_handle" < "$strace" &
   local parse_pid="$!"
   local exit_code=0
-  $call_command \strace -D -f -e trace=process -o "$strace" -s 8192 "${command#\\}" "$@" || local exit_code="$?"
+  $call_command '\strace' -D -f -e trace=process -o "$strace" -s 8192 "${command#\\}" "$@" || local exit_code="$?"
   \wait "$parse_pid"
   \rm "$strace" 2> /dev/null
+  if \[ "$job_control" = 1 ]; then \set -m; fi
   return "$exit_code"
 }
 
@@ -532,14 +538,14 @@ _otel_record_subprocesses() {
       *' --- '*) local operation=signal;;
       *) ;;
     esac
-    local pid="$(\printf '%s' "$line" | \cut -d ' ' -f 1)"
+    local pid="${line%% *}"
     \eval "local parent_pid=\$parent_pid_$pid"
     \eval "local span_handle=\$span_handle_$pid"
     \eval "local parent_span_handle=\$span_handle_$parent_pid"
     case "$operation" in
       fork)
         if \[ "${OTEL_SHELL_CONFIG_OBSERVE_SUBPROCESSES:-FALSE}" != TRUE ]; then continue; fi
-        local new_pid="$(\printf '%s' "$line" | \rev | \cut -d ' ' -f 1 | \rev)";
+        local new_pid="${line##* }"
         \eval "local parent_pid_$new_pid=$pid"
         \eval "local span_name=\"\$span_name_$new_pid\""
         if \[ -z "${span_name:-}" ]; then \eval "local span_name=\"\$span_name_$pid\""; fi
@@ -553,10 +559,21 @@ _otel_record_subprocesses() {
         # TODO immediately end span if stored due to very fast exit (faster than the fork syscall of the parent can actually be finished) 
         ;;
       exec)
-        local name="$(\printf '%s' "$line" | \cut -sd '[' -f 2- | \rev | \cut -sd ']' -f 2- | \rev | \sed 's/", "/ /g')"
-        local name="${name#\"}"
-        local name="${name%\"}"
-        local name="${name:-<unknown>}"
+        case "$line" in
+          *'['*']'*)
+            local name="$line"
+            local name="${name%\]*}"
+            local name="${name#*\[}"
+            if \[ "$_otel_shell" = bash ]; then
+              local name="${name//\", \"/ }"
+            else
+              local name="$(\printf '%s' "$name" | \sed 's/", "/ /g')"  
+            fi
+            local name="${name#\"}"
+            local name="${name%\"}"
+            ;;
+          *) local name="<unknown>";;
+        esac
         \eval "local span_name_$pid=\"\$name\""
         if \[ -n "${span_handle:-}" ]; then
           otel_span_name "$span_handle" "$name"
@@ -571,8 +588,26 @@ _otel_record_subprocesses() {
         ;;
       signal)
         if \[ "${OTEL_SHELL_CONFIG_OBSERVE_SIGNALS:-FALSE}" != TRUE ]; then continue; fi
-        local event_handle="$(otel_event_create "$(\printf '%s' "$line" | \awk '{ print $3 }')")"
-        \printf '%s' "$line" | \cut -d '{' -f 2- | \rev | \cut -d '}' -f 2- | \rev | \tr ',' '\n' | \tr -d ' ' | \tr '_' '.' | while read -r kvp; do otel_event_attribute "$event_handle" "$kvp"; done
+        if \[ "$_otel_shell" = bash ]; then
+          local name="$line"
+          local name=SIG"${name#* --- SIG}"
+          local name="${name%% *}"
+        else
+          local name="$(\printf '%s' "$line" | \awk '{ print $3 }')"
+        fi
+        local event_handle="$(otel_event_create "$name")"
+        local kvps="$line"
+        local kvps="${kvps%\}*}"
+        local kvps="${kvps#*\{}"
+        if \[ "$_otel_shell" = bash ]; then
+          local kvps="${kvps// /}"
+          local kvps="${kvps//_/.}"
+          local kvps="${kvps//,/
+}"
+          \printf '%s' "$kvps"
+        else
+          \printf '%s' "$kvps" | \tr -d ' ' | \tr '_' '.' | \tr ',' '\n'
+        fi | while read -r kvp; do otel_event_attribute "$event_handle" "$kvp"; done
         otel_event_add "$event_handle" "${span_handle:-$root_span_handle}"
         ;;
       *) ;;

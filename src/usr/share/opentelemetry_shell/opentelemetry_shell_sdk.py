@@ -1,4 +1,4 @@
-#!/opt/opentelemetry_shell/venv/bin/python
+#!/opt/opentelemetry_shell/venv_sdk/bin/python
 import sys
 import os
 import time
@@ -129,6 +129,8 @@ def main():
         handle(scope, version, 'SHUTDOWN', None)
     except EOFError:
         sys.exit(0)
+    except:
+        pass
 
 def handle(scope, version, command, arguments):
     global auto_end
@@ -278,6 +280,10 @@ def handle(scope, version, command, arguments):
     elif command == 'SPAN_TRACEPARENT':
         tokens = arguments.split(' ', 1)
         response_path = tokens[0]
+        if len(tokens) == 1:
+            with open(response_path, 'w') as response:
+                response.write('')
+                return
         span_id = tokens[1]
         if not span_id in spans:
             with open(response_path, 'w') as response:

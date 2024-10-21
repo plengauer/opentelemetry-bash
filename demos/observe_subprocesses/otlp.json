@@ -1,0 +1,3363 @@
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "telemetry.sdk.language",
+            "value": {
+              "stringValue": "shell"
+            }
+          },
+          {
+            "key": "telemetry.sdk.name",
+            "value": {
+              "stringValue": "opentelemetry"
+            }
+          },
+          {
+            "key": "telemetry.sdk.version",
+            "value": {
+              "stringValue": "4.33.0"
+            }
+          },
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "unknown_service"
+            }
+          },
+          {
+            "key": "process.pid",
+            "value": {
+              "intValue": "3581"
+            }
+          },
+          {
+            "key": "process.parent_pid",
+            "value": {
+              "intValue": "3580"
+            }
+          },
+          {
+            "key": "process.executable.name",
+            "value": {
+              "stringValue": "bash"
+            }
+          },
+          {
+            "key": "process.executable.path",
+            "value": {
+              "stringValue": "/usr/bin/bash"
+            }
+          },
+          {
+            "key": "process.command_line",
+            "value": {
+              "stringValue": "sudo apt-get update"
+            }
+          },
+          {
+            "key": "process.command",
+            "value": {
+              "stringValue": "sudo"
+            }
+          },
+          {
+            "key": "process.owner",
+            "value": {
+              "stringValue": "root"
+            }
+          },
+          {
+            "key": "process.runtime.name",
+            "value": {
+              "stringValue": "bash"
+            }
+          },
+          {
+            "key": "process.runtime.description",
+            "value": {
+              "stringValue": "Bourne Again Shell"
+            }
+          },
+          {
+            "key": "process.runtime.version",
+            "value": {
+              "stringValue": "5.2.21-2ubuntu4"
+            }
+          },
+          {
+            "key": "process.runtime.options",
+            "value": {
+              "stringValue": "hBc"
+            }
+          },
+          {
+            "key": "service.version",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "service.namespace",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "service.instance.id",
+            "value": {
+              "stringValue": ""
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "shell",
+            "version": "4.33.0"
+          },
+          "spans": [
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "23c231642253d7a6",
+              "parentSpanId": "191300087ec3ebeb",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781341776536797",
+              "endTimeUnixNano": "1728781341790403879",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "767d1f0086536987",
+              "parentSpanId": "191300087ec3ebeb",
+              "flags": 768,
+              "name": "/usr/lib/apt/methods/https",
+              "kind": 1,
+              "startTimeUnixNano": "1728781341811158425",
+              "endTimeUnixNano": "1728781341830784980",
+              "status": {
+                "code": 2
+              }
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "af4ed558a3732567",
+              "parentSpanId": "191300087ec3ebeb",
+              "flags": 768,
+              "name": "/usr/lib/apt/methods/http",
+              "kind": 1,
+              "startTimeUnixNano": "1728781341851181901",
+              "endTimeUnixNano": "1728781341870806710",
+              "status": {
+                "code": 2
+              }
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "66d91064586b219b",
+              "parentSpanId": "4fae716e6f14f2e3",
+              "flags": 768,
+              "name": "id -u",
+              "kind": 1,
+              "startTimeUnixNano": "1728781341975742491",
+              "endTimeUnixNano": "1728781342004250964",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "0d2d1c567837d4cc",
+              "parentSpanId": "4fae716e6f14f2e3",
+              "flags": 768,
+              "name": "systemctl start --no-block apt-news.service esm-cache.service",
+              "kind": 1,
+              "startTimeUnixNano": "1728781342046257503",
+              "endTimeUnixNano": "1728781342060596605",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "ac9eb242a0cf8f27",
+              "parentSpanId": "191300087ec3ebeb",
+              "flags": 768,
+              "name": "sh -c -- [ ! -e /run/systemd/system ] || [ $(id -u) -ne 0 ] || systemctl start --no-block apt-news.service esm-cache.service >/dev/null 2>&1 || true",
+              "kind": 1,
+              "startTimeUnixNano": "1728781341941807759",
+              "endTimeUnixNano": "1728781342073849796",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "4fae716e6f14f2e3",
+              "parentSpanId": "191300087ec3ebeb",
+              "flags": 768,
+              "name": "apt-get update",
+              "kind": 1,
+              "startTimeUnixNano": "1728781341897116778",
+              "endTimeUnixNano": "1728781342085160769",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "4af0867828921768",
+              "parentSpanId": "191300087ec3ebeb",
+              "flags": 768,
+              "name": "/usr/lib/apt/methods/gpgv",
+              "kind": 1,
+              "startTimeUnixNano": "1728781342159678670",
+              "endTimeUnixNano": "1728781342179655548",
+              "status": {
+                "code": 2
+              }
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "57be22fcb2faf282",
+              "parentSpanId": "7a7a509b02729426",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.RWr6Ez /tmp/apt.data.P3dFeI",
+              "kind": 1,
+              "startTimeUnixNano": "1728781342277261729",
+              "endTimeUnixNano": "1728781342285829744",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "ed1480e6b4fcb0bb",
+              "parentSpanId": "9181f00bec0227cc",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781342335321649",
+              "endTimeUnixNano": "1728781342350496623",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "50f51a136bfce287",
+              "parentSpanId": "7a7a509b02729426",
+              "flags": 768,
+              "name": "apt-config shell MASTER_KEYRING APT::Key::MasterKeyring",
+              "kind": 1,
+              "startTimeUnixNano": "1728781342309513606",
+              "endTimeUnixNano": "1728781342361121087",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "5da26b3000cf2da2",
+              "parentSpanId": "9181f00bec0227cc",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781342411489222",
+              "endTimeUnixNano": "1728781342426458763",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "2383e752dda61673",
+              "parentSpanId": "7a7a509b02729426",
+              "flags": 768,
+              "name": "apt-config shell ARCHIVE_KEYRING APT::Key::ArchiveKeyring",
+              "kind": 1,
+              "startTimeUnixNano": "1728781342384414350",
+              "endTimeUnixNano": "1728781342436511362",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "1f571286372aa12e",
+              "parentSpanId": "9181f00bec0227cc",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781342484354039",
+              "endTimeUnixNano": "1728781342500419550",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "89f39cc61d650c2d",
+              "parentSpanId": "7a7a509b02729426",
+              "flags": 768,
+              "name": "apt-config shell REMOVED_KEYS APT::Key::RemovedKeys",
+              "kind": 1,
+              "startTimeUnixNano": "1728781342458470089",
+              "endTimeUnixNano": "1728781342511141666",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "ec31ba79cfea82f2",
+              "parentSpanId": "9181f00bec0227cc",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781342561944288",
+              "endTimeUnixNano": "1728781342578468673",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "9f2791d8026100b4",
+              "parentSpanId": "7a7a509b02729426",
+              "flags": 768,
+              "name": "apt-config shell ARCHIVE_KEYRING_URI APT::Key::ArchiveKeyringURI",
+              "kind": 1,
+              "startTimeUnixNano": "1728781342534588924",
+              "endTimeUnixNano": "1728781342588665575",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "0b92e430bf0ed153",
+              "parentSpanId": "7a7a509b02729426",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.RWr6Ez /tmp/apt.data.P3dFeI",
+              "kind": 1,
+              "startTimeUnixNano": "1728781342610153287",
+              "endTimeUnixNano": "1728781342617826493",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "ae8f2641b3daf2bf",
+              "parentSpanId": "9181f00bec0227cc",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781342667494398",
+              "endTimeUnixNano": "1728781342683219044",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "f4ae2ce36d83b59a",
+              "parentSpanId": "7a7a509b02729426",
+              "flags": 768,
+              "name": "apt-config shell GPGV Apt::Key::gpgvcommand ASSERT_PUBKEY_ALGO Apt::Key::assert-pubkey-algo",
+              "kind": 1,
+              "startTimeUnixNano": "1728781342640837646",
+              "endTimeUnixNano": "1728781342693690095",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "c16794099f735088",
+              "parentSpanId": "9181f00bec0227cc",
+              "flags": 768,
+              "name": "gpgv --assert-pubkey-algo",
+              "kind": 1,
+              "startTimeUnixNano": "1728781342744355315",
+              "endTimeUnixNano": "1728781342757446575",
+              "status": {
+                "code": 2
+              }
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "27f8686d98c45ff3",
+              "parentSpanId": "7a7a509b02729426",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.RWr6Ez /tmp/apt.data.P3dFeI",
+              "kind": 1,
+              "startTimeUnixNano": "1728781342715917815",
+              "endTimeUnixNano": "1728781342769879846",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "35285d3b7d2e45da",
+              "parentSpanId": "7a7a509b02729426",
+              "flags": 768,
+              "name": "mktemp --directory --tmpdir apt-key-gpghome.XXXXXXXXXX",
+              "kind": 1,
+              "startTimeUnixNano": "1728781342792885195",
+              "endTimeUnixNano": "1728781342812224002",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "3969923edc980919",
+              "parentSpanId": "7a7a509b02729426",
+              "flags": 768,
+              "name": "chmod 700 /tmp/apt-key-gpghome.N4PpQ2rIqL",
+              "kind": 1,
+              "startTimeUnixNano": "1728781342844164531",
+              "endTimeUnixNano": "1728781342857773352",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "7f59d920b9b9c5fe",
+              "parentSpanId": "7a7a509b02729426",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.RWr6Ez /tmp/apt.data.P3dFeI",
+              "kind": 1,
+              "startTimeUnixNano": "1728781342883967855",
+              "endTimeUnixNano": "1728781342893107543",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "393deea607df4267",
+              "parentSpanId": "9181f00bec0227cc",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.RWr6Ez /tmp/apt.data.P3dFeI",
+              "kind": 1,
+              "startTimeUnixNano": "1728781342937158460",
+              "endTimeUnixNano": "1728781342967348494",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "0901d327ea4ba5e6",
+              "parentSpanId": "9181f00bec0227cc",
+              "flags": 768,
+              "name": "sed -e s#'#'\\\"'\\\"'#g",
+              "kind": 1,
+              "startTimeUnixNano": "1728781342961716562",
+              "endTimeUnixNano": "1728781342986856862",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "9b077a1d035cebd7",
+              "parentSpanId": "7a7a509b02729426",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.RWr6Ez /tmp/apt.data.P3dFeI",
+              "kind": 1,
+              "startTimeUnixNano": "1728781342916956347",
+              "endTimeUnixNano": "1728781342999761413",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "94307bd41aa80675",
+              "parentSpanId": "9181f00bec0227cc",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.RWr6Ez /tmp/apt.data.P3dFeI",
+              "kind": 1,
+              "startTimeUnixNano": "1728781343045400129",
+              "endTimeUnixNano": "1728781343057094026",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "9036797e1af44e8a",
+              "parentSpanId": "9181f00bec0227cc",
+              "flags": 768,
+              "name": "sed -e s#'#'\\\"'\\\"'#g",
+              "kind": 1,
+              "startTimeUnixNano": "1728781343075344036",
+              "endTimeUnixNano": "1728781343101935364",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "ddafe8b466bc212e",
+              "parentSpanId": "7a7a509b02729426",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.RWr6Ez /tmp/apt.data.P3dFeI",
+              "kind": 1,
+              "startTimeUnixNano": "1728781343024978245",
+              "endTimeUnixNano": "1728781343114601825",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "f105c20bb2921f56",
+              "parentSpanId": "7a7a509b02729426",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.RWr6Ez /tmp/apt.data.P3dFeI",
+              "kind": 1,
+              "startTimeUnixNano": "1728781343137762612",
+              "endTimeUnixNano": "1728781343146071243",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "a368512ced0b2056",
+              "parentSpanId": "7a7a509b02729426",
+              "flags": 768,
+              "name": "gpgv --assert-pubkey-algo=>=rsa2048,ed25519,ed448 --homedir /tmp/apt-key-gpghome.N4PpQ2rIqL --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg --ignore-time-conflict --status-fd 3 /tmp/apt.sig.RWr6Ez /tmp/apt.data.P3dFeI",
+              "kind": 1,
+              "startTimeUnixNano": "1728781343177968519",
+              "endTimeUnixNano": "1728781343190882188",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "a208da9c4865def5",
+              "parentSpanId": "9181f00bec0227cc",
+              "flags": 768,
+              "name": "gpg-connect-agent --homedir /tmp/apt-key-gpghome.N4PpQ2rIqL --no-autostart --dirmngr KILLDIRMNGR",
+              "kind": 1,
+              "startTimeUnixNano": "1728781343246921651",
+              "endTimeUnixNano": "1728781343266378570",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "49eb2d733b526677",
+              "parentSpanId": "9181f00bec0227cc",
+              "flags": 768,
+              "name": "gpg-connect-agent --homedir /tmp/apt-key-gpghome.N4PpQ2rIqL -s --no-autostart GETINFO scd_running /if ${! $?} scd killscd /end",
+              "kind": 1,
+              "startTimeUnixNano": "1728781343287154206",
+              "endTimeUnixNano": "1728781343305336848",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "0096d51f101cf8ad",
+              "parentSpanId": "9181f00bec0227cc",
+              "flags": 768,
+              "name": "gpg-connect-agent --homedir /tmp/apt-key-gpghome.N4PpQ2rIqL --no-autostart KILLAGENT",
+              "kind": 1,
+              "startTimeUnixNano": "1728781343326800298",
+              "endTimeUnixNano": "1728781343344471147",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "2c6f6ab35457a496",
+              "parentSpanId": "9181f00bec0227cc",
+              "flags": 768,
+              "name": "gpg-connect-agent --no-autostart --keyboxd KILLKEYBOXD --homedir /tmp/apt-key-gpghome.N4PpQ2rIqL",
+              "kind": 1,
+              "startTimeUnixNano": "1728781343364076775",
+              "endTimeUnixNano": "1728781343381703514",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "524ebd0f41385a35",
+              "parentSpanId": "7a7a509b02729426",
+              "flags": 768,
+              "name": "gpgconf --kill all",
+              "kind": 1,
+              "startTimeUnixNano": "1728781343222938229",
+              "endTimeUnixNano": "1728781343391782940",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "07f54250244ba82e",
+              "parentSpanId": "7a7a509b02729426",
+              "flags": 768,
+              "name": "rm -rf /tmp/apt-key-gpghome.N4PpQ2rIqL",
+              "kind": 1,
+              "startTimeUnixNano": "1728781343422340139",
+              "endTimeUnixNano": "1728781343435200929",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "9181f00bec0227cc",
+              "parentSpanId": "f512d1be87be2b4c",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.RWr6Ez /tmp/apt.data.P3dFeI",
+              "kind": 1,
+              "startTimeUnixNano": "1728781342248520656",
+              "endTimeUnixNano": "1728781343448359607",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "7a7a509b02729426",
+              "parentSpanId": "191300087ec3ebeb",
+              "flags": 768,
+              "name": "/usr/lib/apt/methods/gpgv",
+              "kind": 1,
+              "startTimeUnixNano": "1728781342228536776",
+              "endTimeUnixNano": "1728781343459172539",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "6b16599ac9870153",
+              "parentSpanId": "e6d58618c5154f26",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.r2Vicw /tmp/apt.data.AyrmpW",
+              "kind": 1,
+              "startTimeUnixNano": "1728781343529250188",
+              "endTimeUnixNano": "1728781343538460658",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "3fd8e02213ae96da",
+              "parentSpanId": "e636e15dc582f9e8",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781343585921046",
+              "endTimeUnixNano": "1728781343600893194",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "3cb863bfb541d8f0",
+              "parentSpanId": "e6d58618c5154f26",
+              "flags": 768,
+              "name": "apt-config shell MASTER_KEYRING APT::Key::MasterKeyring",
+              "kind": 1,
+              "startTimeUnixNano": "1728781343561748123",
+              "endTimeUnixNano": "1728781343610924551",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "2c4a72804acb24bb",
+              "parentSpanId": "e636e15dc582f9e8",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781343658942390",
+              "endTimeUnixNano": "1728781343675223095",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "3770f30e45feae1c",
+              "parentSpanId": "e6d58618c5154f26",
+              "flags": 768,
+              "name": "apt-config shell ARCHIVE_KEYRING APT::Key::ArchiveKeyring",
+              "kind": 1,
+              "startTimeUnixNano": "1728781343633423254",
+              "endTimeUnixNano": "1728781343685707224",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "aa9683ab293c1e18",
+              "parentSpanId": "e636e15dc582f9e8",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781343733147621",
+              "endTimeUnixNano": "1728781343746254154",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "997c422941ae7d93",
+              "parentSpanId": "e6d58618c5154f26",
+              "flags": 768,
+              "name": "apt-config shell REMOVED_KEYS APT::Key::RemovedKeys",
+              "kind": 1,
+              "startTimeUnixNano": "1728781343708837497",
+              "endTimeUnixNano": "1728781343754775186",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "c3eb6467d8d38a29",
+              "parentSpanId": "e636e15dc582f9e8",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781343795747981",
+              "endTimeUnixNano": "1728781343808837715",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "250994a5a203331b",
+              "parentSpanId": "e6d58618c5154f26",
+              "flags": 768,
+              "name": "apt-config shell ARCHIVE_KEYRING_URI APT::Key::ArchiveKeyringURI",
+              "kind": 1,
+              "startTimeUnixNano": "1728781343774105038",
+              "endTimeUnixNano": "1728781343819905691",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "b3d61e65d40458d9",
+              "parentSpanId": "e6d58618c5154f26",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.r2Vicw /tmp/apt.data.AyrmpW",
+              "kind": 1,
+              "startTimeUnixNano": "1728781343841094446",
+              "endTimeUnixNano": "1728781343848243442",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "9a395737f91c9cd0",
+              "parentSpanId": "e636e15dc582f9e8",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781343889875290",
+              "endTimeUnixNano": "1728781343903118858",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "d9aa39188bfe55d5",
+              "parentSpanId": "e6d58618c5154f26",
+              "flags": 768,
+              "name": "apt-config shell GPGV Apt::Key::gpgvcommand ASSERT_PUBKEY_ALGO Apt::Key::assert-pubkey-algo",
+              "kind": 1,
+              "startTimeUnixNano": "1728781343867717265",
+              "endTimeUnixNano": "1728781343911558519",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "a69a1b6f0fd6d8e6",
+              "parentSpanId": "e636e15dc582f9e8",
+              "flags": 768,
+              "name": "gpgv --assert-pubkey-algo",
+              "kind": 1,
+              "startTimeUnixNano": "1728781343954388927",
+              "endTimeUnixNano": "1728781343965439901",
+              "status": {
+                "code": 2
+              }
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "1ebd886d342246d4",
+              "parentSpanId": "e6d58618c5154f26",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.r2Vicw /tmp/apt.data.AyrmpW",
+              "kind": 1,
+              "startTimeUnixNano": "1728781343930983117",
+              "endTimeUnixNano": "1728781343976088723",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "59b91e7cc1f4a862",
+              "parentSpanId": "e6d58618c5154f26",
+              "flags": 768,
+              "name": "mktemp --directory --tmpdir apt-key-gpghome.XXXXXXXXXX",
+              "kind": 1,
+              "startTimeUnixNano": "1728781343995539686",
+              "endTimeUnixNano": "1728781344012710429",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "2269b01054625397",
+              "parentSpanId": "e6d58618c5154f26",
+              "flags": 768,
+              "name": "chmod 700 /tmp/apt-key-gpghome.F2h3J4ZfSp",
+              "kind": 1,
+              "startTimeUnixNano": "1728781344043530323",
+              "endTimeUnixNano": "1728781344056880398",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "4f3e7fd82f29e4f7",
+              "parentSpanId": "e6d58618c5154f26",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.r2Vicw /tmp/apt.data.AyrmpW",
+              "kind": 1,
+              "startTimeUnixNano": "1728781344077881437",
+              "endTimeUnixNano": "1728781344085078701",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "c9efeb756f632190",
+              "parentSpanId": "e636e15dc582f9e8",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.r2Vicw /tmp/apt.data.AyrmpW",
+              "kind": 1,
+              "startTimeUnixNano": "1728781344121296432",
+              "endTimeUnixNano": "1728781344132527975",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "db63febeb09ac156",
+              "parentSpanId": "e636e15dc582f9e8",
+              "flags": 768,
+              "name": "sed -e s#'#'\\\"'\\\"'#g",
+              "kind": 1,
+              "startTimeUnixNano": "1728781344146086157",
+              "endTimeUnixNano": "1728781344165191473",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "31ffdaaf6e7654bc",
+              "parentSpanId": "e6d58618c5154f26",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.r2Vicw /tmp/apt.data.AyrmpW",
+              "kind": 1,
+              "startTimeUnixNano": "1728781344104852846",
+              "endTimeUnixNano": "1728781344175674219",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "13c8660d03dd1c00",
+              "parentSpanId": "e636e15dc582f9e8",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.r2Vicw /tmp/apt.data.AyrmpW",
+              "kind": 1,
+              "startTimeUnixNano": "1728781344211718107",
+              "endTimeUnixNano": "1728781344220884600",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "e9b9e84096de52da",
+              "parentSpanId": "e636e15dc582f9e8",
+              "flags": 768,
+              "name": "sed -e s#'#'\\\"'\\\"'#g",
+              "kind": 1,
+              "startTimeUnixNano": "1728781344234461269",
+              "endTimeUnixNano": "1728781344256466729",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "67a8b72462e9f157",
+              "parentSpanId": "e6d58618c5154f26",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.r2Vicw /tmp/apt.data.AyrmpW",
+              "kind": 1,
+              "startTimeUnixNano": "1728781344195859117",
+              "endTimeUnixNano": "1728781344267492044",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "3e2daa369e8cb756",
+              "parentSpanId": "e6d58618c5154f26",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.r2Vicw /tmp/apt.data.AyrmpW",
+              "kind": 1,
+              "startTimeUnixNano": "1728781344289305234",
+              "endTimeUnixNano": "1728781344298824265",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "1b4be5ad8a475f9d",
+              "parentSpanId": "e6d58618c5154f26",
+              "flags": 768,
+              "name": "gpgv --assert-pubkey-algo=>=rsa2048,ed25519,ed448 --homedir /tmp/apt-key-gpghome.F2h3J4ZfSp --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg --ignore-time-conflict --status-fd 3 /tmp/apt.sig.r2Vicw /tmp/apt.data.AyrmpW",
+              "kind": 1,
+              "startTimeUnixNano": "1728781344331433637",
+              "endTimeUnixNano": "1728781344342866505",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "3ea276ba93902bfa",
+              "parentSpanId": "e636e15dc582f9e8",
+              "flags": 768,
+              "name": "gpg-connect-agent --homedir /tmp/apt-key-gpghome.F2h3J4ZfSp --no-autostart --dirmngr KILLDIRMNGR",
+              "kind": 1,
+              "startTimeUnixNano": "1728781344391667469",
+              "endTimeUnixNano": "1728781344406808422",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "c7fb50245212a26b",
+              "parentSpanId": "e636e15dc582f9e8",
+              "flags": 768,
+              "name": "gpg-connect-agent --homedir /tmp/apt-key-gpghome.F2h3J4ZfSp -s --no-autostart GETINFO scd_running /if ${! $?} scd killscd /end",
+              "kind": 1,
+              "startTimeUnixNano": "1728781344424208788",
+              "endTimeUnixNano": "1728781344439587513",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "56370959af891492",
+              "parentSpanId": "e636e15dc582f9e8",
+              "flags": 768,
+              "name": "gpg-connect-agent --homedir /tmp/apt-key-gpghome.F2h3J4ZfSp --no-autostart KILLAGENT",
+              "kind": 1,
+              "startTimeUnixNano": "1728781344457369424",
+              "endTimeUnixNano": "1728781344472367310",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "e10969c2f30cb87f",
+              "parentSpanId": "e636e15dc582f9e8",
+              "flags": 768,
+              "name": "gpg-connect-agent --no-autostart --keyboxd KILLKEYBOXD --homedir /tmp/apt-key-gpghome.F2h3J4ZfSp",
+              "kind": 1,
+              "startTimeUnixNano": "1728781344489632095",
+              "endTimeUnixNano": "1728781344504535644",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "b7cd5ca5c077fb35",
+              "parentSpanId": "e6d58618c5154f26",
+              "flags": 768,
+              "name": "gpgconf --kill all",
+              "kind": 1,
+              "startTimeUnixNano": "1728781344371258660",
+              "endTimeUnixNano": "1728781344514742988",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "97b972d485837c6b",
+              "parentSpanId": "e6d58618c5154f26",
+              "flags": 768,
+              "name": "rm -rf /tmp/apt-key-gpghome.F2h3J4ZfSp",
+              "kind": 1,
+              "startTimeUnixNano": "1728781344547787429",
+              "endTimeUnixNano": "1728781344561913721",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "e636e15dc582f9e8",
+              "parentSpanId": "f512d1be87be2b4c",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.r2Vicw /tmp/apt.data.AyrmpW",
+              "kind": 1,
+              "startTimeUnixNano": "1728781343499761793",
+              "endTimeUnixNano": "1728781344574811495",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "e6d58618c5154f26",
+              "parentSpanId": "191300087ec3ebeb",
+              "flags": 768,
+              "name": "/usr/lib/apt/methods/gpgv",
+              "kind": 1,
+              "startTimeUnixNano": "1728781343480270548",
+              "endTimeUnixNano": "1728781344585214432",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "f26fbfaf45316e5f",
+              "parentSpanId": "2368f676e76ef4e9",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.tOI9m9 /tmp/apt.data.6cG5Tj",
+              "kind": 1,
+              "startTimeUnixNano": "1728781344643108388",
+              "endTimeUnixNano": "1728781344650370395",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "c0c14a7f2703c5a5",
+              "parentSpanId": "d6c8dcb8cb5b3d05",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781344692580255",
+              "endTimeUnixNano": "1728781344706284844",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "4d5a6fc9bacc8b72",
+              "parentSpanId": "2368f676e76ef4e9",
+              "flags": 768,
+              "name": "apt-config shell MASTER_KEYRING APT::Key::MasterKeyring",
+              "kind": 1,
+              "startTimeUnixNano": "1728781344669889111",
+              "endTimeUnixNano": "1728781344715197714",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "555a16086b6dcba1",
+              "parentSpanId": "d6c8dcb8cb5b3d05",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781344764365972",
+              "endTimeUnixNano": "1728781344777962855",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "c7f51e658f98f6b6",
+              "parentSpanId": "2368f676e76ef4e9",
+              "flags": 768,
+              "name": "apt-config shell ARCHIVE_KEYRING APT::Key::ArchiveKeyring",
+              "kind": 1,
+              "startTimeUnixNano": "1728781344737749552",
+              "endTimeUnixNano": "1728781344786527498",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "848233263316d2d1",
+              "parentSpanId": "d6c8dcb8cb5b3d05",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781344827911452",
+              "endTimeUnixNano": "1728781344841221252",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "5de00b8a2cf2a14e",
+              "parentSpanId": "2368f676e76ef4e9",
+              "flags": 768,
+              "name": "apt-config shell REMOVED_KEYS APT::Key::RemovedKeys",
+              "kind": 1,
+              "startTimeUnixNano": "1728781344806041649",
+              "endTimeUnixNano": "1728781344849770781",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "1b318d53f5b2e30f",
+              "parentSpanId": "d6c8dcb8cb5b3d05",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781344901618134",
+              "endTimeUnixNano": "1728781344915863386",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "db6facd610d76001",
+              "parentSpanId": "2368f676e76ef4e9",
+              "flags": 768,
+              "name": "apt-config shell ARCHIVE_KEYRING_URI APT::Key::ArchiveKeyringURI",
+              "kind": 1,
+              "startTimeUnixNano": "1728781344878699733",
+              "endTimeUnixNano": "1728781344924623636",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "1fd6fbe724603cda",
+              "parentSpanId": "2368f676e76ef4e9",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.tOI9m9 /tmp/apt.data.6cG5Tj",
+              "kind": 1,
+              "startTimeUnixNano": "1728781344944344539",
+              "endTimeUnixNano": "1728781344951463669",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "a81bad6b03133277",
+              "parentSpanId": "d6c8dcb8cb5b3d05",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781344995898656",
+              "endTimeUnixNano": "1728781345009119049",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "2654bfd7b9e365bb",
+              "parentSpanId": "2368f676e76ef4e9",
+              "flags": 768,
+              "name": "apt-config shell GPGV Apt::Key::gpgvcommand ASSERT_PUBKEY_ALGO Apt::Key::assert-pubkey-algo",
+              "kind": 1,
+              "startTimeUnixNano": "1728781344973723311",
+              "endTimeUnixNano": "1728781345018117219",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "c9bad9301f915071",
+              "parentSpanId": "d6c8dcb8cb5b3d05",
+              "flags": 768,
+              "name": "gpgv --assert-pubkey-algo",
+              "kind": 1,
+              "startTimeUnixNano": "1728781345061642183",
+              "endTimeUnixNano": "1728781345072766214",
+              "status": {
+                "code": 2
+              }
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "62ede788ee1dd07d",
+              "parentSpanId": "2368f676e76ef4e9",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.tOI9m9 /tmp/apt.data.6cG5Tj",
+              "kind": 1,
+              "startTimeUnixNano": "1728781345037809792",
+              "endTimeUnixNano": "1728781345083544360",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "b427204006d8576b",
+              "parentSpanId": "2368f676e76ef4e9",
+              "flags": 768,
+              "name": "mktemp --directory --tmpdir apt-key-gpghome.XXXXXXXXXX",
+              "kind": 1,
+              "startTimeUnixNano": "1728781345103313541",
+              "endTimeUnixNano": "1728781345118504077",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "3f6f3bd0c32ed959",
+              "parentSpanId": "2368f676e76ef4e9",
+              "flags": 768,
+              "name": "chmod 700 /tmp/apt-key-gpghome.wjmYjr2fDG",
+              "kind": 1,
+              "startTimeUnixNano": "1728781345145912680",
+              "endTimeUnixNano": "1728781345156835393",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "dd19c21da9503135",
+              "parentSpanId": "2368f676e76ef4e9",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.tOI9m9 /tmp/apt.data.6cG5Tj",
+              "kind": 1,
+              "startTimeUnixNano": "1728781345176808466",
+              "endTimeUnixNano": "1728781345184046879",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "c0dac66189c91e33",
+              "parentSpanId": "d6c8dcb8cb5b3d05",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.tOI9m9 /tmp/apt.data.6cG5Tj",
+              "kind": 1,
+              "startTimeUnixNano": "1728781345225933940",
+              "endTimeUnixNano": "1728781345239400946",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "8123716c8b520d1b",
+              "parentSpanId": "d6c8dcb8cb5b3d05",
+              "flags": 768,
+              "name": "sed -e s#'#'\\\"'\\\"'#g",
+              "kind": 1,
+              "startTimeUnixNano": "1728781345253046691",
+              "endTimeUnixNano": "1728781345274941345",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "44ebd02573668f96",
+              "parentSpanId": "2368f676e76ef4e9",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.tOI9m9 /tmp/apt.data.6cG5Tj",
+              "kind": 1,
+              "startTimeUnixNano": "1728781345206818604",
+              "endTimeUnixNano": "1728781345285542872",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "dce365609db8710b",
+              "parentSpanId": "d6c8dcb8cb5b3d05",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.tOI9m9 /tmp/apt.data.6cG5Tj",
+              "kind": 1,
+              "startTimeUnixNano": "1728781345322325886",
+              "endTimeUnixNano": "1728781345333621143",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "764120a901ef71a3",
+              "parentSpanId": "d6c8dcb8cb5b3d05",
+              "flags": 768,
+              "name": "sed -e s#'#'\\\"'\\\"'#g",
+              "kind": 1,
+              "startTimeUnixNano": "1728781345347184560",
+              "endTimeUnixNano": "1728781345368632760",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "4e590f74410505c3",
+              "parentSpanId": "2368f676e76ef4e9",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.tOI9m9 /tmp/apt.data.6cG5Tj",
+              "kind": 1,
+              "startTimeUnixNano": "1728781345306086616",
+              "endTimeUnixNano": "1728781345379317991",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "88b668b42ae7b682",
+              "parentSpanId": "2368f676e76ef4e9",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.tOI9m9 /tmp/apt.data.6cG5Tj",
+              "kind": 1,
+              "startTimeUnixNano": "1728781345399270195",
+              "endTimeUnixNano": "1728781345406455421",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "8d83252ec964f35e",
+              "parentSpanId": "2368f676e76ef4e9",
+              "flags": 768,
+              "name": "gpgv --assert-pubkey-algo=>=rsa2048,ed25519,ed448 --homedir /tmp/apt-key-gpghome.wjmYjr2fDG --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg --ignore-time-conflict --status-fd 3 /tmp/apt.sig.tOI9m9 /tmp/apt.data.6cG5Tj",
+              "kind": 1,
+              "startTimeUnixNano": "1728781345433985269",
+              "endTimeUnixNano": "1728781345446237258",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "23a0e6d7d824b594",
+              "parentSpanId": "d6c8dcb8cb5b3d05",
+              "flags": 768,
+              "name": "gpg-connect-agent --homedir /tmp/apt-key-gpghome.wjmYjr2fDG --no-autostart --dirmngr KILLDIRMNGR",
+              "kind": 1,
+              "startTimeUnixNano": "1728781345501523427",
+              "endTimeUnixNano": "1728781345516752466",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "bdec79e2dc7409af",
+              "parentSpanId": "d6c8dcb8cb5b3d05",
+              "flags": 768,
+              "name": "gpg-connect-agent --homedir /tmp/apt-key-gpghome.wjmYjr2fDG -s --no-autostart GETINFO scd_running /if ${! $?} scd killscd /end",
+              "kind": 1,
+              "startTimeUnixNano": "1728781345534241361",
+              "endTimeUnixNano": "1728781345549481759",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "2c0f8edc6a697add",
+              "parentSpanId": "d6c8dcb8cb5b3d05",
+              "flags": 768,
+              "name": "gpg-connect-agent --homedir /tmp/apt-key-gpghome.wjmYjr2fDG --no-autostart KILLAGENT",
+              "kind": 1,
+              "startTimeUnixNano": "1728781345567106746",
+              "endTimeUnixNano": "1728781345582184250",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "ff9d4c4f93be93c7",
+              "parentSpanId": "d6c8dcb8cb5b3d05",
+              "flags": 768,
+              "name": "gpg-connect-agent --no-autostart --keyboxd KILLKEYBOXD --homedir /tmp/apt-key-gpghome.wjmYjr2fDG",
+              "kind": 1,
+              "startTimeUnixNano": "1728781345599475507",
+              "endTimeUnixNano": "1728781345614430493",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "00d340ec46f854e4",
+              "parentSpanId": "2368f676e76ef4e9",
+              "flags": 768,
+              "name": "gpgconf --kill all",
+              "kind": 1,
+              "startTimeUnixNano": "1728781345479009524",
+              "endTimeUnixNano": "1728781345622848774",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "ba0a6cbe80952159",
+              "parentSpanId": "2368f676e76ef4e9",
+              "flags": 768,
+              "name": "rm -rf /tmp/apt-key-gpghome.wjmYjr2fDG",
+              "kind": 1,
+              "startTimeUnixNano": "1728781345649838967",
+              "endTimeUnixNano": "1728781345660985790",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "d6c8dcb8cb5b3d05",
+              "parentSpanId": "f512d1be87be2b4c",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.tOI9m9 /tmp/apt.data.6cG5Tj",
+              "kind": 1,
+              "startTimeUnixNano": "1728781344618768311",
+              "endTimeUnixNano": "1728781345673328329",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "2368f676e76ef4e9",
+              "parentSpanId": "191300087ec3ebeb",
+              "flags": 768,
+              "name": "/usr/lib/apt/methods/gpgv",
+              "kind": 1,
+              "startTimeUnixNano": "1728781344602779309",
+              "endTimeUnixNano": "1728781345683495046",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "449bc0d28e9381ec",
+              "parentSpanId": "b635f546fc6487c4",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.Oothcx /tmp/apt.data.8GtFEB",
+              "kind": 1,
+              "startTimeUnixNano": "1728781345745738825",
+              "endTimeUnixNano": "1728781345752948507",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "36c56a14eb0e8117",
+              "parentSpanId": "eec2f54188422835",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781345794975378",
+              "endTimeUnixNano": "1728781345808222731",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "24f2352efaf13758",
+              "parentSpanId": "b635f546fc6487c4",
+              "flags": 768,
+              "name": "apt-config shell MASTER_KEYRING APT::Key::MasterKeyring",
+              "kind": 1,
+              "startTimeUnixNano": "1728781345772719961",
+              "endTimeUnixNano": "1728781345816845765",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "5cc63d2ef03b9703",
+              "parentSpanId": "eec2f54188422835",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781345866134643",
+              "endTimeUnixNano": "1728781345879574404",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "4ec158a9fbb550ea",
+              "parentSpanId": "b635f546fc6487c4",
+              "flags": 768,
+              "name": "apt-config shell ARCHIVE_KEYRING APT::Key::ArchiveKeyring",
+              "kind": 1,
+              "startTimeUnixNano": "1728781345836671884",
+              "endTimeUnixNano": "1728781345888800331",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "631afd9a2e741e2c",
+              "parentSpanId": "eec2f54188422835",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781345937396118",
+              "endTimeUnixNano": "1728781345953560527",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "0502f435e9c67e46",
+              "parentSpanId": "b635f546fc6487c4",
+              "flags": 768,
+              "name": "apt-config shell REMOVED_KEYS APT::Key::RemovedKeys",
+              "kind": 1,
+              "startTimeUnixNano": "1728781345911803135",
+              "endTimeUnixNano": "1728781345964351727",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "d9f07ddc9119c90b",
+              "parentSpanId": "eec2f54188422835",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781346009804427",
+              "endTimeUnixNano": "1728781346023219187",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "a5fbaec93c1c48fe",
+              "parentSpanId": "b635f546fc6487c4",
+              "flags": 768,
+              "name": "apt-config shell ARCHIVE_KEYRING_URI APT::Key::ArchiveKeyringURI",
+              "kind": 1,
+              "startTimeUnixNano": "1728781345987204221",
+              "endTimeUnixNano": "1728781346031927074",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "6fc64e5c4aaf7412",
+              "parentSpanId": "b635f546fc6487c4",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.Oothcx /tmp/apt.data.8GtFEB",
+              "kind": 1,
+              "startTimeUnixNano": "1728781346051515992",
+              "endTimeUnixNano": "1728781346058892163",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "3cd2468738cb8ea0",
+              "parentSpanId": "eec2f54188422835",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781346101112304",
+              "endTimeUnixNano": "1728781346114263891",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "004d9f0e4fb30b2c",
+              "parentSpanId": "b635f546fc6487c4",
+              "flags": 768,
+              "name": "apt-config shell GPGV Apt::Key::gpgvcommand ASSERT_PUBKEY_ALGO Apt::Key::assert-pubkey-algo",
+              "kind": 1,
+              "startTimeUnixNano": "1728781346078785387",
+              "endTimeUnixNano": "1728781346122838693",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "7d6b7d17325cff7f",
+              "parentSpanId": "eec2f54188422835",
+              "flags": 768,
+              "name": "gpgv --assert-pubkey-algo",
+              "kind": 1,
+              "startTimeUnixNano": "1728781346171801073",
+              "endTimeUnixNano": "1728781346185114469",
+              "status": {
+                "code": 2
+              }
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "4c083b605d70ae80",
+              "parentSpanId": "b635f546fc6487c4",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.Oothcx /tmp/apt.data.8GtFEB",
+              "kind": 1,
+              "startTimeUnixNano": "1728781346144049539",
+              "endTimeUnixNano": "1728781346197456300",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "cf42c4dc7fe2d90f",
+              "parentSpanId": "b635f546fc6487c4",
+              "flags": 768,
+              "name": "mktemp --directory --tmpdir apt-key-gpghome.XXXXXXXXXX",
+              "kind": 1,
+              "startTimeUnixNano": "1728781346220661072",
+              "endTimeUnixNano": "1728781346241170351",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "aac4ea77f7aeb34d",
+              "parentSpanId": "b635f546fc6487c4",
+              "flags": 768,
+              "name": "chmod 700 /tmp/apt-key-gpghome.fSxC8Js7jl",
+              "kind": 1,
+              "startTimeUnixNano": "1728781346273634731",
+              "endTimeUnixNano": "1728781346286993203",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "b13909b48edf1d24",
+              "parentSpanId": "b635f546fc6487c4",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.Oothcx /tmp/apt.data.8GtFEB",
+              "kind": 1,
+              "startTimeUnixNano": "1728781346310743254",
+              "endTimeUnixNano": "1728781346319932147",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "ad8d57a4b1bb2d58",
+              "parentSpanId": "eec2f54188422835",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.Oothcx /tmp/apt.data.8GtFEB",
+              "kind": 1,
+              "startTimeUnixNano": "1728781346358569315",
+              "endTimeUnixNano": "1728781346367831948",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "e51dfdeb4a5b9422",
+              "parentSpanId": "eec2f54188422835",
+              "flags": 768,
+              "name": "sed -e s#'#'\\\"'\\\"'#g",
+              "kind": 1,
+              "startTimeUnixNano": "1728781346381173661",
+              "endTimeUnixNano": "1728781346402218017",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "c1af4f9b72338603",
+              "parentSpanId": "b635f546fc6487c4",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.Oothcx /tmp/apt.data.8GtFEB",
+              "kind": 1,
+              "startTimeUnixNano": "1728781346342347742",
+              "endTimeUnixNano": "1728781346413334323",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "2733535774a0d62f",
+              "parentSpanId": "eec2f54188422835",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.Oothcx /tmp/apt.data.8GtFEB",
+              "kind": 1,
+              "startTimeUnixNano": "1728781346456611423",
+              "endTimeUnixNano": "1728781346467884230",
+              "status": {}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "telemetry.sdk.language",
+            "value": {
+              "stringValue": "shell"
+            }
+          },
+          {
+            "key": "telemetry.sdk.name",
+            "value": {
+              "stringValue": "opentelemetry"
+            }
+          },
+          {
+            "key": "telemetry.sdk.version",
+            "value": {
+              "stringValue": "4.33.0"
+            }
+          },
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "unknown_service"
+            }
+          },
+          {
+            "key": "process.pid",
+            "value": {
+              "intValue": "3581"
+            }
+          },
+          {
+            "key": "process.parent_pid",
+            "value": {
+              "intValue": "3580"
+            }
+          },
+          {
+            "key": "process.executable.name",
+            "value": {
+              "stringValue": "bash"
+            }
+          },
+          {
+            "key": "process.executable.path",
+            "value": {
+              "stringValue": "/usr/bin/bash"
+            }
+          },
+          {
+            "key": "process.command_line",
+            "value": {
+              "stringValue": "sudo apt-get update"
+            }
+          },
+          {
+            "key": "process.command",
+            "value": {
+              "stringValue": "sudo"
+            }
+          },
+          {
+            "key": "process.owner",
+            "value": {
+              "stringValue": "root"
+            }
+          },
+          {
+            "key": "process.runtime.name",
+            "value": {
+              "stringValue": "bash"
+            }
+          },
+          {
+            "key": "process.runtime.description",
+            "value": {
+              "stringValue": "Bourne Again Shell"
+            }
+          },
+          {
+            "key": "process.runtime.version",
+            "value": {
+              "stringValue": "5.2.21-2ubuntu4"
+            }
+          },
+          {
+            "key": "process.runtime.options",
+            "value": {
+              "stringValue": "hBc"
+            }
+          },
+          {
+            "key": "service.version",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "service.namespace",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "service.instance.id",
+            "value": {
+              "stringValue": ""
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "shell",
+            "version": "4.33.0"
+          },
+          "spans": [
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "d1039fbd7a2dc36f",
+              "parentSpanId": "eec2f54188422835",
+              "flags": 768,
+              "name": "sed -e s#'#'\\\"'\\\"'#g",
+              "kind": 1,
+              "startTimeUnixNano": "1728781346483122574",
+              "endTimeUnixNano": "1728781346510599536",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "4efaaa925f87f6e2",
+              "parentSpanId": "b635f546fc6487c4",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.Oothcx /tmp/apt.data.8GtFEB",
+              "kind": 1,
+              "startTimeUnixNano": "1728781346438118978",
+              "endTimeUnixNano": "1728781346522393805",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "1675b1eb302d4d3f",
+              "parentSpanId": "b635f546fc6487c4",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.Oothcx /tmp/apt.data.8GtFEB",
+              "kind": 1,
+              "startTimeUnixNano": "1728781346541962204",
+              "endTimeUnixNano": "1728781346549161464",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "68de812ab35f7f86",
+              "parentSpanId": "b635f546fc6487c4",
+              "flags": 768,
+              "name": "gpgv --assert-pubkey-algo=>=rsa2048,ed25519,ed448 --homedir /tmp/apt-key-gpghome.fSxC8Js7jl --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg --ignore-time-conflict --status-fd 3 /tmp/apt.sig.Oothcx /tmp/apt.data.8GtFEB",
+              "kind": 1,
+              "startTimeUnixNano": "1728781346577015885",
+              "endTimeUnixNano": "1728781346588005965",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "8e69755f1a466d61",
+              "parentSpanId": "eec2f54188422835",
+              "flags": 768,
+              "name": "gpg-connect-agent --homedir /tmp/apt-key-gpghome.fSxC8Js7jl --no-autostart --dirmngr KILLDIRMNGR",
+              "kind": 1,
+              "startTimeUnixNano": "1728781346635737913",
+              "endTimeUnixNano": "1728781346650862397",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "e37c3f8a8dc1c182",
+              "parentSpanId": "eec2f54188422835",
+              "flags": 768,
+              "name": "gpg-connect-agent --homedir /tmp/apt-key-gpghome.fSxC8Js7jl -s --no-autostart GETINFO scd_running /if ${! $?} scd killscd /end",
+              "kind": 1,
+              "startTimeUnixNano": "1728781346673532454",
+              "endTimeUnixNano": "1728781346692106088",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "e76eceb3fb4d9bd0",
+              "parentSpanId": "eec2f54188422835",
+              "flags": 768,
+              "name": "gpg-connect-agent --homedir /tmp/apt-key-gpghome.fSxC8Js7jl --no-autostart KILLAGENT",
+              "kind": 1,
+              "startTimeUnixNano": "1728781346710529163",
+              "endTimeUnixNano": "1728781346727435194",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "345697b28af1705a",
+              "parentSpanId": "eec2f54188422835",
+              "flags": 768,
+              "name": "gpg-connect-agent --no-autostart --keyboxd KILLKEYBOXD --homedir /tmp/apt-key-gpghome.fSxC8Js7jl",
+              "kind": 1,
+              "startTimeUnixNano": "1728781346745002868",
+              "endTimeUnixNano": "1728781346760235960",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "55eed9f4c06b3602",
+              "parentSpanId": "b635f546fc6487c4",
+              "flags": 768,
+              "name": "gpgconf --kill all",
+              "kind": 1,
+              "startTimeUnixNano": "1728781346615341432",
+              "endTimeUnixNano": "1728781346768938349",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "6e3da195dc5f75aa",
+              "parentSpanId": "b635f546fc6487c4",
+              "flags": 768,
+              "name": "rm -rf /tmp/apt-key-gpghome.fSxC8Js7jl",
+              "kind": 1,
+              "startTimeUnixNano": "1728781346796063835",
+              "endTimeUnixNano": "1728781346807057054",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "eec2f54188422835",
+              "parentSpanId": "f512d1be87be2b4c",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg verify --status-fd 3 /tmp/apt.sig.Oothcx /tmp/apt.data.8GtFEB",
+              "kind": 1,
+              "startTimeUnixNano": "1728781345720966653",
+              "endTimeUnixNano": "1728781346817578281",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "b635f546fc6487c4",
+              "parentSpanId": "191300087ec3ebeb",
+              "flags": 768,
+              "name": "/usr/lib/apt/methods/gpgv",
+              "kind": 1,
+              "startTimeUnixNano": "1728781345704209040",
+              "endTimeUnixNano": "1728781346826042928",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "87a820391995cd15",
+              "parentSpanId": "488f29d592473b74",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /etc/apt/keyrings/microsoft.gpg verify --status-fd 3 /tmp/apt.sig.djfYn8 /tmp/apt.data.5YveHq",
+              "kind": 1,
+              "startTimeUnixNano": "1728781346892209911",
+              "endTimeUnixNano": "1728781346900540140",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "bc06ce9ae0fda7c1",
+              "parentSpanId": "310de4fff5e88928",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781346947444898",
+              "endTimeUnixNano": "1728781346962650387",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "e71320c1fcac97b0",
+              "parentSpanId": "488f29d592473b74",
+              "flags": 768,
+              "name": "apt-config shell MASTER_KEYRING APT::Key::MasterKeyring",
+              "kind": 1,
+              "startTimeUnixNano": "1728781346923492725",
+              "endTimeUnixNano": "1728781346973172100",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "6f8c2aef540f3b76",
+              "parentSpanId": "310de4fff5e88928",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781347026541677",
+              "endTimeUnixNano": "1728781347034696028",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "918a84244b60cf58",
+              "parentSpanId": "488f29d592473b74",
+              "flags": 768,
+              "name": "apt-config shell ARCHIVE_KEYRING APT::Key::ArchiveKeyring",
+              "kind": 1,
+              "startTimeUnixNano": "1728781346994039830",
+              "endTimeUnixNano": "1728781347044090286",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "cdb3e7a28c0bd1a0",
+              "parentSpanId": "310de4fff5e88928",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781347090014605",
+              "endTimeUnixNano": "1728781347104459030",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "238132e0356212dc",
+              "parentSpanId": "488f29d592473b74",
+              "flags": 768,
+              "name": "apt-config shell REMOVED_KEYS APT::Key::RemovedKeys",
+              "kind": 1,
+              "startTimeUnixNano": "1728781347066299813",
+              "endTimeUnixNano": "1728781347114217819",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "ffd3c0a9cab5b5e6",
+              "parentSpanId": "310de4fff5e88928",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781347159518394",
+              "endTimeUnixNano": "1728781347174573516",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "a99bc3ad6d89623a",
+              "parentSpanId": "488f29d592473b74",
+              "flags": 768,
+              "name": "apt-config shell ARCHIVE_KEYRING_URI APT::Key::ArchiveKeyringURI",
+              "kind": 1,
+              "startTimeUnixNano": "1728781347135139529",
+              "endTimeUnixNano": "1728781347184339009",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "1d0aa57418cf0f08",
+              "parentSpanId": "488f29d592473b74",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /etc/apt/keyrings/microsoft.gpg verify --status-fd 3 /tmp/apt.sig.djfYn8 /tmp/apt.data.5YveHq",
+              "kind": 1,
+              "startTimeUnixNano": "1728781347205820531",
+              "endTimeUnixNano": "1728781347213629256",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "1c02ba0ccec36c67",
+              "parentSpanId": "310de4fff5e88928",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781347259688318",
+              "endTimeUnixNano": "1728781347274718967",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "9b6dd5c2b048f3c4",
+              "parentSpanId": "488f29d592473b74",
+              "flags": 768,
+              "name": "apt-config shell GPGV Apt::Key::gpgvcommand ASSERT_PUBKEY_ALGO Apt::Key::assert-pubkey-algo",
+              "kind": 1,
+              "startTimeUnixNano": "1728781347234709772",
+              "endTimeUnixNano": "1728781347284265218",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "564ffaf8f5555b3d",
+              "parentSpanId": "310de4fff5e88928",
+              "flags": 768,
+              "name": "gpgv --assert-pubkey-algo",
+              "kind": 1,
+              "startTimeUnixNano": "1728781347331432332",
+              "endTimeUnixNano": "1728781347343459392",
+              "status": {
+                "code": 2
+              }
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "66710e4058d468af",
+              "parentSpanId": "488f29d592473b74",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /etc/apt/keyrings/microsoft.gpg verify --status-fd 3 /tmp/apt.sig.djfYn8 /tmp/apt.data.5YveHq",
+              "kind": 1,
+              "startTimeUnixNano": "1728781347305804036",
+              "endTimeUnixNano": "1728781347354686023",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "b977b82048648066",
+              "parentSpanId": "488f29d592473b74",
+              "flags": 768,
+              "name": "mktemp --directory --tmpdir apt-key-gpghome.XXXXXXXXXX",
+              "kind": 1,
+              "startTimeUnixNano": "1728781347375556731",
+              "endTimeUnixNano": "1728781347394090323",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "5775c0cb6ff5dad9",
+              "parentSpanId": "488f29d592473b74",
+              "flags": 768,
+              "name": "chmod 700 /tmp/apt-key-gpghome.H0FKDbHUjA",
+              "kind": 1,
+              "startTimeUnixNano": "1728781347422972407",
+              "endTimeUnixNano": "1728781347435124675",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "974fbebf819b0986",
+              "parentSpanId": "488f29d592473b74",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /etc/apt/keyrings/microsoft.gpg verify --status-fd 3 /tmp/apt.sig.djfYn8 /tmp/apt.data.5YveHq",
+              "kind": 1,
+              "startTimeUnixNano": "1728781347455994738",
+              "endTimeUnixNano": "1728781347463956368",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "493710dbcd67b45c",
+              "parentSpanId": "310de4fff5e88928",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /etc/apt/keyrings/microsoft.gpg verify --status-fd 3 /tmp/apt.sig.djfYn8 /tmp/apt.data.5YveHq",
+              "kind": 1,
+              "startTimeUnixNano": "1728781347502062166",
+              "endTimeUnixNano": "1728781347512338127",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "a783d785adfe08b2",
+              "parentSpanId": "310de4fff5e88928",
+              "flags": 768,
+              "name": "sed -e s#'#'\\\"'\\\"'#g",
+              "kind": 1,
+              "startTimeUnixNano": "1728781347526483845",
+              "endTimeUnixNano": "1728781347550430287",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "da33351ac1f355b7",
+              "parentSpanId": "488f29d592473b74",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /etc/apt/keyrings/microsoft.gpg verify --status-fd 3 /tmp/apt.sig.djfYn8 /tmp/apt.data.5YveHq",
+              "kind": 1,
+              "startTimeUnixNano": "1728781347485001167",
+              "endTimeUnixNano": "1728781347562505831",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "34807864ba6c4bb5",
+              "parentSpanId": "310de4fff5e88928",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /etc/apt/keyrings/microsoft.gpg verify --status-fd 3 /tmp/apt.sig.djfYn8 /tmp/apt.data.5YveHq",
+              "kind": 1,
+              "startTimeUnixNano": "1728781347601051880",
+              "endTimeUnixNano": "1728781347611366452",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "ed2153c39bd58303",
+              "parentSpanId": "310de4fff5e88928",
+              "flags": 768,
+              "name": "sed -e s#'#'\\\"'\\\"'#g",
+              "kind": 1,
+              "startTimeUnixNano": "1728781347626260865",
+              "endTimeUnixNano": "1728781347650118393",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "b752ae548e62fb5e",
+              "parentSpanId": "488f29d592473b74",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /etc/apt/keyrings/microsoft.gpg verify --status-fd 3 /tmp/apt.sig.djfYn8 /tmp/apt.data.5YveHq",
+              "kind": 1,
+              "startTimeUnixNano": "1728781347583400473",
+              "endTimeUnixNano": "1728781347662159191",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "63d0b52d4c59d086",
+              "parentSpanId": "488f29d592473b74",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /etc/apt/keyrings/microsoft.gpg verify --status-fd 3 /tmp/apt.sig.djfYn8 /tmp/apt.data.5YveHq",
+              "kind": 1,
+              "startTimeUnixNano": "1728781347683163585",
+              "endTimeUnixNano": "1728781347691166389",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "8fafe6fc7adf1a44",
+              "parentSpanId": "488f29d592473b74",
+              "flags": 768,
+              "name": "gpgv --assert-pubkey-algo=>=rsa2048,ed25519,ed448 --homedir /tmp/apt-key-gpghome.H0FKDbHUjA --keyring /etc/apt/keyrings/microsoft.gpg --ignore-time-conflict --status-fd 3 /tmp/apt.sig.djfYn8 /tmp/apt.data.5YveHq",
+              "kind": 1,
+              "startTimeUnixNano": "1728781347721883925",
+              "endTimeUnixNano": "1728781347734748557",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "3b1d7aa0b7dbe7c9",
+              "parentSpanId": "310de4fff5e88928",
+              "flags": 768,
+              "name": "gpg-connect-agent --homedir /tmp/apt-key-gpghome.H0FKDbHUjA --no-autostart --dirmngr KILLDIRMNGR",
+              "kind": 1,
+              "startTimeUnixNano": "1728781347788796984",
+              "endTimeUnixNano": "1728781347805070828",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "904cae467f5d65db",
+              "parentSpanId": "310de4fff5e88928",
+              "flags": 768,
+              "name": "gpg-connect-agent --homedir /tmp/apt-key-gpghome.H0FKDbHUjA -s --no-autostart GETINFO scd_running /if ${! $?} scd killscd /end",
+              "kind": 1,
+              "startTimeUnixNano": "1728781347824120870",
+              "endTimeUnixNano": "1728781347840765303",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "af306d4e9835f76c",
+              "parentSpanId": "310de4fff5e88928",
+              "flags": 768,
+              "name": "gpg-connect-agent --homedir /tmp/apt-key-gpghome.H0FKDbHUjA --no-autostart KILLAGENT",
+              "kind": 1,
+              "startTimeUnixNano": "1728781347860106568",
+              "endTimeUnixNano": "1728781347876498924",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "14732c3efa8693d1",
+              "parentSpanId": "310de4fff5e88928",
+              "flags": 768,
+              "name": "gpg-connect-agent --no-autostart --keyboxd KILLKEYBOXD --homedir /tmp/apt-key-gpghome.H0FKDbHUjA",
+              "kind": 1,
+              "startTimeUnixNano": "1728781347893933065",
+              "endTimeUnixNano": "1728781347909036648",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "e66435bb24816be4",
+              "parentSpanId": "488f29d592473b74",
+              "flags": 768,
+              "name": "gpgconf --kill all",
+              "kind": 1,
+              "startTimeUnixNano": "1728781347766121207",
+              "endTimeUnixNano": "1728781347917658375",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "7eff8b80afb2356a",
+              "parentSpanId": "488f29d592473b74",
+              "flags": 768,
+              "name": "rm -rf /tmp/apt-key-gpghome.H0FKDbHUjA",
+              "kind": 1,
+              "startTimeUnixNano": "1728781347945382510",
+              "endTimeUnixNano": "1728781347957003203",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "310de4fff5e88928",
+              "parentSpanId": "f512d1be87be2b4c",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /etc/apt/keyrings/microsoft.gpg verify --status-fd 3 /tmp/apt.sig.djfYn8 /tmp/apt.data.5YveHq",
+              "kind": 1,
+              "startTimeUnixNano": "1728781346864674332",
+              "endTimeUnixNano": "1728781347967620030",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "488f29d592473b74",
+              "parentSpanId": "191300087ec3ebeb",
+              "flags": 768,
+              "name": "/usr/lib/apt/methods/gpgv",
+              "kind": 1,
+              "startTimeUnixNano": "1728781346844336131",
+              "endTimeUnixNano": "1728781347976330675",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "ec76eee6658a71bd",
+              "parentSpanId": "8045acd958f20610",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/microsoft-prod.gpg verify --status-fd 3 /tmp/apt.sig.4pB8uJ /tmp/apt.data.NEqBEW",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348035054736",
+              "endTimeUnixNano": "1728781348042524607",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "01ea58ae34f1cced",
+              "parentSpanId": "dda47d0dc606fb3d",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348086438428",
+              "endTimeUnixNano": "1728781348099921870",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "04067aa0a752514c",
+              "parentSpanId": "8045acd958f20610",
+              "flags": 768,
+              "name": "apt-config shell MASTER_KEYRING APT::Key::MasterKeyring",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348062809093",
+              "endTimeUnixNano": "1728781348108659315",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "64ad7435a8774a6c",
+              "parentSpanId": "dda47d0dc606fb3d",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348151018757",
+              "endTimeUnixNano": "1728781348164383888",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "a54892ea674ec7fa",
+              "parentSpanId": "8045acd958f20610",
+              "flags": 768,
+              "name": "apt-config shell ARCHIVE_KEYRING APT::Key::ArchiveKeyring",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348128509742",
+              "endTimeUnixNano": "1728781348173642016",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "532b7fd9950a2252",
+              "parentSpanId": "dda47d0dc606fb3d",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348216495234",
+              "endTimeUnixNano": "1728781348229699251",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "dc0e7b7b5b050b01",
+              "parentSpanId": "8045acd958f20610",
+              "flags": 768,
+              "name": "apt-config shell REMOVED_KEYS APT::Key::RemovedKeys",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348194183758",
+              "endTimeUnixNano": "1728781348238331169",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "a0bbc0f2ce01fbc4",
+              "parentSpanId": "dda47d0dc606fb3d",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348280418352",
+              "endTimeUnixNano": "1728781348293455647",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "d90a1f75d2af459d",
+              "parentSpanId": "8045acd958f20610",
+              "flags": 768,
+              "name": "apt-config shell ARCHIVE_KEYRING_URI APT::Key::ArchiveKeyringURI",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348257734661",
+              "endTimeUnixNano": "1728781348301888091",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "8898d0b514f82a48",
+              "parentSpanId": "8045acd958f20610",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/microsoft-prod.gpg verify --status-fd 3 /tmp/apt.sig.4pB8uJ /tmp/apt.data.NEqBEW",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348321231944",
+              "endTimeUnixNano": "1728781348328439209",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "7e5a63364e39885c",
+              "parentSpanId": "dda47d0dc606fb3d",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348370297486",
+              "endTimeUnixNano": "1728781348383177579",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "2acbaa8d31a24775",
+              "parentSpanId": "8045acd958f20610",
+              "flags": 768,
+              "name": "apt-config shell GPGV Apt::Key::gpgvcommand ASSERT_PUBKEY_ALGO Apt::Key::assert-pubkey-algo",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348348158241",
+              "endTimeUnixNano": "1728781348391626827",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "e9a21404a1cb5fd2",
+              "parentSpanId": "dda47d0dc606fb3d",
+              "flags": 768,
+              "name": "gpgv --assert-pubkey-algo",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348434896431",
+              "endTimeUnixNano": "1728781348446061498",
+              "status": {
+                "code": 2
+              }
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "321b91f4cfb56cab",
+              "parentSpanId": "8045acd958f20610",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/microsoft-prod.gpg verify --status-fd 3 /tmp/apt.sig.4pB8uJ /tmp/apt.data.NEqBEW",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348411003067",
+              "endTimeUnixNano": "1728781348456507874",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "92519de7ea760f12",
+              "parentSpanId": "8045acd958f20610",
+              "flags": 768,
+              "name": "mktemp --directory --tmpdir apt-key-gpghome.XXXXXXXXXX",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348476001225",
+              "endTimeUnixNano": "1728781348493241729",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "30ad48e1cd833466",
+              "parentSpanId": "8045acd958f20610",
+              "flags": 768,
+              "name": "chmod 700 /tmp/apt-key-gpghome.NhkgIxJpTr",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348520534347",
+              "endTimeUnixNano": "1728781348531767661",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "33906f3847e851eb",
+              "parentSpanId": "8045acd958f20610",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/microsoft-prod.gpg verify --status-fd 3 /tmp/apt.sig.4pB8uJ /tmp/apt.data.NEqBEW",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348551567188",
+              "endTimeUnixNano": "1728781348559098407",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "465fc9d442d94fa0",
+              "parentSpanId": "dda47d0dc606fb3d",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/microsoft-prod.gpg verify --status-fd 3 /tmp/apt.sig.4pB8uJ /tmp/apt.data.NEqBEW",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348594684772",
+              "endTimeUnixNano": "1728781348625742403",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "50398d78a84082cd",
+              "parentSpanId": "dda47d0dc606fb3d",
+              "flags": 768,
+              "name": "sed -e s#'#'\\\"'\\\"'#g",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348610619795",
+              "endTimeUnixNano": "1728781348638182785",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "c077d8df3acabeeb",
+              "parentSpanId": "8045acd958f20610",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/microsoft-prod.gpg verify --status-fd 3 /tmp/apt.sig.4pB8uJ /tmp/apt.data.NEqBEW",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348578592018",
+              "endTimeUnixNano": "1728781348648639791",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "fd8218c510826b9e",
+              "parentSpanId": "dda47d0dc606fb3d",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/microsoft-prod.gpg verify --status-fd 3 /tmp/apt.sig.4pB8uJ /tmp/apt.data.NEqBEW",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348684194787",
+              "endTimeUnixNano": "1728781348695604099",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "4fd469b014ab0305",
+              "parentSpanId": "dda47d0dc606fb3d",
+              "flags": 768,
+              "name": "sed -e s#'#'\\\"'\\\"'#g",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348709257331",
+              "endTimeUnixNano": "1728781348728346277",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "54ed55961b9707a5",
+              "parentSpanId": "8045acd958f20610",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/microsoft-prod.gpg verify --status-fd 3 /tmp/apt.sig.4pB8uJ /tmp/apt.data.NEqBEW",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348667781165",
+              "endTimeUnixNano": "1728781348738776855",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "c72b33c85e1770a9",
+              "parentSpanId": "8045acd958f20610",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/microsoft-prod.gpg verify --status-fd 3 /tmp/apt.sig.4pB8uJ /tmp/apt.data.NEqBEW",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348758178986",
+              "endTimeUnixNano": "1728781348765360223",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "ab81f8cf34ebc989",
+              "parentSpanId": "8045acd958f20610",
+              "flags": 768,
+              "name": "gpgv --assert-pubkey-algo=>=rsa2048,ed25519,ed448 --homedir /tmp/apt-key-gpghome.NhkgIxJpTr --keyring /usr/share/keyrings/microsoft-prod.gpg --ignore-time-conflict --status-fd 3 /tmp/apt.sig.4pB8uJ /tmp/apt.data.NEqBEW",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348792648289",
+              "endTimeUnixNano": "1728781348803816221",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "d843c1f06dcb2555",
+              "parentSpanId": "dda47d0dc606fb3d",
+              "flags": 768,
+              "name": "gpg-connect-agent --homedir /tmp/apt-key-gpghome.NhkgIxJpTr --no-autostart --dirmngr KILLDIRMNGR",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348853502987",
+              "endTimeUnixNano": "1728781348869244683",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "367054a949ec4225",
+              "parentSpanId": "dda47d0dc606fb3d",
+              "flags": 768,
+              "name": "gpg-connect-agent --homedir /tmp/apt-key-gpghome.NhkgIxJpTr -s --no-autostart GETINFO scd_running /if ${! $?} scd killscd /end",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348887181489",
+              "endTimeUnixNano": "1728781348902624065",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "fcaf172a514e05fe",
+              "parentSpanId": "dda47d0dc606fb3d",
+              "flags": 768,
+              "name": "gpg-connect-agent --homedir /tmp/apt-key-gpghome.NhkgIxJpTr --no-autostart KILLAGENT",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348920443298",
+              "endTimeUnixNano": "1728781348935643368",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "2da28dc1abdf8357",
+              "parentSpanId": "dda47d0dc606fb3d",
+              "flags": 768,
+              "name": "gpg-connect-agent --no-autostart --keyboxd KILLKEYBOXD --homedir /tmp/apt-key-gpghome.NhkgIxJpTr",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348953423517",
+              "endTimeUnixNano": "1728781348968703127",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "62c1562fb5093230",
+              "parentSpanId": "8045acd958f20610",
+              "flags": 768,
+              "name": "gpgconf --kill all",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348832876842",
+              "endTimeUnixNano": "1728781348977387563",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "d9588d261d993562",
+              "parentSpanId": "8045acd958f20610",
+              "flags": 768,
+              "name": "rm -rf /tmp/apt-key-gpghome.NhkgIxJpTr",
+              "kind": 1,
+              "startTimeUnixNano": "1728781349004885373",
+              "endTimeUnixNano": "1728781349015772022",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "dda47d0dc606fb3d",
+              "parentSpanId": "f512d1be87be2b4c",
+              "flags": 768,
+              "name": "/usr/bin/apt-key --quiet --readonly --keyring /usr/share/keyrings/microsoft-prod.gpg verify --status-fd 3 /tmp/apt.sig.4pB8uJ /tmp/apt.data.NEqBEW",
+              "kind": 1,
+              "startTimeUnixNano": "1728781348010675145",
+              "endTimeUnixNano": "1728781349026161884",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "8045acd958f20610",
+              "parentSpanId": "191300087ec3ebeb",
+              "flags": 768,
+              "name": "/usr/lib/apt/methods/gpgv",
+              "kind": 1,
+              "startTimeUnixNano": "1728781347994193235",
+              "endTimeUnixNano": "1728781349034462075",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "f512d1be87be2b4c",
+              "parentSpanId": "191300087ec3ebeb",
+              "flags": 768,
+              "name": "/usr/lib/apt/methods/gpgv",
+              "kind": 1,
+              "startTimeUnixNano": "1728781342201994754",
+              "endTimeUnixNano": "1728781349046121743",
+              "status": {
+                "code": 2
+              }
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "f02fc350bb1342d6",
+              "parentSpanId": "191300087ec3ebeb",
+              "flags": 768,
+              "name": "/usr/lib/apt/methods/http",
+              "kind": 1,
+              "startTimeUnixNano": "1728781342108448346",
+              "endTimeUnixNano": "1728781349060547001",
+              "status": {
+                "code": 2
+              }
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "8e72026cb4f77eb3",
+              "parentSpanId": "191300087ec3ebeb",
+              "flags": 768,
+              "name": "/usr/lib/apt/methods/https",
+              "kind": 1,
+              "startTimeUnixNano": "1728781342133957544",
+              "endTimeUnixNano": "1728781349074825908",
+              "status": {
+                "code": 2
+              }
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "32d8d9a97f3e0033",
+              "parentSpanId": "524bd4e262335214",
+              "flags": 768,
+              "name": "touch /var/lib/apt/periodic/update-success-stamp",
+              "kind": 1,
+              "startTimeUnixNano": "1728781349145722623",
+              "endTimeUnixNano": "1728781349156752385",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "3b00294733bceb8e",
+              "parentSpanId": "191300087ec3ebeb",
+              "flags": 768,
+              "name": "sh -c -- touch /var/lib/apt/periodic/update-success-stamp 2>/dev/null || true",
+              "kind": 1,
+              "startTimeUnixNano": "1728781349118139708",
+              "endTimeUnixNano": "1728781349167108067",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "a079cef5f70ab16c",
+              "parentSpanId": "524bd4e262335214",
+              "flags": 768,
+              "name": "/usr/bin/test -e /usr/share/dbus-1/system-services/org.freedesktop.PackageKit.service",
+              "kind": 1,
+              "startTimeUnixNano": "1728781349220210776",
+              "endTimeUnixNano": "1728781349231346007",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "2c94ca27ab82c168",
+              "parentSpanId": "524bd4e262335214",
+              "flags": 768,
+              "name": "/usr/bin/test -S /var/run/dbus/system_bus_socket",
+              "kind": 1,
+              "startTimeUnixNano": "1728781349258284056",
+              "endTimeUnixNano": "1728781349269481954",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "adc567d22f81e279",
+              "parentSpanId": "08444288bda6610c",
+              "flags": 768,
+              "name": "/usr/bin/gdbus call --system --dest org.freedesktop.PackageKit --object-path /org/freedesktop/PackageKit --timeout 4 --method org.freedesktop.PackageKit.StateHasChanged cache-update",
+              "kind": 1,
+              "startTimeUnixNano": "1728781349350545909",
+              "endTimeUnixNano": "1728781349357815749",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "08a31212feb0a58f",
+              "parentSpanId": "08444288bda6610c",
+              "flags": 768,
+              "name": "/usr/bin/gdbus call --system --dest org.freedesktop.PackageKit --object-path /org/freedesktop/PackageKit --timeout 4 --method org.freedesktop.PackageKit.StateHasChanged cache-update",
+              "kind": 1,
+              "startTimeUnixNano": "1728781349317903588",
+              "endTimeUnixNano": "1728781349360436010",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "34f1099a1d397e54",
+              "parentSpanId": "08444288bda6610c",
+              "flags": 768,
+              "name": "/usr/bin/gdbus call --system --dest org.freedesktop.PackageKit --object-path /org/freedesktop/PackageKit --timeout 4 --method org.freedesktop.PackageKit.StateHasChanged cache-update",
+              "kind": 1,
+              "startTimeUnixNano": "1728781349334263239",
+              "endTimeUnixNano": "1728781349363093369",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "15b2e07e64b937a0",
+              "parentSpanId": "524bd4e262335214",
+              "flags": 768,
+              "name": "/usr/bin/gdbus call --system --dest org.freedesktop.PackageKit --object-path /org/freedesktop/PackageKit --timeout 4 --method org.freedesktop.PackageKit.StateHasChanged cache-update",
+              "kind": 1,
+              "startTimeUnixNano": "1728781349297456853",
+              "endTimeUnixNano": "1728781349365691110",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "9a2945a32bb695e5",
+              "parentSpanId": "524bd4e262335214",
+              "flags": 768,
+              "name": "/bin/echo",
+              "kind": 1,
+              "startTimeUnixNano": "1728781349392824259",
+              "endTimeUnixNano": "1728781349403844857",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "08444288bda6610c",
+              "parentSpanId": "191300087ec3ebeb",
+              "flags": 768,
+              "name": "sh -c -- /usr/bin/test -e /usr/share/dbus-1/system-services/org.freedesktop.PackageKit.service && /usr/bin/test -S /var/run/dbus/system_bus_socket && /usr/bin/gdbus call --system --dest org.freedesktop.PackageKit --object-path /org/freedesktop/PackageKit --timeout 4 --method org.freedesktop.PackageKit.StateHasChanged cache-update > /dev/null; /bin/echo > /dev/null",
+              "kind": 1,
+              "startTimeUnixNano": "1728781349192437106",
+              "endTimeUnixNano": "1728781349414362878",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "203ba6f648872a51",
+              "parentSpanId": "524bd4e262335214",
+              "flags": 768,
+              "name": "/usr/bin/test -w /var/cache/swcatalog -a -e /usr/bin/appstreamcli",
+              "kind": 1,
+              "startTimeUnixNano": "1728781349468116282",
+              "endTimeUnixNano": "1728781349479251884",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "6bf876aa8c13f981",
+              "parentSpanId": "6f64325811da097a",
+              "flags": 768,
+              "name": "appstreamcli refresh --source=os",
+              "kind": 1,
+              "startTimeUnixNano": "1728781349527727948",
+              "endTimeUnixNano": "1728781349534893525",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "34150777010110c2",
+              "parentSpanId": "524bd4e262335214",
+              "flags": 768,
+              "name": "appstreamcli refresh --source=os",
+              "kind": 1,
+              "startTimeUnixNano": "1728781349506931820",
+              "endTimeUnixNano": "1728781349537572173",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "6f64325811da097a",
+              "parentSpanId": "191300087ec3ebeb",
+              "flags": 768,
+              "name": "sh -c -- if /usr/bin/test -w /var/cache/swcatalog -a -e /usr/bin/appstreamcli; then appstreamcli refresh --source=os > /dev/null || true; fi",
+              "kind": 1,
+              "startTimeUnixNano": "1728781349439852084",
+              "endTimeUnixNano": "1728781349548291010",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "b063bb0f70f7bef6",
+              "parentSpanId": "524bd4e262335214",
+              "flags": 768,
+              "name": "/usr/bin/test -w /var/lib/command-not-found/ -a -e /usr/lib/cnf-update-db",
+              "kind": 1,
+              "startTimeUnixNano": "1728781349601553878",
+              "endTimeUnixNano": "1728781349612768497",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "f02af326fecb7f69",
+              "parentSpanId": "7d2e4b0f88853180",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --force-confdef --force-confold --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781349659631087",
+              "endTimeUnixNano": "1728781349672833759",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "6a258e9a057645d8",
+              "parentSpanId": "524bd4e262335214",
+              "flags": 768,
+              "name": "/usr/lib/cnf-update-db",
+              "kind": 1,
+              "startTimeUnixNano": "1728781349639731196",
+              "endTimeUnixNano": "1728781349681433578",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "7d2e4b0f88853180",
+              "parentSpanId": "191300087ec3ebeb",
+              "flags": 768,
+              "name": "sh -c -- if /usr/bin/test -w /var/lib/command-not-found/ -a -e /usr/lib/cnf-update-db; then /usr/lib/cnf-update-db > /dev/null; fi",
+              "kind": 1,
+              "startTimeUnixNano": "1728781349573715946",
+              "endTimeUnixNano": "1728781349692040934",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "7b26026113ea35a9",
+              "parentSpanId": "5ff7f0ca475e0230",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781349787765706",
+              "endTimeUnixNano": "1728781349800849596",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "45e7fa78c2213e01",
+              "parentSpanId": "e3c14b3b6c7bf6f5",
+              "flags": 768,
+              "name": "apt-config shell StateDir Dir::State",
+              "kind": 1,
+              "startTimeUnixNano": "1728781349765732205",
+              "endTimeUnixNano": "1728781349809514664",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "37097e5321758b64",
+              "parentSpanId": "5ff7f0ca475e0230",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781349850649586",
+              "endTimeUnixNano": "1728781349863661591",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "0f4a7e56d3c98a3f",
+              "parentSpanId": "e3c14b3b6c7bf6f5",
+              "flags": 768,
+              "name": "apt-config shell ListDir Dir::State::Lists",
+              "kind": 1,
+              "startTimeUnixNano": "1728781349828862685",
+              "endTimeUnixNano": "1728781349872205936",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "20ba97c4b95d6fa0",
+              "parentSpanId": "5ff7f0ca475e0230",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781349913430863",
+              "endTimeUnixNano": "1728781349926940307",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "639f496976c389fd",
+              "parentSpanId": "e3c14b3b6c7bf6f5",
+              "flags": 768,
+              "name": "apt-config shell DpkgStatus Dir::State::status",
+              "kind": 1,
+              "startTimeUnixNano": "1728781349891723262",
+              "endTimeUnixNano": "1728781349935389578",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "9734ea8f6085f658",
+              "parentSpanId": "5ff7f0ca475e0230",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781349976617453",
+              "endTimeUnixNano": "1728781349989568245",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "3ebfcf4cb5a723fa",
+              "parentSpanId": "e3c14b3b6c7bf6f5",
+              "flags": 768,
+              "name": "apt-config shell EtcDir Dir::Etc",
+              "kind": 1,
+              "startTimeUnixNano": "1728781349954653932",
+              "endTimeUnixNano": "1728781349997926834",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "fe9a63fd2f081551",
+              "parentSpanId": "5ff7f0ca475e0230",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781350039318000",
+              "endTimeUnixNano": "1728781350052434782",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "49964a6e82efe07b",
+              "parentSpanId": "e3c14b3b6c7bf6f5",
+              "flags": 768,
+              "name": "apt-config shell SourceList Dir::Etc::sourcelist",
+              "kind": 1,
+              "startTimeUnixNano": "1728781350017307825",
+              "endTimeUnixNano": "1728781350060818858",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "b0823f797a6bf13f",
+              "parentSpanId": "e3c14b3b6c7bf6f5",
+              "flags": 768,
+              "name": "find /var/lib/apt/lists/ /etc/apt/sources.list //var/lib/dpkg/status -type f -newer /var/lib/update-notifier/updates-available -print -quit",
+              "kind": 1,
+              "startTimeUnixNano": "1728781350080481100",
+              "endTimeUnixNano": "1728781350097650042",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "65da6576125d5895",
+              "parentSpanId": "5ff7f0ca475e0230",
+              "flags": 768,
+              "name": "dirname /var/lib/update-notifier/updates-available",
+              "kind": 1,
+              "startTimeUnixNano": "1728781350134053730",
+              "endTimeUnixNano": "1728781350148970334",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "ae576f65bfd5130e",
+              "parentSpanId": "e3c14b3b6c7bf6f5",
+              "flags": 768,
+              "name": "mktemp -p /var/lib/update-notifier",
+              "kind": 1,
+              "startTimeUnixNano": "1728781350117671677",
+              "endTimeUnixNano": "1728781350169470476",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "225c3b67b23973d3",
+              "parentSpanId": "e3c14b3b6c7bf6f5",
+              "flags": 768,
+              "name": "rm -f /var/lib/update-notifier/tmp.yd2j0lBZHX",
+              "kind": 1,
+              "startTimeUnixNano": "1728781350196826353",
+              "endTimeUnixNano": "1728781350207831993",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "5ff7f0ca475e0230",
+              "parentSpanId": "524bd4e262335214",
+              "flags": 768,
+              "name": "/usr/lib/update-notifier/update-motd-updates-available",
+              "kind": 1,
+              "startTimeUnixNano": "1728781349745535125",
+              "endTimeUnixNano": "1728781350218210384",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "e3c14b3b6c7bf6f5",
+              "parentSpanId": "191300087ec3ebeb",
+              "flags": 768,
+              "name": "sh -c -- /usr/lib/update-notifier/update-motd-updates-available 2>/dev/null || true",
+              "kind": 1,
+              "startTimeUnixNano": "1728781349717464852",
+              "endTimeUnixNano": "1728781350228800722",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "524bd4e262335214",
+              "parentSpanId": "191300087ec3ebeb",
+              "flags": 768,
+              "name": "apt-get update",
+              "kind": 1,
+              "startTimeUnixNano": "1728781349092319602",
+              "endTimeUnixNano": "1728781350237472964",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "eff38a130f6f76b6",
+              "parentSpanId": "191300087ec3ebeb",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781350254893584",
+              "endTimeUnixNano": "1728781350267987652",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "45af1a4611166eb9",
+              "parentSpanId": "191300087ec3ebeb",
+              "flags": 768,
+              "name": "/usr/bin/dpkg --force-confdef --force-confold --print-foreign-architectures",
+              "kind": 1,
+              "startTimeUnixNano": "1728781350286131548",
+              "endTimeUnixNano": "1728781350299307520",
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "191300087ec3ebeb",
+              "parentSpanId": "db3970b928c82404",
+              "flags": 768,
+              "name": "apt-get update",
+              "kind": 1,
+              "startTimeUnixNano": "1728781341503486162",
+              "endTimeUnixNano": "1728781350311251790",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "apt-get update"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "apt-get"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "apt-get"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/apt-get"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "apt-get"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.lineno",
+                  "value": {
+                    "intValue": "2"
+                  }
+                }
+              ],
+              "status": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "telemetry.sdk.language",
+            "value": {
+              "stringValue": "shell"
+            }
+          },
+          {
+            "key": "telemetry.sdk.name",
+            "value": {
+              "stringValue": "opentelemetry"
+            }
+          },
+          {
+            "key": "telemetry.sdk.version",
+            "value": {
+              "stringValue": "4.33.0"
+            }
+          },
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "unknown_service"
+            }
+          },
+          {
+            "key": "github.sha",
+            "value": {
+              "stringValue": "dffa5fbd2adad80570ea4f2918913939a98fc807"
+            }
+          },
+          {
+            "key": "github.repository.id",
+            "value": {
+              "stringValue": "692042935"
+            }
+          },
+          {
+            "key": "github.repository.name",
+            "value": {
+              "stringValue": "plengauer/opentelemetry-bash"
+            }
+          },
+          {
+            "key": "github.repository.owner.id",
+            "value": {
+              "stringValue": "100447901"
+            }
+          },
+          {
+            "key": "github.repository.owner.name",
+            "value": {
+              "stringValue": "plengauer"
+            }
+          },
+          {
+            "key": "github.event.ref",
+            "value": {
+              "stringValue": "refs/heads/main"
+            }
+          },
+          {
+            "key": "github.event.ref.sha",
+            "value": {
+              "stringValue": "dffa5fbd2adad80570ea4f2918913939a98fc807"
+            }
+          },
+          {
+            "key": "github.event.ref.name",
+            "value": {
+              "stringValue": "main"
+            }
+          },
+          {
+            "key": "github.event.actor.id",
+            "value": {
+              "stringValue": "170979611"
+            }
+          },
+          {
+            "key": "github.event.actor.name",
+            "value": {
+              "stringValue": "actions-bot-pl"
+            }
+          },
+          {
+            "key": "github.event.name",
+            "value": {
+              "stringValue": "push"
+            }
+          },
+          {
+            "key": "github.workflow.run.id",
+            "value": {
+              "stringValue": "11309490439"
+            }
+          },
+          {
+            "key": "github.workflow.run.attempt",
+            "value": {
+              "stringValue": "1"
+            }
+          },
+          {
+            "key": "github.workflow.ref",
+            "value": {
+              "stringValue": "plengauer/opentelemetry-bash/.github/workflows/publish_main.yaml@refs/heads/main"
+            }
+          },
+          {
+            "key": "github.workflow.sha",
+            "value": {
+              "stringValue": "dffa5fbd2adad80570ea4f2918913939a98fc807"
+            }
+          },
+          {
+            "key": "github.workflow.name",
+            "value": {
+              "stringValue": "Publish"
+            }
+          },
+          {
+            "key": "github.job.name",
+            "value": {
+              "stringValue": "demo-generate"
+            }
+          },
+          {
+            "key": "github.step.name",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "github.action.name",
+            "value": {
+              "stringValue": "demo"
+            }
+          },
+          {
+            "key": "process.pid",
+            "value": {
+              "intValue": "2811"
+            }
+          },
+          {
+            "key": "process.parent_pid",
+            "value": {
+              "intValue": "2716"
+            }
+          },
+          {
+            "key": "process.executable.name",
+            "value": {
+              "stringValue": "bash"
+            }
+          },
+          {
+            "key": "process.executable.path",
+            "value": {
+              "stringValue": "/usr/bin/bash"
+            }
+          },
+          {
+            "key": "process.command_line",
+            "value": {
+              "stringValue": "bash -e demo.sh"
+            }
+          },
+          {
+            "key": "process.command",
+            "value": {
+              "stringValue": "bash"
+            }
+          },
+          {
+            "key": "process.owner",
+            "value": {
+              "stringValue": "runner"
+            }
+          },
+          {
+            "key": "process.runtime.name",
+            "value": {
+              "stringValue": "bash"
+            }
+          },
+          {
+            "key": "process.runtime.description",
+            "value": {
+              "stringValue": "Bourne Again Shell"
+            }
+          },
+          {
+            "key": "process.runtime.version",
+            "value": {
+              "stringValue": "5.2.21-2ubuntu4"
+            }
+          },
+          {
+            "key": "process.runtime.options",
+            "value": {
+              "stringValue": "ehB"
+            }
+          },
+          {
+            "key": "service.version",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "service.namespace",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "service.instance.id",
+            "value": {
+              "stringValue": ""
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "shell",
+            "version": "4.33.0"
+          },
+          "spans": [
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "db3970b928c82404",
+              "parentSpanId": "4c988501eee45f80",
+              "flags": 768,
+              "name": "sudo apt-get update",
+              "kind": 1,
+              "startTimeUnixNano": "1728781340808241117",
+              "endTimeUnixNano": "1728781350349156449",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "sudo apt-get update"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "sudo"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "sudo"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/sudo"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "sudo"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "demo.sh"
+                  }
+                },
+                {
+                  "key": "code.lineno",
+                  "value": {
+                    "intValue": "3"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "f88fb02f36064b6524cf8dabaea9639f",
+              "spanId": "4c988501eee45f80",
+              "parentSpanId": "",
+              "flags": 256,
+              "name": "bash -e demo.sh",
+              "kind": 2,
+              "startTimeUnixNano": "1728781340793930826",
+              "endTimeUnixNano": "1728781350349278235",
+              "status": {}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

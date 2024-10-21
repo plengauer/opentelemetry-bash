@@ -11,21 +11,21 @@ int otel_span_start(FILE *sdk, const char *type, const char *name) {
   size_t buffer_size = 1024 * 4;
   char *buffer = (char*) calloc(buffer_size, sizeof(char));
   if (!buffer) return -1;
-  
+
   char *sdk_response = tmpnam(NULL); // this is unsafe, i know
   if (mkfifo(sdk_response, 0666) != 0) { free(buffer); return -1; }
-  
+
   memset(buffer, 0, buffer_size);
   sprintf(buffer, "SPAN_START %s %s %s %s %s\n", sdk_response, getenv("TRACEPARENT"), getenv("TRACESTATE"), type, name);
   fwrite(buffer, sizeof(char), strlen(buffer), sdk);
   fflush(sdk);
-  
-  memset(buffer, 0, buffer_size);  
+
+  memset(buffer, 0, buffer_size);
   int response_file = open(sdk_response, O_RDONLY);
   read(response_file, buffer, buffer_size);
   close(response_file);
   int span_handle = atoi(buffer);
-  
+
   remove(sdk_response);
   free(buffer);
   return span_handle;
@@ -35,7 +35,7 @@ char * otel_traceparent(FILE *sdk, int span_handle) {
   size_t buffer_size = 1024 * 4;
   char *buffer = (char*) calloc(buffer_size, sizeof(char));
   if (!buffer) return NULL;
-  
+
   char *sdk_response = tmpnam(NULL); // this is unsafe, i know
   if (mkfifo(sdk_response, 0666) != 0) { free(buffer); return NULL; }
 
@@ -77,6 +77,7 @@ int inject(char *buffer, size_t length) {
       if (!sdk) return 4;
       int span_handle = otel_span_start(sdk, "CLIENT", "HTTP");
       if (span_handle < 0) return 5;
+      for (int i = 0; i < 1000 && access(getenv("OTEL_SHELL_INJECT_HTTP_HANDLE_FILE"), F_OK) == 0; i++) usleep(10 * 1000);
       {
         char span_handle_string[16];
         memset(span_handle_string, 0, 16);
@@ -99,7 +100,7 @@ int inject(char *buffer, size_t length) {
     buffer = line_end + 1;
     line_end = strchr(buffer, '\n');
   }
-  
+
   return 9;
 }
 
@@ -166,6 +167,7 @@ int nghttp2_submit_request(void *session, void *pri_spec, void *nva, size_t nvle
       if (!sdk) break;
       int span_handle = otel_span_start(sdk, "CLIENT", "HTTP");
       if (span_handle < 0) break;
+      for (int i = 0; i < 1000 && access(getenv("OTEL_SHELL_INJECT_HTTP_HANDLE_FILE"), F_OK) == 0; i++) usleep(10 * 1000);
       {
         char span_handle_string[16];
         memset(span_handle_string, 0, 16);

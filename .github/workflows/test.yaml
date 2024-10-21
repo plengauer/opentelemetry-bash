@@ -27,7 +27,7 @@ jobs:
         with:
           name: package.deb
       - run: sudo -E apt-get -y install ./package.deb
-      - run: bash -c "cd tests && sudo -E bash run_tests.sh bash"
+      - run: bash -c "cd tests && bash run_tests.sh bash"
 
   upgrade-prepare:
     runs-on: ubuntu-latest
@@ -109,7 +109,7 @@ jobs:
           {
             echo 'apt-get update'
             echo 'apt-get -y remove ${{ matrix.dependency }}'
-            echo 'apt-get -y install /root/package.deb'
+            echo 'DEBIAN_FRONTEND=noninteractive apt-get -y install /root/package.deb'
             echo 'DEBIAN_FRONTEND=noninteractive apt-get -y install ${{ matrix.dependency }}'
             echo 'apt-get -y remove ${{ matrix.dependency }}'
           } | sudo docker run -v $(pwd)/package.deb:/root/package.deb --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
@@ -122,6 +122,7 @@ jobs:
         os: ['debian:oldstable', 'debian:stable', 'debian:testing', 'debian:oldstable-slim', 'debian:stable-slim', 'debian:testing-slim', 'ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling']
         update: ['FALSE', 'TRUE']
         shell: [sh, dash, bash, busybox]
+      fail-fast: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
@@ -165,7 +166,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           issue-message: "Hello, thanks for adding an issue for the first time!"
           pr-message: "Hello, thanks for contributing for the first time!"
-      - uses: renovatebot/github-action@v40.3.1 # integration, node action with call to docker, docker flags that make injection more complicated, then call a node script via exec that already is injected with otel
+      - uses: renovatebot/github-action@v40.3.4 # integration, node action with call to docker, docker flags that make injection more complicated, then call a node script via exec that already is injected with otel
         env:
           RENOVATE_DRY_RUN: full
           RENOVATE_TOKEN: ${{ secrets.GITHUB_TOKEN }}

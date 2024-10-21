@@ -7,9 +7,9 @@ _otel_propagate_wget() {
     *m*) local job_control=1; \set +m;;
     *) local job_control=0;;
   esac
-  if \[ -f /opt/opentelemetry_shell/libinjecthttpheader.so ]; then
+  if \[ -f /opt/opentelemetry_shell/libinjecthttpheader.so ] && \[ "$_otel_shell" != "busybox sh" ]; then
     export OTEL_SHELL_INJECT_HTTP_SDK_PIPE="$_otel_remote_sdk_pipe"
-    export OTEL_SHELL_INJECT_HTTP_HANDLE_FILE="$(\mktemp -u)_opentelemetry_shell_$$.wget.handle)"
+    export OTEL_SHELL_INJECT_HTTP_HANDLE_FILE="$(\mktemp -u)_opentelemetry_shell_$$.wget.handle"
     local OLD_LD_PRELOAD="$LD_PRELOAD"
     export LD_PRELOAD=/opt/opentelemetry_shell/libinjecthttpheader.so
     if \[ -n "$OLD_PRELOAD" ]; then
@@ -85,8 +85,8 @@ _otel_pipe_wget_stderr() {
     fi
     # Connecting to www.google.at (www.google.at)|142.250.185.131|:80... connected.
     if _otel_string_starts_with "$line" 'Connecting to ' || _otel_string_starts_with "$line" 'Reusing existing connection to '; then
-      if \[ -n "$span_handle" ]; then otel_span_end "$span_handle"; fi
-      if \[ -n "$span_handle_file" ] && \[ -f "$span_handle_file" ]; then local span_handle="$(\cat "$span_handle_file")"; \rm "$span_handle_file"; fi
+      if \[ -n "$span_handle" ]; then otel_span_end "$span_handle"; local span_handle=""; fi
+      if \[ -n "$span_handle_file" ]; then while ! \[ -f "$span_handle_file" ]; do \sleep 1; done; local span_handle="$(\cat "$span_handle_file")"; \rm "$span_handle_file"; fi
       if \[ -z "$span_handle" ]; then
         local span_handle="$(otel_span_start CLIENT GET)"
       else
