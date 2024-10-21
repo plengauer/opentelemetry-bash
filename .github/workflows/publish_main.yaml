@@ -190,7 +190,7 @@ jobs:
 
           pretty_print_trace() {
             cat otlp.json | jq -r '. | select(.resourceSpans != null) | .resourceSpans[].scopeSpans[].spans[]' | jq -s '. | sort_by(.startTimeUnixNano) | .[].spanId' | while read -r span_id; do
-              span="$(cat otlp.json | jq '. | select(.resourceSpans != null) | .resourceSpans[].scopeSpans[].spans[] | select(.spanId == "'$span_id'")')"
+              span="$(spans | jq 'select(.spanId == "'$span_id'")')"
               resource_attributes="$(cat otlp.json | jq '. | select(.resourceSpans != null) | .resourceSpans[] | select(.scopeSpans[].spans[].spanId == "'$span_id'")' | jq .resource.attributes)"
               jq -n \
                 --argjson trace_id "$(printf '%s' "$span" | jq .traceId)" \
