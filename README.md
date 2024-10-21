@@ -150,7 +150,7 @@ If the command represents communication to a third party service (like a HTTP re
 Finally, a single root span will be created and activated that represents the script. This span will automatically be deactivated and ended when the script ends.
 
 ## Automatic Instrumentation of Github Actions
-To automatically monitor your Github Workflows on job level and to auto-inject into all `run` steps, add the following step as first in every job you want to observe. You can configure the SDK as described <a href="https://opentelemetry.io/docs/languages/sdk-configuration/">here</a> by adding environment variables to the setup step.
+To automatically monitor your Github Workflows on job level and to auto-inject into all individual steps, add the following step as first in every job you want to observe. You can configure the SDK as described <a href="https://opentelemetry.io/docs/languages/sdk-configuration/">here</a> by adding environment variables to the setup step.
 ```yaml
 - uses: plengauer/opentelemetry-bash/actions/instrument/job@main
   env:
