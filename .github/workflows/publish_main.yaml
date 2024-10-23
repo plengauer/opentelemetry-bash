@@ -113,7 +113,7 @@ jobs:
           cd demos/${{ matrix.demo_directory }}
 
           spans() {
-            jq '. | select(.resourceSpans != null) | .resourceSpans[].scopeSpans[].spans[]' | jq -s '. | sort_by(.startTimeUnixNano) | .[]' < otlp.json
+            cat otlp.json | jq '. | select(.resourceSpans != null) | .resourceSpans[].scopeSpans[].spans[]' | jq -s '. | sort_by(.startTimeUnixNano) | .[]'
           }
 
           convert_span_id_to_name() {
@@ -190,8 +190,8 @@ jobs:
 
           pretty_print_trace() {
             cat otlp.json | jq -r '. | select(.resourceSpans != null) | .resourceSpans[].scopeSpans[].spans[]' | jq -s '. | sort_by(.startTimeUnixNano) | .[].spanId' | while read -r span_id; do
-              span="$(jq '. | select(.resourceSpans != null) | .resourceSpans[].scopeSpans[].spans[] | select(.spanId == "'$span_id'")' < otlp.json)"
-              resource_attributes="$(jq '. | select(.resourceSpans != null) | .resourceSpans[] | select(.scopeSpans[].spans[].spanId == "'$span_id'")' < otlp.json | jq .resource.attributes)"
+              span="$(spans | jq 'select(.spanId == "'$span_id'")')"
+              resource_attributes="$(cat otlp.json | jq '. | select(.resourceSpans != null) | .resourceSpans[] | select(.scopeSpans[].spans[].spanId == "'$span_id'") | .resource.attributes')"
               jq -n \
                 --argjson trace_id "$(printf '%s' "$span" | jq .traceId)" \
                 --argjson span_id "$(printf '%s' "$span" | jq .spanId)" \
