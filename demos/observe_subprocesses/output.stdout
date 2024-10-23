@@ -1,7 +1,8 @@
-Hit:1 http://azure.archive.ubuntu.com/ubuntu noble InRelease
-Hit:2 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease
-Hit:3 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease
-Hit:4 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease
-Hit:5 https://packages.microsoft.com/repos/azure-cli noble InRelease
-Hit:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease
+Hit:1 https://packages.microsoft.com/repos/azure-cli jammy InRelease
+Hit:2 https://packages.microsoft.com/ubuntu/22.04/prod jammy InRelease
+Get:3 file:/etc/apt/apt-mirrors.txt Mirrorlist [142 B]
+Hit:4 http://azure.archive.ubuntu.com/ubuntu jammy InRelease
+Hit:5 http://azure.archive.ubuntu.com/ubuntu jammy-updates InRelease
+Hit:6 http://azure.archive.ubuntu.com/ubuntu jammy-backports InRelease
+Hit:7 http://azure.archive.ubuntu.com/ubuntu jammy-security InRelease
 Reading package lists...
