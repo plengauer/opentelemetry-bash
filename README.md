@@ -194,8 +194,8 @@ You can configure the underlying SDK with the same variables as any other OpenTe
 | OTEL_SHELL_CONFIG_INSTRUMENT_MINIMALLY      | `TRUE`, `FALSE` | `FALSE`                                      | Only create `SERVER`, `CONSUMER`, `CLIENT` and `PRODUCER` spans, mute all `INTERNAL` spans. | stable       |
 | OTEL_SHELL_CONFIG_INJECT_DEEP               | `TRUE`, `FALSE` | `TRUE` for GitHub Actions, `FALSE` otherwise | Inject native OpenTelemetry into scripting languages like node.js and python.               | stable       |
 | OTEL_SHELL_CONFIG_INSTRUMENT_ABSOLUTE_PATHS | `TRUE`, `FALSE` | `FALSE`                                      | Create spans for commands with an absolute path to the executable.                          | experimental |
-| OTEL_SHELL_CONFIG_OBSERVE_SIGNALS           | `TRUE`, `FALSE` | `FALSE`                                      | Create events for received signals.                                                         | experimental |
-| OTEL_SHELL_CONFIG_OBSERVE_SUBPROCESSES      | `TRUE`, `FALSE` | `FALSE`                                      | Create additional minimal spans for all indirect subprocesses.                              | experimental |
+| OTEL_SHELL_CONFIG_OBSERVE_SIGNALS           | `TRUE`, `FALSE` | `TRUE` for GitHub Actions, `FALSE` otherwise | Create events for received signals.                                                         | stable       |
+| OTEL_SHELL_CONFIG_OBSERVE_SUBPROCESSES      | `TRUE`, `FALSE` | `TRUE` for GitHub Actions, `FALSE` otherwise | Create additional minimal spans for all indirect subprocesses.                              | stable       |
 
 Flags that are marked as `stable` are tested and verified in tests and real-world scenarios. Flags marked as `experimental` are new features that are tested but still lack long-term verification in real-world applications. They will eventually reach `stable` or `unsafe`. Flags marked as `unsafe` have implicit assumptions about the nature of the instrumented scripts and will therefore never reach `stable`.
 
