@@ -15,7 +15,7 @@ done
 
 # check simple string request
 \echo "TEST 0" >&2
-port=60000
+port=12347
 response_file="$(\mktemp)"
 netcat -l "$port" < /dev/null > "$response_file" &
 pid="$!"
