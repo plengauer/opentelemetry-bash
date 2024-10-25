@@ -15,7 +15,7 @@ done
 
 # check simple string request
 \echo "TEST 0" >&2
-port=12347
+port=12345
 response_file="$(\mktemp)"
 netcat -l "$port" < /dev/null > "$response_file" &
 pid="$!"
@@ -71,10 +71,10 @@ assert_equals "$(curl http://www.example.com)" "$(\cat "$actual")"
 \echo "TEST 3" >&2
 port=$((port + 1))
 \cat /dev/urandom | \head -c $((1024 * 1)) > "$expected"
-{ \printf 'HTTP/1.1 200 OK\r\nFoo: Bar\r\n\r\n' && \cat "$expected"; } | netcat -l -w 10 "$port" &
+{ \printf 'HTTP/1.1 200 OK\r\nFoo: Bar\r\n\r\n' && \cat "$expected"; } | netcat -v -l -w 1 "$port" &
 \sleep 3
 pid="$!"
-wget --retry-connrefused -O "$actual" http://127.0.0.1:$port/
+\wget --retry-connrefused -O "$actual" http://127.0.0.1:$port/
 \wait "$pid" || \true
 assert_equals "$(\cat "$expected" | \xxd -p)" "$(\cat "$actual" | \xxd -p)"
 
