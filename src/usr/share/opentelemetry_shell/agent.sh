@@ -14,7 +14,7 @@ _otel_shell_injected=TRUE
 _otel_shell_conservative_exec="$OTEL_SHELL_CONSERVATIVE_EXEC"
 unset OTEL_SHELL_CONSERVATIVE_EXEC
 
-\. /usr/share/opentelemetry_shell/opentelemetry_shell_api.sh
+\. /usr/share/opentelemetry_shell/api.sh
 _otel_package_version opentelemetry-shell > /dev/null # to build the cache outside a subshell
 
 if \[ "$_otel_shell" = "bash" ] && \[ -n "$BASHPID" ] && \[ "$$" != "$BASHPID" ]; then
