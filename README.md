@@ -112,13 +112,13 @@ export OTEL_TRACES_EXPORTER=console
 Finally, run your script and see traces, metrics, and logs printed to stderr.
 
 # Installation
-This project currently supports and is actively tested on debian-based operating systems. The code also works on other Linux-based operating systems and should, in theory, even work on the Linux Subsystem for Windows. However, there are no readily available installation packages for non-debian systems. Mac-based operating systems are currently not supported.
+This project currently supports and is actively tested on debian-based and rpm-based operating systems. The code also works on other Linux-based operating systems and should, in theory, even work on the Linux Subsystem for Windows. However, there are no readily available installation packages for these systems. Mac-based operating systems are currently not supported.
 
 Install either via
 ```bash
 wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh
 ```
-or via
+or, for debian-based systems, via
 ```bash
 echo "deb [arch=all] http://3.73.14.87:8000/ stable main" | sudo tee /etc/apt/sources.list.d/otel.list
 sudo apt-get update
