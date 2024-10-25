@@ -1,1 +1,1 @@
-./opentelemetry_shell.inject.netcat.sh
+../share/opentelemetry_shell/agent.injection.netcat.sh
