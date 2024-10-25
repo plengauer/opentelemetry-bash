@@ -44,7 +44,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-  upgrade: # TODO same for rpm (including checking for what rpms are actually available)
+  upgrade: # TODO same for rpm
     needs: [upgrade-prepare, smoke]
     runs-on: ubuntu-latest
     strategy:
@@ -99,7 +99,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        image: ['debian:oldstable', 'debian:stable', 'debian:testing', 'debian:oldstable-slim', 'debian:stable-slim', 'debian:testing-slim', 'ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling']
+        image: ['debian:oldstable', 'debian:stable', 'debian:testing', 'debian:oldstable-slim', 'debian:stable-slim', 'debian:testing-slim', 'ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling', 'fedora:latest', 'centos:latest', 'opensuse/leap:latest', 'opensuse/tumbleweed:latest']
         dependency: ['npm', 'gcc']
     steps:
       - uses: actions/download-artifact@v4
@@ -114,12 +114,12 @@ jobs:
             echo 'apt-get -y remove ${{ matrix.dependency }}'
           } | sudo docker run -v $(pwd)/package.deb:/root/package.deb --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
 
-  os-shell: # TODO same for rpm
+  os-shell:
     needs: smoke
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: ['debian:oldstable', 'debian:stable', 'debian:testing', 'debian:oldstable-slim', 'debian:stable-slim', 'debian:testing-slim', 'ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling']
+        os: ['debian:oldstable', 'debian:stable', 'debian:testing', 'debian:oldstable-slim', 'debian:stable-slim', 'debian:testing-slim', 'ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling', 'fedora:latest', 'centos:latest', 'opensuse/leap:latest', 'opensuse/tumbleweed:latest']
         update: ['FALSE', 'TRUE']
         shell: [sh, dash, bash, busybox]
       fail-fast: true
