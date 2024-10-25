@@ -11,10 +11,11 @@ jobs:
         working-directory: ./src
     steps:
       - uses: actions/checkout@v4
-      - run: sudo apt-get update && sudo apt-get install devscripts debhelper
+      - run: sudo apt-get update && sudo apt-get install devscripts debhelper alien
       - run: sed -i "s/__VERSION__/$(cat ../VERSION)/g" DEBIAN/control
       - run: dpkg-deb --root-owner-group -Zgzip --build . ../package.deb
+      - run: alien -r --scripts ../package.deb && mv *.rpm ../package.rpm
       - uses: actions/upload-artifact@v4
         with:
-          name: package.deb
-          path: package.deb
+          name: packages
+          path: package.*
