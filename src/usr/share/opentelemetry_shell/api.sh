@@ -382,35 +382,11 @@ else
   }
 fi
 
-_otel_call_and_record_logs() {
-  local IFS=' 
-'
-  case "$-" in
-    *m*) local job_control=1; \set +m;;
-    *) local job_control=0;;
-  esac
-  local call_command="$1"; shift
-  local traceparent="$TRACEPARENT"
-  local stderr_logs="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.stderr.logs.pipe"
-  \mkfifo $_otel_mkfifo_flags "$stderr_logs"
-  while IFS= read -r line; do _otel_log_record "$traceparent" "$line"; \echo "$line" >&2; done < "$stderr_logs" &
-  local stderr_pid="$!"
-  local exit_code=0
-  $call_command "$@" 2> "$stderr_logs" || local exit_code="$?"
-  \wait "$stderr_pid"
-  \rm "$stderr_logs" 2> /dev/null
-  if \[ "$job_control" = 1 ]; then \set -m; fi
-  return "$exit_code"
-}
+\. /usr/share/api.observe.logs.sh
+\. /usr/share/api.observe.pipes.sh
+\. /usr/share/api.observe.subprocesses.sh
 
-_otel_call_and_record_pipes() {
-  local IFS=' 
-'
-  # some notes about this function
-  # (*) we have to wait for the background processes because otherwise the span_id may not be valid anymore
-  # (*) waiting for the processes only works when its not a subshell so we can access the last process id
-  # (*) not using a subshell means we have to disable job control, otherwise we get unwanted output
-  # (*) we can only directly tee stdin, otherwise the exit code cannot be captured propely if we pipe stdout directly
+if we pipe stdout directly
   # (*) tee for stdin does ONLY terminate when it writes something and realizes the process has terminated
   # (**) so in cases where stdin is open but nobody every writes to it and the process doesnt expect input, tee hangs forever
   # (**) this is different to output streams, because they get properly terminated with SIGPIPE on read
