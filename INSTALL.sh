@@ -29,7 +29,10 @@ case "$extension" in
       sudo -E rpm --install "$package"
     fi
     ;;
-  *) echo Here be dragons >&2; exit 1;;
+  *)
+    echo Here be dragons >&2
+    exit 1
+    ;;
 esac
 
 rm "$package"
