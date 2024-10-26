@@ -382,9 +382,9 @@ else
   }
 fi
 
-\. /usr/share/api.observe.logs.sh
-\. /usr/share/api.observe.pipes.sh
-\. /usr/share/api.observe.subprocesses.sh
+\. /usr/share/opentelemetry_shell/api.observe.logs.sh
+\. /usr/share/opentelemetry_shell/api.observe.pipes.sh
+\. /usr/share/opentelemetry_shell/api.observe.subprocesses.sh
 
 if \[ "$_otel_shell" = bash ]; then
   _otel_command_type() {
@@ -404,13 +404,6 @@ else
     esac
   }
 fi
-
-_otel_log_record() {
-  local traceparent="$1"
-  shift
-  local line="$(_otel_dollar_star "$@")"
-  _otel_sdk_communicate "LOG_RECORD" "$traceparent" "$line"
-}
 
 _otel_escape_stdin() {
   local first=1
