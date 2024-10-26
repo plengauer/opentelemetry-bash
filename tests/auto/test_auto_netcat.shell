@@ -74,7 +74,7 @@ port=$((port + 1))
 { \printf 'HTTP/1.1 200 OK\r\nFoo: Bar\r\n\r\n' && \cat "$expected"; } | netcat -l -w 1 "$port" &
 \sleep 3
 pid="$!"
-wget --retry-connrefused -O "$actual" http://127.0.0.1:$port/
+\wget --retry-connrefused -O "$actual" http://127.0.0.1:$port/
 \wait "$pid" || \true
 assert_equals "$(\cat "$expected" | \xxd -p)" "$(\cat "$actual" | \xxd -p)"
 
