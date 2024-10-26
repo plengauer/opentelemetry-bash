@@ -20,3 +20,10 @@ _otel_call_and_record_logs() {
   if \[ "$job_control" = 1 ]; then \set -m; fi
   return "$exit_code"
 }
+
+_otel_log_record() {
+  local traceparent="$1"
+  shift
+  local line="$(_otel_dollar_star "$@")"
+  _otel_sdk_communicate "LOG_RECORD" "$traceparent" "$line"
+}
