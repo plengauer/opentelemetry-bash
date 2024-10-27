@@ -241,7 +241,7 @@ jobs:
           retention-days: 1
 
   join:
-    needs: [install, upgrade, system-upgrade, dependency, os-shell, action, performance]
+    needs: [upgrade, system-upgrade, dependency, os-shell, action, performance]
     runs-on: ubuntu-latest
     outputs:
       success: ${{ steps.tests.outputs.success }}
