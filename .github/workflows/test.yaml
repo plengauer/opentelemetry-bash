@@ -7,18 +7,8 @@ jobs:
   _build:
     uses: ./.github/workflows/build.yaml
 
-  install:
-    needs: _build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: packages
-      - run: sudo apt-get -y install ./package.deb
-      - run: sudo apt-get -y remove opentelemetry-shell
-
   smoke:
-    needs: install
+    needs: _build
     runs-on: ubuntu-latest
     timeout-minutes: 180
     steps:
@@ -28,6 +18,7 @@ jobs:
           name: packages
       - run: sudo -E apt-get -y install ./package.deb
       - run: bash -c "cd tests && bash run_tests.sh bash"
+      - run: sudo apt-get -y remove opentelemetry-shell
 
   upgrade-prepare:
     runs-on: ubuntu-latest
