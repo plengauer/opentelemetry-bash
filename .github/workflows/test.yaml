@@ -120,7 +120,7 @@ jobs:
               zypper --non-interactive dup
               zypper --non-interactive remove ${{ matrix.dependency }}
               rpm --install /root/package.rpm
-              zypper --non-interactiveinstall ${{ matrix.dependency }}
+              zypper --non-interactive install ${{ matrix.dependency }}
               zypper --non-interactive remove ${{ matrix.dependency }}
             else
               exit 1
