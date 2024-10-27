@@ -44,7 +44,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-  upgrade: # TODO same for rpm
+  upgrade:
     needs: [upgrade-prepare, smoke]
     runs-on: ubuntu-latest
     strategy:
@@ -60,7 +60,7 @@ jobs:
           name: packages
       - run: sudo apt-get -y install ./package.deb
 
-  system-upgrade: # TODO same for rpm
+  system-upgrade:
     needs: [smoke]
     runs-on: ubuntu-latest
     strategy:
@@ -94,7 +94,7 @@ jobs:
             apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade && apt-get -y autoremove && apt-get -y autoclean
           ' | sudo docker run -v $(pwd)/package.deb:/root/package.deb --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
 
-  dependency: # TODO same for rpm
+  dependency:
     needs: [smoke]
     runs-on: ubuntu-latest
     strategy:
@@ -114,23 +114,23 @@ jobs:
               DEBIAN_FRONTEND=noninteractive apt-get -y install ${{ matrix.dependency }}
               apt-get -y remove ${{ matrix.dependency }}
             elif type dnf; then
-              dnf upgrade --refresh
-              dnf remove ${{ matrix.dependency }}
+              dnf -y upgrade --refresh
+              dnf -y remove ${{ matrix.dependency }}
               rpm --install /root/package.rpm
-              dnf install ${{ matrix.dependency }}
-              dnf remove ${{ matrix.dependency }}
-            elif type zypper; then
-              zypper dup
-              zypper remove ${{ matrix.dependency }}
-              rpm --install /root/package.rpm
-              zypper install ${{ matrix.dependency }}
-              zypper remove ${{ matrix.dependency }}
+              dnf -y install ${{ matrix.dependency }}
+              dnf -y remove ${{ matrix.dependency }}
             elif type yum; then
               yum update
-              yum remove ${{ matrix.dependency }}
+              yum -y remove ${{ matrix.dependency }}
               rpm --install /root/package.rpm
-              yum install ${{ matrix.dependency }}
-              yum remove ${{ matrix.dependency }}
+              yum -y install ${{ matrix.dependency }}
+              yum -y remove ${{ matrix.dependency }}
+            elif type zypper; then
+              zypper dup
+              zypper -y remove ${{ matrix.dependency }}
+              rpm --install /root/package.rpm
+              zypper -y install ${{ matrix.dependency }}
+              zypper -y remove ${{ matrix.dependency }}
             else
               exit 1
             fi
