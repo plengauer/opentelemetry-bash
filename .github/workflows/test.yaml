@@ -99,7 +99,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        image: ['debian:oldstable', 'debian:stable', 'debian:testing', 'debian:oldstable-slim', 'debian:stable-slim', 'debian:testing-slim', 'ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling', 'fedora:latest', 'centos:latest', 'opensuse/leap:latest', 'opensuse/tumbleweed:latest']
+        image: ['debian:oldstable', 'debian:stable', 'debian:testing', 'debian:oldstable-slim', 'debian:stable-slim', 'debian:testing-slim', 'ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling', 'fedora:latest', 'redhat/ubi8:latest', 'redhat/ubi9:latest', 'opensuse/leap:latest', 'opensuse/tumbleweed:latest']
         dependency: ['npm', 'gcc']
     steps:
       - uses: actions/download-artifact@v4
@@ -141,7 +141,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: ['debian:oldstable', 'debian:stable', 'debian:testing', 'debian:oldstable-slim', 'debian:stable-slim', 'debian:testing-slim', 'ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling', 'fedora:latest', 'centos:latest', 'opensuse/leap:latest', 'opensuse/tumbleweed:latest']
+        os: ['debian:oldstable', 'debian:stable', 'debian:testing', 'debian:oldstable-slim', 'debian:stable-slim', 'debian:testing-slim', 'ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling', 'fedora:latest', 'redhat/ubi8:latest', 'redhat/ubi9:latest', 'opensuse/leap:latest', 'opensuse/tumbleweed:latest']
         update: ['FALSE', 'TRUE']
         shell: [sh, dash, bash, busybox]
       fail-fast: true
