@@ -14,7 +14,7 @@ elif [ "$1" = 'configure' ] || [ "$1" = 'triggered' ] || [ "$1" = 'reconfigure' 
     fi
     if type python3 2> /dev/null; then
       python3 -m venv /opt/opentelemetry_shell/venv
-      source /opt/opentelemetry_shell/venv/bin/activate
+      . /opt/opentelemetry_shell/venv/bin/activate
       pip3 install -r /opt/opentelemetry_shell/requirements.txt
       echo '
 from opentelemetry.instrumentation.bootstrap_gen import (default_instrumentations, libraries)
