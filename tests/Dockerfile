@@ -9,7 +9,7 @@ WORKDIR /tests
 COPY . ./
 
 RUN <<EOF
-  packages="jq psmisc wget curl debconf debconf-utils time sudo parallel moreutils ncat wget2 strace nodejs npm python3 python3-pip python3-venv"
+  packages="jq psmisc wget curl debconf debconf-utils time sudo parallel moreutils ncat wget2 strace nodejs npm python3 python3-pip"
   if type apt-get; then
     apt-get update
     [ "$update" = TRUE ] && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y || true
@@ -21,16 +21,16 @@ RUN <<EOF
     rpm --install ./package.rpm
     type "$shell" || dnf -y install "$shell"
     dnf -y install $packages
-  elif type zypper; then
-    zypper -y dup
-    rpm --install ./package.rpm
-    type "$shell" || zypper -y install "$shell"
-    zypper -y install $packages
   elif type yum; then
     yum -y update
     rpm --install ./package.rpm
     type "$shell" || yum -y install "$shell"
     yum -y install $packages
+  elif type zypper; then
+    zypper --non-interactive dup
+    rpm --install ./package.rpm
+    type "$shell" || zypper --non-interactive install "$shell"
+    zypper --non-interactive install $packages
   else
     exit 1
   fi
