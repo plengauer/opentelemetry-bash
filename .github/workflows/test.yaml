@@ -111,17 +111,17 @@ jobs:
               dnf -y install ${{ matrix.dependency }}
               dnf -y remove ${{ matrix.dependency }}
             elif type yum; then
-              yum update
+              yum -y update
               yum -y remove ${{ matrix.dependency }}
               rpm --install /root/package.rpm
               yum -y install ${{ matrix.dependency }}
               yum -y remove ${{ matrix.dependency }}
             elif type zypper; then
-              zypper dup
-              zypper -y remove ${{ matrix.dependency }}
+              zypper --non-interactive dup
+              zypper --non-interactive remove ${{ matrix.dependency }}
               rpm --install /root/package.rpm
-              zypper -y install ${{ matrix.dependency }}
-              zypper -y remove ${{ matrix.dependency }}
+              zypper --non-interactiveinstall ${{ matrix.dependency }}
+              zypper --non-interactive remove ${{ matrix.dependency }}
             else
               exit 1
             fi
