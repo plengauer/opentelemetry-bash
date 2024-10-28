@@ -63,14 +63,14 @@ bash -e demo.sh
                       GET
                       GET
                       GET
+                      POST
+                      POST
+                      POST
+                      GET
                       GET
                       POST
+                      POST
                       GET
-                      GET
-                      POST
-                      POST
-                      POST
-                      POST
                       POST
                       POST
                       POST
@@ -118,34 +118,6 @@ bash -e demo.sh
                       git -c core.quotePath=false log --pretty=format:òòòòòò %s òò --max-count=20
                     onboarding
                     update
-                      git -c core.quotePath=false log --pretty=format:òòòòòò %H ò %aI ò %s ò %D ò %b ò %aN ò %aE òò origin/main..origin/renovate/opentelemetry-js-monorepo
-                      git -c core.quotePath=false rev-list --count 56d891626441185a10ded972e3c418aefe918f32..916c56b644c14b3e94f76030d5c1240dad80fc0f
-                      git -c core.quotePath=false config --local user.name Renovate Bot
-                      git -c core.quotePath=false config --local user.email renovate@whitesourcesoftware.com
-                      git -c core.quotePath=false reset --hard
-                      git -c core.quotePath=false merge --no-commit --no-ff origin/renovate/opentelemetry-js-monorepo
-                      git -c core.quotePath=false merge --abort
-                      git -c core.quotePath=false checkout -f main --
-                      git -c core.quotePath=false rev-parse HEAD
-                      git -c core.quotePath=false log --pretty=format:òòòòòò %H ò %aI ò %s ò %D ò %b ò %aN ò %aE òò --max-count=1
-                      git -c core.quotePath=false reset --hard
-                      git -c core.quotePath=false show origin/renovate/opentelemetry-js-monorepo:src/opt/opentelemetry_shell/package.json
-                      git -c core.quotePath=false show origin/renovate/opentelemetry-js-monorepo:src/opt/opentelemetry_shell/package.json
-                      git -c core.quotePath=false checkout -f main --
-                      git -c core.quotePath=false rev-parse HEAD
-                      git -c core.quotePath=false log --pretty=format:òòòòòò %H ò %aI ò %s ò %D ò %b ò %aN ò %aE òò --max-count=1
-                      git -c core.quotePath=false reset --hard
-                      POST
-                      POST
-                      POST
-                      POST
-                      POST
-                      GET
-                      GET
-                      GET
-                      GET
-                      GET
-                      GET
                     GET
 ```
 ## Full Trace
