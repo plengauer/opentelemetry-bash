@@ -11,9 +11,9 @@ bash -e demo.sh
   echo foo bar baz
   xargs parallel echo :::
     /usr/bin/perl /usr/bin/parallel echo ::: foo bar baz
-      echo bar
-      echo baz
       echo foo
+      echo baz
+      echo bar
 ```
 ## Full Trace
 ```
