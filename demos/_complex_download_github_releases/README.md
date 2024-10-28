@@ -19,20 +19,24 @@ printf "HEAD $path HTTP/1.1\r\nConnection: close\r\nUser-Agent: ncat\r\nHost: $h
 ## Trace Structure Overview
 ```
 bash -e demo.sh
-  tr [:upper:] [:lower:]
   printf HEAD /repos/plengauer/opentelemetry-bash/releases?per_page=100 HTTP/1.1\r\nConnection: close\r\nUser-Agent: ncat\r\nHost: api.github.com\r\n\r\n
-  tr , \n
   ncat --ssl -i 3 --no-shutdown api.github.com 443
     send/receive
       HEAD
-  cut -d ; -f1
-  cut -d = -f 2
-  grep ^page=
-  grep rel="last"
-  tr -d  <>
-  cut -d   -f 2-
-  jq .[] | .assets[] | .browser_download_url -r
+  tr [:upper:] [:lower:]
+  tr , \n
   cut -d ? -f 2-
+  jq .[] | .assets[] | .browser_download_url -r
+  grep rel="last"
+  xargs seq 1
+    seq 1 3
+  grep ^page=
+  tr -d  <>
+  grep ^link:
+  cut -d = -f 2
+  tr & \n
+  cut -d   -f 2-
+  grep .deb$
   xargs parallel -q curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page={} :::
     /usr/bin/perl /usr/bin/parallel -q curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page={} ::: 1 2 3
       curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page=2
@@ -41,8 +45,8 @@ bash -e demo.sh
         GET
       curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page=3
         GET
-  grep _1.
-  tr & \n
+  cut -d ; -f1
+  head --lines=3
   xargs wget
     wget https://github.com/plengauer/opentelemetry-bash/releases/download/v1.13.7/opentelemetry-shell_1.13.7.deb https://github.com/plengauer/opentelemetry-bash/releases/download/v1.13.6/opentelemetry-shell_1.13.6.deb https://github.com/plengauer/opentelemetry-bash/releases/download/v1.13.5/opentelemetry-shell_1.13.5.deb
       GET
@@ -51,11 +55,7 @@ bash -e demo.sh
       GET
       GET
       GET
-  head --lines=3
-  grep .deb$
-  xargs seq 1
-    seq 1 3
-  grep ^link:
+  grep _1.
 ```
 ## Full Trace
 ```
