@@ -124,7 +124,7 @@ jobs:
             spans | jq -r '. | select(.name != null) | select(.parentSpanId == "") | .spanId'
           }
 
-          get_child_span_ids() { #  | jq -s '. | sort_by(.startTimeUnixNano) | .[]'
+          get_child_span_ids() {
             spans | jq '. | select(.name != null) | select(.parentSpanId == "'"$1"'")' | jq -r -s '. | sort_by(.endTimeUnixNano) | .[].spanId'
           }
 
