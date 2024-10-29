@@ -15,8 +15,8 @@ _otel_inject_shell_args_with_c_flag() {
   local found_inner=0
   while \[ "$#" -gt 0 ]; do
     if \[ "$1" = "-c" ]; then
-      # we need a linebreak here for the aliases to work.
       local is_script=0
+      shift
     else
       case "$1" in
         -*file) _otel_escape_arg "$1"; \echo -n " "; shift; _otel_escape_arg "$1"; \echo -n " " ;;
@@ -28,6 +28,7 @@ _otel_inject_shell_args_with_c_flag() {
                  _otel_escape_arg ". otel.sh; . $1 "'"$@"'
                  local dollar_zero="$1";
                else
+                 # we need a linebreak here for the aliases to work.
                  _otel_escape_arg ". otel.sh
 $1"
                  local dollar_zero=""
