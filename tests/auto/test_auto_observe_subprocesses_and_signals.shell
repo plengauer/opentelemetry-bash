@@ -9,7 +9,7 @@ sudo apt-get update
 
 resolve_span '.name == "sudo apt-get update"'
 # \sleep 30
-\cat "$OTEL_EXPORT_LOCATION"
+# \cat "$OTEL_EXPORT_LOCATION"
 
 assert_equals 0 "$(\cat "$OTEL_EXPORT_LOCATION" | \jq '. | select(.name != null) | .events[] | select(.name | startswith("SIG") | not) | .name' | \wc -l)"
 assert_equals 0 "$(\cat "$OTEL_EXPORT_LOCATION" | \jq '. | select(.name != null) | select(.name | contains("execve(")) | .name' | \wc -l)"
