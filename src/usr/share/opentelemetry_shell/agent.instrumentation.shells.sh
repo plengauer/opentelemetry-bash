@@ -22,7 +22,7 @@ _otel_inject_shell_args_with_copy() {
       case "$1" in
         -*file) _otel_escape_arg "$1"; \echo -n " "; shift; _otel_escape_arg "$1"; \echo -n " " ;;
             -*) _otel_escape_arg "$1"; \echo -n " " ;;
-             *) local is_script=${is_script:-1}; local found_inner=1; break ;;
+             *) local is_script="${is_script:-1}"; local found_inner=1; break ;;
       esac
     fi
     shift
