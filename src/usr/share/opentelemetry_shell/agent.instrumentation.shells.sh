@@ -9,7 +9,6 @@
 _otel_inject_shell_args_with_copy() {
   local temporary_script="$1"
   shift
-  local is_script=0
   # command
   local shell="${1#\\}"
   _otel_escape_arg "$1"; \echo -n " "
@@ -18,12 +17,12 @@ _otel_inject_shell_args_with_copy() {
   local found_inner=0
   while \[ "$#" -gt 0 ]; do
     if \[ "$1" = "-c" ]; then
-      shift; local is_script=0; local found_inner=1; break
+      local is_script=0; break
     else
       case "$1" in
         -*file) _otel_escape_arg "$1"; \echo -n " "; shift; _otel_escape_arg "$1"; \echo -n " " ;;
             -*) _otel_escape_arg "$1"; \echo -n " " ;;
-             *) local is_script=1; local found_inner=1; break ;;
+             *) local is_script=${is_script:-1}; local found_inner=1; break ;;
       esac
     fi
     shift
