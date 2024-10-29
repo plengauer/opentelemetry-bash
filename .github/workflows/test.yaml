@@ -20,7 +20,7 @@ jobs:
   smoke:
     needs: install
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
@@ -47,6 +47,7 @@ jobs:
   upgrade:
     needs: [upgrade-prepare, smoke]
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     strategy:
       matrix: ${{ fromJSON(needs.upgrade-prepare.outputs.matrix) }}
     steps:
@@ -63,6 +64,7 @@ jobs:
   system-upgrade:
     needs: [smoke]
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     strategy:
       matrix:
         image: ['ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling']
@@ -97,6 +99,7 @@ jobs:
   dependency:
     needs: [smoke]
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     strategy:
       matrix:
         image: ['debian:oldstable', 'debian:stable', 'debian:testing', 'debian:oldstable-slim', 'debian:stable-slim', 'debian:testing-slim', 'ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling']
@@ -117,6 +120,7 @@ jobs:
   os-shell:
     needs: smoke
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     strategy:
       matrix:
         os: ['debian:oldstable', 'debian:stable', 'debian:testing', 'debian:oldstable-slim', 'debian:stable-slim', 'debian:testing-slim', 'ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling']
@@ -139,6 +143,7 @@ jobs:
   action:
     needs: smoke
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
       - run: printenv | grep '^GITHUB_'
       - uses: actions/download-artifact@v4
@@ -199,6 +204,7 @@ jobs:
   performance:
     needs: [performance-prepare, smoke]
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     strategy: 
       matrix: ${{ fromJSON(needs.performance-prepare.outputs.matrix) }}
     steps:
