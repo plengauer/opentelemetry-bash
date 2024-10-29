@@ -1,4 +1,4 @@
 {
-  "title": "apt-get",
+  "title": "Observing indirect subprocessed with apt-get",
   "description": "This is a script that updates the system using apt-get. It observes all subprocesses recursively, even though they are not shells."
 }
