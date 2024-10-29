@@ -1,4 +1,4 @@
 {
-  "title": "injection into shebangs",
+  "title": "Injection into shebangs",
   "description": "Executables can have shebangs, which means that they are actually scripts and executed via a shell or other interpreter even thought they are called like an executable. This sample shows that `which` is such a command and how we can inject into it effortlessly."
 }
