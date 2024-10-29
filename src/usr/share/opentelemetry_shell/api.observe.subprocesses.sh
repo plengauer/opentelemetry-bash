@@ -36,6 +36,7 @@ _otel_call_and_record_subprocesses() {
 _otel_record_subprocesses() {
   local root_span_handle="$1"
   while read -r line; do
+\echo "DEBUG strace $line" >&2
     local operation=""
     case "$line" in
       *' '*' (To be restarted)') ;;
@@ -68,6 +69,7 @@ _otel_record_subprocesses() {
         otel_span_deactivate
         \eval "local span_handle_$new_pid=$span_handle"
         \eval "local span_name_$new_pid=\"\$span_name\""
+\echo "DEBUG fork'd $pid => $new_pid ($span_name)" >&2
         # TODO immediately end span if stored due to very fast exit (faster than the fork syscall of the parent can actually be finished) 
         ;;
       exec)
@@ -90,6 +92,7 @@ _otel_record_subprocesses() {
         if \[ -n "${span_handle:-}" ]; then
           otel_span_name "$span_handle" "$name"
         fi
+\echo "DEBUG exec'd $pid => $span_name" >&2
         ;;
       exit)
         if \[ -z "${span_handle:-}" ]; then continue; fi
