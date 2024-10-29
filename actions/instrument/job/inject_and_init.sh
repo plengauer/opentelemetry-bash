@@ -67,9 +67,7 @@ if [ -f "$env_dir"/.env ]; then
 fi
 rm -r "$env_dir"
 
-if [ -z "$OTEL_SERVICE_NAME" ]; then
-  export OTEL_SERVICE_NAME="$(echo "$GITHUB_REPOSITORY" | cut -d / -f 2-) CI"
-fi
+export OTEL_SERVICE_NAME="${OTEL_SERVICE_NAME:-"$(echo "$GITHUB_REPOSITORY" | cut -d / -f 2-) CI"}"
 
 root4job_end() {
   if [ -f /tmp/opentelemetry_shell.github.error ]; then
