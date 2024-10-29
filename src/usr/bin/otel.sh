@@ -1,1 +1,1 @@
-opentelemetry_shell.sh
+../share/opentelemetry_shell/agent.sh

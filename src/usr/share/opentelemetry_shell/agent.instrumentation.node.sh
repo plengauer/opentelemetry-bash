@@ -17,7 +17,7 @@ _otel_inject_node_args() {
   while ! \[ "$1" = node ] && ! \[ "$1" = "\\node" ] && ! _otel_string_ends_with "$1" /node; do _otel_escape_arg "$1"; shift; \echo -n ' '; done
   _otel_escape_arg "$1"
   shift
-  \echo -n ' '; _otel_escape_args --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.js
+  \echo -n ' '; _otel_escape_args --require /usr/share/opentelemetry_shell/agent.instrumentation.node.js
   while \[ "$#" -gt 0 ]; do
     \echo -n ' '
     if \[ "$1" = -e ] || \[ "$1" = --eval ] || \[ "$1" = -p ] || \[ "$1" = --print ]; then
@@ -34,9 +34,9 @@ _otel_inject_node_args() {
         done
         if \[ -z "$dir" ]; then local dir="$(\echo "$1" | \rev | \cut -d / -f 2- | \rev)"; fi
         if _otel_is_node_injected "$dir"; then
-          _otel_escape_args --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.link.js "$1"; shift
+          _otel_escape_args --require /usr/share/opentelemetry_shell/agent.instrumentation.node.deep.link.js "$1"; shift
         elif \[ -z "$OTEL_TRACES_EXPORTER" ] || \[ "$OTEL_TRACES_EXPORTER" = console ] || \[ "$OTEL_TRACES_EXPORTER" = otlp ]; then
-          _otel_escape_args --require /usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.instrument.js "$1"; shift
+          _otel_escape_args --require /usr/share/opentelemetry_shell/agent.instrumentation.node.deep.instrument.js "$1"; shift
         else
           _otel_escape_arg "$1"; shift
         fi

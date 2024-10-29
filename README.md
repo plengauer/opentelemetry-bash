@@ -3,6 +3,7 @@ This project delivers [OpenTelemetry](https://opentelemetry.io/) traces, metrics
 [![Tests](https://github.com/plengauer/opentelemetry-bash/actions/workflows/test_branch.yaml/badge.svg?branch=main)](https://github.com/plengauer/opentelemetry-bash/actions/workflows/test_branch.yaml)
 
 # Overview
+Check out our detailed [Demos](https://github.com/plengauer/opentelemetry-bash/tree/main/demos).
 A simple command like `curl http://www.google.at` on an AWS EC2 will produce a span like this:
 ```json
 {
