@@ -92,7 +92,7 @@ _otel_record_subprocesses() {
         if \[ -n "${span_handle:-}" ]; then
           otel_span_name "$span_handle" "$name"
         fi
-\echo "DEBUG exec'd $pid => $span_name" >&2
+\echo "DEBUG exec'd $pid => $name" >&2
         ;;
       exit)
         if \[ -z "${span_handle:-}" ]; then continue; fi
