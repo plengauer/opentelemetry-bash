@@ -110,10 +110,10 @@ _otel_pipe_curl_stderr() {
         local response_code="$(\printf '%s' "$line" | \cut -d ' ' -f 3)"
         otel_span_attribute_typed "$span_handle" int http.response.status_code="$response_code"
         if \[ "$response_code" -ge 400 ]; then otel_span_error "$span_handle"; fi
-      elif _otel_string_starts_with "$line" "} [" && _otel_string_contains "bytes data]"; then
-        otel_span_attribute_typed "$span_handle" int http.request.body.size="$(\printf '%s' "$line" | \cut -d ' ' -f 2 | \tr -d '[')"
-      elif _otel_string_starts_with "$line" "{ [" && _otel_string_contains "bytes data]"; then
-        otel_span_attribute_typed "$span_handle" int http.response.body.size="$(\printf '%s' "$line" | \cut -d ' ' -f 2 | \tr -d '[')"
+#     elif _otel_string_starts_with "$line" "} [" && _otel_string_contains "bytes data]"; then
+#       otel_span_attribute_typed "$span_handle" int http.request.body.size="$(\printf '%s' "$line" | \cut -d ' ' -f 2 | \tr -d '[')"
+#     elif _otel_string_starts_with "$line" "{ [" && _otel_string_contains "bytes data]"; then
+#       otel_span_attribute_typed "$span_handle" int http.response.body.size="$(\printf '%s' "$line" | \cut -d ' ' -f 2 | \tr -d '[')"
       elif _otel_string_starts_with "$(\printf '%s' "$line" | \tr '[:upper:]' '[:lower:]')" "> user-agent: "; then
         otel_span_attribute_typed "$span_handle" string user_agent.original="$(\printf '%s' "$line" | \cut -d ' ' -f 3-)"
       elif _otel_string_starts_with "$(\printf '%s' "$line" | \tr '[:upper:]' '[:lower:]')" "> content-length: "; then
