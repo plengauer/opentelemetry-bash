@@ -14,7 +14,6 @@ _otel_inject_shell_args_with_copy() {
   _otel_escape_arg "$1"; \echo -n " "
   shift
   # options and script or command string
-  local found_inner=0
   while \[ "$#" -gt 0 ]; do
     if \[ "${no_more_options:-0}" != 1 ] && _otel_string_starts_with "$1" -; then
       case "$1" in
@@ -28,13 +27,11 @@ _otel_inject_shell_args_with_copy() {
       shift
     else
       local is_script="${is_script:-1}"
-      local found_inner=1
       break
     fi
-    shift
   done
   # abort in case its interactive or invalid aguments
-  if \[ "$found_inner" -eq 0 ]; then return 0; fi
+  if \[ "$#" = 0 ]; then return 0; fi
   # save command
   local command="$1"
   shift
