@@ -30,7 +30,7 @@ _otel_inject_shell_args_with_c_flag() {
                else
                  # we need a linebreak here for the aliases to work.
                  _otel_escape_arg ". otel.sh
-$1"
+$1" # TODO this doesnt work anymore because $1 is the -c, and not the command!
                  local dollar_zero=""
                fi
                \echo -n " "
