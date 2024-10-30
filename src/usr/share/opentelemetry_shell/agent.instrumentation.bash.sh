@@ -16,7 +16,6 @@ _otel_inject_shell_args_with_c_flag() {
   while \[ "$#" -gt 0 ]; do
     if \[ "$1" = "-c" ]; then
       local is_script=0
-      shift
     else
       case "$1" in
         -*file) _otel_escape_arg "$1"; \echo -n " "; shift; _otel_escape_arg "$1"; \echo -n " " ;;
@@ -30,7 +29,7 @@ _otel_inject_shell_args_with_c_flag() {
                else
                  # we need a linebreak here for the aliases to work.
                  _otel_escape_arg ". otel.sh
-$1" # TODO this doesnt work anymore because $1 is the -c, and not the command!
+$1"
                  local dollar_zero=""
                fi
                \echo -n " "
