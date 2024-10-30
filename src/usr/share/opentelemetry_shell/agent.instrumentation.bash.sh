@@ -17,14 +17,14 @@ _otel_inject_shell_args_with_c_flag() {
     if \[ "${no_more_options:-0}" != 1 ] && _otel_string_starts_with "$1" -; then
       case "$1" in
         --) local no_more_options=1;;
-        -c) local is_script=0;;
+        -c) local is_script=0; _otel_escape_arg "$1"; \echo -n " ";;
         -*file) _otel_escape_arg "$1"; \echo -n " "; shift; _otel_escape_arg "$1"; \echo -n " ";;
         *) _otel_escape_arg "$1"; \echo -n " ";;
       esac
       shift
     else
+      if \[ "${is_script:-1}" = 1 ]; then \echo -n "-c "; fi
       if \[ "${no_more_options:-0}" = 1 ]; then \echo -n "-- "; fi
-      \echo -n "-c "
       if \[ "${is_script:-1}" = 1 ]; then
         # we cant have a linebreak here to not garble the argument positions
         _otel_escape_arg ". otel.sh; . $1 "'"$@"'
