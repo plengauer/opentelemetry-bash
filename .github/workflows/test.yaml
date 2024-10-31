@@ -120,7 +120,7 @@ jobs:
               yum -y install ${{ matrix.dependency }}
               yum -y remove ${{ matrix.dependency }}
             elif type zypper; then
-              zypper --non-interactive dup
+              # zypper --non-interactive dup
               zypper --non-interactive remove ${{ matrix.dependency }}
               rpm --install /root/package.rpm
               zypper --non-interactive install ${{ matrix.dependency }}
