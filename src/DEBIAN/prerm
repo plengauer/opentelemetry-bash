@@ -1,5 +1,5 @@
 #!/bin/sh -e
-set "${1:-remove}"
+if [ -z "$1" ]; then set -- remove; fi
 if [ "$1" = 'remove' ] || [ "$1" = 'deconfigure' ] || [ "$1" = 'upgrade' ]; then
   rm -rf /opt/opentelemetry_shell/venv_sdk /opt/opentelemetry_shell/*.so /opt/opentelemetry_shell/venv /opt/opentelemetry_shell/node_modules /usr/share/opentelemetry_shell/node_modules
 elif [ "$1" = 'failed-upgrade' ]; then
