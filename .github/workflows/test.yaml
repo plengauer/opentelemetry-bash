@@ -110,7 +110,7 @@ jobs:
             elif type dnf; then
               dnf -y upgrade --refresh
               dnf -y remove ${{ matrix.dependency }}
-              rpm --install /root/package.rpm
+              rpm --install -vvh /root/package.rpm
               dnf -y install ${{ matrix.dependency }}
               dnf -y remove ${{ matrix.dependency }}
             elif type yum; then
