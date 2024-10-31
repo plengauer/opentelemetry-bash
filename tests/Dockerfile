@@ -27,7 +27,7 @@ RUN <<EOF
     type "$shell" || yum -y install "$shell"
     yum -y install $packages
   elif type zypper; then
-    zypper --non-interactive dup
+    # zypper --non-interactive dup
     rpm --install ./package.rpm
     type "$shell" || zypper --non-interactive install "$shell"
     zypper --non-interactive install $packages
