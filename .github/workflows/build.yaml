@@ -14,7 +14,15 @@ jobs:
       - run: sudo apt-get update && sudo apt-get install devscripts debhelper alien
       - run: sed -i "s/__VERSION__/$(cat ../VERSION)/g" DEBIAN/control
       - run: dpkg-deb --root-owner-group -Zgzip --build . ../package.deb
-      - run: alien -r --scripts ../package.deb && mv *.rpm ../package.rpm
+      - run: |
+          alien --to-rpm --scripts --keep-version --generate ../package.deb
+          rpm_dir=$(echo */*.spec | rev | cut -d / -f 2- | rev)
+          cat DEBIAN/control | sed 's/Depends/Requires/g' | grep Requires | tr ',' '\n' | sed 's/: /:\n/g' | tr -d ' ' | grep -v '|' | tr '\n' ' ' >> rpm.spec
+          echo >> rpm.spec
+          cat "$rpm_dir"/*.spec >> rpm.spec
+          rm "$rpm_dir"/*.spec
+          rpmbuild -ba --buildroot="$rpm_dir" --build-in-place rpm.spec
+          mv *.rpm ../package.rpm
       - uses: actions/upload-artifact@v4
         with:
           name: packages
@@ -30,7 +38,7 @@ jobs:
           name: packages
       - run: rpm -ql ./package.rpm
       - run: rpm -q --scripts ./package.rpm
-      - run: rpm -qR ./package.rpm && rpm -qp ./package.rpm --requires
+      - run: rpm -qR ./package.rpm
       - run: rpm -qi ./package.rpm
       - run: rpm2cpio ./package.rpm | cpio -idmv '*.spec'
       - run: ls
