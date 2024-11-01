@@ -30,7 +30,7 @@ jobs:
           name: packages
       - run: rpm -ql ./package.rpm
       - run: rpm -q --scripts ./package.rpm
-      - run: rpm -qR ./package.rpm
+      - run: rpm -qR ./package.rpm && rpm -qp mypackage.rpm --requires
       - run: rpm -qi ./package.rpm
       - run: rpm2cpio ./package.rpm | cpio -idmv '*.spec'
       - run: ls
