@@ -331,7 +331,7 @@ otel_observe() {
     otel_span_attribute_typed "$span_handle" string shell.command.name="$command_name"
   fi
   if \[ "$command_type" = file ]; then
-    local executable_path="$(_otel_string_contains "$command_name" / && \echo "$command_name" || \which "$command_name")"
+    local executable_path="$(_otel_string_contains "$command_name" / && \echo "$command_name" || \type -P "$command_name" 2> /dev/null || \which "$command_name")"
     otel_span_attribute_typed "$span_handle" string subprocess.executable.path="$executable_path"
     otel_span_attribute_typed "$span_handle" string subprocess.executable.name="${executable_path##*/}" # "$(\printf '%s' "$command" | \cut -d' ' -f1 | \rev | \cut -d / -f 1 | \rev)"
   fi
