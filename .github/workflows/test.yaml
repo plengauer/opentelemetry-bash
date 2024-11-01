@@ -110,19 +110,19 @@ jobs:
             elif type dnf; then
               dnf -y upgrade --refresh
               dnf -y remove ${{ matrix.dependency }}
-              rpm --install -vvh /root/package.rpm # TODO remove the verbosity
+              dnf -y install /root/package.rpm
               dnf -y install ${{ matrix.dependency }}
               dnf -y remove ${{ matrix.dependency }}
             elif type yum; then
               yum -y update
               yum -y remove ${{ matrix.dependency }}
-              rpm --install /root/package.rpm
+              yum -y install /root/package.rpm
               yum -y install ${{ matrix.dependency }}
               yum -y remove ${{ matrix.dependency }}
             elif type zypper; then
               # zypper --non-interactive dup
               zypper --non-interactive remove ${{ matrix.dependency }} || true
-              rpm --install /root/package.rpm
+              zypper --non-interactive install /root/package.rpm
               zypper --non-interactive install ${{ matrix.dependency }}
               zypper --non-interactive remove ${{ matrix.dependency }}
             else
