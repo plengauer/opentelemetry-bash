@@ -19,3 +19,15 @@ jobs:
         with:
           name: packages
           path: package.*
+
+  experiment:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - run: sudo apt-get update && sudo apt-get install rpm rpmbuild alien
+      - uses: actions/download-artifact@v4
+        with:
+          name: packages
+      - run: rpm2cpio "./package.rpm" | cpio -idmv '*.spec'
+      - run: ls *.spec
+      - run: cat *.spec
