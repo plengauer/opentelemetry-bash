@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - run: sudo apt-get update && sudo apt-get install rpm rpmbuild alien
+      - run: sudo apt-get update && sudo apt-get install rpm alien
       - uses: actions/download-artifact@v4
         with:
           name: packages
