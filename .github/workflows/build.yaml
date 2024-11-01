@@ -29,5 +29,6 @@ jobs:
         with:
           name: packages
       - run: rpm2cpio "./package.rpm" | cpio -idmv '*.spec'
-      - run: ls *.spec
-      - run: cat *.spec
+      - run: ls
+      - run: |
+          cat *.spec
