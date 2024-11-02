@@ -21,7 +21,7 @@ jobs:
           echo >> rpm.spec
           cat "$rpm_dir"/*.spec >> rpm.spec
           rm "$rpm_dir"/*.spec
-          rpmbuild -ba --buildroot="$rpm_dir" --build-in-place rpm.spec
+          rpmbuild -bb --buildroot="$(cat rpm.spec | grep '^Buildroot: ' | cut -d ' ' -f 2)" rpm.spec
           mv *.rpm ../package.rpm
       - uses: actions/upload-artifact@v4
         with:
