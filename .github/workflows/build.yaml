@@ -22,7 +22,7 @@ jobs:
             cat DEBIAN/control | sed 's/Depends/Requires/g' | grep Requires | tr ',' '\n' | sed 's/: /:\n/g' | tr -d ' ' | grep -v '|' | tr '\n' ' ' && echo
             cat "$rpm_dir"/*.spec
           } > rpm.spec && cat < rpm.spec > "$rpm_dir"/*.spec && rm rpm.spec
-          rpmbuild -bb --buildroot="$(cat rpm.spec | grep '^Buildroot: ' | cut -d ' ' -f 2)" "$rpm_dir"/*.spec
+          rpmbuild -bb --buildroot="$(cat "$rpm_dir"/*.spec | grep '^Buildroot: ' | cut -d ' ' -f 2)" "$rpm_dir"/*.spec
           mv *.rpm ../package.rpm
       - uses: actions/upload-artifact@v4
         with:
