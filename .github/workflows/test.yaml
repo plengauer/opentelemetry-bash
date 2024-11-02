@@ -122,7 +122,7 @@ jobs:
             elif type zypper; then
               # zypper --non-interactive dup
               zypper --non-interactive remove ${{ matrix.dependency }} || true
-              zypper --non-interactive --allow-unsigned-rpm install /root/package.rpm
+              zypper --non-interactive install --allow-unsigned-rpm /root/package.rpm
               zypper --non-interactive install ${{ matrix.dependency }}
               zypper --non-interactive remove ${{ matrix.dependency }}
             else
