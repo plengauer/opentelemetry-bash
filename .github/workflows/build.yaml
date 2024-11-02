@@ -17,11 +17,13 @@ jobs:
       - run: |
           alien --to-rpm --scripts --keep-version --generate ../package.deb
           rpm_dir=$(echo */*.spec | rev | cut -d / -f 2- | rev)
-          echo "BuildArch: noarch" >> rpm.spec
-          cat DEBIAN/control | sed 's/Depends/Requires/g' | grep Requires | tr ',' '\n' | sed 's/: /:\n/g' | tr -d ' ' | grep -v '|' | tr '\n' ' ' >> rpm.spec && echo >> rpm.spec
-          cat "$rpm_dir"/*.spec >> rpm.spec
-          rm "$rpm_dir"/*.spec
-          rpmbuild -bb --buildroot="$(cat rpm.spec | grep '^Buildroot: ' | cut -d ' ' -f 2)" rpm.spec
+          {
+            echo "BuildArch: noarch"
+            cat DEBIAN/control | sed 's/Depends/Requires/g' | grep Requires | tr ',' '\n' | sed 's/: /:\n/g' | tr -d ' ' | grep -v '|' | tr '\n' ' ' && echo
+            cat "$rpm_dir"/*.spec
+          } > rpm.spec && cat < rpm.spec > "$rpm_dir"/*.spec && rm rpm.spec
+          rpmbuild -bb --buildroot="$(cat rpm.spec | grep '^Buildroot: ' | cut -d ' ' -f 2)" "$rpm_dir"/*.spec
+          mv *.rpm ../package.rpm
       - uses: actions/upload-artifact@v4
         with:
           name: packages
