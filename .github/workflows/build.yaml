@@ -19,7 +19,7 @@ jobs:
           rpm_dir=$(echo */*.spec | rev | cut -d / -f 2- | rev)
           {
             echo "BuildArch: noarch"
-            cat DEBIAN/control | sed 's/Depends/Requires/g' | grep Requires | tr ',' '\n' | sed 's/: /:\n/g' | tr -d ' ' | grep -v '|' | grep -v python3-venv | tr '\n' ' ' && echo
+            echo -n 'Requires: ' && cat DEBIAN/control | grep Depends | cut -d ' ' -f 2- | tr ',' '\n' | tr -d ' ' | sed 's/|/ or /g' | sed 's/.*/(&)/g' | tr '\n' ' ' && echo
             cat "$rpm_dir"/*.spec
           } > rpm.spec && rm "$rpm_dir"/*.spec
           rpmbuild -bb --buildroot="$(cat rpm.spec | grep '^Buildroot: ' | cut -d ' ' -f 2)" rpm.spec
