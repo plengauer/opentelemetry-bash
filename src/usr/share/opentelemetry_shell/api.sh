@@ -413,6 +413,7 @@ else
       "$1 is a function") \echo 'function';;
       "$1 is a shell builtin") \echo builtin;;
       "$1 is $1") \[ "$_otel_shell" = 'busybox sh' ] && \help | \tail -n +3 | \grep -q "$1" && \echo builtin || \echo file;;
+      "$1 is hashed (/"*"/$1)") \echo file;; 
       *) \echo file;;
     esac
   }
