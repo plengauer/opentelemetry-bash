@@ -28,7 +28,7 @@ RUN <<EOF
     yum -y install $packages
   elif type zypper; then
     [ "$update" = TRUE ] && zypper --non-interactive update
-    zypper --non-interactive install ./package.rpm
+    zypper --non-interactive --allow-unsigned-rpm install ./package.rpm
     type "$shell" || zypper --non-interactive install "$shell"
     zypper --non-interactive install $packages
   else
