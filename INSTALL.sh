@@ -14,19 +14,31 @@ package="$(mktemp -u)"."$extension"
 curl --no-progress-meter https://api.github.com/repos/plengauer/opentelemetry-bash/releases/latest | jq -r '.assets[].browser_download_url' | grep '.'"$extension"'$' | xargs wget -O "$package" \
  || curl -v --no-progress-meter https://github.com/plengauer/opentelemetry-bash/releases/latest/download/opentelemetry-shell."$extension" 2>&1 | grep location | awk -F\  '{ print $3 }' | awk -F/ '{ print $8 }' | awk -Fv '{ print $2 }' | xargs -I '{}' wget -O "$package" https://github.com/plengauer/opentelemetry-bash/releases/latest/download/opentelemetry-shell_'{}'."$extension"
 
+if [ "$(whoami)" = "root" ]; then
+  wrapper=sudo
+else
+  wrapper=''
+fi
+
 case "$extension" in
   deb)
-    if [ "$(whoami)" = "root" ]; then
-      apt-get install -y "$package"
+    if type apt-get; then
+      $wrapper apt-get install -y "$package"  
+    elif type apt; then
+      $wrapper apt install -y "$package"  
     else
-      sudo -E apt-get install -y "$package"
+      $wrapper dpkg --install "$package"  
     fi
     ;;
   rpm)
-    if [ "$(whoami)" = "root" ]; then
-      rpm --install "$package"
+    if type dnf; then
+      $wrapper dnf -y install "$package"
+    elif type yum; then
+      $wrapper yum -y install "$package"
+    elif type zypper; then
+      $wrapper zypper --non-interactive install --allow-unsigned-rpm "$package"
     else
-      sudo -E rpm --install "$package"
+      $wrapper rpm --install "$package"
     fi
     ;;
   *)
