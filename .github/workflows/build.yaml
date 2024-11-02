@@ -18,9 +18,10 @@ jobs:
           alien --to-rpm --scripts --keep-version --generate ../package.deb
           rpm_dir=$(echo */*.spec | rev | cut -d / -f 2- | rev)
           {
-            echo "BuildArch: noarch"
-            echo -n 'Requires: ' && cat DEBIAN/control | grep Depends | cut -d ' ' -f 2- | tr ',' '\n' | tr -d ' ' | sed 's/|/ or /g' | sed 's/.*/(&)/g' | tr '\n' ' ' && echo
+            echo -n 'Requires: ' && cat DEBIAN/control | grep Depends | cut -d ' ' -f 2- | tr ',' '\n' | tr -d ' ' | sed 's/|/ or /g' | sed 's/.*/(&)/g' | grep -v python3-venv | tr '\n' ' ' && echo
             cat "$rpm_dir"/*.spec
+            echo "AutoReq: no"
+            echo "BuildArch: noarch"
           } > rpm.spec && rm "$rpm_dir"/*.spec
           rpmbuild -bb --buildroot="$(cat rpm.spec | grep '^Buildroot: ' | cut -d ' ' -f 2)" rpm.spec
           mv ../*.rpm ../package.rpm
