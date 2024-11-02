@@ -38,4 +38,4 @@ EOF
 
 ENV shell="$shell"
 
-CMD bash run_tests.sh "$shell"
+CMD ! type "$shell" || bash run_tests.sh "$shell"
