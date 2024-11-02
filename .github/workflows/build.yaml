@@ -19,7 +19,7 @@ jobs:
           rpm_dir=$(echo */*.spec | rev | cut -d / -f 2- | rev)
           {
             echo "BuildArch: noarch"
-            cat DEBIAN/control | sed 's/Depends/Requires/g' | grep Requires | tr ',' '\n' | sed 's/: /:\n/g' | tr -d ' ' | grep -v '|' | tr '\n' ' ' && echo
+            cat DEBIAN/control | sed 's/Depends/Requires/g' | grep Requires | tr ',' '\n' | sed 's/: /:\n/g' | tr -d ' ' | grep -v '|' | grep -v python3-venv | tr '\n' ' ' && echo
             cat "$rpm_dir"/*.spec
           } > rpm.spec && rm "$rpm_dir"/*.spec
           rpmbuild -bb --buildroot="$(cat rpm.spec | grep '^Buildroot: ' | cut -d ' ' -f 2)" rpm.spec
@@ -28,20 +28,3 @@ jobs:
         with:
           name: packages
           path: package.*
-
-  experiment:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - run: sudo apt-get update && sudo apt-get install rpm alien
-      - uses: actions/download-artifact@v4
-        with:
-          name: packages
-      - run: rpm -ql ./package.rpm
-      - run: rpm -q --scripts ./package.rpm
-      - run: rpm -qR ./package.rpm
-      - run: rpm -qi ./package.rpm
-      - run: rpm2cpio ./package.rpm | cpio -idmv '*.spec'
-      - run: ls
-      - run: |
-          cat *.spec
