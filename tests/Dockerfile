@@ -17,17 +17,17 @@ RUN <<EOF
     type "$shell" || DEBIAN_FRONTEND=noninteractive apt-get install -y "$shell"
     DEBIAN_FRONTEND=noninteractive apt-get install -y $packages
   elif type dnf; then # TODO respect update
-    dnf -y upgrade --refresh
+    [ "$update" = TRUE ] && dnf -y upgrade --refresh
     dnf -y install ./package.rpm
     type "$shell" || dnf -y install "$shell"
     dnf -y install $packages
   elif type yum; then # TODO respect update
-    yum -y update
+    [ "$update" = TRUE ] && yum -y update
     yum -y install ./package.rpm
     type "$shell" || yum -y install "$shell"
     yum -y install $packages
   elif type zypper; then # TODO respect update
-    # zypper --non-interactive dup
+    [ "$update" = TRUE ] && zypper --non-interactive update
     zypper --non-interactive install ./package.rpm
     type "$shell" || zypper --non-interactive install "$shell"
     zypper --non-interactive install $packages
