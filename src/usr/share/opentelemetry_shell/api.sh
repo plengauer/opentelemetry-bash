@@ -374,7 +374,15 @@ if ! \type which 1> /dev/null 2> /dev/null; then
     }
   else
     which() {
-      \type "$1" | \cut -d ' ' -f 3-
+      local IFS=:
+      for directory in $PATH; do
+        local path="$directory"/"$1"
+        if \[ -x "$path" ]; then
+          \echo "$path"
+          return 0
+        fi
+      done
+      return 1
     }
   fi
 fi
@@ -409,6 +417,7 @@ else
       "$1 is a shell keyword") \echo keyword;;
       "$1 is a shell alias for "*) \echo alias;;
       "$1 is an alias for "*) \echo alias;;
+      "$1 is aliased to "*) \echo alias;;
       "$1 is a shell function") \echo 'function';;
       "$1 is a function") \echo 'function';;
       "$1 is a shell builtin") \echo builtin;;
