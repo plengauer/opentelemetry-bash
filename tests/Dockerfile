@@ -22,7 +22,7 @@ RUN <<EOF
     type "$shell" || dnf -y install "$shell"
     dnf -y install $packages
   elif type yum; then
-    [ "$update" = TRUE ] && yum -y update
+    [ "$update" = TRUE ] && yum -y upgrade
     yum -y install ./package.rpm
     type "$shell" || yum -y install "$shell"
     yum -y install $packages
