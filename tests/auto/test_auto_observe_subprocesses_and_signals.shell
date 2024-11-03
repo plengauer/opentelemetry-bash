@@ -10,7 +10,7 @@ if type apt-get update; then
 elif type dnf; then
   command="sudo dnf -y upgrade"
 elif type zypper; then
-  command="zypper --non-interactive update"
+  command="sudo zypper --non-interactive update"
 else
   exit 0
 fi
