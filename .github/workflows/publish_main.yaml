@@ -125,7 +125,7 @@ jobs:
           }
 
           get_child_span_ids() {
-            spans | jq '. | select(.name != null) | select(.parentSpanId == "'"$1"'")' | jq -r -s '. | sort_by(.endTimeUnixNano) | .[].spanId'
+            spans | jq '. | select(.name != null) | select(.parentSpanId == "'"$1"'") | .startTimeUnixNano |= .[0:-8]' | jq -r -s '. | sort_by(.endTimeUnixNano) | .[].spanId'
           }
 
           print_span_name_tree() {
