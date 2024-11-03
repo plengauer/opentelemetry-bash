@@ -20,7 +20,7 @@ _otel_is_boolean_docker_option() {
 _otel_is_docker_image_injectable() {
   local executable="$1"
   local image="$2"
-  "$executable" run --rm --entrypoint cat "$image" /etc/os-release | \grep -E '^NAME=' | \grep -qE 'Debian|Ubuntu|Alpine Linux'
+  "$executable" run --rm --entrypoint cat "$image" /etc/os-release | \grep -E '^NAME=' | \grep -qE 'Debian|Ubuntu|Alpine Linux|Fedora Linux|Red Hat Enterprise Linux|openSUSE'
 }
 
 _otel_is_docker_image_injected() {
