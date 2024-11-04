@@ -26,6 +26,7 @@ assert_equals 0 "$(\cat "$OTEL_EXPORT_LOCATION" | \jq '. | select(.name != null)
 done
 
 \cat "$OTEL_EXPORT_LOCATION" | \jq -r '. | select(.name != null) | .context.span_id' | while read -r span_id; do
+  if [ -z "$span_id" ]; then continue; fi
   span="$(\cat "$OTEL_EXPORT_LOCATION" | \jq '. | select(.context.span_id == "'"$span_id"'")')"
   while \[ -n "$span" ] && \[ "$(\printf '%s' "$span" | \jq -r '.name')" != "$command" ]; do
     span_id="$(\printf '%s' "$span" | \jq -r '.parent_id')"
