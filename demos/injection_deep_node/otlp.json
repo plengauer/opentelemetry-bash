@@ -24,7 +24,7 @@
           {
             "key": "telemetry.sdk.version",
             "value": {
-              "stringValue": "1.26.0"
+              "stringValue": "1.27.0"
             }
           },
           {
@@ -36,7 +36,7 @@
           {
             "key": "vcs.commit.id",
             "value": {
-              "stringValue": "e98e7ed40fca3243d4bdf5a66f5f54e3867dc58b"
+              "stringValue": "09a2709fd7e39a69fb9e00239add2d9a9aa1a0e0"
             }
           },
           {
@@ -54,25 +54,25 @@
           {
             "key": "github.run_id",
             "value": {
-              "stringValue": "11068449473"
+              "stringValue": "11650349700"
             }
           },
           {
             "key": "github.run_number",
             "value": {
-              "stringValue": "59"
+              "stringValue": "67"
             }
           },
           {
             "key": "github.actor",
             "value": {
-              "stringValue": "plengauer"
+              "stringValue": "actions-bot-pl"
             }
           },
           {
             "key": "github.sha",
             "value": {
-              "stringValue": "e98e7ed40fca3243d4bdf5a66f5f54e3867dc58b"
+              "stringValue": "09a2709fd7e39a69fb9e00239add2d9a9aa1a0e0"
             }
           },
           {
@@ -84,7 +84,7 @@
           {
             "key": "process.pid",
             "value": {
-              "intValue": "8157"
+              "intValue": "6074"
             }
           },
           {
@@ -111,13 +111,13 @@
                     "stringValue": "--require"
                   },
                   {
-                    "stringValue": "/usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.js"
+                    "stringValue": "/usr/share/opentelemetry_shell/agent.instrumentation.node.js"
                   },
                   {
                     "stringValue": "--require"
                   },
                   {
-                    "stringValue": "/usr/share/opentelemetry_shell/opentelemetry_shell.custom.node.deep.instrument.js"
+                    "stringValue": "/usr/share/opentelemetry_shell/agent.instrumentation.node.deep.instrument.js"
                   },
                   {
                     "stringValue": "/home/runner/work/opentelemetry-bash/opentelemetry-bash/demos/injection_deep_node/index.js"
@@ -129,7 +129,7 @@
           {
             "key": "process.runtime.version",
             "value": {
-              "stringValue": "20.17.0"
+              "stringValue": "18.20.4"
             }
           },
           {
@@ -162,17 +162,17 @@
         {
           "scope": {
             "name": "@opentelemetry/instrumentation-http",
-            "version": "0.53.0"
+            "version": "0.54.0"
           },
           "spans": [
             {
-              "traceId": "ceff995c1b91ff0ad3d88106bd722b8d",
-              "spanId": "59340cb3c117193d",
-              "parentSpanId": "762eec2a7fd469eb",
+              "traceId": "0205b0a0cdc044ad6f11ea574bf6cd43",
+              "spanId": "442a2fc64a5a8003",
+              "parentSpanId": "f0f5e8e750395a4e",
               "name": "GET",
               "kind": 3,
-              "startTimeUnixNano": "1727437517417000000",
-              "endTimeUnixNano": "1727437698019752772",
+              "startTimeUnixNano": "1730634742386000000",
+              "endTimeUnixNano": "1730634742432933853",
               "attributes": [
                 {
                   "key": "http.url",
@@ -271,7 +271,7 @@
           {
             "key": "telemetry.sdk.version",
             "value": {
-              "stringValue": "4.31.1"
+              "stringValue": "4.37.0"
             }
           },
           {
@@ -283,7 +283,7 @@
           {
             "key": "github.sha",
             "value": {
-              "stringValue": "e98e7ed40fca3243d4bdf5a66f5f54e3867dc58b"
+              "stringValue": "09a2709fd7e39a69fb9e00239add2d9a9aa1a0e0"
             }
           },
           {
@@ -319,7 +319,7 @@
           {
             "key": "github.event.ref.sha",
             "value": {
-              "stringValue": "e98e7ed40fca3243d4bdf5a66f5f54e3867dc58b"
+              "stringValue": "09a2709fd7e39a69fb9e00239add2d9a9aa1a0e0"
             }
           },
           {
@@ -331,13 +331,13 @@
           {
             "key": "github.event.actor.id",
             "value": {
-              "stringValue": "100447901"
+              "stringValue": "170979611"
             }
           },
           {
             "key": "github.event.actor.name",
             "value": {
-              "stringValue": "plengauer"
+              "stringValue": "actions-bot-pl"
             }
           },
           {
@@ -349,7 +349,7 @@
           {
             "key": "github.workflow.run.id",
             "value": {
-              "stringValue": "11068449473"
+              "stringValue": "11650349700"
             }
           },
           {
@@ -367,7 +367,7 @@
           {
             "key": "github.workflow.sha",
             "value": {
-              "stringValue": "e98e7ed40fca3243d4bdf5a66f5f54e3867dc58b"
+              "stringValue": "09a2709fd7e39a69fb9e00239add2d9a9aa1a0e0"
             }
           },
           {
@@ -397,13 +397,13 @@
           {
             "key": "process.pid",
             "value": {
-              "intValue": "7534"
+              "intValue": "5308"
             }
           },
           {
             "key": "process.parent_pid",
             "value": {
-              "intValue": "2608"
+              "intValue": "2620"
             }
           },
           {
@@ -451,7 +451,7 @@
           {
             "key": "process.runtime.version",
             "value": {
-              "stringValue": "5.2.21-2ubuntu4"
+              "stringValue": "5.1-6ubuntu1.1"
             }
           },
           {
@@ -484,18 +484,18 @@
         {
           "scope": {
             "name": "shell",
-            "version": "4.31.1"
+            "version": "4.37.0"
           },
           "spans": [
             {
-              "traceId": "ceff995c1b91ff0ad3d88106bd722b8d",
-              "spanId": "762eec2a7fd469eb",
-              "parentSpanId": "2eef3f5e101a8e65",
+              "traceId": "0205b0a0cdc044ad6f11ea574bf6cd43",
+              "spanId": "f0f5e8e750395a4e",
+              "parentSpanId": "bf34182984aebb2f",
               "flags": 768,
               "name": "node index.js",
               "kind": 1,
-              "startTimeUnixNano": "1727437516277398310",
-              "endTimeUnixNano": "1727437698037395856",
+              "startTimeUnixNano": "1730634741157400421",
+              "endTimeUnixNano": "1730634742636248554",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -555,14 +555,14 @@
               "status": {}
             },
             {
-              "traceId": "ceff995c1b91ff0ad3d88106bd722b8d",
-              "spanId": "2eef3f5e101a8e65",
+              "traceId": "0205b0a0cdc044ad6f11ea574bf6cd43",
+              "spanId": "bf34182984aebb2f",
               "parentSpanId": "",
               "flags": 256,
               "name": "bash -e demo.sh",
               "kind": 2,
-              "startTimeUnixNano": "1727437516264962762",
-              "endTimeUnixNano": "1727437698037515520",
+              "startTimeUnixNano": "1730634741144395472",
+              "endTimeUnixNano": "1730634742636377936",
               "status": {}
             }
           ]

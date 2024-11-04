@@ -54,7 +54,6 @@ _otel_record_subprocesses() {
     local pid="${line%% *}"
     \eval "local parent_pid=\$parent_pid_$pid"
     \eval "local span_handle=\$span_handle_$pid"
-    \eval "local parent_span_handle=\$span_handle_$parent_pid"
     case "$operation" in
       fork)
         if \[ "${OTEL_SHELL_CONFIG_OBSERVE_SUBPROCESSES:-FALSE}" != TRUE ]; then continue; fi
@@ -64,7 +63,7 @@ _otel_record_subprocesses() {
         if \[ -z "${span_name:-}" ]; then \eval "local span_name=\"\$span_name_$pid\""; fi
         if \[ -z "${span_name:-}" ]; then \eval "local span_name=\"\$span_name_$parent_pid\""; fi
         local span_name="${span_name:-<unknown>}"
-        otel_span_activate "${parent_span_handle:-$root_span_handle}"
+        otel_span_activate "${span_handle:-$root_span_handle}"
         local span_handle="$(otel_span_start INTERNAL "$span_name")"
         otel_span_deactivate
         \eval "local span_handle_$new_pid=$span_handle"

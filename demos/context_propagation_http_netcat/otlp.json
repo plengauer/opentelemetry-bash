@@ -18,7 +18,7 @@
           {
             "key": "telemetry.sdk.version",
             "value": {
-              "stringValue": "4.35.1"
+              "stringValue": "4.37.0"
             }
           },
           {
@@ -30,7 +30,7 @@
           {
             "key": "github.sha",
             "value": {
-              "stringValue": "4cce091935cfa8d96998260feeb479c017841f32"
+              "stringValue": "09a2709fd7e39a69fb9e00239add2d9a9aa1a0e0"
             }
           },
           {
@@ -66,7 +66,7 @@
           {
             "key": "github.event.ref.sha",
             "value": {
-              "stringValue": "4cce091935cfa8d96998260feeb479c017841f32"
+              "stringValue": "09a2709fd7e39a69fb9e00239add2d9a9aa1a0e0"
             }
           },
           {
@@ -78,13 +78,13 @@
           {
             "key": "github.event.actor.id",
             "value": {
-              "stringValue": "100447901"
+              "stringValue": "170979611"
             }
           },
           {
             "key": "github.event.actor.name",
             "value": {
-              "stringValue": "plengauer"
+              "stringValue": "actions-bot-pl"
             }
           },
           {
@@ -96,13 +96,13 @@
           {
             "key": "github.workflow.run.id",
             "value": {
-              "stringValue": "11482241470"
+              "stringValue": "11650349700"
             }
           },
           {
             "key": "github.workflow.run.attempt",
             "value": {
-              "stringValue": "2"
+              "stringValue": "1"
             }
           },
           {
@@ -114,7 +114,7 @@
           {
             "key": "github.workflow.sha",
             "value": {
-              "stringValue": "4cce091935cfa8d96998260feeb479c017841f32"
+              "stringValue": "09a2709fd7e39a69fb9e00239add2d9a9aa1a0e0"
             }
           },
           {
@@ -144,13 +144,13 @@
           {
             "key": "process.pid",
             "value": {
-              "intValue": "4446"
+              "intValue": "4493"
             }
           },
           {
             "key": "process.parent_pid",
             "value": {
-              "intValue": "4443"
+              "intValue": "4491"
             }
           },
           {
@@ -231,18 +231,18 @@
         {
           "scope": {
             "name": "shell",
-            "version": "4.35.1"
+            "version": "4.37.0"
           },
           "spans": [
             {
-              "traceId": "0da542c3c1715fa62f320b1abb6d96b6",
-              "spanId": "d657a43818ef5398",
-              "parentSpanId": "a861e88b89a5f9ee",
+              "traceId": "95a64454759f5f5351048d242f6e39de",
+              "spanId": "7ccdcbeda037faf0",
+              "parentSpanId": "5f197e10a5a63df1",
               "flags": 768,
               "name": "printf HTTP/1.1 418 I'm a teapot",
               "kind": 1,
-              "startTimeUnixNano": "1729703873583084877",
-              "endTimeUnixNano": "1729703873603124588",
+              "startTimeUnixNano": "1730634735797570590",
+              "endTimeUnixNano": "1730634735817090074",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -284,14 +284,14 @@
               "status": {}
             },
             {
-              "traceId": "0da542c3c1715fa62f320b1abb6d96b6",
-              "spanId": "a861e88b89a5f9ee",
-              "parentSpanId": "55946f1c08402793",
+              "traceId": "95a64454759f5f5351048d242f6e39de",
+              "spanId": "5f197e10a5a63df1",
+              "parentSpanId": "6681bc0509eebef3",
               "flags": 768,
               "name": "GET",
               "kind": 2,
-              "startTimeUnixNano": "1729703873572954675",
-              "endTimeUnixNano": "1729703873698658031",
+              "startTimeUnixNano": "1730634735787816335",
+              "endTimeUnixNano": "1730634735910694272",
               "attributes": [
                 {
                   "key": "network.transport",
@@ -308,7 +308,7 @@
                 {
                   "key": "network.peer.port",
                   "value": {
-                    "intValue": "43984"
+                    "intValue": "36188"
                   }
                 },
                 {
@@ -332,7 +332,7 @@
                 {
                   "key": "client.port",
                   "value": {
-                    "intValue": "43984"
+                    "intValue": "36188"
                   }
                 },
                 {
@@ -383,7 +383,7 @@
                     "arrayValue": {
                       "values": [
                         {
-                          "stringValue": "00-0da542c3c1715fa62f320b1abb6d96b6-55946f1c08402793-01"
+                          "stringValue": "00-95a64454759f5f5351048d242f6e39de-6681bc0509eebef3-01"
                         }
                       ]
                     }
@@ -404,22 +404,22 @@
               ],
               "links": [
                 {
-                  "traceId": "8e4de215a180e9381e974bfaa4b4efad",
-                  "spanId": "09b3f074165c8901",
+                  "traceId": "ff2b0c91d2af15833310c82bfb5e6ce4",
+                  "spanId": "4eb19b175e39339b",
                   "flags": 768
                 }
               ],
               "status": {}
             },
             {
-              "traceId": "8e4de215a180e9381e974bfaa4b4efad",
-              "spanId": "09b3f074165c8901",
+              "traceId": "ff2b0c91d2af15833310c82bfb5e6ce4",
+              "spanId": "4eb19b175e39339b",
               "parentSpanId": "",
               "flags": 256,
               "name": "send/receive",
               "kind": 5,
-              "startTimeUnixNano": "1729703873483434814",
-              "endTimeUnixNano": "1729703873701179722",
+              "startTimeUnixNano": "1730634735701402525",
+              "endTimeUnixNano": "1730634735913324102",
               "attributes": [
                 {
                   "key": "network.transport",
@@ -436,7 +436,7 @@
                 {
                   "key": "network.peer.port",
                   "value": {
-                    "intValue": "43984"
+                    "intValue": "36188"
                   }
                 },
                 {
@@ -460,14 +460,14 @@
                 {
                   "key": "client.port",
                   "value": {
-                    "intValue": "43984"
+                    "intValue": "36188"
                   }
                 }
               ],
               "links": [
                 {
-                  "traceId": "0da542c3c1715fa62f320b1abb6d96b6",
-                  "spanId": "a861e88b89a5f9ee",
+                  "traceId": "95a64454759f5f5351048d242f6e39de",
+                  "spanId": "5f197e10a5a63df1",
                   "flags": 768
                 }
               ],
@@ -476,7 +476,11 @@
           ]
         }
       ]
-    },
+    }
+  ]
+}
+{
+  "resourceSpans": [
     {
       "resource": {
         "attributes": [
@@ -495,7 +499,7 @@
           {
             "key": "telemetry.sdk.version",
             "value": {
-              "stringValue": "4.35.1"
+              "stringValue": "4.37.0"
             }
           },
           {
@@ -507,7 +511,7 @@
           {
             "key": "github.sha",
             "value": {
-              "stringValue": "4cce091935cfa8d96998260feeb479c017841f32"
+              "stringValue": "09a2709fd7e39a69fb9e00239add2d9a9aa1a0e0"
             }
           },
           {
@@ -543,7 +547,7 @@
           {
             "key": "github.event.ref.sha",
             "value": {
-              "stringValue": "4cce091935cfa8d96998260feeb479c017841f32"
+              "stringValue": "09a2709fd7e39a69fb9e00239add2d9a9aa1a0e0"
             }
           },
           {
@@ -555,13 +559,13 @@
           {
             "key": "github.event.actor.id",
             "value": {
-              "stringValue": "100447901"
+              "stringValue": "170979611"
             }
           },
           {
             "key": "github.event.actor.name",
             "value": {
-              "stringValue": "plengauer"
+              "stringValue": "actions-bot-pl"
             }
           },
           {
@@ -573,13 +577,13 @@
           {
             "key": "github.workflow.run.id",
             "value": {
-              "stringValue": "11482241470"
+              "stringValue": "11650349700"
             }
           },
           {
             "key": "github.workflow.run.attempt",
             "value": {
-              "stringValue": "2"
+              "stringValue": "1"
             }
           },
           {
@@ -591,7 +595,7 @@
           {
             "key": "github.workflow.sha",
             "value": {
-              "stringValue": "4cce091935cfa8d96998260feeb479c017841f32"
+              "stringValue": "09a2709fd7e39a69fb9e00239add2d9a9aa1a0e0"
             }
           },
           {
@@ -621,13 +625,13 @@
           {
             "key": "process.pid",
             "value": {
-              "intValue": "3374"
+              "intValue": "3424"
             }
           },
           {
             "key": "process.parent_pid",
             "value": {
-              "intValue": "2650"
+              "intValue": "2694"
             }
           },
           {
@@ -708,18 +712,18 @@
         {
           "scope": {
             "name": "shell",
-            "version": "4.35.1"
+            "version": "4.37.0"
           },
           "spans": [
             {
-              "traceId": "0da542c3c1715fa62f320b1abb6d96b6",
-              "spanId": "4888def8b41800bc",
-              "parentSpanId": "8285e8f949e825bf",
+              "traceId": "95a64454759f5f5351048d242f6e39de",
+              "spanId": "2d904de7a35e1e45",
+              "parentSpanId": "6b727af1a1f5f136",
               "flags": 768,
               "name": "printf GET / HTTP/1.1\\r\\n\\r\\n",
               "kind": 1,
-              "startTimeUnixNano": "1729703872871696458",
-              "endTimeUnixNano": "1729703872887834753",
+              "startTimeUnixNano": "1730634735112605221",
+              "endTimeUnixNano": "1730634735128355131",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -767,14 +771,14 @@
               "status": {}
             },
             {
-              "traceId": "0da542c3c1715fa62f320b1abb6d96b6",
-              "spanId": "55946f1c08402793",
-              "parentSpanId": "4c0dbb10640c78b2",
+              "traceId": "95a64454759f5f5351048d242f6e39de",
+              "spanId": "6681bc0509eebef3",
+              "parentSpanId": "235b3acf31b5e48c",
               "flags": 768,
               "name": "GET",
               "kind": 3,
-              "startTimeUnixNano": "1729703873004282812",
-              "endTimeUnixNano": "1729703873814585232",
+              "startTimeUnixNano": "1730634735245301611",
+              "endTimeUnixNano": "1730634736025433252",
               "attributes": [
                 {
                   "key": "network.transport",
@@ -872,14 +876,14 @@
               }
             },
             {
-              "traceId": "0da542c3c1715fa62f320b1abb6d96b6",
-              "spanId": "4c0dbb10640c78b2",
-              "parentSpanId": "a2aae1dc73ab49bd",
+              "traceId": "95a64454759f5f5351048d242f6e39de",
+              "spanId": "235b3acf31b5e48c",
+              "parentSpanId": "d54b83d0c53d81f3",
               "flags": 768,
               "name": "send/receive",
               "kind": 4,
-              "startTimeUnixNano": "1729703872897367128",
-              "endTimeUnixNano": "1729703873815016197",
+              "startTimeUnixNano": "1730634735137872529",
+              "endTimeUnixNano": "1730634736025858481",
               "attributes": [
                 {
                   "key": "network.transport",
@@ -915,14 +919,14 @@
               "status": {}
             },
             {
-              "traceId": "0da542c3c1715fa62f320b1abb6d96b6",
-              "spanId": "a2aae1dc73ab49bd",
-              "parentSpanId": "8285e8f949e825bf",
+              "traceId": "95a64454759f5f5351048d242f6e39de",
+              "spanId": "d54b83d0c53d81f3",
+              "parentSpanId": "6b727af1a1f5f136",
               "flags": 768,
               "name": "ncat --no-shutdown 127.0.0.1 12345",
               "kind": 1,
-              "startTimeUnixNano": "1729703872872736651",
-              "endTimeUnixNano": "1729703873819716265",
+              "startTimeUnixNano": "1730634735113594901",
+              "endTimeUnixNano": "1730634736030741920",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -982,14 +986,14 @@
               "status": {}
             },
             {
-              "traceId": "0da542c3c1715fa62f320b1abb6d96b6",
-              "spanId": "8285e8f949e825bf",
+              "traceId": "95a64454759f5f5351048d242f6e39de",
+              "spanId": "6b727af1a1f5f136",
               "parentSpanId": "",
               "flags": 256,
               "name": "bash -e demo.sh",
               "kind": 2,
-              "startTimeUnixNano": "1729703872858077800",
-              "endTimeUnixNano": "1729703873820301215",
+              "startTimeUnixNano": "1730634735098851223",
+              "endTimeUnixNano": "1730634736031370692",
               "status": {}
             }
           ]

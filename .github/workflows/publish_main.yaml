@@ -120,7 +120,7 @@ jobs:
           cd demos/${{ matrix.demo_directory }}
 
           spans() {
-            cat otlp.json | jq '. | select(.resourceSpans != null) | .resourceSpans[].scopeSpans[].spans[]' | jq -s '. | sort_by(.startTimeUnixNano) | .[]'
+            cat otlp.json | jq '. | select(.resourceSpans != null) | .resourceSpans[].scopeSpans[].spans[]'
           }
 
           convert_span_id_to_name() {
@@ -132,7 +132,7 @@ jobs:
           }
 
           get_child_span_ids() {
-            spans | jq -r '. | select(.name != null) | select(.parentSpanId == "'"$1"'") | .spanId'
+            spans | jq '. | select(.name != null) | select(.parentSpanId == "'"$1"'") | .startTimeUnixNano |= .[0:-8]' | jq -r -s '. | sort_by(.endTimeUnixNano) | .[].spanId'
           }
 
           print_span_name_tree() {

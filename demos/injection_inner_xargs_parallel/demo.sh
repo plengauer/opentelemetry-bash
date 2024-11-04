@@ -1,2 +1,2 @@
 . otel.sh
-echo foo bar baz | xargs parallel echo :::
+seq 1 5 | xargs parallel sleep :::
