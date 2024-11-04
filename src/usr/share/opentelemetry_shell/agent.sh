@@ -413,7 +413,7 @@ _otel_inject() {
     shift
     set -- "$command" "$@"
     if ! \[ "$(\which "$(\echo "$1" | \rev | \cut -d / -f 1 | \rev)")" = "$1" ]; then
-      local PATH="$(\readlink -f "$1" | \rev | \cut -d / -f 2- | \rev):$PATH"
+      export PATH="$(\readlink -f "$1" | \rev | \cut -d / -f 2- | \rev):$PATH"
       _otel_auto_instrument "$_otel_shell_auto_instrumentation_hint"
       \hash -r
     fi
