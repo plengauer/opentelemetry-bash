@@ -95,7 +95,7 @@ _otel_auto_instrument() {
     else
       \alias exec='_otel_record_exec; exec'
     fi
-  else_otel_in
+  else
     \alias exec='_otel_inject_and_exec_directly exec'
   fi
 
