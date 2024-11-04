@@ -95,7 +95,7 @@ _otel_auto_instrument() {
     else
       \alias exec='_otel_record_exec; exec'
     fi
-  else
+  else_otel_in
     \alias exec='_otel_inject_and_exec_directly exec'
   fi
 
@@ -408,11 +408,15 @@ command() {
 }
 
 _otel_inject() {
+\echo DEBUG 0 "$*" >&2
   if _otel_string_contains "$1" /; then
+\echo DEBUG 1 "$*" >&2
     local command="$(\readlink -f "$1" | \rev | \cut -d / -f 1 | \rev)"
     shift
     set -- "$command" "$@"
+\echo DEBUG 2 "$*" >&2
     if ! \[ "$(\which "$(\echo "$1" | \rev | \cut -d / -f 1 | \rev)")" = "$1" ]; then
+\echo DEBUG 3 "$*" >&2
       export PATH="$(\readlink -f "$1" | \rev | \cut -d / -f 2- | \rev):$PATH"
       _otel_auto_instrument "$_otel_shell_auto_instrumentation_hint"
       \hash -r
