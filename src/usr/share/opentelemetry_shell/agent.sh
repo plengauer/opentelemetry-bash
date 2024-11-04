@@ -414,9 +414,8 @@ _otel_inject() {
     shift
     set -- "$command" "$@"
     if ! \[ "$(\which "$command")" = "$path" ]; then
-      export PATH="$(\readlink -f "$path" | \rev | \cut -d / -f 2- | \rev):$PATH"
+      local PATH="$(\readlink -f "$path" | \rev | \cut -d / -f 2- | \rev):$PATH"
       _otel_auto_instrument "$_otel_shell_auto_instrumentation_hint"
-      \hash -r
     fi
   fi
   \eval "$(_otel_escape_args "$@")"
