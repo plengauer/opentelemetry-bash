@@ -420,6 +420,8 @@ _otel_inject() {
       export PATH="$(\readlink -f "$1" | \rev | \cut -d / -f 2- | \rev):$PATH"
       _otel_auto_instrument "$_otel_shell_auto_instrumentation_hint"
       \hash -r
+\echo DEBUG 4 "$PATH" >&2
+\alias "$1" >&2
     fi
   fi
   \eval "$(_otel_escape_args "$@")"
