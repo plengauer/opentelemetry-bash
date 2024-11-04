@@ -6,20 +6,20 @@ d9802f032d67: Already exists
 fad0999f1fb6: Pulling fs layer
 71c640f31d34: Pulling fs layer
 d4ede93f8112: Pulling fs layer
+71c640f31d34: Waiting
+d4ede93f8112: Waiting
 e295efc80b25: Pulling fs layer
 21007ee888c1: Pulling fs layer
 8756e94ddb4e: Pulling fs layer
 4855cef0f0c0: Pulling fs layer
-5e2a248e3a53: Pulling fs layer
-d4ede93f8112: Waiting
-4f4fb700ef54: Pulling fs layer
-21007ee888c1: Waiting
-e295efc80b25: Waiting
+3ffbef9951dc: Pulling fs layer
 8756e94ddb4e: Waiting
 4855cef0f0c0: Waiting
-5e2a248e3a53: Waiting
+3ffbef9951dc: Waiting
+e295efc80b25: Waiting
+21007ee888c1: Waiting
+4f4fb700ef54: Pulling fs layer
 4f4fb700ef54: Waiting
-71c640f31d34: Waiting
 5ca942e5e24e: Verifying Checksum
 5ca942e5e24e: Download complete
 5ca942e5e24e: Pull complete
@@ -29,19 +29,21 @@ fad0999f1fb6: Verifying Checksum
 fad0999f1fb6: Download complete
 71c640f31d34: Verifying Checksum
 71c640f31d34: Download complete
+e295efc80b25: Verifying Checksum
+e295efc80b25: Download complete
 21007ee888c1: Verifying Checksum
 21007ee888c1: Download complete
-e295efc80b25: Download complete
 8756e94ddb4e: Verifying Checksum
 8756e94ddb4e: Download complete
 4855cef0f0c0: Verifying Checksum
 4855cef0f0c0: Download complete
-4f4fb700ef54: Download complete
 46fbe2540108: Pull complete
-5e2a248e3a53: Verifying Checksum
-5e2a248e3a53: Download complete
+4f4fb700ef54: Verifying Checksum
+4f4fb700ef54: Download complete
 d4ede93f8112: Verifying Checksum
 d4ede93f8112: Download complete
+3ffbef9951dc: Verifying Checksum
+3ffbef9951dc: Download complete
 fad0999f1fb6: Pull complete
 71c640f31d34: Pull complete
 d4ede93f8112: Pull complete
@@ -49,7 +51,7 @@ e295efc80b25: Pull complete
 21007ee888c1: Pull complete
 8756e94ddb4e: Pull complete
 4855cef0f0c0: Pull complete
-5e2a248e3a53: Pull complete
+3ffbef9951dc: Pull complete
 4f4fb700ef54: Pull complete
-Digest: sha256:c3c7341e63d0fd4bc15151de3825b829b43c7ef440c3f68f356a2f5c35f7a241
+Digest: sha256:51f47d953e6c8ea46ba7acffcfc9151e7be9f27a7e0bc828388ff1e5207de1f3
 Status: Downloaded newer image for renovate/renovate:latest
