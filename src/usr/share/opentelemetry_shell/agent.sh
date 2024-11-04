@@ -414,6 +414,7 @@ _otel_inject() {
     set -- "$command" "$@"
     if ! \[ "$(\which "$(\echo "$1" | \rev | \cut -d / -f 1 | \rev)")" = "$1" ]; then
       local PATH="$(\readlink -f "$1" | \rev | \cut -d / -f 2- | \rev):$PATH"
+      \hash -r
       _otel_auto_instrument "$_otel_shell_auto_instrumentation_hint"
     fi
   fi
