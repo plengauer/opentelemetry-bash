@@ -1,4 +1,4 @@
-if ! [ -x "$(which ncat)" ]; then exit 0; fi
+if ! type ncat; then exit 0; fi
 set -e
 . ./assert.sh
 . otel.sh
