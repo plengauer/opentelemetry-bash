@@ -1,3 +1,5 @@
+if ! type netcat; then exit 0; fi
+
 set -e
 . ./assert.sh
 . otel.sh
