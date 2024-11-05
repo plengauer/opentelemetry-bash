@@ -9,7 +9,7 @@ WORKDIR /tests
 COPY . ./
 
 RUN <<EOF
-  packages="jq psmisc wget curl debconf debconf-utils time sudo parallel moreutils ncat netcat wget2 strace nodejs npm python3 python3-pip"
+  packages="jq psmisc wget curl debconf debconf-utils time sudo parallel moreutils ncat (netcat | netcat-traditional) wget2 strace nodejs npm python3 python3-pip"
   if type apt-get; then
     apt-get update
     [ "$update" = TRUE ] && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y || true
