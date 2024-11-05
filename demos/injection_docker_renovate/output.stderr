@@ -1,55 +1,55 @@
 Unable to find image 'renovate/renovate:latest' locally
 latest: Pulling from renovate/renovate
-d9802f032d67: Already exists
-5ca942e5e24e: Pulling fs layer
-46fbe2540108: Pulling fs layer
-fad0999f1fb6: Pulling fs layer
-71c640f31d34: Pulling fs layer
-d4ede93f8112: Pulling fs layer
-e295efc80b25: Pulling fs layer
-21007ee888c1: Pulling fs layer
-8756e94ddb4e: Pulling fs layer
-4855cef0f0c0: Pulling fs layer
-5e2a248e3a53: Pulling fs layer
-d4ede93f8112: Waiting
+ff65ddf9395b: Pulling fs layer
+5786e3006c9b: Pulling fs layer
+d5d04d3816ba: Pulling fs layer
+88192070d19f: Pulling fs layer
+9631b230dd01: Pulling fs layer
+e0801dda2e9e: Pulling fs layer
+6ab9e5c3de27: Pulling fs layer
+a968603ff577: Pulling fs layer
+1e6bdc35cc8b: Pulling fs layer
+f6a5c5476e9a: Pulling fs layer
 4f4fb700ef54: Pulling fs layer
-21007ee888c1: Waiting
-e295efc80b25: Waiting
-8756e94ddb4e: Waiting
-4855cef0f0c0: Waiting
-5e2a248e3a53: Waiting
-4f4fb700ef54: Waiting
-71c640f31d34: Waiting
-5ca942e5e24e: Verifying Checksum
-5ca942e5e24e: Download complete
-5ca942e5e24e: Pull complete
-46fbe2540108: Verifying Checksum
-46fbe2540108: Download complete
-fad0999f1fb6: Verifying Checksum
-fad0999f1fb6: Download complete
-71c640f31d34: Verifying Checksum
-71c640f31d34: Download complete
-21007ee888c1: Verifying Checksum
-21007ee888c1: Download complete
-e295efc80b25: Download complete
-8756e94ddb4e: Verifying Checksum
-8756e94ddb4e: Download complete
-4855cef0f0c0: Verifying Checksum
-4855cef0f0c0: Download complete
+6ab9e5c3de27: Waiting
+a968603ff577: Waiting
+88192070d19f: Waiting
+1e6bdc35cc8b: Waiting
+f6a5c5476e9a: Waiting
+e0801dda2e9e: Waiting
+5786e3006c9b: Verifying Checksum
+5786e3006c9b: Download complete
+ff65ddf9395b: Verifying Checksum
+ff65ddf9395b: Download complete
+88192070d19f: Verifying Checksum
+88192070d19f: Download complete
+d5d04d3816ba: Verifying Checksum
+d5d04d3816ba: Download complete
+9631b230dd01: Verifying Checksum
+9631b230dd01: Download complete
+a968603ff577: Verifying Checksum
+a968603ff577: Download complete
+6ab9e5c3de27: Verifying Checksum
+6ab9e5c3de27: Download complete
+1e6bdc35cc8b: Download complete
+4f4fb700ef54: Verifying Checksum
 4f4fb700ef54: Download complete
-46fbe2540108: Pull complete
-5e2a248e3a53: Verifying Checksum
-5e2a248e3a53: Download complete
-d4ede93f8112: Verifying Checksum
-d4ede93f8112: Download complete
-fad0999f1fb6: Pull complete
-71c640f31d34: Pull complete
-d4ede93f8112: Pull complete
-e295efc80b25: Pull complete
-21007ee888c1: Pull complete
-8756e94ddb4e: Pull complete
-4855cef0f0c0: Pull complete
-5e2a248e3a53: Pull complete
+f6a5c5476e9a: Verifying Checksum
+f6a5c5476e9a: Download complete
+ff65ddf9395b: Pull complete
+5786e3006c9b: Pull complete
+e0801dda2e9e: Verifying Checksum
+e0801dda2e9e: Download complete
+d5d04d3816ba: Pull complete
+88192070d19f: Pull complete
+9631b230dd01: Pull complete
+e0801dda2e9e: Pull complete
+6ab9e5c3de27: Pull complete
+a968603ff577: Pull complete
+1e6bdc35cc8b: Pull complete
+f6a5c5476e9a: Pull complete
 4f4fb700ef54: Pull complete
-Digest: sha256:c3c7341e63d0fd4bc15151de3825b829b43c7ef440c3f68f356a2f5c35f7a241
+Digest: sha256:0536c2f637d365e8867e95dfc0bd917e6f8f920b42202e8b03c4a2e5fd5c47f3
 Status: Downloaded newer image for renovate/renovate:latest
+(node:4982) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
