@@ -17,7 +17,7 @@ github_workflow() {
 }
 
 export OTEL_SHELL_CONFIG_INSTALL_DEEP=FALSE
-export GITHUB_ACTION_REPOSITORY="${GITHUB_ACTION_REPOSITORY:-"$GITHUB_REPOSITORY"}"; fi
+export GITHUB_ACTION_REPOSITORY="${GITHUB_ACTION_REPOSITORY:-"$GITHUB_REPOSITORY"}"
 action_tag_name="$(echo "$GITHUB_ACTION_REF" | cut -sd @ -f 2-)"
 if [ -n "$action_tag_name" ]; then
   debian_file="$(mktemp)"
