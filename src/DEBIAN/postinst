@@ -23,7 +23,7 @@ for element in default_instrumentations:
   print(element)
 for element in libraries:
   print(element["instrumentation"])
-' | python3 | grep -v 'opentelemetry-instrumentation-sqlite3' | xargs pip3 install
+' | python3 | grep -v 'opentelemetry-instrumentation-test' | xargs pip3 install
       pip3 check
       deactivate
       (cd /opt/opentelemetry_shell/venv/lib/python3.*/site-packages && ln --symbolic /usr/share/opentelemetry_shell/opentelemetry_shell.custom.python.deep.py usercustomize.py 2> /dev/null || true)
