@@ -6,6 +6,7 @@ elif [ "$1" = 'configure' ] || [ "$1" = 'triggered' ] || [ "$1" = 'reconfigure' 
   python3 -m venv /opt/opentelemetry_shell/venv_sdk
   source /opt/opentelemetry_shell/venv_sdk/bin/activate
   pip3 install -r /opt/opentelemetry_shell/requirements_sdk.txt
+  pip3 check
   deactivate
   if [ "${OTEL_SHELL_CONFIG_INSTALL_DEEP:-TRUE}" = TRUE ]; then
     if type gcc 2> /dev/null; then
@@ -15,6 +16,7 @@ elif [ "$1" = 'configure' ] || [ "$1" = 'triggered' ] || [ "$1" = 'reconfigure' 
       python3 -m venv /opt/opentelemetry_shell/venv
       source /opt/opentelemetry_shell/venv/bin/activate
       pip3 install -r /opt/opentelemetry_shell/requirements.txt
+      pip3 check
       echo '
 from opentelemetry.instrumentation.bootstrap_gen import (default_instrumentations, libraries)
 for element in default_instrumentations:
