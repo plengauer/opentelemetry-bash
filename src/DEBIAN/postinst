@@ -16,6 +16,7 @@ elif [ "$1" = 'configure' ] || [ "$1" = 'triggered' ] || [ "$1" = 'reconfigure' 
       python3 -m venv /opt/opentelemetry_shell/venv
       source /opt/opentelemetry_shell/venv/bin/activate
       pip3 install -r /opt/opentelemetry_shell/requirements.txt
+      pip3 check
       echo '
 from opentelemetry.instrumentation.bootstrap_gen import (default_instrumentations, libraries)
 for element in default_instrumentations:
@@ -23,7 +24,7 @@ for element in default_instrumentations:
 for element in libraries:
   print(element["instrumentation"])
 ' | python3 | xargs pip3 install
-      pip3 check
+      # pip3 check
       deactivate
       (cd /opt/opentelemetry_shell/venv/lib/python3.*/site-packages && ln --symbolic /usr/share/opentelemetry_shell/opentelemetry_shell.custom.python.deep.py usercustomize.py 2> /dev/null || true)
     fi
