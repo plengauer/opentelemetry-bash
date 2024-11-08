@@ -4,11 +4,11 @@ _otel_inject_python() {
   if \[ "$OTEL_SHELL_CONFIG_INJECT_DEEP" = TRUE ] && \[ -d "/opt/opentelemetry_shell/venv" ] && _otel_string_starts_with "$(\eval "$1 -V" | \cut -d ' ' -f 2)" "3." && ! _otel_string_ends_with "$2" /pip && ! _otel_string_ends_with "$2" /pip3; then
     local cmdline="$(_otel_dollar_star "$@")"
     local cmdline="${cmdline#\\}"
-    if \[ -z "${OTEL_PYTHON_DISABLED_INSTRUMENTATIONS:-}" ]; then # TODO
-      export OTEL_PYTHON_DISABLED_INSTRUMENTATIONS="aws-lambda"
-    else
-      export OTEL_PYTHON_DISABLED_INSTRUMENTATIONS="$OTEL_PYTHON_DISABLED_INSTRUMENTATIONS,aws-lambda"
-    fi
+    # if \[ -z "${OTEL_PYTHON_DISABLED_INSTRUMENTATIONS:-}" ]; then # TODO
+    #   export OTEL_PYTHON_DISABLED_INSTRUMENTATIONS="aws-lambda"
+    # else
+    #   export OTEL_PYTHON_DISABLED_INSTRUMENTATIONS="$OTEL_PYTHON_DISABLED_INSTRUMENTATIONS,aws-lambda"
+    # fi
     if _otel_python_is_customize_injectable; then
       local command="$1"; shift
       set -- "$command" /opt/opentelemetry_shell/venv/bin/opentelemetry-instrument "${command#\\}" "$@"
