@@ -83,7 +83,7 @@ jobs:
     steps:
       - run: |
           printenv | grep '^IMAGE_' | cut -d = -f 2- | grep -v '^$' | sort -u | while read -r image; do echo "\"$image\""; done | jq -s -r tostring | xargs -0 -I {} echo 'images={}' >> "$GITHUB_OUTPUT"
-          printenv | grep '^IMAGE_' | grep -v '_LATEST$' | grep _UBUNTU_ | cut -d = -f 2- | grep -v '^$' | sort -u | while read -r image; do echo "\"$image\""; done | jq -s -r tostring | xargs -0 -I {} echo 'images_upgradeable={}' >> "$GITHUB_OUTPUT"
+          printenv | grep '^IMAGE_' | grep -v '_LATEST=' | grep _UBUNTU_ | cut -d = -f 2- | grep -v '^$' | sort -u | while read -r image; do echo "\"$image\""; done | jq -s -r tostring | xargs -0 -I {} echo 'images_upgradeable={}' >> "$GITHUB_OUTPUT"
         id: dynamic
 
   system-upgrade:
