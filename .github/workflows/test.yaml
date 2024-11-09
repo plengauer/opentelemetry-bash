@@ -3,6 +3,26 @@ name: Test
 on:
   workflow_call:
 
+env:
+  IMAGE_DEBIAN_OLDEST: 'debian:oldstable'
+  IMAGE_DEBIAN_STABLE: 'debian:stable'
+  IMAGE_DEBIAN_LATEST: 'debian:testing'
+  IMAGE_DEBIAN_SLIM_OLDEST: 'debian:oldstable-slim'
+  IMAGE_DEBIAN_SLIM_STABLE: 'debian:stable-slim'
+  IMAGE_DEBIAN_SLIM_LATEST: 'debian:testing-slim'
+  IMAGE_UBUNTU_OLDEST: 'ubuntu:focal' # needs manual maintenance on April 2025 (https://ubuntu.com/about/release-cycle)
+  IMAGE_UBUNTU_STABLE: 'ubuntu:latest'
+  IMAGE_UBUNTU_LATEST: 'ubuntu:rolling'
+  IMAGE_FEDORA_OLDEST: 'fedora:40' # needs manual maintenance on June 2025 (https://docs.fedoraproject.org/en-US/releases/lifecycle/)
+  IMAGE_FEDORA_STABLE: 'fedora:41' # needs manual maintenance on June 2025 (https://docs.fedoraproject.org/en-US/releases/lifecycle/)
+  IMAGE_FEDORA_LATEST: 'fedora:latest'
+  IMAGE_RHEL_OLDEST: 'redhat/ubi8:latest' # needs manual maintenance
+  IMAGE_RHEL_STABLE: 'redhat/ubi9:latest' # needs manual maintenance
+  IMAGE_RHEL_LATEST: 'redhat/ubi9:latest' # needs manual maintenance
+  IMAGE_OPENSUSE_OLDEST: 'opensuse/leap:15.5' # needs manual maintenance on January 2025 (https://endoflife.date/opensuse)
+  IMAGE_OPENSUSE_STABLE: 'opensuse/leap:latest'
+  IMAGE_OPENSUSE_LATEST: 'opensuse/tumbleweed:latest'
+
 jobs:
   _build:
     uses: ./.github/workflows/build.yaml
@@ -53,12 +73,12 @@ jobs:
       - run: sudo apt-get -y install ./package.deb
 
   system-upgrade:
-    needs: [smoke]
+    needs: smoke
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
       matrix:
-        image: ['ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling']
+        image: [ 'ubuntu:focal', 'ubuntu:latest' ]
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -87,13 +107,22 @@ jobs:
             apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade && apt-get -y autoremove && apt-get -y autoclean
           ' | sudo docker run -v $(pwd)/package.deb:/root/package.deb --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
 
+  images-prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      images: ${{ steps.dynamic.outputs.images }}
+    steps:
+      - run: |
+          printenv | grep '^IMAGE_' | cut -d = -f 2- | grep -v '^$' | sort -u | while read -r image; do echo "\"$image\""; done | jq -s | xargs -0 -I {} echo 'images={}' >> "$GITHUB_OUTPUT"
+        id: dynamic
+
   dependency:
-    needs: [smoke]
+    needs: [ images-prepare, smoke ]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
       matrix:
-        image: ['debian:oldstable', 'debian:stable', 'debian:testing', 'debian:oldstable-slim', 'debian:stable-slim', 'debian:testing-slim', 'ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling', 'fedora:latest', 'redhat/ubi8:latest', 'redhat/ubi9:latest', 'opensuse/leap:latest', 'opensuse/tumbleweed:latest']
+        image: ${{ fromJSON(needs.images-prepare.outputs.images) }}
         dependency: ['npm', 'gcc']
     steps:
       - uses: actions/download-artifact@v4
@@ -120,7 +149,6 @@ jobs:
               yum -y install ${{ matrix.dependency }}
               yum -y remove ${{ matrix.dependency }}
             elif type zypper; then
-              # zypper --non-interactive dup
               zypper --non-interactive remove ${{ matrix.dependency }} || true
               zypper --non-interactive install --allow-unsigned-rpm /root/package.rpm
               zypper --non-interactive install ${{ matrix.dependency }}
@@ -131,12 +159,12 @@ jobs:
           ' | sudo docker run -v $(pwd)/package.deb:/root/package.deb -v $(pwd)/package.rpm:/root/package.rpm --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
 
   os-shell:
-    needs: smoke
+    needs: [ images-prepare, smoke ]
     runs-on: ubuntu-latest
     timeout-minutes: 60
     strategy:
       matrix:
-        os: ['debian:oldstable', 'debian:stable', 'debian:testing', 'debian:oldstable-slim', 'debian:stable-slim', 'debian:testing-slim', 'ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling', 'fedora:latest', 'redhat/ubi8:latest', 'redhat/ubi9:latest', 'opensuse/leap:latest', 'opensuse/tumbleweed:latest']
+        os: ${{ fromJSON(needs.images-prepare.outputs.images) }}
         update: ['FALSE', 'TRUE']
         shell: [sh, ash, dash, bash, busybox]
       fail-fast: true
