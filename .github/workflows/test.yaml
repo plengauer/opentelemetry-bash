@@ -27,11 +27,11 @@ env:
   IMAGE_OPENSUSE_LATEST: 'opensuse/tumbleweed:latest'
 
 jobs:
-  _build:
+  build:
     uses: ./.github/workflows/build.yaml
 
   smoke:
-    needs: _build
+    needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
