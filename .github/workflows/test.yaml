@@ -75,13 +75,24 @@ jobs:
           name: packages
       - run: sudo apt-get -y install ./package.deb
 
+  images-prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      images: ${{ steps.dynamic.outputs.images }}
+      images_upgradeable: ${{ steps.dynamic.outputs.images_upgradeable }}
+    steps:
+      - run: |
+          printenv | grep '^IMAGE_' | cut -d = -f 2- | grep -v '^$' | sort -u | while read -r image; do echo "\"$image\""; done | jq -s -r tostring | xargs -0 -I {} echo 'images={}' >> "$GITHUB_OUTPUT"
+          printenv | grep '^IMAGE_' | grep -v '_LATEST$' | grep _UBUNTU_ | cut -d = -f 2- | grep -v '^$' | sort -u | while read -r image; do echo "\"$image\""; done | jq -s -r tostring | xargs -0 -I {} echo 'images_upgradeable={}' >> "$GITHUB_OUTPUT"
+        id: dynamic
+
   system-upgrade:
-    needs: smoke
+    needs: [ images-prepare, smoke ]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
       matrix:
-        image: [ 'ubuntu:focal', 'ubuntu:latest' ]
+        image: ${{ fromJSON(needs.images-prepare.outputs.images_upgradeable) }}
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -109,15 +120,6 @@ jobs:
             esac
             apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade && apt-get -y autoremove && apt-get -y autoclean
           ' | sudo docker run -v $(pwd)/package.deb:/root/package.deb --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
-
-  images-prepare:
-    runs-on: ubuntu-latest
-    outputs:
-      images: ${{ steps.dynamic.outputs.images }}
-    steps:
-      - run: |
-          printenv | grep '^IMAGE_' | cut -d = -f 2- | grep -v '^$' | sort -u | while read -r image; do echo "\"$image\""; done | jq -s -r tostring | xargs -0 -I {} echo 'images={}' >> "$GITHUB_OUTPUT"
-        id: dynamic
 
   dependency:
     needs: [ images-prepare, smoke ]
