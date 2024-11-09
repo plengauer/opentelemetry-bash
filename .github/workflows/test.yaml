@@ -116,7 +116,7 @@ jobs:
       images: ${{ steps.dynamic.outputs.images }}
     steps:
       - run: |
-          printenv | grep '^IMAGE_' | cut -d = -f 2- | grep -v '^$' | sort -u | while read -r image; do echo "\"$image\""; done | jq -s | xargs -0 -I {} echo 'images={}' >> "$GITHUB_OUTPUT"
+          printenv | grep '^IMAGE_' | cut -d = -f 2- | grep -v '^$' | sort -u | while read -r image; do echo "\"$image\""; done | jq -s -r tostring | xargs -0 -I {} echo 'images={}' >> "$GITHUB_OUTPUT"
         id: dynamic
 
   dependency:
