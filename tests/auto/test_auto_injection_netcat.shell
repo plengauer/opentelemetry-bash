@@ -36,13 +36,13 @@ assert_equals "hello world" "$(curl http://127.0.0.1:12345/)"
 wait "$pid"
 
 span="$(resolve_span '.name == "GET") | select(.kind == "SpanKind.SERVER"')"
-\echo "$span"
+\echo "$span" # TODO remove
 span_id=$(\echo "$span" | jq -r '.parent_id')
 span="$(resolve_span '.context.span_id == "'"$span_id"'"')"
-\echo "$span"
+\echo "$span" # TODO remove
 assert_equals "GET" "$(\echo "$span" | jq -r '.name')"
 assert_equals "SpanKind.CLIENT" "$(\echo "$span" | jq -r '.kind')"
 span_id=$(\echo "$span" | jq -r '.parent_id')
 span="$(resolve_span '.context.span_id == "'"$span_id"'"')"
-\echo "$span"
+\echo "$span" # TODO remove
 assert_equals "curl http://127.0.0.1:12345/" "$(\echo "$span" | jq -r '.name')"
