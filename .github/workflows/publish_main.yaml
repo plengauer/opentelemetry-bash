@@ -7,11 +7,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  _test:
+  test:
     uses: ./.github/workflows/test.yaml
 
   publish:
-    needs: [_test]
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
