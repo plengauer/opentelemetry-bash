@@ -80,7 +80,7 @@ _otel_resource_attributes() {
   _otel_resource_attribute string process.executable.path="$process_executable_path"
   _otel_resource_attribute string process.command_line="$process_command"
   _otel_resource_attribute string process.command="${process_command%% *}" # "$(\printf '%s' "$process_command" | \cut -d ' ' -f 1)"
-  _otel_resource_attribute string process.owner="$USER"
+  _otel_resource_attribute string process.owner="${USER:-"$(whoami)"}"
   _otel_resource_attribute string process.runtime.name="$_otel_shell"
   case "$_otel_shell" in
        sh) _otel_resource_attribute string process.runtime.description="Bourne Shell" ;;
