@@ -13,7 +13,9 @@ assert_equals "shell" $(echo "$span" | jq -r '.resource.attributes."telemetry.sd
 assert_equals "opentelemetry" $(echo "$span" | jq -r '.resource.attributes."telemetry.sdk.name"')
 assert_not_equals "null" $(echo "$span" | jq -r '.resource.attributes."telemetry.sdk.version"')
 assert_not_equals "null" $(echo "$span" | jq -r '.resource.attributes."process.pid"')
-if  [ "$SHELL" = "sh" ] || [ "$SHELL" = "ash" ]; then
+if  [ "$SHELL" = "sh" ]; then
+  :
+elif [ "$SHELL" = "ash" ]; then
   assert_equals "dash" $(echo "$span" | jq -r '.resource.attributes."process.executable.name"')
 elif  [ "$SHELL" = "busybox sh" ]; then
   assert_equals "busybox" $(echo "$span" | jq -r '.resource.attributes."process.executable.name"')
