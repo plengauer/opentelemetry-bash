@@ -419,11 +419,12 @@ command() {
 
 _otel_inject() {
   if _otel_string_contains "$1" /; then
-    local command="$(\readlink -f "$1" | \rev | \cut -d / -f 1 | \rev)"
+    local path="$1"
+    local command="$(\readlink -f "$path" | \rev | \cut -d / -f 1 | \rev)"
     shift
     set -- "$command" "$@"
-    if ! \[ "$(\which "$(\echo "$1" | \rev | \cut -d / -f 1 | \rev)")" = "$1" ]; then
-      local PATH="$(\readlink -f "$1" | \rev | \cut -d / -f 2- | \rev):$PATH"
+    if ! \[ "$(\which "$command")" = "$path" ]; then
+      local PATH="$(\readlink -f "$path" | \rev | \cut -d / -f 2- | \rev):$PATH"
       _otel_auto_instrument "$_otel_shell_auto_instrumentation_hint"
     fi
   fi
