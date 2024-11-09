@@ -172,7 +172,7 @@ jobs:
         os: ${{ fromJSON(needs.images-prepare.outputs.images) }}
         update: ['FALSE', 'TRUE']
         shell: [sh, ash, dash, bash, busybox]
-      fail-fast: true
+      fail-fast: false
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
