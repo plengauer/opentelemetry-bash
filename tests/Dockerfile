@@ -9,13 +9,13 @@ WORKDIR /tests
 COPY . ./
 
 RUN <<EOF
-  packages="jq psmisc wget curl debconf debconf-utils time sudo parallel moreutils ncat wget2 strace nodejs npm python3 python3-pip gcc"
+  packages="jq psmisc wget curl time sudo parallel moreutils ncat wget2 strace nodejs npm python3 python3-pip gcc"
   if type apt-get; then
     apt-get update
     [ "$update" = TRUE ] && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y || true
     DEBIAN_FRONTEND=noninteractive apt-get install -y ./package.deb && rm ./package.deb
     type "$shell" || DEBIAN_FRONTEND=noninteractive apt-get install -y "$shell"
-    DEBIAN_FRONTEND=noninteractive apt-get install -y $packages
+    DEBIAN_FRONTEND=noninteractive apt-get install -y $packages debconf debconf-utils python3-venv
   elif type dnf; then
     [ "$update" = TRUE ] && dnf -y upgrade --refresh
     dnf -y install ./package.rpm
