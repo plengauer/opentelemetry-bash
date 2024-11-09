@@ -1,4 +1,4 @@
-if ! type sudo || ! type systemctl; then
+if ! type sudo || ! type systemctl || ! type apt-get; then
   exit 0
 fi
 
