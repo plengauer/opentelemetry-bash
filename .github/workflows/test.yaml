@@ -102,7 +102,7 @@ jobs:
       matrix:
         image: ${{ fromJSON(needs.images-prepare.outputs.images) }}
     steps:
-      run: echo hello world
+      - run: echo hello world
 
   system-upgrade:
     needs: [ images-prepare, smoke ]
