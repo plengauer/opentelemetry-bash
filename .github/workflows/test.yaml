@@ -95,15 +95,6 @@ jobs:
           cat images.json | jq '.[] | select(.type != "latest") | select(.os == "ubuntu")' | jq .image | jq -s -r tostring | xargs -0 -I {} echo 'images_upgradeable={}' >> "$GITHUB_OUTPUT"
         id: dynamic
 
-  images-test:
-    needs: images-prepare
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        image: ${{ fromJSON(needs.images-prepare.outputs.images) }}
-    steps:
-      - run: echo hello world
-
   system-upgrade:
     needs: [ images-prepare, smoke ]
     runs-on: ubuntu-latest
