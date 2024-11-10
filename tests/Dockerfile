@@ -15,22 +15,22 @@ RUN <<EOF
     [ "$update" = TRUE ] && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y || true
     DEBIAN_FRONTEND=noninteractive apt-get install -y ./package.deb && rm ./package.deb
     type "$shell" || DEBIAN_FRONTEND=noninteractive apt-get install -y "$shell"
-    DEBIAN_FRONTEND=noninteractive apt-get install -y $packages debconf debconf-utils python3-venv
+    DEBIAN_FRONTEND=noninteractive apt-get install -y $packages debconf debconf-utils python3-venv || true
   elif type dnf; then
     [ "$update" = TRUE ] && dnf -y upgrade --refresh
     dnf -y install ./package.rpm
     type "$shell" || dnf -y install "$shell"
-    dnf -y install $packages
+    dnf -y install $packages || true
   elif type yum; then
     [ "$update" = TRUE ] && yum -y upgrade
     yum -y install ./package.rpm
     type "$shell" || yum -y install "$shell"
-    yum -y install $packages
+    yum -y install $packages || true
   elif type zypper; then
     [ "$update" = TRUE ] && zypper --non-interactive update
     zypper --non-interactive install --allow-unsigned-rpm ./package.rpm
     type "$shell" || zypper --non-interactive install "$shell"
-    zypper --non-interactive install $packages
+    zypper --non-interactive install $packages || true
   else
     exit 1
   fi
