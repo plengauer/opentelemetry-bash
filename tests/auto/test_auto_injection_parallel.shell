@@ -1,5 +1,5 @@
-if ! dpkg -s moreutils; then exit 0; fi
-if ! dpkg -s parallel; then exit 0; fi
+if ! type dpkg || ! dpkg -s moreutils; then exit 0; fi
+if ! type parallel; then exit 0; fi
 . ./assert.sh
 . /usr/bin/opentelemetry_shell.sh
 
