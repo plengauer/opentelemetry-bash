@@ -91,9 +91,18 @@ jobs:
               | sudo docker run --rm --network=host -i "$value" \
               | cut -d ' ' -f 2 | cut -d . -f 2 | while read -r version; do [ "$version" -ge "$min_version" ] && echo "{\"image\":\"$value\",\"os\":\"$(echo "$key" | cut -d _ -f 2)\",\"type\":\"$(echo "$key" | cut -d _ -f 3)\"}" || true; done
           done | jq -s > images.json
-          cat images.json | jq '.[]'                                                       | jq .image | jq -s tostring | xargs -0 -I {} echo 'images={}' >> "$GITHUB_OUTPUT"
-          cat images.json | jq '.[] | select(.type != "latest") | select(.os == "ubuntu")' | jq .image | jq -s tostring | xargs -0 -I {} echo 'images_upgradeable={}' >> "$GITHUB_OUTPUT"
+          cat images.json | jq '.[]'                                                       | jq .image | jq -s -r tostring | xargs -0 -I {} echo 'images={}' >> "$GITHUB_OUTPUT"
+          cat images.json | jq '.[] | select(.type != "latest") | select(.os == "ubuntu")' | jq .image | jq -s -r tostring | xargs -0 -I {} echo 'images_upgradeable={}' >> "$GITHUB_OUTPUT"
         id: dynamic
+
+  images-test:
+    needs: images-prepare
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image: ${{ fromJSON(needs.images-prepare.outputs.images) }}
+    steps:
+      run: echo hello world
 
   system-upgrade:
     needs: [ images-prepare, smoke ]
