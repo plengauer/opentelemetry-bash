@@ -82,10 +82,18 @@ jobs:
       images_upgradeable: ${{ steps.dynamic.outputs.images_upgradeable }}
     steps:
       - run: |
-          printenv | grep '^IMAGE_' | cut -d = -f 2- | grep -v '^$' | sort -u | while read -r image; do
+          min_version="$(curl https://pypi.org/project/opentelemetry-api/ | grep -F -- 'Python :: ' | cut -d ':' -f 3 | tr -d ' ' | grep -F -- 3. | cut -d . -f 2 | sort -n | head -n 1)"
+          printenv | grep '^IMAGE_' | while read -r kvp; do
+            key="$(echo "$kvp" | cut -sd '=' -f 1 | tr '[:upper:]' '[:lower:]')"
+            value="$(echo "$kvp" | cut -sd '=' -f 2)"
+            if [ -z "$value" ]; then continue; fi
             echo '((apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install python3) || dnf -y install python3 || yum -y install python3 || zypper --non-interactive install python3) > /dev/null && python3 --version' \
-              | sudo docker run --rm --network=host -i "$image" | cut -d ' ' -f 2 | cut -d . -f 2 | while read -r version; do [ "$version" -ge 8 ] && echo "$image" || true; done
-          done | while read -r image; do echo "\"$image\""; done | jq -s -r tostring | xargs -0 -I {} echo 'images={}' >> "$GITHUB_OUTPUT"
+              | { cat > /dev/null; echo Python 3.8; } # | sudo docker run --rm --network=host -i "$value" \
+              | cut -d ' ' -f 2 | cut -d . -f 2 | while read -r version; do [ "$version" -ge "$min_version" ] && echo "{\"image\":\"$value\",\"os\":\"$(echo "$key" | cut -d _ -f 2)\",\"type\":\"$(echo "$key" | cut -d _ -f 3)\"}" || true; done
+          done | jq -s tostring > images.json
+          cat images.json
+          cat images.json | jq .image | jq -s tostring | xargs -0 -I {} echo 'images={}' # >> "$GITHUB_OUTPUT"
+          cat images.json | jq '.[] | select(.type != "latest")' | jq .image | jq -s tostring | xargs -0 -I {} echo 'images_upgradeable={}' # >> "$GITHUB_OUTPUT"
         id: dynamic
 
   system-upgrade:
