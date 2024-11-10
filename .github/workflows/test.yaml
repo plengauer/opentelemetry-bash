@@ -82,8 +82,10 @@ jobs:
       images_upgradeable: ${{ steps.dynamic.outputs.images_upgradeable }}
     steps:
       - run: |
-          printenv | grep '^IMAGE_' | cut -d = -f 2- | grep -v '^$' | sort -u | while read -r image; do echo "\"$image\""; done | jq -s -r tostring | xargs -0 -I {} echo 'images={}' >> "$GITHUB_OUTPUT"
-          printenv | grep '^IMAGE_' | grep -v '_LATEST=' | grep _UBUNTU_ | cut -d = -f 2- | grep -v '^$' | sort -u | while read -r image; do echo "\"$image\""; done | jq -s -r tostring | xargs -0 -I {} echo 'images_upgradeable={}' >> "$GITHUB_OUTPUT"
+          printenv | grep '^IMAGE_' | cut -d = -f 2- | grep -v '^$' | sort -u | while read -r image; do
+            echo '((apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install python3) || dnf -y install python3 || yum -y install python3 || zypper --non-interactive install python3) > /dev/null && python3 --version' \
+              | sudo docker run --rm --network=host -i "$image" | cut -d ' ' -f 2 | cut -d . -f 2 | while read -r version; do [ "$version" -ge 8 ] && echo "$image" || true; done
+          done | while read -r image; do echo "\"$image\""; done | jq -s -r tostring | xargs -0 -I {} echo 'images={}' >> "$GITHUB_OUTPUT"
         id: dynamic
 
   system-upgrade:
