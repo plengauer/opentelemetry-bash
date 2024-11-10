@@ -18,7 +18,15 @@ jobs:
           alien --to-rpm --scripts --keep-version --generate ../package.deb
           rpm_dir=$(echo */*.spec | rev | cut -d / -f 2- | rev)
           {
-            echo -n 'Requires: ' && cat DEBIAN/control | grep Depends | cut -d ' ' -f 2- | tr ',' '\n' | tr -d ' ' | sed 's/|/ or /g' | tr -d '(' | tr -d ')' | sed 's/.*/(&)/g' | grep -v 'python3-venv' | sed 's/xxd/(xxd or vim-common or vim)/g' | tr '\n' ' ' && echo
+            dependencies_format_deb_to_rpm() {
+              tr -d ' ' | tr -d '(' | tr -d ')' | sed 's/|/ or /g' | sed 's/.*/(&)/g'
+            }
+
+            dependencies_content_deb_to_rpm() {
+              grep -v 'python3-venv' | sed 's/xxd/xxd | vim-common | vim/g'
+            }
+          
+            echo -n 'Requires: ' && cat DEBIAN/control | grep Depends | cut -d ' ' -f 2- | tr ',' '\n' | dependencies_content_deb_to_rpm | dependencies_format_deb_to_rpm | tr '\n' ' ' && echo
             echo "AutoReq: no"
             echo "BuildArch: noarch"
             # cat "$rpm_dir"/*.spec
