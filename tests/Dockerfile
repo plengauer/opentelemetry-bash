@@ -9,8 +9,8 @@ WORKDIR /tests
 COPY . ./
 
 RUN <<EOF
-  packages_mandatory="jq psmisc wget curl time sudo gcc"
-  packages_optional="parallel moreutils ncat wget2 nodejs npm python3 python3-pip"
+  packages_mandatory="jq psmisc wget curl time sudo"
+  packages_optional="parallel moreutils ncat wget2 nodejs npm python3 python3-pip gcc"
   if type apt-get; then
     apt-get update
     [ "$update" = TRUE ] && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y || true
