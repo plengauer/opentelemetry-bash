@@ -35,6 +35,8 @@ jobs:
                 '%post'*)
                   cat DEBIAN/triggers | grep -v '^$' | cut -d ' ' -f 2 | rev | cut -d / -f 1 | rev | sort -u | while read -r package; do
                     cat "$rpm_dir"/*.spec | sed -n '/^%post/,/^$/p' | sed 's/^%post/%triggerin -- '"$package"'/g'
+                    echo
+                    cat "$rpm_dir"/*.spec | sed -n '/^%post/,/^$/p' | sed 's/^%post/%triggerun -- '"$package"'/g'
                   done
                   ;;
                 *) ;;
