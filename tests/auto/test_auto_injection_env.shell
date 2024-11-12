@@ -1,7 +1,11 @@
 . ./assert.sh
 . otel.sh
 
-_otel_inject_inner_command_args env echo hello world
+_otel_inject_inner_command_args env echo hello world 1
+sleep 3
+eval "$(_otel_inject_inner_command_args env echo hello world 2)"
+sleep 3
+
 env echo hello world
 assert_equals 0 $?
 span="$(resolve_span '.name == "env echo hello world"')"
