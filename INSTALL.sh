@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-if type apt-get 1> /dev/null 2> /dev/null; then
+if type dpkg 1> /dev/null 2> /dev/null; then
   extension=deb
 elif type rpm 1> /dev/null 2> /dev/null; then
   extension=rpm
