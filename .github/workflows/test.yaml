@@ -110,7 +110,6 @@ jobs:
             cat src/DEBIAN/control | grep '^Enhances: ' | tr ' ' '\n' | tr ',' '\n' | grep -v -F 'Enhances:' | grep -v '^$'
           } | sort -u | while read -r shell; do echo "\"$shell\""; done | jq -s -r tostring | xargs -0 -I {} echo 'shells={}' >> "$GITHUB_OUTPUT"
         id: dynamic
-      
 
   system-upgrade:
     needs: [ images-prepare, smoke ]
