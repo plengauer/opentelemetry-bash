@@ -152,7 +152,7 @@ jobs:
       dependencies: ${{ steps.dynamic.outputs.dependencies }}
     steps:
       - uses: actions/checkout@v4
-      - run: cat src/DEBIAN/triggers | cut -sd ' ' -f 2- | rev | cut -sd / -f 1 | rev | grep -v '^$' | sort -u | while read -r dependency; do echo "\"$dependency\""; done | jq -s -r tostring | xargs -0 -I {} echo 'dependencies={}' >> "$GITHUB_OUTPUT"
+      - run: cat src/DEBIAN/triggers | cut -sd ' ' -f 2- | rev | cut -sd / -f 1 | rev | grep -v '^$' | grep -v '^python3$' | sort -u | while read -r dependency; do echo "\"$dependency\""; done | jq -s -r tostring | xargs -0 -I {} echo 'dependencies={}' >> "$GITHUB_OUTPUT"
         id: dynamic
 
   dependency:
