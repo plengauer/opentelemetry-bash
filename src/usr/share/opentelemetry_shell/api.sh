@@ -60,7 +60,8 @@ fi
 _otel_sdk_communicate() {
   if _otel_string_contains "$*" "
 "; then
-    _otel_sdk_communicate "$(\echo "$@" | \tr '\n' ' ')"
+    local IFS=' '
+    _otel_sdk_communicate "$(\printf '%s' "$*" | \tr '\n' ' ')"
   else
     \echo "$@" >&7
   fi
