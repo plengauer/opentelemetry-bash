@@ -189,7 +189,7 @@ jobs:
           ' | sudo docker run -v $(pwd)/package.deb:/root/package.deb -v $(pwd)/package.rpm:/root/package.rpm --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
 
   os-shell:
-    needs: [ images-prepare, smoke ]
+    needs: [ images-prepare, shells-prepare, smoke ]
     runs-on: ubuntu-latest
     timeout-minutes: 60
     strategy:
