@@ -161,8 +161,8 @@ jobs:
     timeout-minutes: 15
     strategy:
       matrix:
-        image: ${{ fromJSON(needs.images-prepare.outputs.dependencies) }}
-        dependency: ${{ fromJSON(needs.dependency-prepare.outputs.images) }}
+        image: ${{ fromJSON(needs.images-prepare.outputs.images) }}
+        dependency: ${{ fromJSON(needs.dependency-prepare.outputs.dependencies) }}
     steps:
       - uses: actions/download-artifact@v4
         with:
