@@ -146,14 +146,23 @@ jobs:
             apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade && apt-get -y autoremove && apt-get -y autoclean
           ' | sudo docker run -v $(pwd)/package.deb:/root/package.deb --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
 
+  dependency-prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      shells: ${{ steps.dynamic.outputs.dependencies }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: cat src/DEBIAN/triggers | cut -d ' ' -f 2 | rev | cut -d . -f 1 | rev | sort -u | while read -r dependency; do echo "\"$dependency\""; done | jq -s -r tostring | xargs -0 -I {} echo 'dependencies={}' >> "$GITHUB_OUTPUT"
+        id: dynamic
+
   dependency:
-    needs: [ images-prepare, smoke ]
+    needs: [ dependency-prepare, images-prepare, smoke ]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
       matrix:
-        image: ${{ fromJSON(needs.images-prepare.outputs.images) }}
-        dependency: ['npm', 'gcc']
+        image: ${{ fromJSON(needs.images-prepare.outputs.dependencies) }}
+        dependency: ${{ fromJSON(needs.dependency-prepare.outputs.images) }}
     steps:
       - uses: actions/download-artifact@v4
         with:
