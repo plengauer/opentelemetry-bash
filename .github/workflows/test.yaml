@@ -98,6 +98,20 @@ jobs:
           cat images.json | jq '.[] | select(.type != "latest") | select(.os == "ubuntu")' | jq .image | sort -u | jq -s -r tostring | xargs -0 -I {} echo 'images_upgradeable={}' >> "$GITHUB_OUTPUT"
         id: dynamic
 
+  shells-prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      shells: ${{ steps.dynamic.outputs.shells }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          {
+            echo sh
+            cat src/DEBIAN/control | grep '^Enhances: ' | tr ' ' '\n' | tr ',' '\n' | grep -v -F 'Enhances:' | grep -v '^$'
+          } | sort -u | while read -r shell; do echo "\"$shell\""; done | jq -s -r tostring | xargs -0 -I {} echo 'shells={}' >> "$GITHUB_OUTPUT"
+        id: dynamic
+      
+
   system-upgrade:
     needs: [ images-prepare, smoke ]
     runs-on: ubuntu-latest
@@ -183,7 +197,7 @@ jobs:
       matrix:
         os: ${{ fromJSON(needs.images-prepare.outputs.images) }}
         update: ['FALSE', 'TRUE']
-        shell: [sh, ash, dash, bash, busybox]
+        shell: ${{ fromJSON(needs.shells-prepare.outputs.shells) }}
       fail-fast: false
     steps:
       - uses: actions/checkout@v4
