@@ -43,7 +43,7 @@ jobs:
       - run: bash -c "cd tests && bash run_tests.sh bash"
       - run: sudo apt-get -y remove opentelemetry-shell
 
-  upgrade-prepare:
+  prepare-upgrade:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.dynamic-matrix.outputs.matrix }}
@@ -59,11 +59,11 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
 
   upgrade:
-    needs: [upgrade-prepare, smoke]
+    needs: [prepare-upgrade, smoke]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
-      matrix: ${{ fromJSON(needs.upgrade-prepare.outputs.matrix) }}
+      matrix: ${{ fromJSON(needs.prepare-upgrade.outputs.matrix) }}
     steps:
       - run: |
           curl --no-progress-meter --fail --retry 16 --retry-all-errors --header "Authorization: Bearer $GITHUB_TOKEN" https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases/tags/${{ matrix.tag_name }} | jq -r '.assets[].browser_download_url' | xargs wget --header "Authorization: Bearer $GITHUB_TOKEN"
@@ -75,7 +75,7 @@ jobs:
           name: packages
       - run: sudo apt-get -y install ./package.deb
 
-  images-prepare:
+  prepare-images:
     runs-on: ubuntu-latest
     outputs:
       images: ${{ steps.dynamic.outputs.images }}
@@ -98,7 +98,7 @@ jobs:
           cat images.json | jq '.[] | select(.type != "latest") | select(.os == "ubuntu")' | jq .image | sort -u | jq -s -r tostring | xargs -0 -I {} echo 'images_upgradeable={}' >> "$GITHUB_OUTPUT"
         id: dynamic
 
-  shells-prepare:
+  prepare-shells:
     runs-on: ubuntu-latest
     outputs:
       shells: ${{ steps.dynamic.outputs.shells }}
@@ -112,12 +112,12 @@ jobs:
         id: dynamic
 
   system-upgrade:
-    needs: [ images-prepare, smoke ]
+    needs: [ prepare-images, smoke ]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
       matrix:
-        image: ${{ fromJSON(needs.images-prepare.outputs.images_upgradeable) }}
+        image: ${{ fromJSON(needs.prepare-images.outputs.images_upgradeable) }}
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -146,7 +146,7 @@ jobs:
             apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade && apt-get -y autoremove && apt-get -y autoclean
           ' | sudo docker run -v $(pwd)/package.deb:/root/package.deb --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
 
-  dependency-prepare:
+  prepare-dependency:
     runs-on: ubuntu-latest
     outputs:
       dependencies: ${{ steps.dynamic.outputs.dependencies }}
@@ -156,13 +156,13 @@ jobs:
         id: dynamic
 
   dependency:
-    needs: [ dependency-prepare, images-prepare, smoke ]
+    needs: [ prepare-dependency, prepare-images, smoke ]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
       matrix:
-        image: ${{ fromJSON(needs.images-prepare.outputs.images) }}
-        dependency: ${{ fromJSON(needs.dependency-prepare.outputs.dependencies) }}
+        image: ${{ fromJSON(needs.prepare-images.outputs.images) }}
+        dependency: ${{ fromJSON(needs.prepare-dependency.outputs.dependencies) }}
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -198,14 +198,14 @@ jobs:
           ' | sudo docker run -v $(pwd)/package.deb:/root/package.deb -v $(pwd)/package.rpm:/root/package.rpm --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
 
   os-shell:
-    needs: [ images-prepare, shells-prepare ] #, smoke ] # TODO readd smoke
+    needs: [ prepare-images, prepare-shells ] #, smoke ] # TODO readd smoke
     runs-on: ubuntu-latest
     timeout-minutes: 60
     strategy:
       matrix:
-        os: ${{ fromJSON(needs.images-prepare.outputs.images) }}
+        os: ${{ fromJSON(needs.prepare-images.outputs.images) }}
         update: ['FALSE', 'TRUE']
-        shell: ${{ fromJSON(needs.shells-prepare.outputs.shells) }}
+        shell: ${{ fromJSON(needs.prepare-shells.outputs.shells) }}
       fail-fast: false
     steps:
       - uses: actions/checkout@v4
@@ -270,7 +270,7 @@ jobs:
            update=TRUE
            shell=bash
 
-  performance-prepare:
+  prepare-performance:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.dynamic-matrix.outputs.matrix }}
@@ -282,11 +282,11 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
   
   performance:
-    needs: [performance-prepare, smoke]
+    needs: [prepare-performance, smoke]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy: 
-      matrix: ${{ fromJSON(needs.performance-prepare.outputs.matrix) }}
+      matrix: ${{ fromJSON(needs.prepare-performance.outputs.matrix) }}
     steps:
       - if: matrix.tag_name == '~local'
         uses: actions/download-artifact@v4
