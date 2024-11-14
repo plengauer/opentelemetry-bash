@@ -75,7 +75,8 @@ req.end();
 set -x
 _otel_inject_node_args node "$directory"/index.js
 set +x
-find /opt/opentelemetry_shell/
+find /opt/opentelemetry_shell/node_modules
+find /usr/share/opentelemetry_shell/
 span="$(node "$directory"/index.js 2>&1)"
 assert_equals 0 $?
 \echo "$span"
