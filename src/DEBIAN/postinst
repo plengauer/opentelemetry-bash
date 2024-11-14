@@ -21,9 +21,9 @@ elif [ "$1" = 'configure' ] || [ "$1" = 'triggered' ] || [ "$1" = 'reconfigure' 
       echo '
 from opentelemetry.instrumentation.bootstrap_gen import (default_instrumentations, libraries)
 for element in default_instrumentations:
-  print(element)
+    print(element)
 for element in libraries:
-  print(element["instrumentation"])
+    print(element["instrumentation"])
 ' | python3 | grep -v 'opentelemetry-instrumentation-test' | xargs pip3 install
       pip3 check
       deactivate
