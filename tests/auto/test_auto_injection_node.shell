@@ -48,9 +48,6 @@ assert_not_equals null $(\echo "$span" | jq -r '.parent_id')
 type npm || exit 1
 
 export OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE
-set -x
-_otel_inject_node_args node -e "const child_process = require('child_process'); child_process.spawn('echo', [ 'hello', 'world', '6' ]);"
-set +x
 
 node -e "const child_process = require('child_process'); child_process.spawn('echo', [ 'hello', 'world', '6' ]);"
 assert_equals 0 $?
@@ -75,6 +72,9 @@ const options = {
 const req = https.request(options, (res) => {});
 req.end();
 " > "$directory"/index.js
+set -x
+_otel_inject_node_args node "$directory"/index.js
+set +x
 span="$(node "$directory"/index.js 2>&1)"
 assert_equals 0 $?
 \echo "$span"
