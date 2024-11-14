@@ -29,6 +29,7 @@ _otel_inject_node_args() {
     else
       if \[ "$OTEL_SHELL_CONFIG_INJECT_DEEP" = TRUE ] && \[ -d "$(\readlink -f /usr/share/opentelemetry_shell/node_modules)" ]; then
         if \[ "$next_is_code" = TRUE ]; then
+          _otel_escape_arg "$1"; \echo -n ' '
           local base_dir="$(\echo "$1" | \rev | \cut -d / -f 2- | \rev)"
         else
           local base_dir="$(\pwd)"
@@ -39,12 +40,13 @@ _otel_inject_node_args() {
         done
         if \[ -z "$dir" ]; then local dir="$base_dir"; fi
         if _otel_is_node_injected "$dir"; then
-          _otel_escape_args --require /usr/share/opentelemetry_shell/agent.instrumentation.node.deep.link.js "$1"; shift
+          _otel_escape_args --require /usr/share/opentelemetry_shell/agent.instrumentation.node.deep.link.js
         elif \[ -z "$OTEL_TRACES_EXPORTER" ] || \[ "$OTEL_TRACES_EXPORTER" = console ] || \[ "$OTEL_TRACES_EXPORTER" = otlp ]; then
-          _otel_escape_args --require /usr/share/opentelemetry_shell/agent.instrumentation.node.deep.instrument.js "$1"; shift
+          _otel_escape_args --require /usr/share/opentelemetry_shell/agent.instrumentation.node.deep.instrument.js
         else
-          _otel_escape_arg "$1"; shift
+          if ! \[ "$next_is_code" = TRUE ]; then \echo -n ' '; _otel_escape_arg "$1"; fi
         fi
+        shift
       else
         _otel_escape_arg "$1"; shift
       fi
