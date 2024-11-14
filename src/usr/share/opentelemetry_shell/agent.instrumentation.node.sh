@@ -43,13 +43,12 @@ _otel_inject_node_args() {
           _otel_escape_args --require /usr/share/opentelemetry_shell/agent.instrumentation.node.deep.link.js
         elif \[ -z "$OTEL_TRACES_EXPORTER" ] || \[ "$OTEL_TRACES_EXPORTER" = console ] || \[ "$OTEL_TRACES_EXPORTER" = otlp ]; then
           _otel_escape_args --require /usr/share/opentelemetry_shell/agent.instrumentation.node.deep.instrument.js
-        else
-          if ! \[ "$next_is_code" = TRUE ]; then \echo -n ' '; _otel_escape_arg "$1"; fi
         fi
-        shift
+        if ! \[ "$next_is_code" = TRUE ]; then \echo -n ' '; _otel_escape_arg "$1"; fi
       else
-        _otel_escape_arg "$1"; shift
+        _otel_escape_arg "$1"
       fi
+      shift
       break
     fi
   done
