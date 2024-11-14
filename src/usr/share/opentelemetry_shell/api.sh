@@ -375,6 +375,7 @@ if ! \type which 1> /dev/null 2> /dev/null; then
     }
   else
     which() {
+      if \[ -x "$1" ]; then \echo "$1"; return 0; fi
       local IFS=:
       for directory in $PATH; do
         local path="$directory"/"$1"
