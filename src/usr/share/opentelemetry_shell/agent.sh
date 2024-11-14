@@ -208,7 +208,7 @@ _otel_resolve_shebang() {
   if \[ -z "$path" ] || ! \[ -x "$path" ]; then return 1; fi
   read -r first_line < "$path"
   if ! _otel_string_starts_with "$first_line" "#!"; then return 2; fi
-  local shebang="${first_line#\#!}"
+  local shebang="${first_line#\#\!}"
   local shebang="${shebang#"${shebang%%[![:space:]]*}"}"
   \echo "$shebang"
 }
