@@ -37,6 +37,7 @@ for element in libraries:
         find "$cache" -exec chown "$user" {} '+'
         cache="$(runuser -l "$user" -c 'npm config list -l' | grep -E '^cache = ' | cut -d '=' -f 2- | tr -d '" ')"
         runuser -l "$user" -c 'npm config set cache="$1"' runuser "$(mktemp -d)"
+set -x
         (cd /opt/opentelemetry_shell && npm install --package-lock=false)
         runuser -l "$user" -c 'npm config set cache="$1"' runuser "$cache"
         (cd /usr/share/opentelemetry_shell/ && ln --symbolic ../../../opt/opentelemetry_shell/node_modules node_modules 2> /dev/null || true)
