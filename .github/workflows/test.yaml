@@ -22,9 +22,9 @@ env:
   IMAGE_RHEL_OLDEST: 'redhat/ubi8:latest' # needs manual maintenance
   IMAGE_RHEL_STABLE: 'redhat/ubi9:latest' # needs manual maintenance
   IMAGE_RHEL_LATEST: 'redhat/ubi9:latest' # needs manual maintenance
-#  IMAGE_OPENSUSE_OLDEST: 'opensuse/leap:15.5' # needs manual maintenance on January 2025 (https://endoflife.date/opensuse)
-#  IMAGE_OPENSUSE_STABLE: 'opensuse/leap:latest'
-#  IMAGE_OPENSUSE_LATEST: 'opensuse/tumbleweed:latest'
+  IMAGE_OPENSUSE_OLDEST: 'opensuse/leap:15.5' # needs manual maintenance on January 2025 (https://endoflife.date/opensuse)
+  IMAGE_OPENSUSE_STABLE: 'opensuse/leap:latest'
+  IMAGE_OPENSUSE_LATEST: 'opensuse/tumbleweed:latest'
 
 jobs:
   build:
