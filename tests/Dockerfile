@@ -21,14 +21,14 @@ RUN <<EOF
   elif type dnf; then
     [ "$update" = TRUE ] && dnf -y upgrade --refresh
     type "$shell" || dnf -y install "$shell"
-    dnf -y install $packages_mandatory
-    dnf -y install $packages_optional || true
+    dnf -y install --allowerasing $packages_mandatory
+    dnf -y install --allowerasing $packages_optional || true
     dnf -y install ./package.rpm
   elif type yum; then
     [ "$update" = TRUE ] && yum -y upgrade
     type "$shell" || yum -y install "$shell"
-    yum -y install $packages_mandatory
-    yum -y install $packages_optional || true
+    yum -y install --allowerasing $packages_mandatory
+    yum -y install --allowerasing $packages_optional || true
     yum -y install ./package.rpm
   elif type zypper; then
     [ "$update" = TRUE ] && zypper --non-interactive update
