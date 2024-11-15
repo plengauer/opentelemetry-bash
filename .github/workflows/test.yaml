@@ -18,7 +18,7 @@ env:
 #  IMAGE_CENTOS_LATEST: 'centos:latest'
 #  IMAGE_FEDORA_OLDEST: 'fedora:40' # needs manual maintenance on June 2025 (https://docs.fedoraproject.org/en-US/releases/lifecycle/)
 #  IMAGE_FEDORA_STABLE: 'fedora:41' # needs manual maintenance on June 2025 (https://docs.fedoraproject.org/en-US/releases/lifecycle/)
-#  IMAGE_FEDORA_LATEST: 'fedora:latest'
+  IMAGE_FEDORA_LATEST: 'fedora:latest'
   IMAGE_RHEL_OLDEST: 'redhat/ubi8:latest' # needs manual maintenance
   IMAGE_RHEL_STABLE: 'redhat/ubi9:latest' # needs manual maintenance
   IMAGE_RHEL_LATEST: 'redhat/ubi9:latest' # needs manual maintenance
