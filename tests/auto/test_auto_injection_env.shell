@@ -1,10 +1,6 @@
 . ./assert.sh
 . otel.sh
 
-set -x
-_otel_inject_inner_command_args /usr/bin/coreutils --coreutils-prog-shebang=env /usr/bin/env echo hello world
-set +x
-
 env echo hello world
 assert_equals 0 $?
 span="$(resolve_span '.name == "echo hello world"')"
