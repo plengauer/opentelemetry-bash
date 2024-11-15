@@ -24,6 +24,8 @@ _otel_inject_inner_command_args() {
   # wrap command
   \echo -n " $_otel_shell -c '. otel.sh
 alias >&2
+\printenv | \grep '^OTEL_' >&2
+\set | \grep '^_otel' >&2
 "
   while \[ "$#" -gt 0 ]; do \echo -n " "; no_quote=1 _otel_escape_arg "$(_otel_escape_arg "$1")"; shift; done
   \echo -n " "; no_quote=1 _otel_escape_arg '"$@"'
