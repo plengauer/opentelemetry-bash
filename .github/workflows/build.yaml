@@ -39,7 +39,7 @@ jobs:
                   ;;
                 *) ;;
               esac
-              printf '%s' "$line"
+              printf '%s\n' "$line"
             done
           } > rpm.spec && rm "$rpm_dir"/*.spec
           rpmbuild -bb --buildroot="$(cat rpm.spec | grep '^Buildroot: ' | cut -d ' ' -f 2)" rpm.spec
