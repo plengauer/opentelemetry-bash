@@ -1,5 +1,4 @@
 #!/bin/sh -e
-set -x
 rm -rf /opt/opentelemetry_bash 1> /dev/null 2> /dev/null || true # clean the old install directory
 if [ "$1" = 1 ] || [ "$1" = 2 ]; then set -- configure; fi
 if [ "$1" = 'abort-configure' ] || [ "$1" = 'abort-upgrade' ] || [ "$1" = 'abort-remove' ] || [ "$1" = 'abort-deconfigure' ]; then
@@ -18,7 +17,6 @@ elif [ "$1" = 'configure' ] || [ "$1" = 'triggered' ] || [ "$1" = 'reconfigure' 
       python3 -m venv /opt/opentelemetry_shell/venv
       . /opt/opentelemetry_shell/venv/bin/activate
       pip3 install -r /opt/opentelemetry_shell/requirements.txt
-      pip3 check
       printf '%s' '
 from opentelemetry.instrumentation.bootstrap_gen import (default_instrumentations, libraries)
 print(*default_instrumentations, sep="\n")
