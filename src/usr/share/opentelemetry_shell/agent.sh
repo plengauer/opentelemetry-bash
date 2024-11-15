@@ -35,7 +35,7 @@ elif \[ "$_otel_is_interactive" = "TRUE" ]; then
 elif \[ "$OTEL_SHELL_IS_DYNAMIC" = TRUE ]; then
   _otel_shell_auto_instrumentation_hint=""
   unset OTEL_SHELL_IS_DYNAMIC
-elif \[ -f "$0" ] && \[ "$(\readlink -f "$0" | \rev | \cut -d / -f 1 | \rev)" != "$(\readlink -f "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)" ]; then
+elif \[ -f "$0" ] && \[ "$(\readlink -f "$0")" != "$(\readlink -f "/proc/$$/exe")" ]; then
   _otel_shell_auto_instrumentation_hint="$0"
 else
   _otel_shell_auto_instrumentation_hint="$(_otel_resolve_command_self)"
