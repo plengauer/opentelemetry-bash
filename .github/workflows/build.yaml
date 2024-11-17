@@ -19,7 +19,7 @@ jobs:
           rpm_dir=$(echo */*.spec | rev | cut -d / -f 2- | rev)
           {
             dependencies_format_deb_to_rpm() {
-              tr -d '(' | tr -d ')' | sed 's/|/or/g' | sed 's/.*/(&)/g'
+              tr '(' ' ' | tr -d ')' | sed 's/|/ or /g' | sed 's/.*/(&)/g'
             }
 
             dependencies_content_deb_to_rpm() {
