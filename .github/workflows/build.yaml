@@ -4,6 +4,35 @@ on:
   workflow_call:
 
 jobs:
+  verify-python-dependency:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./src
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          min_version_otel="$(curl https://pypi.org/project/opentelemetry-api/ | grep -F -- 'Python :: ' | cut -d ':' -f 3 | tr -d ' ' | grep -F -- 3. | cut -d . -f 2 | sort -n | head -n 1)"
+          min_version_shell="$(cat src/DEBIAN/control | grep '^Depends:' | tr ',' '\n' | grep -F -- 'python3 (>=' | cut -d '(' -f 2- | cut -d ')' -f 1 | cut -d ' ' -f 2 | cut -d . -f 2)"
+          [ "$min_version_shell" -ge "$min_version_otel" ]
+
+  verify-debian-dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get -y install apt-file
+      - run: sudo apt-file update
+      - run: |
+          patternify() { grep -v '^$' | grep -P '^[a-zA-Z-_.]+$' | while read -r pattern; do echo '^'"$pattern"'$'; done }
+          dependencies="$(cat src/DEBIAN/control | grep -E '^Depends:|^Suggests:|^Recommends:' | cut -d : -f 2- | tr '|' ',' | tr ',' '\n' | cut -d '(' -f 1 | tr -d ' ' | patternify)"
+          find src -iname '*.sh' | xargs cat \
+            | grep -v 'SKIP_DEPENDENCY_CHECK' | while read -r line; do line="${line%%#*}"; printf '%s\n' "$line"; done \
+            | grep -oP '\\[a-zA-Z][a-zA-Z0-9-_.]*' | while read -r command; do command="${command#\\}"; [ "${#command}" -gt 1 ] && printf '%s\n' "$command" || true; done \
+            | grep -vE '^_otel|^otel_|^OTEL_' | grep -vE "$(compgen -b | patternify)" | grep -vE "$(compgen -k | patternify)" | grep -vE '^which$' \
+            | sort -u | while read -r command; do
+              sudo apt-file search "$command" | grep -E "/$command\$" | cut -d : -f 1 | grep -q -- "$dependencies" && echo "$command OK" || echo "$command UNAVAILABLE"
+            done | tee /dev/stderr | grep -q 'UNAVAILABLE' && exit 1 || exit 0
+
   build:
     runs-on: ubuntu-latest
     defaults:
