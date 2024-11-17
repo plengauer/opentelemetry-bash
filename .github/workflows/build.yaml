@@ -6,9 +6,6 @@ on:
 jobs:
   verify-python-dependency:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./src
     steps:
       - uses: actions/checkout@v4
       - run: |
