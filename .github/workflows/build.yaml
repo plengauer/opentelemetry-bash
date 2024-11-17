@@ -23,7 +23,7 @@ jobs:
             }
 
             dependencies_content_deb_to_rpm() {
-              grep -v 'python3-venv' | sed 's/dpkg/rpm/g' | sed 's/xxd/xxd | vim-common | vim/g'
+              grep -v 'python3-venv' | sed 's/^awk$/gawk | mawk/g' | sed 's/^dpkg$/rpm/g' | sed 's/^xxd$/xxd | vim-common | vim/g'
             }
           
             echo -n 'Requires: ' && cat DEBIAN/control | grep Depends | cut -d ' ' -f 2- | tr ',' '\n' | dependencies_content_deb_to_rpm | dependencies_format_deb_to_rpm | tr '\n' ' ' && echo
