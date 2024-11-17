@@ -21,7 +21,7 @@ jobs:
       - run: sudo apt-file update
       - run: |
           patternify() { grep -v '^$' | grep -P '^[a-zA-Z-_.]+$' | while read -r pattern; do echo '^'"$pattern"'$'; done }
-          dependencies="$(cat src/DEBIAN/control | grep -E '^Depends:|^Suggests:|^Recommends:' | cut -d : -f 2- | tr '|' ',' | tr ',' '\n' | cut -d '(' -f 1 | tr -d ' ' | patternify)"
+          dependencies="$(cat src/DEBIAN/control | grep -E '^Depends:|^Suggests:|^Recommends:' | cut -d : -f 2- | tr '|' ',' | tr ',' '\n' | cut -d '(' -f 1 | tr -d ' ' | sed 's/^awk$/gawk/g' | patternify)"
           find src -iname '*.sh' | xargs cat \
             | grep -v 'SKIP_DEPENDENCY_CHECK' | while read -r line; do line="${line%%#*}"; printf '%s\n' "$line"; done \
             | grep -oP '\\[a-zA-Z][a-zA-Z0-9-_.]*' | while read -r command; do command="${command#\\}"; [ "${#command}" -gt 1 ] && printf '%s\n' "$command" || true; done \
