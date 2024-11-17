@@ -100,7 +100,7 @@ _otel_auto_instrument() {
   fi
 
   # cache
-  \[ "$(\alias | \wc -l)" -gt 25 ] && \alias | \sed 's/^alias //' | { \[ -n "$hint" ] && \grep "$(_otel_resolve_instrumentation_hint "$hint" | \sed 's/[]\.^*[]/\\&/g' | \awk '$0="^"$0"="')" || \cat; } | \awk '{print "\\alias " $0 }'  > "$cache_file" || \true
+  \[ "$(\alias | \wc -l)" -gt 25 ] && \alias | \sed 's/^alias //' | { \[ -n "$hint" ] && \grep "$(_otel_resolve_instrumentation_hint "$hint" | \sed 's/[]\.^*[]/\\&/g' | \gawk '$0="^"$0"="')" || \cat; } | \gawk '{print "\\alias " $0 }'  > "$cache_file" || \true
 }
 
 _otel_list_special_auto_instrument_files() {
@@ -123,7 +123,7 @@ _otel_list_path_executables() {
 }
 
 _otel_list_alias_commands() {
-  \alias | \sed 's/^alias //' | \grep -vF '[=' | \awk -F'=' '{ var=$1; sub($1 FS,""); } ! ($0 ~ "^'\''((OTEL_|_otel_).* )*" var "'\''$") { print var }'
+  \alias | \sed 's/^alias //' | \grep -vF '[=' | \gawk -F'=' '{ var=$1; sub($1 FS,""); } ! ($0 ~ "^'\''((OTEL_|_otel_).* )*" var "'\''$") { print var }'
 }
 
 _otel_list_aliased_commands() {
@@ -328,10 +328,10 @@ _otel_hash_and_reinstrument() {
   if \[ "$1" = -r ]; then
     local aliases_pre="$(\mktemp)"
     local aliases_new="$(\mktemp)"
-    \alias | \sed 's/^alias //' | \awk '{print "\\alias " $0 }' > "$aliases_pre"
+    \alias | \sed 's/^alias //' | \gawk '{print "\\alias " $0 }' > "$aliases_pre"
     \unalias -a
     _otel_auto_instrument "$_otel_shell_auto_instrumentation_hint"
-    \alias | \sed 's/^alias //' | \awk '{print "\\alias " $0 }' > "$aliases_new"
+    \alias | \sed 's/^alias //' | \gawk '{print "\\alias " $0 }' > "$aliases_new"
     \unalias -a
     \. "$aliases_pre"
     \. "$aliases_new"
