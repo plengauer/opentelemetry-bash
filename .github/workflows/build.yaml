@@ -29,18 +29,18 @@ jobs:
             echo -n 'Requires: ' && cat DEBIAN/control | grep Depends | cut -d ' ' -f 2- | tr ',' '\n' | tr -d ' ' | grep -v '^$' | dependencies_content_deb_to_rpm | dependencies_format_deb_to_rpm | tr '\n' ' ' && echo
             echo "AutoReq: no"
             echo "BuildArch: noarch"
-            cat "$rpm_dir"/*.spec # | while read -r line; do
-            #  case "$line" in
-            #    '%post'*)
-            #      cat DEBIAN/triggers | grep -v '^$' | cut -d ' ' -f 2 | rev | cut -d / -f 1 | rev | sort -u | while read -r package; do
-            #        cat "$rpm_dir"/*.spec | sed -n '/^%post/,/^$/p' | sed 's/^%post/%triggerin -- '"$package"'/g'
-            #        cat "$rpm_dir"/*.spec | sed -n '/^%post/,/^$/p' | sed 's/^%post/%triggerun -- '"$package"'/g'
-            #      done
-            #      ;;
-            #    *) ;;
-            #  esac
-            #  printf '%s\n' "$line"
-            #done
+            cat "$rpm_dir"/*.spec | while read -r line; do
+              case "$line" in
+                '%post'*)
+                  cat DEBIAN/triggers | grep -v '^$' | cut -d ' ' -f 2 | rev | cut -d / -f 1 | rev | sort -u | while read -r package; do
+                    cat "$rpm_dir"/*.spec | sed -n '/^%post/,/^$/p' | sed 's/^%post/%triggerin -- '"$package"'/g'
+                    cat "$rpm_dir"/*.spec | sed -n '/^%post/,/^$/p' | sed 's/^%post/%triggerun -- '"$package"'/g'
+                  done
+                  ;;
+                *) ;;
+              esac
+              printf '%s\n' "$line"
+            done
           } > rpm.spec && rm "$rpm_dir"/*.spec
           rpmbuild -bb --buildroot="$(cat rpm.spec | grep '^Buildroot: ' | cut -d ' ' -f 2)" rpm.spec
           mv ../*.rpm ../package.rpm
