@@ -1,55 +1,58 @@
 Unable to find image 'renovate/renovate:latest' locally
 latest: Pulling from renovate/renovate
-d9802f032d67: Already exists
-5ca942e5e24e: Pulling fs layer
-46fbe2540108: Pulling fs layer
-fad0999f1fb6: Pulling fs layer
-71c640f31d34: Pulling fs layer
-d4ede93f8112: Pulling fs layer
-e295efc80b25: Pulling fs layer
-21007ee888c1: Pulling fs layer
-8756e94ddb4e: Pulling fs layer
-4855cef0f0c0: Pulling fs layer
-5e2a248e3a53: Pulling fs layer
-d4ede93f8112: Waiting
+afad30e59d72: Pulling fs layer
+e2704c8942c3: Pulling fs layer
+09668f7b751b: Pulling fs layer
+bb1ff44d8439: Pulling fs layer
+115c2c19377a: Pulling fs layer
+897e62ab9112: Pulling fs layer
+d09d1d764621: Pulling fs layer
+02b0fd275065: Pulling fs layer
+1faa4b95fb9b: Pulling fs layer
+187037b24ced: Pulling fs layer
+6fca468e2fdc: Pulling fs layer
 4f4fb700ef54: Pulling fs layer
-21007ee888c1: Waiting
-e295efc80b25: Waiting
-8756e94ddb4e: Waiting
-4855cef0f0c0: Waiting
-5e2a248e3a53: Waiting
+02b0fd275065: Waiting
+1faa4b95fb9b: Waiting
+6fca468e2fdc: Waiting
+115c2c19377a: Waiting
+897e62ab9112: Waiting
 4f4fb700ef54: Waiting
-71c640f31d34: Waiting
-5ca942e5e24e: Verifying Checksum
-5ca942e5e24e: Download complete
-5ca942e5e24e: Pull complete
-46fbe2540108: Verifying Checksum
-46fbe2540108: Download complete
-fad0999f1fb6: Verifying Checksum
-fad0999f1fb6: Download complete
-71c640f31d34: Verifying Checksum
-71c640f31d34: Download complete
-21007ee888c1: Verifying Checksum
-21007ee888c1: Download complete
-e295efc80b25: Download complete
-8756e94ddb4e: Verifying Checksum
-8756e94ddb4e: Download complete
-4855cef0f0c0: Verifying Checksum
-4855cef0f0c0: Download complete
+d09d1d764621: Waiting
+187037b24ced: Waiting
+e2704c8942c3: Verifying Checksum
+e2704c8942c3: Download complete
+afad30e59d72: Verifying Checksum
+afad30e59d72: Download complete
+09668f7b751b: Verifying Checksum
+09668f7b751b: Download complete
+bb1ff44d8439: Verifying Checksum
+bb1ff44d8439: Download complete
+115c2c19377a: Verifying Checksum
+115c2c19377a: Download complete
+02b0fd275065: Download complete
+1faa4b95fb9b: Verifying Checksum
+1faa4b95fb9b: Download complete
+d09d1d764621: Verifying Checksum
+d09d1d764621: Download complete
+6fca468e2fdc: Verifying Checksum
+6fca468e2fdc: Download complete
+4f4fb700ef54: Verifying Checksum
 4f4fb700ef54: Download complete
-46fbe2540108: Pull complete
-5e2a248e3a53: Verifying Checksum
-5e2a248e3a53: Download complete
-d4ede93f8112: Verifying Checksum
-d4ede93f8112: Download complete
-fad0999f1fb6: Pull complete
-71c640f31d34: Pull complete
-d4ede93f8112: Pull complete
-e295efc80b25: Pull complete
-21007ee888c1: Pull complete
-8756e94ddb4e: Pull complete
-4855cef0f0c0: Pull complete
-5e2a248e3a53: Pull complete
+afad30e59d72: Pull complete
+187037b24ced: Download complete
+e2704c8942c3: Pull complete
+09668f7b751b: Pull complete
+bb1ff44d8439: Pull complete
+897e62ab9112: Verifying Checksum
+897e62ab9112: Download complete
+115c2c19377a: Pull complete
+897e62ab9112: Pull complete
+d09d1d764621: Pull complete
+02b0fd275065: Pull complete
+1faa4b95fb9b: Pull complete
+187037b24ced: Pull complete
+6fca468e2fdc: Pull complete
 4f4fb700ef54: Pull complete
-Digest: sha256:c3c7341e63d0fd4bc15151de3825b829b43c7ef440c3f68f356a2f5c35f7a241
+Digest: sha256:8621cd96ef78be027703a92f5fce50087ca5ec44863f246edaafd52256522a8e
 Status: Downloaded newer image for renovate/renovate:latest

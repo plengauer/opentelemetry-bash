@@ -1,46 +1,46 @@
  WARN: cli config dryRun property has been changed to full
-       "trace_id": "c6f19808331108d8c153e1ce19a2beb7",
-       "span_id": "e46851a7066d41e6",
+       "trace_id": "bf5165865204028ba2ff39aaa0bbc393",
+       "span_id": "9fb4294150a185ee",
        "trace_flags": "01"
  INFO: Repository started (repository=plengauer/opentelemetry-bash)
-       "renovateVersion": "38.142.4",
-       "trace_id": "c6f19808331108d8c153e1ce19a2beb7",
-       "span_id": "3e7c35519fee1a45",
+       "renovateVersion": "39.20.1",
+       "trace_id": "bf5165865204028ba2ff39aaa0bbc393",
+       "span_id": "85611e0540adff82",
        "trace_flags": "01"
  INFO: Dependency extraction complete (repository=plengauer/opentelemetry-bash, baseBranch=main)
        "stats": {
          "managers": {
            "github-actions": {"fileCount": 5, "depCount": 53},
            "npm": {"fileCount": 1, "depCount": 10},
-           "pip_requirements": {"fileCount": 1, "depCount": 2}
+           "pip_requirements": {"fileCount": 2, "depCount": 7}
          },
-         "total": {"fileCount": 7, "depCount": 65}
+         "total": {"fileCount": 8, "depCount": 70}
        },
-       "trace_id": "c6f19808331108d8c153e1ce19a2beb7",
-       "span_id": "a962c60c7489f6c1",
+       "trace_id": "bf5165865204028ba2ff39aaa0bbc393",
+       "span_id": "88cda609926a1466",
        "trace_flags": "01"
  INFO: GitHub GraphQL datasource: skipping empty item (repository=plengauer/opentelemetry-bash)
        "packageName": "actions/first-interaction",
        "baseUrl": "https://api.github.com/",
-       "trace_id": "c6f19808331108d8c153e1ce19a2beb7",
-       "span_id": "a962c60c7489f6c1",
+       "trace_id": "bf5165865204028ba2ff39aaa0bbc393",
+       "span_id": "88cda609926a1466",
        "trace_flags": "01"
  INFO: DRY-RUN: Would close Dependency Dashboard (repository=plengauer/opentelemetry-bash)
        "title": "Dependency Dashboard",
-       "trace_id": "c6f19808331108d8c153e1ce19a2beb7",
-       "span_id": "3e7c35519fee1a45",
+       "trace_id": "bf5165865204028ba2ff39aaa0bbc393",
+       "span_id": "85611e0540adff82",
        "trace_flags": "01"
  INFO: DRY-RUN: Would save repository cache. (repository=plengauer/opentelemetry-bash)
-       "trace_id": "c6f19808331108d8c153e1ce19a2beb7",
-       "span_id": "3e7c35519fee1a45",
+       "trace_id": "bf5165865204028ba2ff39aaa0bbc393",
+       "span_id": "85611e0540adff82",
        "trace_flags": "01"
  INFO: Repository finished (repository=plengauer/opentelemetry-bash)
        "cloned": true,
-       "durationMs": 15544,
-       "trace_id": "c6f19808331108d8c153e1ce19a2beb7",
-       "span_id": "3e7c35519fee1a45",
+       "durationMs": 25902,
+       "trace_id": "bf5165865204028ba2ff39aaa0bbc393",
+       "span_id": "85611e0540adff82",
        "trace_flags": "01"
  INFO: Renovate was run at log level "info". Set LOG_LEVEL=debug in environment variables to see extended debug logs.
-       "trace_id": "c6f19808331108d8c153e1ce19a2beb7",
-       "span_id": "26fb2c3011007634",
+       "trace_id": "bf5165865204028ba2ff39aaa0bbc393",
+       "span_id": "071310293879f213",
        "trace_flags": "01"
