@@ -216,7 +216,7 @@ jobs:
               | jq 'with_entries(if .key == "status" and .value == 0 then .value = "UNSET" else . end)' \
               | jq 'with_entries(if .key == "status" and .value == 1 then .value = "OK" else . end)' \
               | jq 'with_entries(if .key == "status" and .value == 2 then .value = "ERROR" else . end)' \
-              | jq .
+              | jq -s '. | sort_by(.name) | .[]'
           }
 
           {
