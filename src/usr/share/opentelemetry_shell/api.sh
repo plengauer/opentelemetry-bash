@@ -17,6 +17,7 @@ fi
 if \[ -z "$TMPDIR" ]; then TMPDIR=/tmp; fi
 _otel_shell_pipe_dir="${OTEL_SHELL_PIPE_DIR:-$TMPDIR}"
 _otel_remote_sdk_pipe="${OTEL_REMOTE_SDK_PIPE:-$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.pipe}"
+_otel_remote_sdk_fd="${OTEL_REMOTE_SDK_FD:-7}"
 _otel_shell="$(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)"
 if \[ "$_otel_shell" = busybox ]; then _otel_shell="busybox sh"; fi
 if \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = 0 ] || \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "$PPID" ] || \[ "$PPID" = 0 ] || \[ "$(\tr '\000-\037' ' ' < /proc/$PPID/cmdline)" = "$(\tr '\000-\037' ' ' < /proc/$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE/cmdline)" ]; then _otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"; fi
@@ -28,11 +29,11 @@ unset OTEL_SHELL_SPAN_KIND_OVERRIDE
 if \[ -p "$_otel_remote_sdk_pipe" ]; then
   otel_init() {
     _otel_mkfifo_flags=--mode=666
-    \exec 7> "$_otel_remote_sdk_pipe"
+    \eval "\\exec ${_otel_remote_sdk_fd}> \"$_otel_remote_sdk_pipe\""
   }
 
   otel_shutdown() {
-    \exec 7>&-
+    \eval "\\exec ${_otel_remote_sdk_fd}>&-"
   }
 else
   otel_init() {
@@ -44,14 +45,14 @@ else
     # several weird things going on in the next line, (1) using '((' fucks up the syntax highlighting in github while '( (' does not, and (2) &> causes weird buffering / late flushing behavior
     if \env --help 2>&1 | \grep -q 'ignore-signal'; then local extra_env_flags='--ignore-signal=INT --ignore-signal=HUP'; fi
     ( (\env $extra_env_flags /usr/share/opentelemetry_shell/sdk.py "shell" "$(_otel_package_version opentelemetry-shell)" < "$_otel_remote_sdk_pipe" 1> "$sdk_output" 2> "$sdk_output") &)
-    \exec 7> "$_otel_remote_sdk_pipe"
+    \eval "\\exec ${_otel_remote_sdk_fd}> \"$_otel_remote_sdk_pipe\""
     _otel_resource_attributes
     _otel_sdk_communicate "INIT"
   }
 
   otel_shutdown() {
     _otel_sdk_communicate "SHUTDOWN"
-    \exec 7>&-
+    \eval "\\exec ${_otel_remote_sdk_fd}>&-"
     \rm "$_otel_remote_sdk_pipe"
   }
 fi
