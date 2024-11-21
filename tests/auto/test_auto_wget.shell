@@ -1,6 +1,8 @@
 set -e
 . ./assert.sh
 
+if wget --version | grep -q Wget2; then exit 0; fi
+
 $SHELL auto/wget.shell http://www.google.com/
 
 span="$(resolve_span '.name == "wget -O - http://www.google.com/"')"

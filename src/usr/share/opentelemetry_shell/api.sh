@@ -18,7 +18,8 @@ if \[ -z "$TMPDIR" ]; then TMPDIR=/tmp; fi
 _otel_shell_pipe_dir="${OTEL_SHELL_PIPE_DIR:-$TMPDIR}"
 _otel_remote_sdk_pipe="${OTEL_REMOTE_SDK_PIPE:-$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.pipe}"
 _otel_remote_sdk_fd="${OTEL_REMOTE_SDK_FD:-7}"
-_otel_shell="$(\readlink "/proc/$$/exe" | \rev | \cut -d / -f 1 | \rev)"
+_otel_shell="$(\readlink "/proc/$$/exe")"
+_otel_shell="${_otel_shell##*/}"
 if \[ "$_otel_shell" = busybox ]; then _otel_shell="busybox sh"; fi
 if \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = 0 ] || \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "$PPID" ] || \[ "$PPID" = 0 ] || \[ "$(\tr '\000-\037' ' ' < /proc/$PPID/cmdline)" = "$(\tr '\000-\037' ' ' < /proc/$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE/cmdline)" ]; then _otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"; fi
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE
@@ -44,7 +45,7 @@ else
     _otel_package_version "$_otel_shell" > /dev/null
     # several weird things going on in the next line, (1) using '((' fucks up the syntax highlighting in github while '( (' does not, and (2) &> causes weird buffering / late flushing behavior
     if \env --help 2>&1 | \grep -q 'ignore-signal'; then local extra_env_flags='--ignore-signal=INT --ignore-signal=HUP'; fi
-    ( (\env $extra_env_flags /usr/share/opentelemetry_shell/sdk.py "shell" "$(_otel_package_version opentelemetry-shell)" < "$_otel_remote_sdk_pipe" 1> "$sdk_output" 2> "$sdk_output") &)
+    ( (\env $extra_env_flags /opt/opentelemetry_shell/sdk/venv/bin/python /usr/share/opentelemetry_shell/sdk.py "shell" "$(_otel_package_version opentelemetry-shell)" < "$_otel_remote_sdk_pipe" 1> "$sdk_output" 2> "$sdk_output") &)
     \eval "\\exec ${_otel_remote_sdk_fd}> \"$_otel_remote_sdk_pipe\""
     _otel_resource_attributes
     _otel_sdk_communicate "INIT"
@@ -60,7 +61,8 @@ fi
 _otel_sdk_communicate() {
   if _otel_string_contains "$*" "
 "; then
-    _otel_sdk_communicate "$(\echo "$@" | \tr '\n' ' ')"
+    local IFS=' '
+    _otel_sdk_communicate "$(\printf '%s' "$*" | \tr '\n' ' ')"
   else
     \echo "$@" >&7
   fi
@@ -80,7 +82,7 @@ _otel_resource_attributes() {
   _otel_resource_attribute string process.executable.path="$process_executable_path"
   _otel_resource_attribute string process.command_line="$process_command"
   _otel_resource_attribute string process.command="${process_command%% *}" # "$(\printf '%s' "$process_command" | \cut -d ' ' -f 1)"
-  _otel_resource_attribute string process.owner="$USER"
+  _otel_resource_attribute string process.owner="${USER:-"$(\whoami)"}"
   _otel_resource_attribute string process.runtime.name="$_otel_shell"
   case "$_otel_shell" in
        sh) _otel_resource_attribute string process.runtime.description="Bourne Shell" ;;
@@ -138,7 +140,7 @@ else
 fi
 
 _otel_resolve_package_version() {
-  \dpkg -s "$1" 2> /dev/null | \grep '^Version: ' | \cut -d ' ' -f 2
+  (\dpkg -s "$1" || \rpm -qi "$1") 2> /dev/null | \grep Version | \cut -d : -f 2 | tr -d ' '
 }
 
 otel_span_current() {
@@ -367,6 +369,27 @@ otel_observe() {
   return "$exit_code"
 }
 
+if ! \type which 1> /dev/null 2> /dev/null; then
+  if \[ "$_otel_shell" = bash ]; then
+    which() {
+      \type -P "$1"
+    }
+  else
+    which() {
+      if \[ -x "$1" ]; then \echo "$1"; return 0; fi
+      local IFS=:
+      for directory in $PATH; do
+        local path="$directory"/"$1"
+        if \[ -x "$path" ]; then
+          \echo "$path"
+          return 0
+        fi
+      done
+      return 1
+    }
+  fi
+fi
+
 if \[ "$_otel_shell" = dash ] || \[ "$_otel_shell" = 'busybox sh' ]; then # TODO its only old dashes
   # old versions of dash dont set env vars properly
   # more specifically they do not make variables that are set in front of commands part of the child process env vars but only of the local execution environment
@@ -397,10 +420,12 @@ else
       "$1 is a shell keyword") \echo keyword;;
       "$1 is a shell alias for "*) \echo alias;;
       "$1 is an alias for "*) \echo alias;;
+      "$1 is aliased to "*) \echo alias;;
       "$1 is a shell function") \echo 'function';;
       "$1 is a function") \echo 'function';;
       "$1 is a shell builtin") \echo builtin;;
       "$1 is $1") \[ "$_otel_shell" = 'busybox sh' ] && \help | \tail -n +3 | \grep -q "$1" && \echo builtin || \echo file;;
+      "$1 is hashed (/"*"/$1)") \echo file;; 
       *) \echo file;;
     esac
   }
@@ -432,7 +457,7 @@ _otel_escape_arg() {
     local do_escape=1
   else
     case "$1X" in
-      *[[:space:]\&\<\>\|\'\"\(\)\`!\$\;\\\*]*) local do_escape=1 ;;
+      *[[:space:]\&\<\>\|\'\"\(\)\`\!\$\;\\\*]*) local do_escape=1 ;;
       *) local do_escape=0 ;;
     esac
   fi

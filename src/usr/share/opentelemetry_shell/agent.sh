@@ -200,15 +200,15 @@ _otel_deshebangify() {
   if \[ "$(_otel_command_type "$cmd")" != file ]; then return 1; fi
   local shebang="$(_otel_resolve_shebang "$1")" # e.g., "/bin/bash -x"
   if \[ -z "$shebang" ]; then return 2; fi
-  \alias "$1=OTEL_SHELL_COMMAND_TYPE_OVERRIDE=file $shebang $(\which "$1")" # e.g., alias upgrade='/bin/bash -x /usr/bin/upgrade'
+  \alias "$1=OTEL_SHELL_COMMAND_TYPE_OVERRIDE=file $shebang $(\which "$1" 2> /dev/null)" # e.g., alias upgrade='/bin/bash -x /usr/bin/upgrade'
 }
 
 _otel_resolve_shebang() {
-  local path="$(\which "$1")"
+  local path="$(\which "$1" 2> /dev/null)"
   if \[ -z "$path" ] || ! \[ -x "$path" ]; then return 1; fi
   read -r first_line < "$path"
   if ! _otel_string_starts_with "$first_line" "#!"; then return 2; fi
-  local shebang="${first_line#\#!}"
+  local shebang="${first_line#\#\!}"
   local shebang="${shebang#"${shebang%%[![:space:]]*}"}"
   \echo "$shebang"
 }

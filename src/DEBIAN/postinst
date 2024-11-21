@@ -1,10 +1,11 @@
-#!/bin/bash -e
+#!/bin/sh -e
 rm -rf /opt/opentelemetry_bash 1> /dev/null 2> /dev/null || true # clean the old install directory
+if [ "$1" = 1 ] || [ "$1" = 2 ]; then set -- configure; fi
 if [ "$1" = 'abort-configure' ] || [ "$1" = 'abort-upgrade' ] || [ "$1" = 'abort-remove' ] || [ "$1" = 'abort-deconfigure' ]; then
   true
 elif [ "$1" = 'configure' ] || [ "$1" = 'triggered' ] || [ "$1" = 'reconfigure' ]; then
   python3 -m venv /opt/opentelemetry_shell/sdk/venv
-  source /opt/opentelemetry_shell/sdk/venv/bin/activate
+  . /opt/opentelemetry_shell/sdk/venv/bin/activate
   pip3 install -r /opt/opentelemetry_shell/sdk/requirements.txt
   pip3 check
   deactivate
@@ -14,15 +15,12 @@ elif [ "$1" = 'configure' ] || [ "$1" = 'triggered' ] || [ "$1" = 'reconfigure' 
     fi
     if type python3 2> /dev/null; then
       python3 -m venv /opt/opentelemetry_shell/venv
-      source /opt/opentelemetry_shell/venv/bin/activate
+      . /opt/opentelemetry_shell/venv/bin/activate
       pip3 install -r /opt/opentelemetry_shell/requirements.txt
-      pip3 check
-      echo '
+      printf '%s' '
 from opentelemetry.instrumentation.bootstrap_gen import (default_instrumentations, libraries)
-for element in default_instrumentations:
-  print(element)
-for element in libraries:
-  print(element["instrumentation"])
+print(*default_instrumentations, sep="\n")
+print(*map(lambda element: element["instrumentation"], libraries), sep="\n")
 ' | python3 | grep "==$(pip3 show opentelemetry-distro | grep Version | cut -d ':' -f 2- | tr -d ' ')"'$' | xargs pip3 install
       pip3 check
       deactivate

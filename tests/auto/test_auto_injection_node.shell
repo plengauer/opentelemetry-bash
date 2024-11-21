@@ -1,4 +1,4 @@
-if ! which node; then exit 0; fi
+if ! type node; then exit 0; fi
 . ./assert.sh
 
 . otel.sh
@@ -48,6 +48,7 @@ assert_not_equals null $(\echo "$span" | jq -r '.parent_id')
 type npm || exit 1
 
 export OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE
+
 node -e "const child_process = require('child_process'); child_process.spawn('echo', [ 'hello', 'world', '6' ]);"
 assert_equals 0 $?
 span="$(resolve_span '.name == "echo hello world 6"')"

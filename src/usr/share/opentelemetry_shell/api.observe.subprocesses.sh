@@ -39,6 +39,7 @@ _otel_record_subprocesses() {
     local operation=""
     case "$line" in
       *' '*' (To be restarted)') ;;
+      *' (Function not implemented)') ;;
       *' clone'*'('*' <unfinished ...>') ;;
       *' '*'fork('*' <unfinished ...>') ;;
       *' clone'*'('*) local operation=fork;;

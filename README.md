@@ -1,4 +1,4 @@
-This project delivers [OpenTelemetry](https://opentelemetry.io/) traces, metrics and logs from shell scripts (sh, ash, dash, bash, busybox, and many other POSIX compliant shells) as well as from GitHub actions (including node and docker actions). Compared to similar projects, it delivers not just a command-line SDK to create spans manually, but also provides automatic context propagation via HTTP (wget, wget2, curl, and netcat), auto-instrumentation of all available commands, auto-injection into child scripts and into executables using shebangs, as well as automatic log collection from stderr. Its installable via a debian package from the releases in this repository, or from the apt-repository below. This project is not officially affiliated with the CNCF project [OpenTelemetry](https://opentelemetry.io/).
+This project delivers [OpenTelemetry](https://opentelemetry.io/) traces, metrics and logs from shell scripts (sh, ash, dash, bash, busybox, and many other POSIX compliant shells) as well as from GitHub actions (including node and docker actions). Compared to similar projects, it delivers not just a command-line SDK to create spans manually, but also provides automatic context propagation via HTTP (wget, wget2, curl, and netcat), auto-instrumentation of all available commands, auto-injection into child scripts and into executables using shebangs, as well as automatic log collection from stderr. Its installable via a debian or rpm package from the releases in this repository, or from the apt-repository below. This project is not officially affiliated with the CNCF project [OpenTelemetry](https://opentelemetry.io/).
 
 [![Tests](https://github.com/plengauer/opentelemetry-bash/actions/workflows/test_branch.yaml/badge.svg?branch=main)](https://github.com/plengauer/opentelemetry-bash/actions/workflows/test_branch.yaml)
 
@@ -113,13 +113,13 @@ export OTEL_TRACES_EXPORTER=console
 Finally, run your script and see traces, metrics, and logs printed to stderr.
 
 # Installation
-This project currently supports and is actively tested on debian-based operating systems. The code also works on other Linux-based operating systems and should, in theory, even work on the Linux Subsystem for Windows. However, there are no readily available installation packages for non-debian systems. Mac-based operating systems are currently not supported.
+This project currently supports and is actively tested on debian-based (Debian and Ubuntu) and rpm-based (Fedora, OpenSuse, and Red Hat Enterprise Linux (RHEL)) operating systems. The code also works on other Linux-based operating systems and should, in theory, even work on the Linux Subsystem for Windows. However, there are no readily available installation packages for these systems. Mac-based operating systems are currently not supported.
 
 Install either via
 ```bash
 wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh
 ```
-or via
+or, for debian-based systems, via
 ```bash
 echo "deb [arch=all] http://3.73.14.87:8000/ stable main" | sudo tee /etc/apt/sources.list.d/otel.list
 sudo apt-get update
