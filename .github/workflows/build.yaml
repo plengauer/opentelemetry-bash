@@ -20,7 +20,7 @@ jobs:
       - run: sudo apt-get update && sudo apt-get -y install apt-file
       - run: sudo apt-file update
       - run: |
-          patternify() { grep -v '^$' | grep -P '^[a-zA-Z-_.]+$' | while read -r pattern; do echo '^'"$pattern"'$'; done }
+          patternify() { grep -v '^$' | grep -P '^[a-zA-Z0-9/_.-]+$' | while read -r pattern; do echo '^'"$pattern"'$'; done }
           dependencies="$(cat src/DEBIAN/control | grep -E '^Depends:|^Suggests:|^Recommends:' | cut -d : -f 2- | tr '|' ',' | tr ',' '\n' | cut -d '(' -f 1 | tr -d ' ' | sed 's/^awk$/gawk/g' | patternify)"
           { find src -iname '*.sh'; find src/DEBIAN | grep -vE '^src/DEBIAN$|^src/DEBIAN/control$|^src/DEBIAN/triggers$'; } | xargs cat \
             | grep -v 'SKIP_DEPENDENCY_CHECK' | while read -r line; do line="${line%%#*}"; printf '%s\n' "$line"; done \
@@ -29,7 +29,8 @@ jobs:
             | grep -vE '^_otel|^otel_|^OTEL_' | grep -vE "$(compgen -b | patternify)" | grep -vE "$(compgen -k | patternify)" \
             | grep -vE '^which$' | grep -vE '^rpm$' | sed 's/^awk$/gawk/g' \
             | sort -u | while read -r command; do
-              (dpkg -S "$(readlink -f "$(which "$command")")" 2> /dev/null || apt-file search "$command" | grep -E "/$command\$") | cut -d : -f 1 | grep -q -- "$dependencies" && echo "$command OK" || echo "$command UNAVAILABLE"
+              (false || apt-file search "$command" | grep -E "/$command\$") | cut -d : -f 1 | grep -q -- "$dependencies" && echo "$command OK" || echo "$command UNAVAILABLE"
+              # (dpkg -S "$(readlink -f "$(which "$command")")" 2> /dev/null || apt-file search "$command" | grep -E "/$command\$") | cut -d : -f 1 | grep -q -- "$dependencies" && echo "$command OK" || echo "$command UNAVAILABLE"
             done | tee /dev/stderr | grep -q 'UNAVAILABLE' && exit 1 || exit 0
 
   build:
