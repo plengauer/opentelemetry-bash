@@ -196,6 +196,32 @@ jobs:
             fi
           ' | sudo docker run -v $(pwd)/package.deb:/root/package.deb -v $(pwd)/package.rpm:/root/package.rpm --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
 
+  install-oneoff-user:
+    needs: [ smoke ]
+    runs-on: ubuntu-latest
+    steps:
+      - run: wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh
+      - run: type otel.sh
+
+  install-oneoff-os:
+    needs: [ prepare-images, smoke ]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image: ${{ fromJSON(needs.prepare-images.outputs.images) }}
+    steps:
+      - run: |
+          echo '
+            if type apt-get; then apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install wget
+            elif type dnf; then dnf -y install wget
+            elif type yum; then yum -y install wget
+            elif type zypper; then zypper --non-interactive install wget
+            else exit 1
+            fi
+            wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh
+            type otel.sh
+          ' | sudo docker run --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
+
   os-shell:
     needs: [ prepare-images, prepare-shells, smoke ]
     runs-on: ubuntu-latest
@@ -313,7 +339,7 @@ jobs:
           retention-days: 1
 
   join:
-    needs: [upgrade, system-upgrade, dependency, os-shell, action, performance]
+    needs: [upgrade, system-upgrade, dependency, install-oneoff-user, install-oneoff-os, os-shell, action, performance]
     runs-on: ubuntu-latest
     outputs:
       success: ${{ steps.tests.outputs.success }}
