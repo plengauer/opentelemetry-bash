@@ -200,6 +200,8 @@ jobs:
     needs: [ smoke ]
     runs-on: ubuntu-latest
     steps:
+      - run: type sudo
+      - run: whoami
       - run: wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh
       - run: type otel.sh
 
