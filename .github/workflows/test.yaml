@@ -83,7 +83,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          min_version="$(cat src/DEBIAN/control | grep '^PreDepends:' | tr ',' '\n' | grep -F -- 'python3 (>=' | cut -d '(' -f 2- | cut -d ')' -f 1 | cut -d ' ' -f 2 | cut -d . -f 2)"
+          min_version="$(cat src/DEBIAN/control | grep '^Pre-Depends:' | tr ',' '\n' | grep -F -- 'python3 (>=' | cut -d '(' -f 2- | cut -d ')' -f 1 | cut -d ' ' -f 2 | cut -d . -f 2)"
           printenv | grep '^IMAGE_' | while read -r kvp; do
             key="$(echo "$kvp" | cut -sd '=' -f 1 | tr '[:upper:]' '[:lower:]')"
             value="$(echo "$kvp" | cut -sd '=' -f 2)"
