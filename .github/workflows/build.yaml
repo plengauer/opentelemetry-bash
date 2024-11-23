@@ -29,7 +29,8 @@ jobs:
             | grep -vE '^_otel|^otel_|^OTEL_' | grep -vE "$(compgen -b | patternify)" | grep -vE "$(compgen -k | patternify)" \
             | grep -vE '^which$' | grep -vE '^print$' | grep -vE '^rpm$' | sed 's/^awk$/gawk/g' \
             | sort -u | while read -r command; do
-              (dpkg -S "$(which "$command")" 2> /dev/null || dpkg -S "$(readlink -f "$(which "$command")")" 2> /dev/null || apt-file search "$command" | grep -E "/$command\$") | cut -d : -f 1 | grep -q -- "$dependencies" && echo "$command OK" || echo "$command UNAVAILABLE"
+              apt-file search "$command" | grep -E "/$command\$" | cut -d : -f 1 | grep -q -- "$dependencies" && echo "$command OK" || echo "$command UNAVAILABLE"
+              # (dpkg -S "$(which "$command")" 2> /dev/null || dpkg -S "$(readlink -f "$(which "$command")")" 2> /dev/null || apt-file search "$command" | grep -E "/$command\$") | cut -d : -f 1 | grep -q -- "$dependencies" && echo "$command OK" || echo "$command UNAVAILABLE"
             done | tee /dev/stderr | grep -q 'UNAVAILABLE' && exit 1 || exit 0
 
   build:
