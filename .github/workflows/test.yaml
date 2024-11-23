@@ -202,7 +202,7 @@ jobs:
     steps:
       - run: type sudo
       - run: whoami
-      - run: wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh
+      - run: wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh -x
       - run: type otel.sh
 
   install-oneoff-os:
@@ -215,9 +215,9 @@ jobs:
       - run: |
           echo '
             if type apt-get; then apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install wget curl jq gawk sudo
-            elif type dnf; then dnf -y install --nobest --skipbroken wget curl jq gawk sudo
-            elif type yum; then yum -y install --nobest --skipbroken wget curl jq gawk sudo
-            elif type zypper; then zypper --non-interactive install wget curl jq gawk sudo
+            elif type dnf; then dnf -y install --nobest --skipbroken wget jq gawk sudo
+            elif type yum; then yum -y install --nobest --skipbroken wget jq gawk sudo
+            elif type zypper; then zypper --non-interactive install wget jq gawk sudo
             else exit 1
             fi
             wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh
