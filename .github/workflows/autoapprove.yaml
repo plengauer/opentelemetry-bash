@@ -1,8 +1,9 @@
 name: Autoapprove
 
 on:
+  pull_request:
   schedule:
-    - cron: '0 * * * *'
+    - cron: '0 0 * * 0'
   workflow_dispatch:
 
 concurrency:
@@ -11,6 +12,8 @@ concurrency:
 jobs:
   approve:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     steps:
       - run: |
           curl --no-progress-meter -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/pulls?per_page=100 \
