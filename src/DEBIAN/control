@@ -1,7 +1,8 @@
 Package: opentelemetry-shell
 Version: __VERSION__
 Architecture: all
-Depends: ash | dash | bash | busybox, coreutils, util-linux, findutils, grep, sed, awk, dpkg, python3 (>= 3.8), python3-pip, python3-venv, procps, jq, xxd
+PreDepends: ash | dash | bash | busybox, python3 (>= 3.8), python3-pip, python3-venv
+Depends: coreutils, util-linux, findutils, grep, sed, awk, dpkg, procps, jq, xxd
 Recommends: strace, gcc
 Enhances: ash, dash, bash, busybox
 Priority: extra
