@@ -22,7 +22,7 @@ jobs:
       - run: |
           patternify() { grep -v '^$' | grep -P '^[a-zA-Z0-9/_.-]+$' | while read -r pattern; do echo '^'"$pattern"'$'; done }
           verify() {
-            local dependencies="$(cat src/DEBIAN/control | grep -E "$1" | cut -d : -f 2- | tr '|' ',' | tr ',' '\n' | cut -d '(' -f 1 | tr -d ' ' | sed 's/^awk$/gawk/g' | patternify)"
+            local dependencies="$(cat src/DEBIAN/control | grep -E "$1" | cut -d : -f 2- | tr '|' ',' | tr ',' '\n' | cut -d '(' -f 1 | tr -d ' ' | sed 's/^awk$/gawk/g' | sed 's/^python3$/python3-minimal/g' | patternify)"
             cat | while read -r file; do echo "Verifying $file" >&2; echo "$file"; done | xargs cat \
               | grep -v 'SKIP_DEPENDENCY_CHECK' | while read -r line; do line="${line%%#*}"; printf '%s\n' "$line"; done \
               | grep -oP '(^[[:space:]]*|\$\()\\?[a-zA-Z/][a-zA-Z0-9/_.-]*($|[[:space:]])' \
