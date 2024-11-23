@@ -31,7 +31,7 @@ jobs:
               | grep -vE '^which$' | grep -vE '^print$' | grep -vE '^rpm$' | sed 's/^awk$/gawk/g' \
               | sort -u | while read -r command; do
                 printf '%s' "$command ... "
-                apt-file search "$command" | grep -E '^/bin/|^/sbin/|^/usr/bin/|^/usr/sbin/|^/usr/local/bin/|^/usr/local/sbin/' | grep -E "/$command\$" | cut -d : -f 1 | grep -q -- "$dependencies" && echo OK || echo UNAVAILABLE
+                apt-file search "$command" | grep -E ': /bin/|: /sbin/|: /usr/bin/|: /usr/sbin/|: /usr/local/bin/|: /usr/local/sbin/' | grep -E "/$command\$" | cut -d : -f 1 | grep -q -- "$dependencies" && echo OK || echo UNAVAILABLE
               done | tee /dev/stderr | grep -q 'UNAVAILABLE' && return 1 || return 0
           }
           find src/DEBIAN | grep -vE '^src/DEBIAN$|^src/DEBIAN/control$|^src/DEBIAN/triggers$' | verify '^PreDepends:' && find src -iname '*.sh' | grep -vE '^src/DEBIAN/' | verify '^PreDepends:|^Depends:|^Recommends:|^Suggests:'
