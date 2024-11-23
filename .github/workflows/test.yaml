@@ -212,10 +212,10 @@ jobs:
     steps:
       - run: |
           echo '
-            if type apt-get; then apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install wget curl jq awk sudo
-            elif type dnf; then dnf -y install wget curl jq awk sudo
-            elif type yum; then yum -y install wget curl jq awk sudo
-            elif type zypper; then zypper --non-interactive install wget curl jq awk sudo
+            if type apt-get; then apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install wget curl jq gawk sudo
+            elif type dnf; then dnf -y install wget curl jq gawk sudo
+            elif type yum; then yum -y install wget curl jq gawk sudo
+            elif type zypper; then zypper --non-interactive install wget curl jq gawk sudo
             else exit 1
             fi
             wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh
