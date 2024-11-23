@@ -1,0 +1,18 @@
+name: Autoapprove
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: approve
+
+jobs:
+  approve:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          curl --no-progress-meter -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/pulls?per_page=100 \
+            | jq '.[] | select(.state == "open") | select(.user.login == "actions-bot-pl") | .number' \
+            | xargs -I '{}' curl --no-progress-meter -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/pulls/'{}'/reviews -d '{"event":"APPROVE","body":"This is an automated approval."}'
