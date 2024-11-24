@@ -15,9 +15,9 @@ curl --no-progress-meter https://api.github.com/repos/plengauer/opentelemetry-ba
  || curl -v --no-progress-meter https://github.com/plengauer/opentelemetry-bash/releases/latest/download/opentelemetry-shell."$extension" 2>&1 | grep location | awk -F\  '{ print $3 }' | awk -F/ '{ print $8 }' | awk -Fv '{ print $2 }' | xargs -I '{}' wget -O "$package" https://github.com/plengauer/opentelemetry-bash/releases/latest/download/opentelemetry-shell_'{}'."$extension"
 
 if [ "$(whoami)" = "root" ]; then
-  wrapper=sudo
+  wrapper=env
 else
-  wrapper=''
+  wrapper=sudo
 fi
 
 case "$extension" in
