@@ -7,7 +7,5 @@
   "prHourlyLimit": 0,
   "prConcurrentLimit": 0,
   "automerge": true,
-  "automergeType": "pr",
-  "assignAutomerge": true,
-  "reviewers": ["plengauer", "ihudak", "moflwi", "probsJustin"]
+  "automergeType": "pr"
 }
