@@ -72,7 +72,7 @@ $arg"
       local injected=cmdline
     elif \[ -f "$arg" ]; then
       _otel_escape_args -c "$(\cat /usr/share/opentelemetry_shell/agent.instrumentation.python.deep.py)
-with open('$arg', 'r') as file:
+with open('$arg', 'r') as file: # SKIP_DEPENDENCY_CHECK
   exec(file.read())"
       local injected=file
     fi

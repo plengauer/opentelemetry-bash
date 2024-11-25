@@ -10,7 +10,7 @@ jobs:
       - uses: actions/checkout@v4
       - run: |
           min_version_otel="$(curl https://pypi.org/project/opentelemetry-api/ | grep -F -- 'Python :: ' | cut -d ':' -f 3 | tr -d ' ' | grep -F -- 3. | cut -d . -f 2 | sort -n | head -n 1)"
-          min_version_shell="$(cat src/DEBIAN/control | grep '^Depends:' | tr ',' '\n' | grep -F -- 'python3 (>=' | cut -d '(' -f 2- | cut -d ')' -f 1 | cut -d ' ' -f 2 | cut -d . -f 2)"
+          min_version_shell="$(cat src/DEBIAN/control | grep '^Pre-Depends:' | tr ',' '\n' | grep -F -- 'python3 (>=' | cut -d '(' -f 2- | cut -d ')' -f 1 | cut -d ' ' -f 2 | cut -d . -f 2)"
           [ "$min_version_shell" -ge "$min_version_otel" ]
 
   verify-debian-dependencies:
@@ -20,16 +20,22 @@ jobs:
       - run: sudo apt-get update && sudo apt-get -y install apt-file
       - run: sudo apt-file update
       - run: |
-          patternify() { grep -v '^$' | grep -P '^[a-zA-Z-_.]+$' | while read -r pattern; do echo '^'"$pattern"'$'; done }
-          dependencies="$(cat src/DEBIAN/control | grep -E '^Depends:|^Suggests:|^Recommends:' | cut -d : -f 2- | tr '|' ',' | tr ',' '\n' | cut -d '(' -f 1 | tr -d ' ' | sed 's/^awk$/gawk/g' | patternify)"
-          find src -iname '*.sh' | xargs cat \
-            | grep -v 'SKIP_DEPENDENCY_CHECK' | while read -r line; do line="${line%%#*}"; printf '%s\n' "$line"; done \
-            | grep -oP '\\[a-zA-Z][a-zA-Z0-9-_.]*' | while read -r command; do command="${command#\\}"; [ "${#command}" -gt 1 ] && printf '%s\n' "$command" || true; done \
-            | grep -vE '^_otel|^otel_|^OTEL_' | grep -vE "$(compgen -b | patternify)" | grep -vE "$(compgen -k | patternify)" \
-            | grep -vE '^which$' | grep -vE '^rpm$' | sed 's/^awk$/gawk/g' \
-            | sort -u | while read -r command; do
-              (dpkg -S "$(which "$command")" 2> /dev/null || sudo apt-file search "$command" | grep -E "/$command\$") | cut -d : -f 1 | grep -q -- "$dependencies" && echo "$command OK" || echo "$command UNAVAILABLE"
-            done | tee /dev/stderr | grep -q 'UNAVAILABLE' && exit 1 || exit 0
+          process_packages() { sed 's/^awk$/gawk/g' | sed 's/^python3$/python3-minimal/g'; }
+          process_commands() { sed 's/^awk$/gawk/g' | grep -vE '^which$' | grep -vE '^print$' | grep -vE '^rpm$';  }
+          patternify() { grep -v '^$' | grep -P '^[a-zA-Z0-9/_.-]+$' | while read -r pattern; do echo '^'"$pattern"'$'; done }
+          verify() {
+            local dependencies="$(cat src/DEBIAN/control | grep -E "$1" | cut -d : -f 2- | tr '|' ',' | tr ',' '\n' | cut -d '(' -f 1 | tr -d ' ' | process_packages | patternify)"
+            cat | while read -r file; do echo "Verifying $file" >&2; echo "$file"; done | xargs cat \
+              | grep -v 'SKIP_DEPENDENCY_CHECK' | while read -r line; do line="${line%%#*}"; printf '%s\n' "$line"; done \
+              | grep -oP '(^[[:space:]]*|\$\()\\?[a-zA-Z/][a-zA-Z0-9/_.-]*($|[[:space:]])' \
+              | while read -r command; do command="${command% }"; command="${command# }"; command="${command#\$\(}"; command="${command#\\}"; [ "${#command}" -gt 1 ] && printf '%s\n' "$command" || true; done \
+              | grep -vE '^_otel|^otel_|^OTEL_' | grep -vE "$(compgen -b | patternify)" | grep -vE "$(compgen -k | patternify)" | process_commands \
+              | sort -u | while read -r command; do
+                printf '%s' "$command ... "
+                apt-file search /"$command" | grep -E "/$command\$" | grep -E ': /bin/|: /sbin/|: /usr/bin/|: /usr/sbin/|: /usr/local/bin/|: /usr/local/sbin/' | cut -d : -f 1 | grep -q "$dependencies" && echo OK || echo UNAVAILABLE
+              done | tee /dev/stderr | grep -q 'UNAVAILABLE' && return 1 || return 0
+          }
+          find src/DEBIAN | grep -vE '^src/DEBIAN$|^src/DEBIAN/control$|^src/DEBIAN/triggers$' | verify '^Pre-Depends:' && find src -iname '*.sh' | grep -vE '^src/DEBIAN/' | verify '^Pre-Depends:|^Depends:|^Recommends:|^Suggests:'
 
   build:
     runs-on: ubuntu-latest
@@ -53,7 +59,7 @@ jobs:
               grep -v 'python3-venv' | sed 's/^awk$/gawk | mawk/g' | sed 's/^dpkg$/rpm/g' | sed 's/^xxd$/xxd | vim-common | vim/g'
             }
           
-            echo -n 'Requires: ' && cat DEBIAN/control | grep Depends | cut -d ' ' -f 2- | tr ',' '\n' | tr -d ' ' | grep -v '^$' | dependencies_content_deb_to_rpm | dependencies_format_deb_to_rpm | tr '\n' ' ' && echo
+            echo -n 'Requires: ' && cat DEBIAN/control | grep -E '^Pre-Depends:|^Depends:|^Recommends:' | cut -d ' ' -f 2- | tr ',' '\n' | tr -d ' ' | grep -v '^$' | dependencies_content_deb_to_rpm | dependencies_format_deb_to_rpm | tr '\n' ' ' && echo
             echo "AutoReq: no"
             echo "BuildArch: noarch"
             cat "$rpm_dir"/*.spec | while read -r line; do
