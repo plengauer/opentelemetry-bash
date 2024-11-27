@@ -70,6 +70,10 @@ jobs:
           #!/bin/sh -e
           echo hello world
           '
+                    printf '%s' '%triggerun -- '"$package"'
+          #!/bin/sh -e
+          echo hello world
+          '
                     # cat "$rpm_dir"/*.spec | sed -n '/^%post/,/^$/p' | sed 's/^%post/%triggerin -- '"$package"'/g'
                     # cat "$rpm_dir"/*.spec | sed -n '/^%post/,/^$/p' | sed 's/^%post/%triggerun -- '"$package"'/g'
                   done
