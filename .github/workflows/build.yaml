@@ -74,7 +74,7 @@ jobs:
               esac
               printf '%s\n' "$line"
             done
-          } > rpm.spec && rm "$rpm_dir"/*.spec
+          } | tee /dev/stderr > rpm.spec && rm "$rpm_dir"/*.spec
           rpmbuild -bb --buildroot="$(cat rpm.spec | grep '^Buildroot: ' | cut -d ' ' -f 2)" rpm.spec
           mv ../*.rpm ../package.rpm
       - uses: actions/upload-artifact@v4
