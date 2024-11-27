@@ -62,7 +62,7 @@ jobs:
             echo -n 'Requires: ' && cat DEBIAN/control | grep -E '^Pre-Depends:|^Depends:|^Recommends:' | cut -d ' ' -f 2- | tr ',' '\n' | tr -d ' ' | grep -v '^$' | dependencies_content_deb_to_rpm | dependencies_format_deb_to_rpm | tr '\n' ' ' && echo
             echo "AutoReq: no"
             echo "BuildArch: noarch"
-            cat "$rpm_dir"/*.spec | while read -r line; do
+            cat "$rpm_dir"/*.spec | grep npm | while read -r line; do
               case "$line" in
                 '%post'*)
                   cat DEBIAN/triggers | grep -v '^$' | cut -d ' ' -f 2 | rev | cut -d / -f 1 | rev | sort -u | while read -r package; do
@@ -74,7 +74,7 @@ jobs:
           # #!/bin/sh -e
           # echo hello world
           # '
-                    cat "$rpm_dir"/*.spec | sed -n '/^%post/,/^$/p' | sed 's/^%post/%triggerin -- '"$package"'/g' && echo
+                    cat "$rpm_dir"/*.spec | sed -n '/^%post/,/^$/p' | sed 's/^%post/%triggerin -- '"$package"'/g'
                     # cat "$rpm_dir"/*.spec | sed -n '/^%post/,/^$/p' | sed 's/^%post/%triggerun -- '"$package"'/g'
                   done
                   ;;
