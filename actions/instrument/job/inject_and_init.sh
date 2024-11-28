@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
-echo DEBUG DEBUG DEBUG "$GITHUB_ACTION_PATH"
+my_dir="$(echo "$0" | rev | cut -d / -f 2- | rev)"
+echo DEBUG DEBUG DEBUG "$my_dir"
 
 github() {
   url="$GITHUB_API_URL"/"$1"?per_page=100
