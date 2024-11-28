@@ -65,15 +65,7 @@ jobs:
             cat "$rpm_dir"/*.spec | while read -r line; do
               case "$line" in
                 '%post'*)
-                  cat DEBIAN/triggers | grep -v '^$' | cut -d ' ' -f 2 | rev | cut -d / -f 1 | rev | sort -u | grep -v python3 | tee /dev/stderr | while read -r package; do
-          #           printf '%s' '%triggerin -- '"$package"'
-          # #!/bin/sh -e
-          # echo hello world
-          # '
-          #           printf '%s' '%triggerun -- '"$package"'
-          # #!/bin/sh -e
-          # echo hello world
-          # '
+                  cat DEBIAN/triggers | grep -v '^$' | cut -d ' ' -f 2 | rev | cut -d / -f 1 | rev | sort -u | grep -v python3 | while read -r package; do
                     cat "$rpm_dir"/*.spec | sed -n '/^%post/,/^$/p' | sed 's/^%post/%triggerin -- '"$package"'/g'
                     cat "$rpm_dir"/*.spec | sed -n '/^%post/,/^$/p' | sed 's/^%post/%triggerun -- '"$package"'/g'
                   done
