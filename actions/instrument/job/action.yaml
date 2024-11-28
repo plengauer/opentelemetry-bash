@@ -9,6 +9,3 @@ inputs:
   __job_status:
     description: 'INTERNAL ONLY - DO NOT SET MANUALLY'
     default: '${{ job.status }}'
-  __action_path:
-    description: 'INTERNAL ONLY - DO NOT SET MANUALLY'
-    default: '${{ github.action_path }}'
