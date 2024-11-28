@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+echo DEBUG DEBUG DEBUG "$GITHUB_ACTION_PATH"
 
 github() {
   url="$GITHUB_API_URL"/"$1"?per_page=100
