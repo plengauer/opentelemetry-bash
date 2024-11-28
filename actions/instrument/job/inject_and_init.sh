@@ -24,7 +24,7 @@ if [ -z "$GITHUB_ACTION_REPOSITORY" ]; then export GITHUB_ACTION_REPOSITORY="$GI
 action_tag_name="$(echo "$GITHUB_ACTION_REF" | cut -sd @ -f 2-)"
 if [ -n "$action_tag_name" ]; then
   debian_file="$(mktemp)"
-  github repos/"$GITHUB_ACTION_REPOSITORY"/releases | { if [ "$action_tag_name" = main ]; then jq '.[0]'; else jq '.[] | select(.tag_name=="'"$action_tag_name"'")'; fi } | jq -r '.assets[] | .browser_download_url' | xargs wget -O "$debian_file"
+  github repos/"$GITHUB_ACTION_REPOSITORY"/releases | { if [ "$action_tag_name" = main ]; then jq '.[0]'; else jq '.[] | select(.tag_name=="'"$action_tag_name"'")'; fi } | jq -r '.assets[].browser_download_url' | grep '.deb$' | xargs wget -O "$debian_file"
   sudo -E apt-get install -y "$debian_file"
   rm "$debian_file"
 elif [ "$GITHUB_REPOSITORY" = "$GITHUB_ACTION_REPOSITORY" ]; then
@@ -67,9 +67,7 @@ if [ -f "$env_dir"/.env ]; then
 fi
 rm -r "$env_dir"
 
-if [ -z "$OTEL_SERVICE_NAME" ]; then
-  export OTEL_SERVICE_NAME="$(echo "$GITHUB_REPOSITORY" | cut -d / -f 2-) CI"
-fi
+export OTEL_SERVICE_NAME="${OTEL_SERVICE_NAME:-"$(echo "$GITHUB_REPOSITORY" | cut -d / -f 2-) CI"}"
 
 root4job_end() {
   if [ -f /tmp/opentelemetry_shell.github.error ]; then
@@ -111,7 +109,9 @@ while ! [ -f "$traceparent_file" ]; do sleep 1; done
 export TRACEPARENT="$(cat "$traceparent_file")"
 rm "$traceparent_file"
 
-export OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE
-export OTEL_SHELL_CONFIG_OBSERVE_PIPES=TRUE
+export OTEL_SHELL_CONFIG_INJECT_DEEP="${OTEL_SHELL_CONFIG_INJECT_DEEP:-TRUE}"
+export OTEL_SHELL_CONFIG_OBSERVE_SUBPROCESSES="${OTEL_SHELL_CONFIG_OBSERVE_SUBPROCESSES:-TRUE}"
+export OTEL_SHELL_CONFIG_OBSERVE_SIGNALS="${OTEL_SHELL_CONFIG_OBSERVE_SIGNALS:-TRUE}"
+export OTEL_SHELL_CONFIG_OBSERVE_PIPES="${OTEL_SHELL_CONFIG_OBSERVE_PIPES:-TRUE}"
 
 printenv | grep -E '^OTEL_|^TRACEPARENT=|^TRACESTATE=' >> "$GITHUB_ENV"

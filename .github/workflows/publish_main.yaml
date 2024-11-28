@@ -7,19 +7,21 @@ on:
   workflow_dispatch:
 
 jobs:
-  _test:
+  test:
     uses: ./.github/workflows/test.yaml
 
   publish:
-    needs: [_test]
+    needs: test
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - run: echo "version=$(cat VERSION)" >> "$GITHUB_OUTPUT"
         id: version
       - uses: actions/download-artifact@v4
         with:
-          name: package.deb
+          name: packages
       - uses: actions/create-release@v1
         id: create_release
         env:
@@ -30,13 +32,20 @@ jobs:
           draft: false
           prerelease: false
       - uses: actions/upload-release-asset@v1
-        id: upload-release-asset
         env:
           GITHUB_TOKEN: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./package.deb
           asset_name: opentelemetry-shell_${{ steps.version.outputs.version }}.deb
+          asset_content_type: application/octet-stream
+      - uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./package.rpm
+          asset_name: opentelemetry-shell_${{ steps.version.outputs.version }}.rpm
           asset_content_type: application/octet-stream
 
   demo-prepare:
@@ -58,7 +67,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: package.deb
+          name: packages
       - run: sudo apt-get update && sudo apt-get install -y ./package.deb && rm ./package.deb
       - uses: actions/checkout@v4
       - id: demo
@@ -113,7 +122,7 @@ jobs:
           cd demos/${{ matrix.demo_directory }}
 
           spans() {
-            jq '. | select(.resourceSpans != null) | .resourceSpans[].scopeSpans[].spans[]' | jq -s '. | sort_by(.startTimeUnixNano) | .[]' < otlp.json
+            cat otlp.json | jq '. | select(.resourceSpans != null) | .resourceSpans[].scopeSpans[].spans[]'
           }
 
           convert_span_id_to_name() {
@@ -125,7 +134,7 @@ jobs:
           }
 
           get_child_span_ids() {
-            spans | jq -r '. | select(.name != null) | select(.parentSpanId == "'"$1"'") | .spanId'
+            spans | jq '. | select(.name != null) | select(.parentSpanId == "'"$1"'") | .startTimeUnixNano |= .[0:-8]' | jq -r -s '. | sort_by(.endTimeUnixNano) | .[].spanId'
           }
 
           print_span_name_tree() {
@@ -189,9 +198,9 @@ jobs:
           }
 
           pretty_print_trace() {
-            cat otlp.json | jq -r '. | select(.resourceSpans != null) | .resourceSpans[].scopeSpans[].spans[]' | jq -s '. | sort_by(.startTimeUnixNano) | .[].spanId' | while read -r span_id; do
-              span="$(jq '. | select(.resourceSpans != null) | .resourceSpans[].scopeSpans[].spans[] | select(.spanId == "'$span_id'")' < otlp.json)"
-              resource_attributes="$(jq '. | select(.resourceSpans != null) | .resourceSpans[] | select(.scopeSpans[].spans[].spanId == "'$span_id'")' < otlp.json | jq .resource.attributes)"
+            cat otlp.json | jq -r '. | select(.resourceSpans != null) | .resourceSpans[].scopeSpans[].spans[]' | jq -r -s '. | sort_by(.startTimeUnixNano) | .[].spanId' | while read -r span_id; do
+              span="$(spans | jq 'select(.spanId == "'$span_id'")')"
+              resource_attributes="$(cat otlp.json | jq '. | select(.resourceSpans != null) | .resourceSpans[] | select(.scopeSpans[].spans[].spanId == "'$span_id'") | .resource.attributes')"
               jq -n \
                 --argjson trace_id "$(printf '%s' "$span" | jq .traceId)" \
                 --argjson span_id "$(printf '%s' "$span" | jq .spanId)" \
@@ -216,7 +225,7 @@ jobs:
               | jq 'with_entries(if .key == "status" and .value == 0 then .value = "UNSET" else . end)' \
               | jq 'with_entries(if .key == "status" and .value == 1 then .value = "OK" else . end)' \
               | jq 'with_entries(if .key == "status" and .value == 2 then .value = "ERROR" else . end)' \
-              | jq .
+              | jq -s '. | sort_by(.name) | .[]'
           }
 
           {
@@ -243,7 +252,7 @@ jobs:
           cd demos/${{ matrix.demo_directory }}
           git add --intent-to-add README.md output.stdout output.stderr otlp.json
           git diff
-          git diff README.md | grep -v '^+++' | grep -v '^---' | grep -v ' /tmp/' | grep -v Id | grep -v _id | grep -v .id | grep -v Time | grep -v time | grep -v timestamp | grep -v github. | grep -v .version | grep -v .port | grep -v process.pid | grep -v process.parent_pid | grep -v '"00-' | grep -q '^+' && echo dirty=true >> "$GITHUB_OUTPUT" || true
+          git diff README.md | grep -v '^+++' | grep -v '^---' | grep -v '/tmp' | grep -v Id | grep -v _id | grep -v .id | grep -v Time | grep -v time | grep -v timestamp | grep -v github. | grep -v .version | grep -v .port | grep -v process.pid | grep -v process.parent_pid | grep -v '"00-' | grep -q '^+' && echo dirty=true >> "$GITHUB_OUTPUT" || true
         id: diff
       - name: "Resolve Reviewers"
         if: steps.diff.outputs.dirty

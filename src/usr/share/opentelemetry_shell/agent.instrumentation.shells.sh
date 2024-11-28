@@ -9,27 +9,29 @@
 _otel_inject_shell_args_with_copy() {
   local temporary_script="$1"
   shift
-  local is_script=0
   # command
   local shell="${1#\\}"
   _otel_escape_arg "$1"; \echo -n " "
   shift
   # options and script or command string
-  local found_inner=0
   while \[ "$#" -gt 0 ]; do
-    if \[ "$1" = "-c" ]; then
-      shift; local is_script=0; local found_inner=1; break
-    else
+    if \[ "${no_more_options:-0}" != 1 ] && _otel_string_starts_with "$1" -; then
       case "$1" in
-        -*file) _otel_escape_arg "$1"; \echo -n " "; shift; _otel_escape_arg "$1"; \echo -n " " ;;
-            -*) _otel_escape_arg "$1"; \echo -n " " ;;
-             *) local is_script=1; local found_inner=1; break ;;
+        --) local no_more_options=1;;
+        --*) _otel_escape_arg "$1"; \echo -n " ";;
+        -*file) _otel_escape_arg "$1"; \echo -n " "; shift; _otel_escape_arg "$1"; \echo -n " ";;
+        -c) local is_script=0;;
+        -*c*) local is_script=0; _otel_escape_arg "$(\printf '%s' "$1" | \sed 's/c//g')"; \echo -n " ";;
+        *) _otel_escape_arg "$1"; \echo -n " ";;
       esac
+      shift
+    else
+      local is_script="${is_script:-1}"
+      break
     fi
-    shift
   done
   # abort in case its interactive or invalid aguments
-  if \[ "$found_inner" -eq 0 ]; then return 0; fi
+  if \[ "$#" = 0 ]; then return 0; fi
   # save command
   local command="$1"
   shift

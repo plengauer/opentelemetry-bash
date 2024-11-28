@@ -16,7 +16,7 @@ _otel_inject_inner_command_args() {
   shift
   # options
   # -option or not executable file 
-  while \[ "$#" -gt 0 ] && ( \[ "${1%"${1#?}"}" = "-" ] || ! ( \[ -x "$1" ] || \[ -x "$(\which "$1")" ] ) ); do \echo -n " "; _otel_escape_arg "$1"; shift; done
+  while \[ "$#" -gt 0 ] && ( _otel_string_starts_with "$1" - || ! ( \[ -x "$1" ] || \[ -x "$(\which "$1" 2> /dev/null)" ] ) || ( \[ -x "$1" ] && _otel_string_starts_with "$(_otel_resolve_shebang "${1##*/}")" "$command " ) ); do \echo -n " "; _otel_escape_arg "$1"; shift; done
   # opt out if there is no command
   if \[ -z "$*" ]; then return 0; fi
   # more options
@@ -34,7 +34,7 @@ _otel_inject_inner_command() {
   local cmdline="${cmdline#\\}"
   local command_string="$(_otel_inject_inner_command_args "$@")"
   unset OTEL_SHELL_INJECT_INNER_COMMAND_MORE_ARGS # unset it also here, not just in subshell above
-  OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE \eval _otel_call "$command_string"
+  OTEL_SHELL_AUTO_INSTRUMENTATION_HINT="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE \eval _otel_call "$command_string"
 }
 
 _otel_alias_prepend taskset _otel_inject_inner_command

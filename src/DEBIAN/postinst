@@ -1,33 +1,34 @@
-#!/bin/bash -e
+#!/bin/sh -e
 rm -rf /opt/opentelemetry_bash 1> /dev/null 2> /dev/null || true # clean the old install directory
+if [ "$1" = 1 ] || [ "$1" = 2 ]; then set -- configure; fi
 if [ "$1" = 'abort-configure' ] || [ "$1" = 'abort-upgrade' ] || [ "$1" = 'abort-remove' ] || [ "$1" = 'abort-deconfigure' ]; then
   true
 elif [ "$1" = 'configure' ] || [ "$1" = 'triggered' ] || [ "$1" = 'reconfigure' ]; then
-  python3 -m venv /opt/opentelemetry_shell/venv_sdk
-  source /opt/opentelemetry_shell/venv_sdk/bin/activate
-  pip3 install -r /opt/opentelemetry_shell/requirements_sdk.txt
-  deactivate
+  python3 -m venv /opt/opentelemetry_shell/sdk/venv
+  . /opt/opentelemetry_shell/sdk/venv/bin/activate
+  pip3 install -r /opt/opentelemetry_shell/sdk/requirements.txt
+  pip3 check
+  deactivate # SKIP_DEPENDENCY_CHECK
   if [ "${OTEL_SHELL_CONFIG_INSTALL_DEEP:-TRUE}" = TRUE ]; then
-    if type gcc; then
-      gcc -shared -fPIC -o /opt/opentelemetry_shell/libinjecthttpheader.so /usr/share/opentelemetry_shell/opentelemetry_shell.inject.http_header.c -ldl
+    if type gcc 2> /dev/null; then # SKIP_DEPENDENCY_CHECK
+      gcc -shared -fPIC -o /opt/opentelemetry_shell/libinjecthttpheader.so /usr/share/opentelemetry_shell/agent.injection.http_header.c -ldl # SKIP_DEPENDENCY_CHECK
     fi
-    if type python3; then
+    if type python3 2> /dev/null; then
       python3 -m venv /opt/opentelemetry_shell/venv
-      source /opt/opentelemetry_shell/venv/bin/activate
+      . /opt/opentelemetry_shell/venv/bin/activate
       pip3 install -r /opt/opentelemetry_shell/requirements.txt
-      echo '
-from opentelemetry.instrumentation.bootstrap_gen import (default_instrumentations, libraries)
-for element in default_instrumentations:
-  print(element)
-for element in libraries:
-  print(element["instrumentation"])
-' | python3 | xargs pip3 install
-      deactivate
-      (cd /opt/opentelemetry_shell/venv/lib/python3.*/site-packages && ln --symbolic /usr/share/opentelemetry_shell/opentelemetry_shell.custom.python.deep.py usercustomize.py || true)
+      printf '%s' '
+from opentelemetry.instrumentation.bootstrap_gen import (default_instrumentations, libraries) # SKIP_DEPENDENCY_CHECK
+print(*default_instrumentations, sep="\n") # SKIP_DEPENDENCY_CHECK
+print(*map(lambda element: element["instrumentation"], libraries), sep="\n") # SKIP_DEPENDENCY_CHECK
+' | python3 | grep "==$(pip3 show opentelemetry-distro | grep Version | cut -d ':' -f 2- | tr -d ' ')"'$' | xargs pip3 install
+      pip3 check
+      deactivate # SKIP_DEPENDENCY_CHECK
+      (cd /opt/opentelemetry_shell/venv/lib/python3.*/site-packages && ln --symbolic /usr/share/opentelemetry_shell/opentelemetry_shell.custom.python.deep.py usercustomize.py 2> /dev/null || true)
     fi
     export PATH="$PATH":/usr/local/bin
-    if type npm; then
-      cache="$(npm config list -l | grep -E '^cache = ' | cut -d '=' -f 2- | tr -d '" ')"
+    if type npm 2> /dev/null; then # SKIP_DEPENDENCY_CHECK
+      cache="$(npm config list -l | grep -E '^cache = ' | cut -d '=' -f 2- | tr -d '" ')" # SKIP_DEPENDENCY_CHECK
       if [ -d "$cache" ]; then
         user="$(echo "$cache" | rev | cut -d / -f 2- | rev | xargs stat -c '%U')"
         find "$cache" -exec chown "$user" {} '+'
@@ -35,7 +36,7 @@ for element in libraries:
         runuser -l "$user" -c 'npm config set cache="$1"' runuser "$(mktemp -d)"
         (cd /opt/opentelemetry_shell && npm install --package-lock=false)
         runuser -l "$user" -c 'npm config set cache="$1"' runuser "$cache"
-        (cd /usr/share/opentelemetry_shell/ && ln --symbolic ../../../opt/opentelemetry_shell/node_modules node_modules || true)
+        (cd /usr/share/opentelemetry_shell/ && ln --symbolic ../../../opt/opentelemetry_shell/node_modules node_modules 2> /dev/null || true)
       fi
     fi
   fi

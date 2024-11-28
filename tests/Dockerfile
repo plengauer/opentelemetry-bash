@@ -6,16 +6,41 @@ FROM $image
 ARG shell
 ARG update
 WORKDIR /tests
-
-RUN apt-get update
 COPY . ./
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y ./package.deb && rm ./package.deb
 
-RUN [ "$update" = TRUE ] && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y || true
-RUN type "$shell" || DEBIAN_FRONTEND=noninteractive apt-get install -y "$shell"
-
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y jq psmisc wget curl debconf debconf-utils time sudo parallel moreutils ncat wget2 strace nodejs npm python3 python3-pip python3-venv
+RUN <<EOF
+  packages_mandatory="jq psmisc wget curl time sudo"
+  packages_optional="parallel moreutils ncat wget2 nodejs npm python3 python3-pip gcc"
+  if type apt-get; then
+    apt-get update
+    [ "$update" = TRUE ] && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y || true
+    type "$shell" || DEBIAN_FRONTEND=noninteractive apt-get install -y "$shell"
+    DEBIAN_FRONTEND=noninteractive apt-get install -y $packages_mandatory debconf debconf-utils python3-venv
+    DEBIAN_FRONTEND=noninteractive apt-get install -y $packages_optional || true
+    DEBIAN_FRONTEND=noninteractive apt-get install -y ./package.deb && rm ./package.deb
+  elif type dnf; then
+    [ "$update" = TRUE ] && dnf -y upgrade --refresh
+    type "$shell" || dnf -y install "$shell"
+    dnf -y install --allowerasing $packages_mandatory
+    dnf -y install --allowerasing $packages_optional || true
+    dnf -y install ./package.rpm
+  elif type yum; then
+    [ "$update" = TRUE ] && yum -y upgrade
+    type "$shell" || yum -y install "$shell"
+    yum -y install --allowerasing $packages_mandatory
+    yum -y install --allowerasing $packages_optional || true
+    yum -y install ./package.rpm
+  elif type zypper; then
+    [ "$update" = TRUE ] && zypper --non-interactive update
+    type "$shell" || zypper --non-interactive install "$shell"
+    zypper --non-interactive install $packages_mandatory
+    zypper --non-interactive install $packages_optional || true
+    zypper --non-interactive install --allow-unsigned-rpm ./package.rpm
+  else
+    exit 1
+  fi
+EOF
 
 ENV shell="$shell"
 
-CMD bash run_tests.sh "$shell"
+CMD ! type "$shell" || bash run_tests.sh "$shell"

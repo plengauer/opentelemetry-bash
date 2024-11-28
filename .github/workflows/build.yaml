@@ -4,6 +4,39 @@ on:
   workflow_call:
 
 jobs:
+  verify-python-dependency:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          min_version_otel="$(curl https://pypi.org/project/opentelemetry-api/ | grep -F -- 'Python :: ' | cut -d ':' -f 3 | tr -d ' ' | grep -F -- 3. | cut -d . -f 2 | sort -n | head -n 1)"
+          min_version_shell="$(cat src/DEBIAN/control | grep '^Pre-Depends:' | tr ',' '\n' | grep -F -- 'python3 (>=' | cut -d '(' -f 2- | cut -d ')' -f 1 | cut -d ' ' -f 2 | cut -d . -f 2)"
+          [ "$min_version_shell" -ge "$min_version_otel" ]
+
+  verify-debian-dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get -y install apt-file
+      - run: sudo apt-file update
+      - run: |
+          process_packages() { sed 's/^awk$/gawk/g' | sed 's/^python3$/python3-minimal/g'; }
+          process_commands() { sed 's/^awk$/gawk/g' | grep -vE '^which$' | grep -vE '^print$' | grep -vE '^rpm$';  }
+          patternify() { grep -v '^$' | grep -P '^[a-zA-Z0-9/_.-]+$' | while read -r pattern; do echo '^'"$pattern"'$'; done }
+          verify() {
+            local dependencies="$(cat src/DEBIAN/control | grep -E "$1" | cut -d : -f 2- | tr '|' ',' | tr ',' '\n' | cut -d '(' -f 1 | tr -d ' ' | process_packages | patternify)"
+            cat | while read -r file; do echo "Verifying $file" >&2; echo "$file"; done | xargs cat \
+              | grep -v 'SKIP_DEPENDENCY_CHECK' | while read -r line; do line="${line%%#*}"; printf '%s\n' "$line"; done \
+              | grep -oP '(^[[:space:]]*|\$\()\\?[a-zA-Z/][a-zA-Z0-9/_.-]*($|[[:space:]])' \
+              | while read -r command; do command="${command% }"; command="${command# }"; command="${command#\$\(}"; command="${command#\\}"; [ "${#command}" -gt 1 ] && printf '%s\n' "$command" || true; done \
+              | grep -vE '^_otel|^otel_|^OTEL_' | grep -vE "$(compgen -b | patternify)" | grep -vE "$(compgen -k | patternify)" | process_commands \
+              | sort -u | while read -r command; do
+                printf '%s' "$command ... "
+                apt-file search /"$command" | grep -E "/$command\$" | grep -E ': /bin/|: /sbin/|: /usr/bin/|: /usr/sbin/|: /usr/local/bin/|: /usr/local/sbin/' | cut -d : -f 1 | grep -q "$dependencies" && echo OK || echo UNAVAILABLE
+              done | tee /dev/stderr | grep -q 'UNAVAILABLE' && return 1 || return 0
+          }
+          find src/DEBIAN | grep -vE '^src/DEBIAN$|^src/DEBIAN/control$|^src/DEBIAN/triggers$' | verify '^Pre-Depends:' && find src -iname '*.sh' | grep -vE '^src/DEBIAN/' | verify '^Pre-Depends:|^Depends:|^Recommends:|^Suggests:'
+
   build:
     runs-on: ubuntu-latest
     defaults:
@@ -11,10 +44,40 @@ jobs:
         working-directory: ./src
     steps:
       - uses: actions/checkout@v4
-      - run: sudo apt-get update && sudo apt-get install devscripts debhelper
+      - run: sudo apt-get update && sudo apt-get install devscripts debhelper alien
       - run: sed -i "s/__VERSION__/$(cat ../VERSION)/g" DEBIAN/control
       - run: dpkg-deb --root-owner-group -Zgzip --build . ../package.deb
+      - run: |
+          alien --to-rpm --scripts --keep-version --generate ../package.deb
+          rpm_dir=$(echo */*.spec | rev | cut -d / -f 2- | rev)
+          {
+            dependencies_format_deb_to_rpm() {
+              tr '(' ' ' | tr -d ')' | sed 's/=/= /g' | sed 's/|/ or /g' | sed 's/.*/(&)/g'
+            }
+
+            dependencies_content_deb_to_rpm() {
+              grep -v 'python3-venv' | sed 's/^awk$/gawk | mawk/g' | sed 's/^dpkg$/rpm/g' | sed 's/^xxd$/xxd | vim-common | vim/g'
+            }
+          
+            echo -n 'Requires: ' && cat DEBIAN/control | grep -E '^Pre-Depends:|^Depends:|^Recommends:' | cut -d ' ' -f 2- | tr ',' '\n' | tr -d ' ' | grep -v '^$' | dependencies_content_deb_to_rpm | dependencies_format_deb_to_rpm | tr '\n' ' ' && echo
+            echo "AutoReq: no"
+            echo "BuildArch: noarch"
+            cat "$rpm_dir"/*.spec # | while read -r line; do
+            #  case "$line" in
+            #    '%post'*)
+            #      cat DEBIAN/triggers | grep -v '^$' | cut -d ' ' -f 2 | rev | cut -d / -f 1 | rev | sort -u | while read -r package; do
+            #        cat "$rpm_dir"/*.spec | sed -n '/^%post/,/^$/p' | sed 's/^%post/%triggerin -- '"$package"'/g'
+            #        cat "$rpm_dir"/*.spec | sed -n '/^%post/,/^$/p' | sed 's/^%post/%triggerun -- '"$package"'/g'
+            #      done
+            #      ;;
+            #    *) ;;
+            #  esac
+            #  printf '%s\n' "$line"
+            #done
+          } > rpm.spec && rm "$rpm_dir"/*.spec
+          rpmbuild -bb --buildroot="$(cat rpm.spec | grep '^Buildroot: ' | cut -d ' ' -f 2)" rpm.spec
+          mv ../*.rpm ../package.rpm
       - uses: actions/upload-artifact@v4
         with:
-          name: package.deb
-          path: package.deb
+          name: packages
+          path: package.*

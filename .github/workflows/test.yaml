@@ -3,33 +3,54 @@ name: Test
 on:
   workflow_call:
 
+env:
+  IMAGE_DEBIAN_OLDEST: 'debian:oldstable'
+  IMAGE_DEBIAN_STABLE: 'debian:stable'
+  IMAGE_DEBIAN_LATEST: 'debian:testing'
+  IMAGE_DEBIAN_DEV: 'debian:unstable'
+  IMAGE_DEBIAN_SLIM_OLDEST: 'debian:oldstable-slim'
+  IMAGE_DEBIAN_SLIM_STABLE: 'debian:stable-slim'
+  IMAGE_DEBIAN_SLIM_LATEST: 'debian:testing-slim'
+  IMAGE_DEBIAN_SLIM_DEV: 'debian:unstable-slim'
+  IMAGE_UBUNTU_OLDEST: 'ubuntu:focal' # needs manual maintenance on April 2025 (https://ubuntu.com/about/release-cycle)
+  IMAGE_UBUNTU_STABLE: 'ubuntu:latest'
+  IMAGE_UBUNTU_LATEST: 'ubuntu:rolling'
+  IMAGE_UBUNTU_DEV: 'ubuntu:devel'
+  IMAGE_CENTOS_OLDEST: '' # CentOS is EOL
+  IMAGE_CENTOS_STABLE: '' # CentOS is EOL
+  IMAGE_CENTOS_LATEST: 'centos:latest'
+  IMAGE_CENTOS_DEV: 'centos:latest'
+  IMAGE_FEDORA_OLDEST: 'fedora:40' # needs manual maintenance on June 2025 (https://docs.fedoraproject.org/en-US/releases/lifecycle/)
+  IMAGE_FEDORA_STABLE: 'fedora:41' # needs manual maintenance on June 2025 (https://docs.fedoraproject.org/en-US/releases/lifecycle/)
+  IMAGE_FEDORA_LATEST: 'fedora:latest'
+  IMAGE_FEDORA_DEV: 'fedora:rawhide'
+  IMAGE_RHEL_OLDEST: 'redhat/ubi8:latest' # needs manual maintenance
+  IMAGE_RHEL_STABLE: 'redhat/ubi9:latest' # needs manual maintenance
+  IMAGE_RHEL_LATEST: 'redhat/ubi9:latest' # needs manual maintenance
+  IMAGE_RHEL_DEV: '' # not public
+  IMAGE_OPENSUSE_OLDEST: 'opensuse/leap:15.5' # needs manual maintenance on January 2025 (https://endoflife.date/opensuse)
+  IMAGE_OPENSUSE_STABLE: 'opensuse/leap:latest'
+  IMAGE_OPENSUSE_LATEST: 'opensuse/tumbleweed:latest'
+  IMAGE_OPENSUSE_DEV: '' # not public
+
 jobs:
-  _build:
+  build:
     uses: ./.github/workflows/build.yaml
 
-  install:
-    needs: _build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: package.deb
-      - run: sudo apt-get -y install ./package.deb
-      - run: sudo apt-get -y remove opentelemetry-shell
-
   smoke:
-    needs: install
+    needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
-          name: package.deb
+          name: packages
       - run: sudo -E apt-get -y install ./package.deb
       - run: bash -c "cd tests && bash run_tests.sh bash"
+      - run: sudo apt-get -y remove opentelemetry-shell
 
-  upgrade-prepare:
+  prepare-upgrade:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.dynamic-matrix.outputs.matrix }}
@@ -45,10 +66,11 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
 
   upgrade:
-    needs: [upgrade-prepare, smoke]
+    needs: [prepare-upgrade, smoke]
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     strategy:
-      matrix: ${{ fromJSON(needs.upgrade-prepare.outputs.matrix) }}
+      matrix: ${{ fromJSON(needs.prepare-upgrade.outputs.matrix) }}
     steps:
       - run: |
           curl --no-progress-meter --fail --retry 16 --retry-all-errors --header "Authorization: Bearer $GITHUB_TOKEN" https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases/tags/${{ matrix.tag_name }} | jq -r '.assets[].browser_download_url' | xargs wget --header "Authorization: Bearer $GITHUB_TOKEN"
@@ -57,19 +79,55 @@ jobs:
       - run: sudo apt-get -y install ./*.deb
       - uses: actions/download-artifact@v4
         with:
-          name: package.deb
+          name: packages
       - run: sudo apt-get -y install ./package.deb
 
-  system-upgrade:
-    needs: [smoke]
+  prepare-images:
     runs-on: ubuntu-latest
+    outputs:
+      images: ${{ steps.dynamic.outputs.images }}
+      images_upgradeable: ${{ steps.dynamic.outputs.images_upgradeable }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          min_version="$(cat src/DEBIAN/control | grep '^Pre-Depends:' | tr ',' '\n' | grep -F -- 'python3 (>=' | cut -d '(' -f 2- | cut -d ')' -f 1 | cut -d ' ' -f 2 | cut -d . -f 2)"
+          printenv | grep '^IMAGE_' | while read -r kvp; do
+            key="$(echo "$kvp" | cut -sd '=' -f 1 | tr '[:upper:]' '[:lower:]')"
+            value="$(echo "$kvp" | cut -sd '=' -f 2)"
+            if [ -z "$value" ]; then continue; fi
+            echo '((apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install python3) || dnf -y install python3 || yum -y install python3 || zypper --non-interactive install python3) > /dev/null && python3 --version' \
+              | sudo docker run --rm --network=host -i "$value" \
+              | cut -d ' ' -f 2 | cut -d . -f 2 | while read -r version; do [ "$version" -ge "$min_version" ] && echo "{\"image\":\"$value\",\"os\":\"$(echo "$key" | cut -d _ -f 2)\",\"type\":\"$(echo "$key" | cut -d _ -f 3)\"}" || true; done
+          done | jq -s > images.json
+          [ "$(cat images.json | jq -r '.[].image' | wc -l)" -ge 5 ] # double check that we dont fail everywhere and then run no tests at all
+          cat images.json | jq '.[] | select(.type != "dev")'                                                       | jq .image | sort -u | jq -s -r tostring | xargs -0 -I {} echo 'images={}' >> "$GITHUB_OUTPUT"
+          cat images.json | jq '.[] | select(.type != "dev") | select(.type != "latest") | select(.os == "ubuntu")' | jq .image | sort -u | jq -s -r tostring | xargs -0 -I {} echo 'images_upgradeable={}' >> "$GITHUB_OUTPUT"
+        id: dynamic
+
+  prepare-shells:
+    runs-on: ubuntu-latest
+    outputs:
+      shells: ${{ steps.dynamic.outputs.shells }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          {
+            echo sh
+            cat src/DEBIAN/control | grep '^Enhances: ' | tr ' ' '\n' | tr ',' '\n' | grep -v -F 'Enhances:' | grep -v '^$'
+          } | sort -u | while read -r shell; do echo "\"$shell\""; done | jq -s -r tostring | xargs -0 -I {} echo 'shells={}' >> "$GITHUB_OUTPUT"
+        id: dynamic
+
+  system-upgrade:
+    needs: [ prepare-images, smoke ]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
     strategy:
       matrix:
-        image: ['ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling']
+        image: ${{ fromJSON(needs.prepare-images.outputs.images_upgradeable) }}
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: package.deb
+          name: packages
       - run: |
           echo '
             apt-get update
@@ -94,41 +152,103 @@ jobs:
             apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade && apt-get -y autoremove && apt-get -y autoclean
           ' | sudo docker run -v $(pwd)/package.deb:/root/package.deb --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
 
-  dependency:
-    needs: [smoke]
+  prepare-dependency:
     runs-on: ubuntu-latest
+    outputs:
+      dependencies: ${{ steps.dynamic.outputs.dependencies }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: cat src/DEBIAN/triggers | cut -sd ' ' -f 2- | rev | cut -sd / -f 1 | rev | grep -v '^$' | grep -v '^python3$' | sort -u | while read -r dependency; do echo "\"$dependency\""; done | jq -s -r tostring | xargs -0 -I {} echo 'dependencies={}' >> "$GITHUB_OUTPUT"
+        id: dynamic
+
+  dependency:
+    needs: [ prepare-dependency, prepare-images, smoke ]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
     strategy:
       matrix:
-        image: ['debian:oldstable', 'debian:stable', 'debian:testing', 'debian:oldstable-slim', 'debian:stable-slim', 'debian:testing-slim', 'ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling']
-        dependency: ['npm', 'gcc']
+        image: ${{ fromJSON(needs.prepare-images.outputs.images) }}
+        dependency: ${{ fromJSON(needs.prepare-dependency.outputs.dependencies) }}
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: package.deb
+          name: packages
       - run: |
-          {
-            echo 'apt-get update'
-            echo 'apt-get -y remove ${{ matrix.dependency }}'
-            echo 'DEBIAN_FRONTEND=noninteractive apt-get -y install /root/package.deb'
-            echo 'DEBIAN_FRONTEND=noninteractive apt-get -y install ${{ matrix.dependency }}'
-            echo 'apt-get -y remove ${{ matrix.dependency }}'
-          } | sudo docker run -v $(pwd)/package.deb:/root/package.deb --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
+          echo '
+            if type apt-get; then
+              apt-get update
+              apt-get -y remove ${{ matrix.dependency }}
+              DEBIAN_FRONTEND=noninteractive apt-get -y install /root/package.deb
+              DEBIAN_FRONTEND=noninteractive apt-get -y install ${{ matrix.dependency }}
+              apt-get -y remove ${{ matrix.dependency }}
+            elif type dnf; then
+              dnf -y upgrade --refresh
+              dnf -y remove ${{ matrix.dependency }}
+              dnf -y install /root/package.rpm
+              dnf -y install ${{ matrix.dependency }}
+              dnf -y remove ${{ matrix.dependency }}
+            elif type yum; then
+              yum -y update
+              yum -y remove ${{ matrix.dependency }}
+              yum -y install /root/package.rpm
+              yum -y install ${{ matrix.dependency }}
+              yum -y remove ${{ matrix.dependency }}
+            elif type zypper; then
+              zypper --non-interactive remove ${{ matrix.dependency }} || true
+              zypper --non-interactive install --allow-unsigned-rpm /root/package.rpm
+              zypper --non-interactive install ${{ matrix.dependency }}
+              zypper --non-interactive remove ${{ matrix.dependency }}
+            else
+              exit 1
+            fi
+          ' | sudo docker run -v $(pwd)/package.deb:/root/package.deb -v $(pwd)/package.rpm:/root/package.rpm --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
 
-  os-shell:
-    needs: smoke
+  install-oneoff-user:
+    needs: [ smoke ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cat INSTALL.sh | sh -x
+      - run: type otel.sh
+
+  install-oneoff-os:
+    needs: [ prepare-images, smoke ]
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: ['debian:oldstable', 'debian:stable', 'debian:testing', 'debian:oldstable-slim', 'debian:stable-slim', 'debian:testing-slim', 'ubuntu:focal', 'ubuntu:latest', 'ubuntu:rolling']
+        image: ${{ fromJSON(needs.prepare-images.outputs.images) }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          {
+            echo '
+              if type apt-get; then apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install wget curl jq gawk sudo
+              elif type dnf; then dnf -y install wget jq gawk sudo
+              elif type yum; then yum -y install wget jq gawk sudo
+              elif type zypper; then zypper --non-interactive install wget jq gawk sudo
+              else exit 1
+              fi
+            '
+            cat INSTALL.sh
+            echo type otel.sh
+          } | sudo docker run --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
+
+  os-shell:
+    needs: [ prepare-images, prepare-shells, smoke ]
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      matrix:
+        os: ${{ fromJSON(needs.prepare-images.outputs.images) }}
         update: ['FALSE', 'TRUE']
-        shell: [sh, dash, bash, busybox]
+        shell: ${{ fromJSON(needs.prepare-shells.outputs.shells) }}
       fail-fast: false
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
-          name: package.deb
-      - run: mv ./package.deb tests
+          name: packages
+      - run: mv ./package.* tests
       - run: bash -c 'cd tests && bash run_tests_containerized.sh "$OS" "$UPDATE" "$SHELL"'
         env:
           OS: ${{ matrix.os }}
@@ -139,11 +259,12 @@ jobs:
   action:
     needs: smoke
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
       - run: printenv | grep '^GITHUB_'
       - uses: actions/download-artifact@v4
         with:
-          name: package.deb
+          name: packages
       - run: sudo -E apt-get install ./package.deb
       - uses: actions/checkout@v4
       - uses: ./actions/instrument/job
@@ -159,14 +280,14 @@ jobs:
           [ -n "$TRACEPARENT" ]
       - uses: actions/download-artifact@v4 # check if node action works
         with:
-          name: package.deb
+          name: packages
       - uses: actions/hello-world-docker-action@main # check if docker action works
       - uses: actions/first-interaction@v1 # node action with - in env vars
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           issue-message: "Hello, thanks for adding an issue for the first time!"
           pr-message: "Hello, thanks for contributing for the first time!"
-      - uses: renovatebot/github-action@v40.3.4 # integration, node action with call to docker, docker flags that make injection more complicated, then call a node script via exec that already is injected with otel
+      - uses: renovatebot/github-action@v41.0.4 # integration, node action with call to docker, docker flags that make injection more complicated, then call a node script via exec that already is injected with otel
         env:
           RENOVATE_DRY_RUN: full
           RENOVATE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -185,7 +306,7 @@ jobs:
            update=TRUE
            shell=bash
 
-  performance-prepare:
+  prepare-performance:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.dynamic-matrix.outputs.matrix }}
@@ -197,15 +318,16 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
   
   performance:
-    needs: [performance-prepare, smoke]
+    needs: [prepare-performance, smoke]
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     strategy: 
-      matrix: ${{ fromJSON(needs.performance-prepare.outputs.matrix) }}
+      matrix: ${{ fromJSON(needs.prepare-performance.outputs.matrix) }}
     steps:
       - if: matrix.tag_name == '~local'
         uses: actions/download-artifact@v4
         with:
-          name: package.deb
+          name: packages
       - if: matrix.tag_name != '~local'
         run: |
           curl --no-progress-meter --fail --retry 16 --retry-all-errors --header "Authorization: Bearer $GITHUB_TOKEN" https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases | jq -r '.[] | select(.tag_name == "${{ matrix.tag_name }}") | .assets[].browser_download_url' | grep '.deb$' | xargs wget --header "Authorization: Bearer $GITHUB_TOKEN"
@@ -228,7 +350,7 @@ jobs:
           retention-days: 1
 
   join:
-    needs: [install, upgrade, system-upgrade, dependency, os-shell, action, performance]
+    needs: [upgrade, system-upgrade, dependency, install-oneoff-user, install-oneoff-os, os-shell, action, performance]
     runs-on: ubuntu-latest
     outputs:
       success: ${{ steps.tests.outputs.success }}

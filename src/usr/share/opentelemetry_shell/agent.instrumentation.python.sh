@@ -14,7 +14,7 @@ _otel_inject_python() {
       set -- "$command" /opt/opentelemetry_shell/venv/bin/opentelemetry-instrument "${command#\\}" "$@"
       if \[ "$_otel_python_code_source" = stdin ]; then
         unset _otel_python_code_source
-        { \cat /usr/share/opentelemetry_shell/opentelemetry_shell.custom.python.deep.py; \cat; } | OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE PYTHONPATH=/opt/opentelemetry_shell/venv/lib/"$(\ls /opt/opentelemetry_shell/venv/lib/)"/site-packages/:"$PYTHONPATH" OTEL_BSP_MAX_EXPORT_BATCH_SIZE=1 _otel_call "$@"
+        { \cat /usr/share/opentelemetry_shell/agent.instrumentation.python.deep.py; \cat; } | OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE PYTHONPATH=/opt/opentelemetry_shell/venv/lib/"$(\ls /opt/opentelemetry_shell/venv/lib/)"/site-packages/:"$PYTHONPATH" OTEL_BSP_MAX_EXPORT_BATCH_SIZE=1 _otel_call "$@"
       else
         OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE PYTHONPATH=/opt/opentelemetry_shell/venv/lib/"$(\ls /opt/opentelemetry_shell/venv/lib/)"/site-packages/:"$PYTHONPATH" OTEL_BSP_MAX_EXPORT_BATCH_SIZE=1 _otel_call "$@"
       fi
@@ -31,7 +31,7 @@ _otel_inject_opentelemetry_instrument() {
     \eval "set -- $(_otel_python_inject_args "$@")"
     if \[ "$_otel_python_code_source" = stdin ]; then
       unset _otel_python_code_source
-      { \cat /usr/share/opentelemetry_shell/opentelemetry_shell.custom.python.deep.py; \cat; } | OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_BSP_MAX_EXPORT_BATCH_SIZE="${OTEL_BSP_MAX_EXPORT_BATCH_SIZE:-1}" _otel_call "$@"
+      { \cat /usr/share/opentelemetry_shell/agent.instrumentation.python.deep.py; \cat; } | OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_BSP_MAX_EXPORT_BATCH_SIZE="${OTEL_BSP_MAX_EXPORT_BATCH_SIZE:-1}" _otel_call "$@"
     else
       OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE OTEL_BSP_MAX_EXPORT_BATCH_SIZE="${OTEL_BSP_MAX_EXPORT_BATCH_SIZE:-1}" _otel_call "$@"
     fi
@@ -67,12 +67,12 @@ _otel_python_inject_args() {
       _otel_escape_arg "$arg"
       \echo -n ' '
       local arg="$1"; shift
-      _otel_escape_arg "$(\cat /usr/share/opentelemetry_shell/opentelemetry_shell.custom.python.deep.py)
+      _otel_escape_arg "$(\cat /usr/share/opentelemetry_shell/agent.instrumentation.python.deep.py)
 $arg"
       local injected=cmdline
     elif \[ -f "$arg" ]; then
-      _otel_escape_args -c "$(\cat /usr/share/opentelemetry_shell/opentelemetry_shell.custom.python.deep.py)
-with open('$arg', 'r') as file:
+      _otel_escape_args -c "$(\cat /usr/share/opentelemetry_shell/agent.instrumentation.python.deep.py)
+with open('$arg', 'r') as file: # SKIP_DEPENDENCY_CHECK
   exec(file.read())"
       local injected=file
     fi
