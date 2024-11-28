@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 my_dir="$(echo "$0" | rev | cut -d / -f 2- | rev)"
-echo DEBUG DEBUG DEBUG "$my_dir"
 
 github() {
   url="$GITHUB_API_URL"/"$1"?per_page=100
@@ -24,6 +23,7 @@ echo "$GITHUB_ACTION" > /tmp/opentelemetry_shell_action_name
 
 if [ -z "$GITHUB_ACTION_REPOSITORY" ]; then export GITHUB_ACTION_REPOSITORY="$GITHUB_REPOSITORY"; fi
 action_tag_name="$(echo "$GITHUB_ACTION_REF" | cut -sd @ -f 2-)"
+if [ -z "$action_tag_name" ]; then action_tag_name="v$(cat "$my_dir"/../../../VERSION)"; fi
 if [ -n "$action_tag_name" ]; then
   debian_file="$(mktemp)"
   github repos/"$GITHUB_ACTION_REPOSITORY"/releases | { if [ "$action_tag_name" = main ]; then jq '.[0]'; else jq '.[] | select(.tag_name=="'"$action_tag_name"'")'; fi } | jq -r '.assets[].browser_download_url' | grep '.deb$' | xargs wget -O "$debian_file"
@@ -36,7 +36,6 @@ else
 fi
 npm install '@actions/artifact'
 
-my_dir="$(echo "$0" | rev | cut -d / -f 2- | rev)"
 new_path_dir="/tmp/otel/bin"
 mkdir -p "$new_path_dir"
 gcc -o "$new_path_dir"/sh "$my_dir"/forward.c -DEXECUTABLE="$(which sh)" -DARG1="$my_dir"/decorate_action_run.sh -DARG2="$(which sh)"
