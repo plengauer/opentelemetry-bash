@@ -19,8 +19,9 @@ github_workflow() {
 export OTEL_SHELL_CONFIG_INSTALL_DEEP=FALSE
 export GITHUB_ACTION_REPOSITORY="${GITHUB_ACTION_REPOSITORY:-"$GITHUB_REPOSITORY"}"
 action_tag_name="$(echo "$GITHUB_ACTION_REF" | cut -sd @ -f 2-)"
+if [ -z "$action_tag_name" ]; then action_tag_name="v$(cat "$(echo "$0" | rev | cut -d / -f 2- | rev)"/../../../VERSION)"; fi
 if [ -n "$action_tag_name" ]; then
-  debian_file="$(mktemp)"
+  debian_file="$(mktemp -u).deb"
   github repos/"$GITHUB_ACTION_REPOSITORY"/releases | { if [ "$action_tag_name" = main ]; then jq '.[0]'; else jq '.[] | select(.tag_name=="'"$action_tag_name"'")'; fi } | jq -r '.assets[].browser_download_url' | grep '.deb$' | xargs wget -O "$debian_file"
   sudo apt-get install -y "$debian_file"
   rm "$debian_file"
