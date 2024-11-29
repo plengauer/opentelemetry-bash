@@ -266,6 +266,8 @@ jobs:
       - uses: Vampire/setup-wsl@v3.1.3
       - shell: wsl-bash {0}
         run: |
+          printenv
+          find
           cd "$GITHUB_WORKSPACE"
           sudo -E apt-get -y install ./package.deb
           bash -c "cd tests && bash run_tests.sh bash"
