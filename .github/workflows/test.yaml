@@ -203,7 +203,7 @@ jobs:
             fi
           ' | sudo docker run -v $(pwd)/package.deb:/root/package.deb -v $(pwd)/package.rpm:/root/package.rpm --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
 
-  install-oneoff-user:
+  install-manual-user:
     needs: [ smoke ]
     runs-on: ubuntu-latest
     steps:
@@ -211,7 +211,7 @@ jobs:
       - run: cat INSTALL.sh | sh -x
       - run: type otel.sh
 
-  install-oneoff-os:
+  install-manual-os:
     needs: [ prepare-images, smoke ]
     runs-on: ubuntu-latest
     strategy:
@@ -255,6 +255,20 @@ jobs:
           UPDATE: ${{ matrix.update }}
           SHELL: ${{ matrix.shell }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  os-shell-windows-bash:
+    needs: [ smoke ]
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+      - uses: Vampire/setup-wsl@v3.1.3
+      - shell: wsl-bash {0}
+        run: |
+          sudo -E apt-get -y install ./package.deb
+          bash -c "cd tests && bash run_tests.sh bash"
+          sudo apt-get -y remove opentelemetry-shell
 
   action:
     needs: smoke
@@ -350,7 +364,7 @@ jobs:
           retention-days: 1
 
   join:
-    needs: [upgrade, system-upgrade, dependency, install-oneoff-user, install-oneoff-os, os-shell, action, performance]
+    needs: [upgrade, system-upgrade, dependency, install-manual-user, install-manual-os, os-shell, os-shell-windows-bash, action, performance]
     runs-on: ubuntu-latest
     outputs:
       success: ${{ steps.tests.outputs.success }}
