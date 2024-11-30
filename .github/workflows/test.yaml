@@ -233,7 +233,7 @@ jobs:
             echo type otel.sh
           } | sudo docker run --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
 
-  os-shell:
+  unix-shell:
     needs: [ prepare-images, prepare-shells, smoke ]
     runs-on: ubuntu-latest
     timeout-minutes: 60
@@ -249,17 +249,18 @@ jobs:
         with:
           name: packages
       - run: mv ./package.* tests
-      - run: bash -c 'cd tests && bash run_tests_containerized.sh "$OS" "$UPDATE" "$SHELL"'
+      - run: bash -c 'cd tests && bash run_tests_containerized.sh "${{ matrix.os }}" "${{ matrix.update }}" "${{ matrix.shell }}"'
         env:
-          OS: ${{ matrix.os }}
-          UPDATE: ${{ matrix.update }}
-          SHELL: ${{ matrix.shell }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  os-shell-windows-bash:
+  windows-shell:
     needs: [ build ]
     runs-on: windows-latest
     timeout-minutes: 60
+    strategy:
+      matrix:
+        shell: ${{ fromJSON(needs.prepare-shells.outputs.shells) }}
+      fail-fast: false
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
@@ -269,10 +270,14 @@ jobs:
       - shell: wsl-bash {0}
         run: |
           sudo apt-get update
-          sudo -E apt-get -y install ./packages/package.deb dos2unix curl wget time
+          sudo -E apt-get -y install ./packages/package.deb dos2unix jq psmisc wget curl time sudo 
+          sudo -E apt-get -y install parallel moreutils ncat wget2 nodejs npm python3 python3-pip gcc docker || true
+          [ ${{ matrix.shell }} = sh ] || sudo -E apt-get -y install ${{ matrix.shell }} || exit 0
           dos2unix tests/*.sh tests/*/*
-          bash -c "cd tests && bash run_tests.sh bash"
+          bash -c "cd tests && bash run_tests.sh ${{ matrix.shell }}"
           sudo apt-get -y remove opentelemetry-shell
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   action:
     needs: smoke
