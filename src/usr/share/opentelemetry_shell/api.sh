@@ -20,7 +20,6 @@ _otel_remote_sdk_pipe="${OTEL_REMOTE_SDK_PIPE:-$(\mktemp -u -p "$_otel_shell_pip
 _otel_remote_sdk_fd="${OTEL_REMOTE_SDK_FD:-7}"
 _otel_shell="$(\readlink "/proc/$$/exe")"
 _otel_shell="${_otel_shell##*/}"
-if \[ -z "$_otel_shell" ]; then \readlink "/proc/$$/exe"; exit 1; fi
 if \[ "$_otel_shell" = busybox ]; then _otel_shell="busybox sh"; fi
 if \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = 0 ] || \[ "$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE" = "$PPID" ] || \[ "$PPID" = 0 ] || \[ "$(\tr '\000-\037' ' ' < /proc/$PPID/cmdline)" = "$(\tr '\000-\037' ' ' < /proc/$OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE/cmdline)" ]; then _otel_commandline_override="$OTEL_SHELL_COMMANDLINE_OVERRIDE"; fi
 unset OTEL_SHELL_COMMANDLINE_OVERRIDE
