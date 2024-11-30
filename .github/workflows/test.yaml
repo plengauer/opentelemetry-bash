@@ -269,7 +269,7 @@ jobs:
       - shell: wsl-bash {0}
         run: |
           sudo apt-get update
-          sudo -E apt-get -y install ./packages/package.deb
+          sudo -E apt-get -y install ./packages/package.deb dos2unix
           dos2unix run_tests.sh
           bash -c "cd tests && bash run_tests.sh bash"
           sudo apt-get -y remove opentelemetry-shell
