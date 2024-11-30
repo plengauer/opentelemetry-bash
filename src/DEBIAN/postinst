@@ -28,6 +28,7 @@ print(*map(lambda element: element["instrumentation"], libraries), sep="\n") # S
     fi
     export PATH="$PATH":/usr/local/bin
     if type npm 2> /dev/null; then # SKIP_DEPENDENCY_CHECK
+set -x
       cache="$(npm config list -l | grep -E '^cache = ' | cut -d '=' -f 2- | tr -d '" ')" # SKIP_DEPENDENCY_CHECK
       if [ -d "$cache" ]; then
         user="$(echo "$cache" | rev | cut -d / -f 2- | rev | xargs stat -c '%U')"
