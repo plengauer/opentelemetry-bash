@@ -254,7 +254,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   windows-shell:
-    needs: [ build ]
+    needs: [ prepare-images, build ]
     runs-on: windows-latest
     timeout-minutes: 60
     strategy:
