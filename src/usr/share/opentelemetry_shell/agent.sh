@@ -63,7 +63,7 @@ _otel_auto_instrument() {
   ## (1) using the hint - will not work when scripts are changing or called the same but very fast!
   ## (2) using the resolved hint - will not work when new executables are added onto the system or their shebang changes or new bash.rc aliases are added
   ## (3) using the filtered list of commands - will work in every case but slowest
-  local cache_key="$({ _otel_list_path_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_hint "$hint" | \sort -u; \alias; \echo "$PATH" "$_otel_shell_conservative_exec" "$OTEL_SHELL_CONFIG_INSTRUMENT_MINIMALLY"; } | \md5sum | \cut -d ' ' -f 1)"
+  local cache_key="$({ _otel_list_path_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_hint "$hint" | \uniq -u; \alias; \echo "$PATH" "$_otel_shell_conservative_exec" "$OTEL_SHELL_CONFIG_INSTRUMENT_MINIMALLY"; } | \md5sum | \cut -d ' ' -f 1)"
   local cache_file="$TMPDIR/opentelemetry_shell_$(_otel_package_version opentelemetry-shell)"_"$_otel_shell"_instrumentation_cache_"$cache_key".aliases
   if \[ -f "$cache_file" ]; then
     \eval "$(\grep -vh '_otel_alias_prepend ' $(_otel_list_special_auto_instrument_files))"
@@ -81,10 +81,10 @@ _otel_auto_instrument() {
   # deshebangify commands, do special instrumentations, propagate special instrumentations into aliases, instrument all commands
   ## (both otel_filter_commands_by_file and _otel_filter_commands_by_instrumentation are functionally optional, but helps optimizing time because the following loop AND otel_instrument itself is expensive!)
   ## avoid piping directly into the loops, then it will be considered a subshell and aliases won't take effect here
-  for cmd in $(_otel_list_path_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_hint "$hint" | \sort -u); do _otel_deshebangify "$cmd" || \true; done
+  for cmd in $(_otel_list_path_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_hint "$hint" | \uniq -u); do _otel_deshebangify "$cmd" || \true; done
   for otel_custom_file in $(_otel_list_special_auto_instrument_files); do \. "$otel_custom_file"; done
-  for cmd in $(_otel_list_alias_commands | _otel_filter_commands_by_special | \sort -u); do _otel_dealiasify "$cmd" || \true; done
-  for cmd in $(_otel_list_all_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_instrumentation | _otel_filter_commands_by_mode | _otel_filter_commands_by_hint "$hint" | \sort -u); do otel_instrument "$cmd"; done
+  for cmd in $(_otel_list_alias_commands | _otel_filter_commands_by_special | \uniq -u); do _otel_dealiasify "$cmd" || \true; done
+  for cmd in $(_otel_list_all_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_instrumentation | _otel_filter_commands_by_mode | _otel_filter_commands_by_hint "$hint" | \uniq -u); do otel_instrument "$cmd"; done
 
   # super special instrumentations
   \alias .='_otel_instrument_and_source "$#" "$@" .'
@@ -162,7 +162,7 @@ _otel_filter_commands_by_hint() {
 
 _otel_resolve_instrumentation_hint() {
   local hint="$1"
-  { \[ -f "$hint" ] && \[ "$(\readlink -f "$hint")" != "$(\readlink -f "/proc/$$/exe")" ] && \[ "$(\readlink -f "$hint")" != "/usr/share/opentelemetry_shell/opentelemetry_shell.sh" ] && \cat "$hint" || \echo "$hint"; } | \tr -s ' $=";(){}/\\!#~^'\' '\n' | _otel_filter_by_validity | \sort -u
+  { \[ -f "$hint" ] && \[ "$(\readlink -f "$hint")" != "$(\readlink -f "/proc/$$/exe")" ] && \[ "$(\readlink -f "$hint")" != "/usr/share/opentelemetry_shell/opentelemetry_shell.sh" ] && \cat "$hint" || \echo "$hint"; } | \tr -s ' $=";(){}/\\!#~^'\' '\n' | _otel_filter_by_validity | \uniq -u
 }
 
 _otel_filter_commands_by_instrumentation() {
