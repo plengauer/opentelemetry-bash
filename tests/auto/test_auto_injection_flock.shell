@@ -1,6 +1,8 @@
 . ./assert.sh
 . /usr/bin/opentelemetry_shell.sh
 
+_otel_inject_inner_command_args flock .lock echo hello world
+
 touch .lock
 # chmod +x .lock
 output="$(flock .lock echo hello world)"
