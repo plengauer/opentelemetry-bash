@@ -22,19 +22,19 @@ RUN <<EOF
     [ "$update" = TRUE ] && dnf -y upgrade --refresh
     type "$shell" || dnf -y install "$shell"
     dnf -y install --allowerasing $packages_mandatory
-    for package in $packages_optional; do dnf -y install --allowerasing $package || true; done
+    dnf -y install --allowerasing $packages_optional || true
     dnf -y install ./package.rpm
   elif type yum; then
     [ "$update" = TRUE ] && yum -y upgrade
     type "$shell" || yum -y install "$shell"
     yum -y install --allowerasing $packages_mandatory
-    for package in $packages_optional; do yum -y install --allowerasing $package || true; done
+    yum -y install --allowerasing $packages_optional || true
     yum -y install ./package.rpm
   elif type zypper; then
     [ "$update" = TRUE ] && zypper --non-interactive update
     type "$shell" || zypper --non-interactive install "$shell"
     zypper --non-interactive install $packages_mandatory
-    for package in $packages_optional; do zypper --non-interactive install $package || true; done
+    zypper --non-interactive install $packages_optional || true
     zypper --non-interactive install --allow-unsigned-rpm ./package.rpm
   else
     exit 1
