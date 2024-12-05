@@ -1,7 +1,9 @@
 . ./assert.sh
 . /usr/bin/opentelemetry_shell.sh
 
+umask
 touch .lock
+ls -la .lock
 chmod -x .lock
 ls -la .lock
 # chmod +x .lock
