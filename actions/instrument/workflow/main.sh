@@ -2,9 +2,8 @@
 set -e
 if [ "$GITHUB_JOB" != observe ]; then echo "Job name must be 'observe'!" >&2; exit 1; fi
 
-my_dir="$(echo "$0" | rev | cut -d / -f 2- | rev)"
-. "$my_dir"/../shared/github.sh
-OTEL_SHELL_CONFIG_INSTALL_DEEP=FALSE bash -e "$my_dir"/../shared/install.sh
+. ../shared/github.sh
+OTEL_SHELL_CONFIG_INSTALL_DEEP=FALSE bash -e ../shared/install.sh
 
 export OTEL_SERVICE_NAME="${OTEL_SERVICE_NAME:-"$(echo "$GITHUB_REPOSITORY" | cut -d / -f 2-) CI"}"
 
