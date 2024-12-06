@@ -1,4 +1,7 @@
 #!/bin/sh -e
+
+npm install '@actions/cache'
+
 export GITHUB_ACTION_REPOSITORY="${GITHUB_ACTION_REPOSITORY:-"$GITHUB_REPOSITORY"}"
 action_tag_name="$(echo "$GITHUB_ACTION_REF" | cut -sd @ -f 2-)"
 if [ -z "$action_tag_name" ]; then action_tag_name="v$(cat "$my_dir"/../../../VERSION)"; fi
@@ -12,4 +15,5 @@ elif [ -n "$action_tag_name" ]; then
 else
   wget -O - https://raw.githubusercontent.com/"$GITHUB_ACTION_REPOSITORY"/main/INSTALL.sh | sh
 fi
+
 npm install '@actions/artifact'
