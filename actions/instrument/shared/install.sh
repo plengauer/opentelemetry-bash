@@ -6,7 +6,7 @@ if [ "$GITHUB_REPOSITORY" = "$GITHUB_ACTION_REPOSITORY" ] && dpkg -l | grep -q o
   :
 elif [ -n "$action_tag_name" ]; then
   debian_file="$(mktemp -u).deb"
-  github repos/"$GITHUB_ACTION_REPOSITORY"/releases | { if [ "$action_tag_name" = main ]; then jq '.[0]'; else jq '.[] | select(.tag_name=="'"$action_tag_name"'")'; fi } | jq -r '.assets[].browser_download_url' | grep '.deb$' | xargs wget -O "$debian_file"
+  github repos/"$GITHUB_ACTION_REPOSITORY"/releases | ( [ "$action_tag_name" = main ] && jq '.[0]' || jq '.[] | select(.tag_name=="'"$action_tag_name"'")' ) | jq -r '.assets[].browser_download_url' | grep '.deb$' | xargs wget -O "$debian_file"
   sudo -E apt-get install -y "$debian_file"
   rm "$debian_file"
 else
