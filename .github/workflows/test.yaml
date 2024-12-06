@@ -271,7 +271,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo -E apt-get -y install ./packages/package.deb dos2unix jq psmisc wget curl time sudo 
-          sudo -E apt-get -y install parallel moreutils ncat wget2 || true # nodejs npm python3 python3-pip gcc docker || true # TODO
+          sudo -E apt-get -y install parallel moreutils ncat wget2 nodejs || true # npm python3 python3-pip gcc docker || true # TODO
           [ ${{ matrix.shell }} = sh ] || sudo -E apt-get -y install ${{ matrix.shell }} || exit 0
           dos2unix tests/*.sh tests/*/*
           bash -c "cd tests && bash run_tests.sh ${{ matrix.shell }}"
