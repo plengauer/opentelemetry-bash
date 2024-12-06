@@ -1,6 +1,6 @@
  WARN: cli config dryRun property has been changed to full
  INFO: Repository started (repository=plengauer/opentelemetry-bash)
-       "renovateVersion": "39.28.0"
+       "renovateVersion": "39.44.0"
  INFO: Dependency extraction complete (repository=plengauer/opentelemetry-bash, baseBranch=main)
        "stats": {
          "managers": {
@@ -18,5 +18,5 @@
  INFO: DRY-RUN: Would save repository cache. (repository=plengauer/opentelemetry-bash)
  INFO: Repository finished (repository=plengauer/opentelemetry-bash)
        "cloned": true,
-       "durationMs": 17578
+       "durationMs": 19440
  INFO: Renovate was run at log level "info". Set LOG_LEVEL=debug in environment variables to see extended debug logs.
