@@ -260,6 +260,10 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    strategy:
+      matrix:
+        cache: ['false', 'true']
+      fail-fast: false
     steps:
       - run: printenv | grep '^GITHUB_'
       - uses: actions/download-artifact@v4
@@ -268,6 +272,8 @@ jobs:
       - run: sudo -E apt-get install ./package.deb
       - uses: actions/checkout@v4
       - uses: ./actions/instrument/job
+        with:
+          cache: ${{ matrix.cache }}
         env:
           OTEL_METRICS_EXPORTER: console
           OTEL_LOGS_EXPORTER: console
