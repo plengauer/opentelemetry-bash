@@ -6,10 +6,10 @@ if [ -n "$action_tag_name" ]; then
   if [ "$INPUT_CACHE" = "true" ]; then
     npm install '@actions/cache' # TODO where to get this from? just install and deal with it
     cache_key="${GITHUB_ACTION_REPOSITORY} ${action_tag_name} $(cat /etc/os-release | grep 'VERSION=' | cut -d = -f 2- | tr -d \")"
-    sudo ls -la $(sudo pip cache dir)
-    ls -la $(pip cache dir)
-    sudo ls -la $(sudo npm config get cache)
-    ls -la $(npm config get cache)
+    sudo ls -la $(sudo pip cache dir) || true
+    ls -la $(pip cache dir) || true
+    sudo ls -la $(sudo npm config get cache) || true
+    ls -la $(npm config get cache) || true
     sudo node -e "require('@actions/cache').restoreCache(['/tmp/opentelemetry-shell.deb', '/var/cache/apt/archives/*.deb', '$(sudo pip cache dir)', '$(sudo npm config get cache)'], '$cache_key');"
   fi
   debian_file=/tmp/opentelemetry-shell.deb
