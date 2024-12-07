@@ -16,7 +16,7 @@ if [ -n "$action_tag_name" ]; then
       github repos/"$GITHUB_ACTION_REPOSITORY"/releases | ( [ "$action_tag_name" = main ] && jq '.[0]' || jq '.[] | select(.tag_name=="'"$action_tag_name"'")' ) | jq -r '.assets[].browser_download_url' | grep '.deb$' | xargs wget -O - | sudo tee "$debian_file" > /dev/null
     fi
   fi
-  sudo -E -H apt-get -o Binary::apt::APT::Keep-Downloaded-Packages=true install -y /tmp/opentelemetry-shell.deb
+  sudo -E -H apt-get -o Binary::apt::APT::Keep-Downloaded-Packages=true install -y "$debian_file"
   if [ -n "${cache_key:-}" ]; then
     sudo -E -H node -e "require('@actions/cache').saveCache(['/var/cache/apt/archives/*.deb', '$(sudo pip cache dir)', '$(sudo npm config get cache)'], '$cache_key');"
   fi
