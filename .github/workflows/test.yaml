@@ -269,7 +269,6 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: packages
-      - run: sudo -E apt-get install ./package.deb
       - uses: actions/checkout@v4
       - uses: ./actions/instrument/job
         with:
