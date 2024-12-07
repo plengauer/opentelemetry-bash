@@ -13,8 +13,7 @@ elif [ "$1" = 'configure' ] || [ "$1" = 'triggered' ] || [ "$1" = 'reconfigure' 
     if type gcc 2> /dev/null; then # SKIP_DEPENDENCY_CHECK
       gcc -shared -fPIC -o /opt/opentelemetry_shell/libinjecthttpheader.so /usr/share/opentelemetry_shell/agent.injection.http_header.c -ldl # SKIP_DEPENDENCY_CHECK
     fi
-    if type python3 2> /dev/null; then
-      pip cache dir
+    if type python3 2> /dev/null && [ "$(stat -c '%U' ~)" = "$(whoami)" ]; then
       python3 -m venv /opt/opentelemetry_shell/venv
       . /opt/opentelemetry_shell/venv/bin/activate
       pip3 install -r /opt/opentelemetry_shell/requirements.txt
@@ -28,19 +27,9 @@ print(*map(lambda element: element["instrumentation"], libraries), sep="\n") # S
       (cd /opt/opentelemetry_shell/venv/lib/python3.*/site-packages && ln --symbolic /usr/share/opentelemetry_shell/opentelemetry_shell.custom.python.deep.py usercustomize.py 2> /dev/null || true)
     fi
     export PATH="$PATH":/usr/local/bin
-    if type npm 2> /dev/null; then # SKIP_DEPENDENCY_CHECK
-      npm config list -l # SKIP_DEPENDENCY_CHECK
-      npm config get cache # SKIP_DEPENDENCY_CHECK
-      cache="$(npm config list -l | grep -E '^cache = ' | cut -d '=' -f 2- | tr -d '" ')" # SKIP_DEPENDENCY_CHECK
-      if [ -d "$cache" ]; then
-        user="$(echo "$cache" | rev | cut -d / -f 2- | rev | xargs stat -c '%U')"
-        find "$cache" -exec chown "$user" {} '+'
-        cache="$(runuser -l "$user" -c 'npm config list -l' | grep -E '^cache = ' | cut -d '=' -f 2- | tr -d '" ')"
-        runuser -l "$user" -c 'npm config set cache="$1"' runuser "$(mktemp -d)"
-        (cd /opt/opentelemetry_shell && npm install --package-lock=false)
-        runuser -l "$user" -c 'npm config set cache="$1"' runuser "$cache"
-        (cd /usr/share/opentelemetry_shell/ && ln --symbolic ../../../opt/opentelemetry_shell/node_modules node_modules 2> /dev/null || true)
-      fi
+    if type npm 2> /dev/null && [ "$(stat -c '%U' ~)" = "$(whoami)" ]; then # SKIP_DEPENDENCY_CHECK
+      (cd /opt/opentelemetry_shell && npm install --package-lock=false)
+      (cd /usr/share/opentelemetry_shell/ && ln --symbolic ../../../opt/opentelemetry_shell/node_modules node_modules 2> /dev/null || true)
     fi
   fi
   true
