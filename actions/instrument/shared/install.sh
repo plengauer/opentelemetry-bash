@@ -18,7 +18,7 @@ if [ -n "$action_tag_name" ]; then
     sudo apt-get install -y --download-only "$debian_file"
     [ -z "${cache_key:-}" ] || sudo node -e "require('@actions/cache').saveCache(['/tmp/opentelemetry-shell.deb', '/var/cache/apt/archives/*.deb', '$(sudo pip cache dir)', '$(sudo npm config get cache)'], '$cache_key');"
   fi
-  sudo -E apt-get install -y "$packages_cache_directory"/opentelemetry-shell.deb
+  sudo -E apt-get install -y /tmp/opentelemetry-shell.deb
   rm "$debian_file"
 else
   wget -O - https://raw.githubusercontent.com/"$GITHUB_ACTION_REPOSITORY"/main/INSTALL.sh | sh
