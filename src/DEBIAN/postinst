@@ -14,6 +14,7 @@ elif [ "$1" = 'configure' ] || [ "$1" = 'triggered' ] || [ "$1" = 'reconfigure' 
       gcc -shared -fPIC -o /opt/opentelemetry_shell/libinjecthttpheader.so /usr/share/opentelemetry_shell/agent.injection.http_header.c -ldl # SKIP_DEPENDENCY_CHECK
     fi
     if type python3 2> /dev/null; then
+      pip cache dir
       python3 -m venv /opt/opentelemetry_shell/venv
       . /opt/opentelemetry_shell/venv/bin/activate
       pip3 install -r /opt/opentelemetry_shell/requirements.txt
@@ -28,6 +29,8 @@ print(*map(lambda element: element["instrumentation"], libraries), sep="\n") # S
     fi
     export PATH="$PATH":/usr/local/bin
     if type npm 2> /dev/null; then # SKIP_DEPENDENCY_CHECK
+      npm config list -l # SKIP_DEPENDENCY_CHECK
+      npm config get cache # SKIP_DEPENDENCY_CHECK
       cache="$(npm config list -l | grep -E '^cache = ' | cut -d '=' -f 2- | tr -d '" ')" # SKIP_DEPENDENCY_CHECK
       if [ -d "$cache" ]; then
         user="$(echo "$cache" | rev | cut -d / -f 2- | rev | xargs stat -c '%U')"
