@@ -18,7 +18,7 @@ if [ -n "$action_tag_name" ]; then
     write_back_cache=TRUE
   fi
   OTEL_SHELL_CONFIG_INSTALL_ASSUME=TRUE sudo -E -H apt-get -o Binary::apt::APT::Keep-Downloaded-Packages=true install -y "$debian_file"
-  if [ "$write_back_cache" = TRUE ]; then
+  if [ "${write_back_cache:-FALSE}" = TRUE ] && [ -n "${cache_key:-}" ]; then
     sudo -E -H node -e "require('@actions/cache').saveCache(['/var/cache/apt/archives/*.deb', '/opt/opentelemetry_shell/sdk/venv', '/opt/opentelemetry_shell/venv', '/opt/opentelemetry_shell/node_modules'], '$cache_key');"
   fi
   sudo rm "$debian_file"
