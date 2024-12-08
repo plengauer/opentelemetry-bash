@@ -1,6 +1,4 @@
 #!/bin/sh -e
-printenv >&2
-find "$GITHUB_WORKSPACE/../.."
 export GITHUB_ACTION_REPOSITORY="${GITHUB_ACTION_REPOSITORY:-"$GITHUB_REPOSITORY"}"
 action_tag_name="$(echo "$GITHUB_ACTION_REF" | cut -sd @ -f 2-)"
 if [ -z "$action_tag_name" ]; then action_tag_name="v$(cat ../../../VERSION)"; fi
