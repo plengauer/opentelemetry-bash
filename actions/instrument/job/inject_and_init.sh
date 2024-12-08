@@ -2,7 +2,7 @@
 set -e
 
 . ../shared/github.sh
-bash -e ../shared/install.sh
+time bash -e ../shared/install.sh
 
 echo "$GITHUB_ACTION" > /tmp/opentelemetry_shell_action_name
 
