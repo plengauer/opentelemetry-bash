@@ -3,3 +3,7 @@ description: 'Observe Github Workflows with OpenTelemetry'
 runs:
   using: 'node20'
   main: 'main.js'
+inputs:
+  cache:
+    description: 'Whether to use GitHub Actions Cache to cache dependencies'
+    default: false
