@@ -10,8 +10,8 @@ if [ -n "$action_tag_name" ]; then
   fi
   debian_file=/var/cache/apt/archives/opentelemetry-shell_$(cat ../../../VERSION)_all.deb
   if ! [ -f "$debian_file" ]; then
-    if [ "$GITHUB_REPOSITORY" = "$GITHUB_ACTION_REPOSITORY" ] && [ -f package.deb ]; then
-      sudo mv package.deb "$debian_file"
+    if [ "$GITHUB_REPOSITORY" = "$GITHUB_ACTION_REPOSITORY" ] && [ -f "$GITHUB_WORKSPACE"/package.deb ]; then
+      sudo mv "$GITHUB_WORKSPACE"/package.deb "$debian_file"
     else
       github repos/"$GITHUB_ACTION_REPOSITORY"/releases | ( [ "$action_tag_name" = main ] && jq '.[0]' || jq '.[] | select(.tag_name=="'"$action_tag_name"'")' ) | jq -r '.assets[].browser_download_url' | grep '.deb$' | xargs wget -O - | sudo tee "$debian_file" > /dev/null
     fi
