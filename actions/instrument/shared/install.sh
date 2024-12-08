@@ -6,7 +6,7 @@ if [ -n "$action_tag_name" ]; then
   if [ "$INPUT_CACHE" = "true" ]; then
     npm install '@actions/cache' # TODO where to get this from? just install and deal with it
     cache_key="${GITHUB_ACTION_REPOSITORY} ${action_tag_name} $(cat /etc/os-release | grep 'VERSION=' | cut -d = -f 2- | tr -d \")"
-    sudo -E -H node -e "require('@actions/cache').restoreCache(['/var/cache/apt/archives/*.deb', '$(sudo pip cache dir)', '$(sudo npm config get cache)'], '$cache_key');"
+    sudo -E -H node -e "require('@actions/cache').restoreCache(['/var/cache/apt/archives/*.deb', '$(sudo pip cache dir)', '$(sudo npm config get cache)', '/opt/opentelemetry_shell/sdk/venv', '/opt/opentelemetry_shell/venv', '/opt/opentelemetry_shell/node_modules'], '$cache_key');"
   fi
   debian_file=/var/cache/apt/archives/opentelemetry-shell_$(cat ../../../VERSION)_all.deb
   if ! [ -f "$debian_file" ]; then
@@ -18,7 +18,7 @@ if [ -n "$action_tag_name" ]; then
   fi
   time sudo -E -H apt-get -o Binary::apt::APT::Keep-Downloaded-Packages=true install -y "$debian_file"
   if [ -n "${cache_key:-}" ]; then
-    sudo -E -H node -e "require('@actions/cache').saveCache(['/var/cache/apt/archives/*.deb', '$(sudo pip cache dir)', '$(sudo npm config get cache)'], '$cache_key');"
+    sudo -E -H node -e "require('@actions/cache').saveCache(['/var/cache/apt/archives/*.deb', '$(sudo pip cache dir)', '$(sudo npm config get cache)', '/opt/opentelemetry_shell/sdk/venv', '/opt/opentelemetry_shell/venv', '/opt/opentelemetry_shell/node_modules'], '$cache_key');"
   fi
   sudo rm "$debian_file"
 else
