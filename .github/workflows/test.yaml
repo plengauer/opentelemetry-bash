@@ -257,7 +257,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   action:
-    needs: build
+    needs: smoke
     runs-on: ubuntu-latest
     timeout-minutes: 60
     strategy:
