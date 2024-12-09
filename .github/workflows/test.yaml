@@ -267,6 +267,7 @@ jobs:
       - uses: Vampire/setup-wsl@v3.1.4
         with:
           update: 'true'
+          distribution: 'Ubuntu-24.04'
       - shell: wsl-bash {0}
         run: |
           sudo apt-get update
