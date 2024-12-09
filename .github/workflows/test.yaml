@@ -266,8 +266,7 @@ jobs:
       - uses: actions/download-artifact@v4
       - uses: Vampire/setup-wsl@v3.1.4
         with:
-          update: 'true'
-          distribution: 'Debian'
+          update: 'false'
       - shell: wsl-bash {0}
         run: |
           sudo apt-get update
