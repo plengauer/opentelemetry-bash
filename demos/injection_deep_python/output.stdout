@@ -1,17 +1,22 @@
 Collecting requests
-  Downloading requests-2.32.3-py3-none-any.whl (64 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 64.9/64.9 KB 3.9 MB/s eta 0:00:00
-Collecting charset-normalizer<4,>=2
-  Downloading charset_normalizer-3.4.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (144 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 144.8/144.8 KB 7.5 MB/s eta 0:00:00
-Collecting certifi>=2017.4.17
-  Downloading certifi-2024.8.30-py3-none-any.whl (167 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 167.3/167.3 KB 10.7 MB/s eta 0:00:00
-Collecting idna<4,>=2.5
-  Downloading idna-3.10-py3-none-any.whl (70 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 70.4/70.4 KB 8.7 MB/s eta 0:00:00
-Collecting urllib3<3,>=1.21.1
-  Downloading urllib3-2.2.3-py3-none-any.whl (126 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 126.3/126.3 KB 8.7 MB/s eta 0:00:00
+  Downloading requests-2.32.3-py3-none-any.whl.metadata (4.6 kB)
+Collecting charset-normalizer<4,>=2 (from requests)
+  Downloading charset_normalizer-3.4.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (34 kB)
+Collecting idna<4,>=2.5 (from requests)
+  Downloading idna-3.10-py3-none-any.whl.metadata (10 kB)
+Collecting urllib3<3,>=1.21.1 (from requests)
+  Downloading urllib3-2.2.3-py3-none-any.whl.metadata (6.5 kB)
+Collecting certifi>=2017.4.17 (from requests)
+  Downloading certifi-2024.8.30-py3-none-any.whl.metadata (2.2 kB)
+Downloading requests-2.32.3-py3-none-any.whl (64 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 64.9/64.9 kB 17.0 MB/s eta 0:00:00
+Downloading certifi-2024.8.30-py3-none-any.whl (167 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 167.3/167.3 kB 22.2 MB/s eta 0:00:00
+Downloading charset_normalizer-3.4.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (143 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 143.8/143.8 kB 32.1 MB/s eta 0:00:00
+Downloading idna-3.10-py3-none-any.whl (70 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 70.4/70.4 kB 23.5 MB/s eta 0:00:00
+Downloading urllib3-2.2.3-py3-none-any.whl (126 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 126.3/126.3 kB 38.6 MB/s eta 0:00:00
 Installing collected packages: urllib3, idna, charset-normalizer, certifi, requests
 Successfully installed certifi-2024.8.30 charset-normalizer-3.4.0 idna-3.10 requests-2.32.3 urllib3-2.2.3
