@@ -113,7 +113,7 @@ export OTEL_TRACES_EXPORTER=console
 Finally, run your script and see traces, metrics, and logs printed to stderr.
 
 # Installation
-This project currently supports and is actively tested on debian-based (Debian and Ubuntu) and rpm-based (Fedora, OpenSuse, and Red Hat Enterprise Linux (RHEL)) operating systems. The code also works on other Linux-based operating systems and should, in theory, even work on the Linux Subsystem for Windows. However, there are no readily available installation packages for these systems. Mac-based operating systems are currently not supported.
+This project currently supports and is actively tested on debian-based (Debian and Ubuntu) and rpm-based (Fedora, OpenSuse, and Red Hat Enterprise Linux (RHEL)) operating systems as well as on the Windows Subsystem for Linux. The code also works on other Linux-based operating systems, however, there are no readily available installation packages for these systems. Mac-based operating systems are currently not supported.
 
 Install either via
 ```bash

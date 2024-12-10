@@ -203,7 +203,7 @@ jobs:
             fi
           ' | sudo docker run -v $(pwd)/package.deb:/root/package.deb -v $(pwd)/package.rpm:/root/package.rpm --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
 
-  install-oneoff-user:
+  install-manual-user:
     needs: [ smoke ]
     runs-on: ubuntu-latest
     steps:
@@ -211,7 +211,7 @@ jobs:
       - run: cat INSTALL.sh | sh -x
       - run: type otel.sh
 
-  install-oneoff-os:
+  install-manual-os:
     needs: [ prepare-images, smoke ]
     runs-on: ubuntu-latest
     strategy:
@@ -233,7 +233,7 @@ jobs:
             echo type otel.sh
           } | sudo docker run --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
 
-  os-shell:
+  linux-shell:
     needs: [ prepare-images, prepare-shells, smoke ]
     runs-on: ubuntu-latest
     timeout-minutes: 60
@@ -249,11 +249,37 @@ jobs:
         with:
           name: packages
       - run: mv ./package.* tests
-      - run: bash -c 'cd tests && bash run_tests_containerized.sh "$OS" "$UPDATE" "$SHELL"'
+      - run: bash -c 'cd tests && bash run_tests_containerized.sh "${{ matrix.os }}" "${{ matrix.update }}" "${{ matrix.shell }}"'
         env:
-          OS: ${{ matrix.os }}
-          UPDATE: ${{ matrix.update }}
-          SHELL: ${{ matrix.shell }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  windows-shell:
+    needs: [ prepare-shells, smoke ]
+    runs-on: windows-latest
+    timeout-minutes: 60
+    strategy:
+      matrix:
+        shell: ${{ fromJSON(needs.prepare-shells.outputs.shells) }}
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+      - uses: Vampire/setup-wsl@v3.1.4
+      - shell: wsl-bash {0}
+        run: |
+          retry() {
+            while ! "$@"; do sleep 60; done
+          }
+          retry sudo apt-get update
+          retry sudo -E apt-get -y install ./packages/package.deb dos2unix jq psmisc wget curl time sudo 
+          for package in parallel moreutils ncat wget2 python3 python3-pip gcc docker; do # TODO nodejs npm
+            sudo -E apt-get -y install "$package" || true
+          done
+          [ ${{ matrix.shell }} = sh ] || retry sudo -E apt-get -y install ${{ matrix.shell }} || exit 0
+          dos2unix tests/*.sh tests/*/*
+          bash -c "cd tests && bash run_tests.sh ${{ matrix.shell }}"
+          sudo apt-get -y remove opentelemetry-shell
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   action:
@@ -350,7 +376,7 @@ jobs:
           retention-days: 1
 
   join:
-    needs: [upgrade, system-upgrade, dependency, install-oneoff-user, install-oneoff-os, os-shell, action, performance]
+    needs: [upgrade, system-upgrade, dependency, install-manual-user, install-manual-os, linux-shell, windows-shell, action, performance]
     runs-on: ubuntu-latest
     outputs:
       success: ${{ steps.tests.outputs.success }}

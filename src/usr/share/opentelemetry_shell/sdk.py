@@ -6,7 +6,7 @@ import json
 import requests
 import opentelemetry
 
-from opentelemetry.sdk.resources import Resource, ResourceDetector, OTELResourceDetector, get_aggregated_resources
+from opentelemetry.sdk.resources import Resource, ResourceDetector, OTELResourceDetector, OsResourceDetector, get_aggregated_resources
 from opentelemetry_resourcedetector_docker import DockerResourceDetector
 from opentelemetry_resourcedetector_kubernetes import KubernetesResourceDetector
 
@@ -148,6 +148,7 @@ def handle(scope, version, command, arguments):
                 KubernetesResourceDetector(),
                 DockerResourceDetector(),
                 GithubActionResourceDetector(),
+                OsResourceDetector(),
                 OTELResourceDetector(),
             ]).merge(Resource.create(resource))
 
