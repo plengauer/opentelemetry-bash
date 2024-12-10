@@ -267,19 +267,15 @@ jobs:
       - uses: Vampire/setup-wsl@v3.1.4
         with:
           update: 'false'
-      - uses: nick-fields/retry@v3
-        with:
-          timeout_minutes: 15
-          max_attempts: 3
-          retry_on: error
-          shell: wsl-bash {0}
-          command: |
-            sudo apt-get update
-            sudo -E apt-get -y install ./packages/package.deb dos2unix jq psmisc wget curl time sudo 
-            sudo -E apt-get -y install parallel moreutils ncat wget2 python3 python3-pip gcc docker || true # TODO nodejs npm
-            [ ${{ matrix.shell }} = sh ] || sudo -E apt-get -y install ${{ matrix.shell }} || exit 0
       - shell: wsl-bash {0}
         run: |
+          retry() {
+            while ! "$@"; do sleep 60; done
+          }
+          retry sudo apt-get update
+          retry sudo -E apt-get -y install ./packages/package.deb dos2unix jq psmisc wget curl time sudo 
+          retry sudo -E apt-get -y install parallel moreutils ncat wget2 python3 python3-pip gcc docker || true # TODO nodejs npm
+          [ ${{ matrix.shell }} = sh ] || retry sudo -E apt-get -y install ${{ matrix.shell }} || exit 0
           dos2unix tests/*.sh tests/*/*
           bash -c "cd tests && bash run_tests.sh ${{ matrix.shell }}"
           sudo apt-get -y remove opentelemetry-shell
