@@ -269,6 +269,7 @@ jobs:
           update: 'false'
       - uses: nick-fields/retry@v3
         with:
+          timeout_minutes: 15
           max_attempts: 3
           retry_on: error
           shell: wsl-bash {0}
