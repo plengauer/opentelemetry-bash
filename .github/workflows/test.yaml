@@ -265,12 +265,15 @@ jobs:
     timeout-minutes: 60
     strategy:
       matrix:
+        version: [1, 2]
         shell: ${{ fromJSON(needs.prepare-shells.outputs.shells) }}
       fail-fast: false
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
       - uses: Vampire/setup-wsl@v3.1.4
+        with:
+          wsl-version: ${{ matrix.version }}
       - shell: wsl-bash {0}
         run: |
           retry() {
