@@ -89,7 +89,12 @@ jobs:
       images_upgradeable: ${{ steps.dynamic.outputs.images_upgradeable }}
     steps:
       - uses: actions/checkout@v4
-      - run: |
+      - uses: actions/cache@v4
+        with:
+          path: images.json
+          key: images
+      - if: ${{ hashFiles('images.json') == '' }}
+        run: |
           min_version="$(cat src/DEBIAN/control | grep '^Pre-Depends:' | tr ',' '\n' | grep -F -- 'python3 (>=' | cut -d '(' -f 2- | cut -d ')' -f 1 | cut -d ' ' -f 2 | cut -d . -f 2)"
           printenv | grep '^IMAGE_' | while read -r kvp; do
             key="$(echo "$kvp" | cut -sd '=' -f 1 | tr '[:upper:]' '[:lower:]')"
@@ -99,6 +104,7 @@ jobs:
               | sudo docker run --rm --network=host -i "$value" \
               | cut -d ' ' -f 2 | cut -d . -f 2 | while read -r version; do [ "$version" -ge "$min_version" ] && echo "{\"image\":\"$value\",\"os\":\"$(echo "$key" | cut -d _ -f 2)\",\"type\":\"$(echo "$key" | cut -d _ -f 3)\"}" || true; done
           done | jq -s > images.json
+      - run: |
           [ "$(cat images.json | jq -r '.[].image' | wc -l)" -ge 5 ] # double check that we dont fail everywhere and then run no tests at all
           cat images.json | jq '.[] | select(.type != "dev")'                                                       | jq .image | sort -u | jq -s -r tostring | xargs -0 -I {} echo 'images={}' >> "$GITHUB_OUTPUT"
           cat images.json | jq '.[] | select(.type != "dev") | select(.type != "latest") | select(.os == "ubuntu")' | jq .image | sort -u | jq -s -r tostring | xargs -0 -I {} echo 'images_upgradeable={}' >> "$GITHUB_OUTPUT"
