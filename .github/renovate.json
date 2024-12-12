@@ -7,5 +7,6 @@
   "prHourlyLimit": 0,
   "prConcurrentLimit": 0,
   "automerge": true,
-  "automergeType": "pr"
+  "automergeType": "pr",
+  "ignoreUnstable": false
 }
