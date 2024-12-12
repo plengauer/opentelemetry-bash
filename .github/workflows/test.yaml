@@ -307,12 +307,14 @@ jobs:
           OTEL_METRICS_EXPORTER: console
           OTEL_LOGS_EXPORTER: console
           OTEL_TRACES_EXPORTER: console
-      - run: echo hello world # check if simple command fails
-      - run: sudo apt-get update
+      - run: | # check if install succeeded
+          type otel.sh && type strace
       - run: | # check if instrumentation happened
           [ "$(alias | grep '_otel_observe' | wc -l)" -gt 0 ]
       - run: | # check if traceparent is injected
           [ -n "$TRACEPARENT" ]
+      - run: echo hello world # check if simple command fails
+      - run: sudo apt-get update # check if complex command fails
       - uses: actions/download-artifact@v4 # check if node action works
         with:
           name: packages
