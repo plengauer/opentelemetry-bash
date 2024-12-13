@@ -94,7 +94,7 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: images.json
-          key: images-${{ steps.key.outputs.key }}
+          key: images ${{ steps.key.outputs.key }}
       - if: ${{ hashFiles('images.json') == '' }}
         run: |
           min_version="$(cat src/DEBIAN/control | grep '^Pre-Depends:' | tr ',' '\n' | grep -F -- 'python3 (>=' | cut -d '(' -f 2- | cut -d ')' -f 1 | cut -d ' ' -f 2 | cut -d . -f 2)"
