@@ -1,2 +1,2 @@
-opentelemetry-distro==0.49b2
-opentelemetry-exporter-otlp==1.28.2
+opentelemetry-distro==0.50b0
+opentelemetry-exporter-otlp==1.29.0
