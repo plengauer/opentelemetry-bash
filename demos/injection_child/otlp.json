@@ -18,7 +18,7 @@
           {
             "key": "telemetry.sdk.version",
             "value": {
-              "stringValue": "4.40.0"
+              "stringValue": "4.42.1"
             }
           },
           {
@@ -30,7 +30,7 @@
           {
             "key": "github.sha",
             "value": {
-              "stringValue": "6b7d4d865470d5c92812c790db367815af92a6cc"
+              "stringValue": "b28a4d8db186c3ddcf3b3807a72dbc1a21094898"
             }
           },
           {
@@ -66,7 +66,7 @@
           {
             "key": "github.event.ref.sha",
             "value": {
-              "stringValue": "6b7d4d865470d5c92812c790db367815af92a6cc"
+              "stringValue": "b28a4d8db186c3ddcf3b3807a72dbc1a21094898"
             }
           },
           {
@@ -78,31 +78,31 @@
           {
             "key": "github.event.actor.id",
             "value": {
-              "stringValue": "170979611"
+              "stringValue": "100447901"
             }
           },
           {
             "key": "github.event.actor.name",
             "value": {
-              "stringValue": "actions-bot-pl"
+              "stringValue": "plengauer"
             }
           },
           {
             "key": "github.event.name",
             "value": {
-              "stringValue": "push"
+              "stringValue": "workflow_dispatch"
             }
           },
           {
             "key": "github.workflow.run.id",
             "value": {
-              "stringValue": "11969599531"
+              "stringValue": "12338760964"
             }
           },
           {
             "key": "github.workflow.run.attempt",
             "value": {
-              "stringValue": "2"
+              "stringValue": "1"
             }
           },
           {
@@ -114,7 +114,7 @@
           {
             "key": "github.workflow.sha",
             "value": {
-              "stringValue": "6b7d4d865470d5c92812c790db367815af92a6cc"
+              "stringValue": "b28a4d8db186c3ddcf3b3807a72dbc1a21094898"
             }
           },
           {
@@ -142,15 +142,27 @@
             }
           },
           {
+            "key": "os.type",
+            "value": {
+              "stringValue": "linux"
+            }
+          },
+          {
+            "key": "os.version",
+            "value": {
+              "stringValue": "6.8.0-1017-azure"
+            }
+          },
+          {
             "key": "process.pid",
             "value": {
-              "intValue": "3638"
+              "intValue": "3432"
             }
           },
           {
             "key": "process.parent_pid",
             "value": {
-              "intValue": "2893"
+              "intValue": "2687"
             }
           },
           {
@@ -198,7 +210,7 @@
           {
             "key": "process.runtime.version",
             "value": {
-              "stringValue": "0.5.11+git20210903+057cd650a4ed-3build1"
+              "stringValue": "0.5.12-6ubuntu5"
             }
           },
           {
@@ -231,18 +243,18 @@
         {
           "scope": {
             "name": "shell",
-            "version": "4.40.0"
+            "version": "4.42.1"
           },
           "spans": [
             {
-              "traceId": "cece1013cc656e41fcad97fd79f9792f",
-              "spanId": "f728ec85b03087e1",
-              "parentSpanId": "276310d762b53185",
+              "traceId": "a5311424721cd565f212f755f56e9836",
+              "spanId": "6a9c63df01001843",
+              "parentSpanId": "f8a0c6d08a85c9af",
               "flags": 768,
               "name": "echo hello world from child",
               "kind": 1,
-              "startTimeUnixNano": "1732279275504816343",
-              "endTimeUnixNano": "1732279275521056292",
+              "startTimeUnixNano": "1734305741046523023",
+              "endTimeUnixNano": "1734305741061539894",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -309,7 +321,7 @@
           {
             "key": "telemetry.sdk.version",
             "value": {
-              "stringValue": "4.40.0"
+              "stringValue": "4.42.1"
             }
           },
           {
@@ -321,7 +333,7 @@
           {
             "key": "github.sha",
             "value": {
-              "stringValue": "6b7d4d865470d5c92812c790db367815af92a6cc"
+              "stringValue": "b28a4d8db186c3ddcf3b3807a72dbc1a21094898"
             }
           },
           {
@@ -357,7 +369,7 @@
           {
             "key": "github.event.ref.sha",
             "value": {
-              "stringValue": "6b7d4d865470d5c92812c790db367815af92a6cc"
+              "stringValue": "b28a4d8db186c3ddcf3b3807a72dbc1a21094898"
             }
           },
           {
@@ -369,31 +381,31 @@
           {
             "key": "github.event.actor.id",
             "value": {
-              "stringValue": "170979611"
+              "stringValue": "100447901"
             }
           },
           {
             "key": "github.event.actor.name",
             "value": {
-              "stringValue": "actions-bot-pl"
+              "stringValue": "plengauer"
             }
           },
           {
             "key": "github.event.name",
             "value": {
-              "stringValue": "push"
+              "stringValue": "workflow_dispatch"
             }
           },
           {
             "key": "github.workflow.run.id",
             "value": {
-              "stringValue": "11969599531"
+              "stringValue": "12338760964"
             }
           },
           {
             "key": "github.workflow.run.attempt",
             "value": {
-              "stringValue": "2"
+              "stringValue": "1"
             }
           },
           {
@@ -405,7 +417,7 @@
           {
             "key": "github.workflow.sha",
             "value": {
-              "stringValue": "6b7d4d865470d5c92812c790db367815af92a6cc"
+              "stringValue": "b28a4d8db186c3ddcf3b3807a72dbc1a21094898"
             }
           },
           {
@@ -433,15 +445,27 @@
             }
           },
           {
+            "key": "os.type",
+            "value": {
+              "stringValue": "linux"
+            }
+          },
+          {
+            "key": "os.version",
+            "value": {
+              "stringValue": "6.8.0-1017-azure"
+            }
+          },
+          {
             "key": "process.pid",
             "value": {
-              "intValue": "2893"
+              "intValue": "2687"
             }
           },
           {
             "key": "process.parent_pid",
             "value": {
-              "intValue": "2794"
+              "intValue": "2586"
             }
           },
           {
@@ -489,7 +513,7 @@
           {
             "key": "process.runtime.version",
             "value": {
-              "stringValue": "5.1-6ubuntu1.1"
+              "stringValue": "5.2.21-2ubuntu4"
             }
           },
           {
@@ -522,18 +546,18 @@
         {
           "scope": {
             "name": "shell",
-            "version": "4.40.0"
+            "version": "4.42.1"
           },
           "spans": [
             {
-              "traceId": "cece1013cc656e41fcad97fd79f9792f",
-              "spanId": "276310d762b53185",
-              "parentSpanId": "29f064fc6231b18c",
+              "traceId": "a5311424721cd565f212f755f56e9836",
+              "spanId": "f8a0c6d08a85c9af",
+              "parentSpanId": "69d724b193bfbede",
               "flags": 768,
               "name": "sh ./child.sh hello world from child",
               "kind": 1,
-              "startTimeUnixNano": "1732279274859312604",
-              "endTimeUnixNano": "1732279275558884984",
+              "startTimeUnixNano": "1734305740446569849",
+              "endTimeUnixNano": "1734305741093270063",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -593,14 +617,14 @@
               "status": {}
             },
             {
-              "traceId": "cece1013cc656e41fcad97fd79f9792f",
-              "spanId": "a66cc067d3656e49",
-              "parentSpanId": "29f064fc6231b18c",
+              "traceId": "a5311424721cd565f212f755f56e9836",
+              "spanId": "21e19dc7d2ba50da",
+              "parentSpanId": "69d724b193bfbede",
               "flags": 768,
               "name": "printf echo hello world from stdin",
               "kind": 1,
-              "startTimeUnixNano": "1732279275564768854",
-              "endTimeUnixNano": "1732279275581897885",
+              "startTimeUnixNano": "1734305741098366614",
+              "endTimeUnixNano": "1734305741114041652",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -673,7 +697,7 @@
           {
             "key": "telemetry.sdk.version",
             "value": {
-              "stringValue": "4.40.0"
+              "stringValue": "4.42.1"
             }
           },
           {
@@ -685,7 +709,7 @@
           {
             "key": "github.sha",
             "value": {
-              "stringValue": "6b7d4d865470d5c92812c790db367815af92a6cc"
+              "stringValue": "b28a4d8db186c3ddcf3b3807a72dbc1a21094898"
             }
           },
           {
@@ -721,7 +745,7 @@
           {
             "key": "github.event.ref.sha",
             "value": {
-              "stringValue": "6b7d4d865470d5c92812c790db367815af92a6cc"
+              "stringValue": "b28a4d8db186c3ddcf3b3807a72dbc1a21094898"
             }
           },
           {
@@ -733,31 +757,31 @@
           {
             "key": "github.event.actor.id",
             "value": {
-              "stringValue": "170979611"
+              "stringValue": "100447901"
             }
           },
           {
             "key": "github.event.actor.name",
             "value": {
-              "stringValue": "actions-bot-pl"
+              "stringValue": "plengauer"
             }
           },
           {
             "key": "github.event.name",
             "value": {
-              "stringValue": "push"
+              "stringValue": "workflow_dispatch"
             }
           },
           {
             "key": "github.workflow.run.id",
             "value": {
-              "stringValue": "11969599531"
+              "stringValue": "12338760964"
             }
           },
           {
             "key": "github.workflow.run.attempt",
             "value": {
-              "stringValue": "2"
+              "stringValue": "1"
             }
           },
           {
@@ -769,7 +793,7 @@
           {
             "key": "github.workflow.sha",
             "value": {
-              "stringValue": "6b7d4d865470d5c92812c790db367815af92a6cc"
+              "stringValue": "b28a4d8db186c3ddcf3b3807a72dbc1a21094898"
             }
           },
           {
@@ -797,15 +821,27 @@
             }
           },
           {
+            "key": "os.type",
+            "value": {
+              "stringValue": "linux"
+            }
+          },
+          {
+            "key": "os.version",
+            "value": {
+              "stringValue": "6.8.0-1017-azure"
+            }
+          },
+          {
             "key": "process.pid",
             "value": {
-              "intValue": "4448"
+              "intValue": "4242"
             }
           },
           {
             "key": "process.parent_pid",
             "value": {
-              "intValue": "4445"
+              "intValue": "4239"
             }
           },
           {
@@ -853,7 +889,7 @@
           {
             "key": "process.runtime.version",
             "value": {
-              "stringValue": "0.5.11+git20210903+057cd650a4ed-3build1"
+              "stringValue": "0.5.12-6ubuntu5"
             }
           },
           {
@@ -886,18 +922,18 @@
         {
           "scope": {
             "name": "shell",
-            "version": "4.40.0"
+            "version": "4.42.1"
           },
           "spans": [
             {
-              "traceId": "cece1013cc656e41fcad97fd79f9792f",
-              "spanId": "374f62c04cb08592",
-              "parentSpanId": "af89883cd656f2b3",
+              "traceId": "a5311424721cd565f212f755f56e9836",
+              "spanId": "8823ec160971db8f",
+              "parentSpanId": "6ac4466651c16d7c",
               "flags": 768,
               "name": "echo hello world from stdin",
               "kind": 1,
-              "startTimeUnixNano": "1732279322018659009",
-              "endTimeUnixNano": "1732279322034687554",
+              "startTimeUnixNano": "1734305792395647869",
+              "endTimeUnixNano": "1734305792410635271",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -964,7 +1000,7 @@
           {
             "key": "telemetry.sdk.version",
             "value": {
-              "stringValue": "4.40.0"
+              "stringValue": "4.42.1"
             }
           },
           {
@@ -976,7 +1012,7 @@
           {
             "key": "github.sha",
             "value": {
-              "stringValue": "6b7d4d865470d5c92812c790db367815af92a6cc"
+              "stringValue": "b28a4d8db186c3ddcf3b3807a72dbc1a21094898"
             }
           },
           {
@@ -1012,7 +1048,7 @@
           {
             "key": "github.event.ref.sha",
             "value": {
-              "stringValue": "6b7d4d865470d5c92812c790db367815af92a6cc"
+              "stringValue": "b28a4d8db186c3ddcf3b3807a72dbc1a21094898"
             }
           },
           {
@@ -1024,31 +1060,31 @@
           {
             "key": "github.event.actor.id",
             "value": {
-              "stringValue": "170979611"
+              "stringValue": "100447901"
             }
           },
           {
             "key": "github.event.actor.name",
             "value": {
-              "stringValue": "actions-bot-pl"
+              "stringValue": "plengauer"
             }
           },
           {
             "key": "github.event.name",
             "value": {
-              "stringValue": "push"
+              "stringValue": "workflow_dispatch"
             }
           },
           {
             "key": "github.workflow.run.id",
             "value": {
-              "stringValue": "11969599531"
+              "stringValue": "12338760964"
             }
           },
           {
             "key": "github.workflow.run.attempt",
             "value": {
-              "stringValue": "2"
+              "stringValue": "1"
             }
           },
           {
@@ -1060,7 +1096,7 @@
           {
             "key": "github.workflow.sha",
             "value": {
-              "stringValue": "6b7d4d865470d5c92812c790db367815af92a6cc"
+              "stringValue": "b28a4d8db186c3ddcf3b3807a72dbc1a21094898"
             }
           },
           {
@@ -1088,15 +1124,27 @@
             }
           },
           {
+            "key": "os.type",
+            "value": {
+              "stringValue": "linux"
+            }
+          },
+          {
+            "key": "os.version",
+            "value": {
+              "stringValue": "6.8.0-1017-azure"
+            }
+          },
+          {
             "key": "process.pid",
             "value": {
-              "intValue": "88478"
+              "intValue": "92340"
             }
           },
           {
             "key": "process.parent_pid",
             "value": {
-              "intValue": "2893"
+              "intValue": "2687"
             }
           },
           {
@@ -1144,7 +1192,7 @@
           {
             "key": "process.runtime.version",
             "value": {
-              "stringValue": "0.5.11+git20210903+057cd650a4ed-3build1"
+              "stringValue": "0.5.12-6ubuntu5"
             }
           },
           {
@@ -1177,18 +1225,18 @@
         {
           "scope": {
             "name": "shell",
-            "version": "4.40.0"
+            "version": "4.42.1"
           },
           "spans": [
             {
-              "traceId": "cece1013cc656e41fcad97fd79f9792f",
-              "spanId": "935e9cc69be5836d",
-              "parentSpanId": "899e65539f62b1ac",
+              "traceId": "a5311424721cd565f212f755f56e9836",
+              "spanId": "27d12b58345f252f",
+              "parentSpanId": "68cfca11c8456e77",
               "flags": 768,
               "name": "echo hello world from -c",
               "kind": 1,
-              "startTimeUnixNano": "1732279322468892078",
-              "endTimeUnixNano": "1732279322484493167",
+              "startTimeUnixNano": "1734305792798994238",
+              "endTimeUnixNano": "1734305792813818107",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -1251,7 +1299,7 @@
           {
             "key": "telemetry.sdk.version",
             "value": {
-              "stringValue": "4.40.0"
+              "stringValue": "4.42.1"
             }
           },
           {
@@ -1263,7 +1311,7 @@
           {
             "key": "github.sha",
             "value": {
-              "stringValue": "6b7d4d865470d5c92812c790db367815af92a6cc"
+              "stringValue": "b28a4d8db186c3ddcf3b3807a72dbc1a21094898"
             }
           },
           {
@@ -1299,7 +1347,7 @@
           {
             "key": "github.event.ref.sha",
             "value": {
-              "stringValue": "6b7d4d865470d5c92812c790db367815af92a6cc"
+              "stringValue": "b28a4d8db186c3ddcf3b3807a72dbc1a21094898"
             }
           },
           {
@@ -1311,31 +1359,31 @@
           {
             "key": "github.event.actor.id",
             "value": {
-              "stringValue": "170979611"
+              "stringValue": "100447901"
             }
           },
           {
             "key": "github.event.actor.name",
             "value": {
-              "stringValue": "actions-bot-pl"
+              "stringValue": "plengauer"
             }
           },
           {
             "key": "github.event.name",
             "value": {
-              "stringValue": "push"
+              "stringValue": "workflow_dispatch"
             }
           },
           {
             "key": "github.workflow.run.id",
             "value": {
-              "stringValue": "11969599531"
+              "stringValue": "12338760964"
             }
           },
           {
             "key": "github.workflow.run.attempt",
             "value": {
-              "stringValue": "2"
+              "stringValue": "1"
             }
           },
           {
@@ -1347,7 +1395,7 @@
           {
             "key": "github.workflow.sha",
             "value": {
-              "stringValue": "6b7d4d865470d5c92812c790db367815af92a6cc"
+              "stringValue": "b28a4d8db186c3ddcf3b3807a72dbc1a21094898"
             }
           },
           {
@@ -1375,15 +1423,27 @@
             }
           },
           {
+            "key": "os.type",
+            "value": {
+              "stringValue": "linux"
+            }
+          },
+          {
+            "key": "os.version",
+            "value": {
+              "stringValue": "6.8.0-1017-azure"
+            }
+          },
+          {
             "key": "process.pid",
             "value": {
-              "intValue": "2893"
+              "intValue": "2687"
             }
           },
           {
             "key": "process.parent_pid",
             "value": {
-              "intValue": "2794"
+              "intValue": "2586"
             }
           },
           {
@@ -1431,7 +1491,7 @@
           {
             "key": "process.runtime.version",
             "value": {
-              "stringValue": "5.1-6ubuntu1.1"
+              "stringValue": "5.2.21-2ubuntu4"
             }
           },
           {
@@ -1464,18 +1524,18 @@
         {
           "scope": {
             "name": "shell",
-            "version": "4.40.0"
+            "version": "4.42.1"
           },
           "spans": [
             {
-              "traceId": "cece1013cc656e41fcad97fd79f9792f",
-              "spanId": "af89883cd656f2b3",
-              "parentSpanId": "29f064fc6231b18c",
+              "traceId": "a5311424721cd565f212f755f56e9836",
+              "spanId": "6ac4466651c16d7c",
+              "parentSpanId": "69d724b193bfbede",
               "flags": 768,
               "name": "sh",
               "kind": 1,
-              "startTimeUnixNano": "1732279275565778742",
-              "endTimeUnixNano": "1732279322070404175",
+              "startTimeUnixNano": "1734305741099399561",
+              "endTimeUnixNano": "1734305792443347918",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -1535,14 +1595,14 @@
               "status": {}
             },
             {
-              "traceId": "cece1013cc656e41fcad97fd79f9792f",
-              "spanId": "899e65539f62b1ac",
-              "parentSpanId": "29f064fc6231b18c",
+              "traceId": "a5311424721cd565f212f755f56e9836",
+              "spanId": "68cfca11c8456e77",
+              "parentSpanId": "69d724b193bfbede",
               "flags": 768,
               "name": "sh -c echo \"$@\" sh hello world from -c",
               "kind": 1,
-              "startTimeUnixNano": "1732279322075665081",
-              "endTimeUnixNano": "1732279322519662275",
+              "startTimeUnixNano": "1734305792448224955",
+              "endTimeUnixNano": "1734305792846528619",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -1602,14 +1662,14 @@
               "status": {}
             },
             {
-              "traceId": "cece1013cc656e41fcad97fd79f9792f",
-              "spanId": "29f064fc6231b18c",
+              "traceId": "a5311424721cd565f212f755f56e9836",
+              "spanId": "69d724b193bfbede",
               "parentSpanId": "",
               "flags": 256,
               "name": "bash -e demo.sh",
               "kind": 2,
-              "startTimeUnixNano": "1732279274845250435",
-              "endTimeUnixNano": "1732279322519856648",
+              "startTimeUnixNano": "1734305740433824864",
+              "endTimeUnixNano": "1734305792846729722",
               "status": {}
             }
           ]
