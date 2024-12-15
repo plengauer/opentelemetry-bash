@@ -47,6 +47,14 @@ jobs:
           asset_path: ./package.rpm
           asset_name: opentelemetry-shell_${{ steps.version.outputs.version }}.rpm
           asset_content_type: application/octet-stream
+- name: Attest
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: '${{ github.workspace }}/my-app'
+- name: Attest
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: '${{ github.workspace }}/my-app'
 
   demo-prepare:
     runs-on: ubuntu-latest
