@@ -30,7 +30,7 @@ print(*map(lambda element: element["instrumentation"], libraries), sep="\n") # S
       (cd /opt/opentelemetry_shell/venv/lib/python3.*/site-packages && ln --symbolic /usr/share/opentelemetry_shell/opentelemetry_shell.custom.python.deep.py usercustomize.py 2> /dev/null || true)
     fi
     export PATH="$PATH":/usr/local/bin
-    if type npm 2> /dev/null && (! [ -d /opt/opentelemetry_shell/node_modules ] || [ "${OTEL_SHELL_CONFIG_INSTALL_ASSUME:-FALSE}" = FALSE ]); then # SKIP_DEPENDENCY_CHECK
+    if type npm 2> /dev/null && [ "$(node --version | cut -d v -f 2 | cut -d . -f 1)" -ge 14 ] && (! [ -d /opt/opentelemetry_shell/node_modules ] || [ "${OTEL_SHELL_CONFIG_INSTALL_ASSUME:-FALSE}" = FALSE ]); then # SKIP_DEPENDENCY_CHECK
       (cd /opt/opentelemetry_shell && npm install --package-lock=false)
       (cd /usr/share/opentelemetry_shell/ && ln --symbolic ../../../opt/opentelemetry_shell/node_modules node_modules 2> /dev/null || true)
     fi
