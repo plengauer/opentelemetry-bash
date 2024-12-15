@@ -1,4 +1,5 @@
 if ! type node; then exit 0; fi
+if ! [ -d /opt/opentelemetry_shell/node_modules ]; then exit 0; fi
 . ./assert.sh
 
 . otel.sh

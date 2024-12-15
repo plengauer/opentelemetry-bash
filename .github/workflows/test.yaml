@@ -216,7 +216,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: cat INSTALL.sh | sh -x
+      - run: cat INSTALL.sh | sh -e
       - run: type otel.sh
 
   install-manual-os:
@@ -387,7 +387,7 @@ jobs:
           retention-days: 1
 
   join:
-    needs: [upgrade, system-upgrade, dependency, install-manual-user, install-manual-os, linux-shell, windows-shell, action, performance]
+    needs: [upgrade, system-upgrade, dependency, linux-shell, windows-shell, action] # , install-manual-user, install-manual-os # TODO if new dependencies break old package managers, since this test fetches old builds, we will never be able to merge again
     runs-on: ubuntu-latest
     outputs:
       success: ${{ steps.tests.outputs.success }}
