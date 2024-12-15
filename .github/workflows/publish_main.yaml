@@ -15,6 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      id-token: write
+      attestations: write
     steps:
       - uses: actions/checkout@v4
       - run: echo "version=$(cat VERSION)" >> "$GITHUB_OUTPUT"
@@ -22,6 +24,14 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: packages
+      - uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: ./package.deb
+          subject-name: opentelemetry-shell_${{ steps.version.outputs.version }}.deb
+      - uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: ./package.rpm
+          subject-name: opentelemetry-shell_${{ steps.version.outputs.version }}.rpm
       - uses: actions/create-release@v1
         id: create_release
         env:
@@ -47,14 +57,6 @@ jobs:
           asset_path: ./package.rpm
           asset_name: opentelemetry-shell_${{ steps.version.outputs.version }}.rpm
           asset_content_type: application/octet-stream
-- name: Attest
-        uses: actions/attest-build-provenance@v2
-        with:
-          subject-path: '${{ github.workspace }}/my-app'
-- name: Attest
-        uses: actions/attest-build-provenance@v2
-        with:
-          subject-path: '${{ github.workspace }}/my-app'
 
   demo-prepare:
     runs-on: ubuntu-latest
