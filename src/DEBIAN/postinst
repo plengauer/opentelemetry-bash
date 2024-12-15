@@ -27,7 +27,7 @@ print(*map(lambda element: element["instrumentation"], libraries), sep="\n") # S
       (cd /opt/opentelemetry_shell/venv/lib/python3.*/site-packages && ln --symbolic /usr/share/opentelemetry_shell/opentelemetry_shell.custom.python.deep.py usercustomize.py 2> /dev/null || true)
     fi
     export PATH="$PATH":/usr/local/bin
-    if type npm 2> /dev/null; then # SKIP_DEPENDENCY_CHECK
+    if type npm 2> /dev/null && [ "$(node --version | cut -d v -f 2 | cut -d . -f 1)" -ge 14 ]; then # SKIP_DEPENDENCY_CHECK
       cache="$(npm config list -l | grep -E '^cache = ' | cut -d '=' -f 2- | tr -d '" ')" # SKIP_DEPENDENCY_CHECK
       if [ -d "$cache" ]; then
         user="$(echo "$cache" | rev | cut -d / -f 2- | rev | xargs stat -c '%U')"
