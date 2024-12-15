@@ -18,7 +18,7 @@
           {
             "key": "telemetry.sdk.version",
             "value": {
-              "stringValue": "4.37.0"
+              "stringValue": "4.42.1"
             }
           },
           {
@@ -30,7 +30,7 @@
           {
             "key": "github.sha",
             "value": {
-              "stringValue": "09a2709fd7e39a69fb9e00239add2d9a9aa1a0e0"
+              "stringValue": "b28a4d8db186c3ddcf3b3807a72dbc1a21094898"
             }
           },
           {
@@ -66,7 +66,7 @@
           {
             "key": "github.event.ref.sha",
             "value": {
-              "stringValue": "09a2709fd7e39a69fb9e00239add2d9a9aa1a0e0"
+              "stringValue": "b28a4d8db186c3ddcf3b3807a72dbc1a21094898"
             }
           },
           {
@@ -78,25 +78,25 @@
           {
             "key": "github.event.actor.id",
             "value": {
-              "stringValue": "170979611"
+              "stringValue": "100447901"
             }
           },
           {
             "key": "github.event.actor.name",
             "value": {
-              "stringValue": "actions-bot-pl"
+              "stringValue": "plengauer"
             }
           },
           {
             "key": "github.event.name",
             "value": {
-              "stringValue": "push"
+              "stringValue": "workflow_dispatch"
             }
           },
           {
             "key": "github.workflow.run.id",
             "value": {
-              "stringValue": "11650349700"
+              "stringValue": "12338760964"
             }
           },
           {
@@ -114,7 +114,7 @@
           {
             "key": "github.workflow.sha",
             "value": {
-              "stringValue": "09a2709fd7e39a69fb9e00239add2d9a9aa1a0e0"
+              "stringValue": "b28a4d8db186c3ddcf3b3807a72dbc1a21094898"
             }
           },
           {
@@ -142,15 +142,27 @@
             }
           },
           {
+            "key": "os.type",
+            "value": {
+              "stringValue": "linux"
+            }
+          },
+          {
+            "key": "os.version",
+            "value": {
+              "stringValue": "6.8.0-1017-azure"
+            }
+          },
+          {
             "key": "process.pid",
             "value": {
-              "intValue": "2719"
+              "intValue": "2681"
             }
           },
           {
             "key": "process.parent_pid",
             "value": {
-              "intValue": "2624"
+              "intValue": "2584"
             }
           },
           {
@@ -198,7 +210,7 @@
           {
             "key": "process.runtime.version",
             "value": {
-              "stringValue": "5.1-6ubuntu1.1"
+              "stringValue": "5.2.21-2ubuntu4"
             }
           },
           {
@@ -231,18 +243,18 @@
         {
           "scope": {
             "name": "shell",
-            "version": "4.37.0"
+            "version": "4.42.1"
           },
           "spans": [
             {
-              "traceId": "85bad867a0176cc53d5f301fccb5d9e4",
-              "spanId": "44493914225fede8",
-              "parentSpanId": "6dc8c7aa96a62047",
+              "traceId": "044e7e18dc1da8bff14c4c093723df06",
+              "spanId": "f1bed9ef9b0202ad",
+              "parentSpanId": "c5aa06ee7c089224",
               "flags": 768,
               "name": "echo hello world",
               "kind": 1,
-              "startTimeUnixNano": "1730634724294864487",
-              "endTimeUnixNano": "1730634724310795071",
+              "startTimeUnixNano": "1734305737988159696",
+              "endTimeUnixNano": "1734305738003904961",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -290,14 +302,14 @@
               "status": {}
             },
             {
-              "traceId": "85bad867a0176cc53d5f301fccb5d9e4",
-              "spanId": "6dc8c7aa96a62047",
+              "traceId": "044e7e18dc1da8bff14c4c093723df06",
+              "spanId": "c5aa06ee7c089224",
               "parentSpanId": "",
               "flags": 256,
               "name": "bash -e demo.sh",
               "kind": 2,
-              "startTimeUnixNano": "1730634724282112461",
-              "endTimeUnixNano": "1730634724310908583",
+              "startTimeUnixNano": "1734305737975169838",
+              "endTimeUnixNano": "1734305738004020486",
               "status": {}
             }
           ]
