@@ -89,10 +89,12 @@ jobs:
       images_upgradeable: ${{ steps.dynamic.outputs.images_upgradeable }}
     steps:
       - uses: actions/checkout@v4
+      - id: key
+        run: printenv | grep -E '^IMAGE_' | md5sum | cut -d ' ' -f 1 | xargs -I '{}' echo "key={}" >> "$GITHUB_OUTPUT"
       - uses: actions/cache@v4
         with:
           path: images.json
-          key: images
+          key: images ${{ steps.key.outputs.key }}
       - if: ${{ hashFiles('images.json') == '' }}
         run: |
           min_version="$(cat src/DEBIAN/control | grep '^Pre-Depends:' | tr ',' '\n' | grep -F -- 'python3 (>=' | cut -d '(' -f 2- | cut -d ')' -f 1 | cut -d ' ' -f 2 | cut -d . -f 2)"
