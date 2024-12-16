@@ -9,3 +9,6 @@ inputs:
   __job_status:
     description: 'INTERNAL ONLY - DO NOT SET MANUALLY'
     default: '${{ job.status }}'
+  cache:
+    description: 'Whether to use GitHub Actions Cache to cache dependencies'
+    default: false
