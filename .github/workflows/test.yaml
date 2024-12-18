@@ -46,7 +46,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: packages
-      - run: sudo -E apt-get -y install ./package.deb
+      - run: sudo apt-get -y install ./package.deb
       - run: bash -c "cd tests && bash run_tests.sh bash"
       - run: sudo apt-get -y remove opentelemetry-shell
 
@@ -89,10 +89,12 @@ jobs:
       images_upgradeable: ${{ steps.dynamic.outputs.images_upgradeable }}
     steps:
       - uses: actions/checkout@v4
+      - id: key
+        run: printenv | grep -E '^IMAGE_' | md5sum | cut -d ' ' -f 1 | xargs -I '{}' echo "key={}" >> "$GITHUB_OUTPUT"
       - uses: actions/cache@v4
         with:
           path: images.json
-          key: images
+          key: images ${{ steps.key.outputs.key }}
       - if: ${{ hashFiles('images.json') == '' }}
         run: |
           min_version="$(cat src/DEBIAN/control | grep '^Pre-Depends:' | tr ',' '\n' | grep -F -- 'python3 (>=' | cut -d '(' -f 2- | cut -d ')' -f 1 | cut -d ' ' -f 2 | cut -d . -f 2)"
@@ -295,24 +297,31 @@ jobs:
     needs: smoke
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    strategy:
+      matrix:
+        cache: ['false', 'true']
+      fail-fast: false
     steps:
       - run: printenv | grep '^GITHUB_'
+      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
           name: packages
-      - run: sudo -E apt-get install ./package.deb
-      - uses: actions/checkout@v4
       - uses: ./actions/instrument/job
+        with:
+          cache: ${{ matrix.cache }}
         env:
           OTEL_METRICS_EXPORTER: console
           OTEL_LOGS_EXPORTER: console
           OTEL_TRACES_EXPORTER: console
-      - run: echo hello world # check if simple command fails
-      - run: sudo apt-get update
+      - run: | # check if install succeeded
+          type otel.sh && type strace
       - run: | # check if instrumentation happened
           [ "$(alias | grep '_otel_observe' | wc -l)" -gt 0 ]
       - run: | # check if traceparent is injected
           [ -n "$TRACEPARENT" ]
+      - run: echo hello world # check if simple command fails
+      - run: sudo apt-get update # check if complex command fails
       - uses: actions/download-artifact@v4 # check if node action works
         with:
           name: packages
@@ -384,24 +393,10 @@ jobs:
           path: performance.${{ matrix.tag_name }}.warmstart.list
           retention-days: 1
 
-  join:
-    needs: [upgrade, system-upgrade, dependency, linux-shell, windows-shell, action] # , install-manual-user, install-manual-os # TODO if new dependencies break old package managers, since this test fetches old builds, we will never be able to merge again
-    runs-on: ubuntu-latest
-    outputs:
-      success: ${{ steps.tests.outputs.success }}
-    steps:
-      - id: tests
-        run: echo "success=true" >> "$GITHUB_OUTPUT"
-
-  all:
-    if: ${{ always() }}
-    needs: [join]
+  performance-summary:
+    needs: performance
     runs-on: ubuntu-latest
     steps:
-      - env:
-          SUCCESS: ${{ needs.join.outputs.success }}
-        run: |
-          [ "$SUCCESS" = 'true' ]
       - uses: actions/download-artifact@v4
         with:
           pattern: 'performance.*.list'
@@ -430,3 +425,22 @@ jobs:
           name: performance.png
           path: performance.png
           retention-days: 90
+
+  join:
+    needs: [upgrade, system-upgrade, dependency, linux-shell, windows-shell, action]
+    runs-on: ubuntu-latest
+    outputs:
+      success: ${{ steps.tests.outputs.success }}
+    steps:
+      - id: tests
+        run: echo "success=true" >> "$GITHUB_OUTPUT"
+
+  all:
+    if: ${{ always() }} # this is because we need this to fail and not skipped to avoid PRs getting merged without this passing
+    needs: join
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          SUCCESS: ${{ needs.join.outputs.success }}
+        run: |
+          [ "$SUCCESS" = 'true' ]
