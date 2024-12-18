@@ -9,7 +9,10 @@
   "packageRules": [
      {
        "groupName": "opentelemetry-python monorepo",
-       "matchSourceUrls": [ "https://github.com/open-telemetry/opentelemetry-python", "https://github.com/open-telemetry/opentelemetry-python-contrib" ],
+       "matchSourceUrls": [
+         "https://github.com/open-telemetry/opentelemetry-python",
+         "https://github.com/open-telemetry/opentelemetry-python-contrib"
+       ],
        "ignoreUnstable": false
      }
   ]
