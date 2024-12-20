@@ -3,10 +3,17 @@
   "extends": [
     "config:recommended"
   ],
-  "dependencyDashboard": true,
   "prHourlyLimit": 0,
   "prConcurrentLimit": 0,
   "automerge": true,
-  "automergeType": "pr",
-  "ignoreUnstable": false
+  "packageRules": [
+     {
+       "groupName": "opentelemetry-python monorepo",
+       "matchSourceUrls": [
+         "https://github.com/open-telemetry/opentelemetry-python",
+         "https://github.com/open-telemetry/opentelemetry-python-contrib"
+       ],
+       "ignoreUnstable": false
+     }
+  ]
 }
