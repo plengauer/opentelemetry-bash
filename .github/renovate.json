@@ -7,15 +7,15 @@
   "prConcurrentLimit": 0,
   "automerge": true,
   "packageRules": [
-     {
-       "groupName": "opentelemetry-python monorepo",
-       "matchPackagePatterns": [
-         "^opentelemetry-"
-       ],
-       "matchManagers": [
-         "pip_requirements"
-       ],
-       "ignoreUnstable": false
-     }
+    {
+      "groupName": "opentelemetry-python monorepo",
+      "matchManagers": [
+        "pip_requirements"
+      ],
+      "ignoreUnstable": false,
+      "matchPackageNames": [
+        "/^opentelemetry-/"
+      ]
+    }
   ]
 }
