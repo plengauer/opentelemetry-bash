@@ -13,7 +13,7 @@
          "^opentelemetry-"
        ],
        "matchManagers": [
-         "pip_requirements",
+         "pip_requirements"
        ],
        "ignoreUnstable": false
      }
