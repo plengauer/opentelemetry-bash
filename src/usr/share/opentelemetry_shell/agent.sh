@@ -115,7 +115,7 @@ _otel_list_all_commands() {
 }
 
 _otel_list_path_commands() {
-  _otel_list_path_executables | \rev | \cut -d / -f 1 | \rev | { \[ -n "${WSL_DISTRO_NAME:-}" ] && (\grep -vE '.dll$' | \grep -vE '.DLL$') || \cat; }
+  _otel_list_path_executables | \rev | \cut -d / -f 1 | \rev
 }
 
 _otel_list_path_executables() {
