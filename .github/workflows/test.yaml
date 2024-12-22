@@ -34,34 +34,6 @@ env:
   IMAGE_OPENSUSE_DEV: '' # not public
 
 jobs:
-  experiment:
-    needs: [ build ]
-    runs-on: windows-latest
-    timeout-minutes: 120
-    strategy:
-      matrix:
-        version: [1, 2]
-      fail-fast: false
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-      - uses: Vampire/setup-wsl@v4.0.0
-        with:
-          wsl-version: ${{ matrix.version }}
-      - shell: wsl-bash {0}
-        run: |
-          retry() {
-            while ! "$@"; do sleep 60; done
-          }
-          retry sudo apt-get update
-          retry sudo -E apt-get -y install ./packages/package.deb
-          echo "$PATH"
-          set +u
-          . otel.sh
-          { echo alias; } | bash
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   build:
     uses: ./.github/workflows/build.yaml
 
