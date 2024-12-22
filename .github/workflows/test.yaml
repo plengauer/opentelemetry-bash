@@ -55,6 +55,7 @@ jobs:
           }
           retry sudo apt-get update
           retry sudo -E apt-get -y install ./packages/package.deb
+          echo "$PATH"
           { echo ". otel.sh"; echo alias; } | bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
