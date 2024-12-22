@@ -155,6 +155,8 @@ _otel_filter_commands_by_hint() {
     else
       \grep -xF "$(_otel_resolve_instrumentation_hint "$hint")"
     fi
+  elif \[ -n "${WSL_DISTRO_NAME:-}" ]; then
+    \grep -vF '.dll$|.DLL$|.mof$|.config$|.log$|.scr$|.ax$|.NLS$|.json$|.xml$|.ps1xml$|.txt$|.png$'
   else
     \cat
   fi
