@@ -156,7 +156,10 @@ _otel_filter_commands_by_hint() {
       \grep -xF "$(_otel_resolve_instrumentation_hint "$hint")"
     fi
   elif \[ -n "${WSL_DISTRO_NAME:-}" ]; then
-    \grep -vE '.dll$|.DLL$|.mof$|.config$|.log$|.scr$|.ax$|.NLS$|.json$|.xml$|.ps1xml$|.txt$|.png$'
+    # in WSL, path may include a directory of windows executables
+    # there, a bunch of files have the executable bit set, but are not really executable binaries (like .dll, ....)
+    # usually, they are excluded by the hint, but if there is no hint, lets exclude the usual suspects to increase startup performance
+    \grep -vE '.dll$|.DLL$|.mof$|.config$|.log$|.scr$|.ax$|.NLS$|.json$|.xml$|.xsl$|.xsd$|.ps1xml$|.txt$|.png$|.ico$'
   else
     \cat
   fi
