@@ -56,6 +56,7 @@ jobs:
           retry sudo apt-get update
           retry sudo -E apt-get -y install ./packages/package.deb
           echo "$PATH"
+          set +u
           . otel.sh
           { echo alias; } | bash
         env:
