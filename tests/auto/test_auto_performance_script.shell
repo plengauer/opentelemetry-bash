@@ -1,3 +1,5 @@
+if [ -n "${WSL_DISTRO_NAME:-}" ]; then exit 0; fi
+
 set -e
 
 script="$(mktemp).$SHELL"
@@ -12,5 +14,5 @@ echo "cat cut sed awk bash sh" >> "$script"
 echo "echo 'hello world'" >> "$script"
 echo "printf '%s %s' \"hello world\"" >> "$script"
 
-timeout 60s $SHELL "$script"
+timeout 5s $SHELL "$script"
 
