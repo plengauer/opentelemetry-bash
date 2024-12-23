@@ -129,7 +129,8 @@ if \[ "$_otel_shell" = bash ]; then
     local package_name="$1"
     local varname="OTEL_SHELL_PACKAGE_VERSION_CACHE_$package_name"
     local varname="${varname//-/_}"
-    if \[ -n "${!varname}" ]; then \echo "${!varname}"; return 0; fi
+    \eval "local varvalue=\${$varname:-}"
+    if \[ -n "$varvalue" ]; then \echo "$varvalue"; return 0; fi
     \export "$varname=$(_otel_resolve_package_version "$1")"
     \echo "${!varname}"
   }
