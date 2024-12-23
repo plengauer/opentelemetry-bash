@@ -115,7 +115,7 @@ _otel_list_all_commands() {
 }
 
 _otel_list_path_commands() {
-  _otel_list_path_executables | \rev | \cut -d / -f 1 | \rev | { \[ -n "${WSL_DISTRO_NAME:-}" ] && (\grep -vE '.dll$' | \grep -vE '.DLL$') || \cat; }
+  _otel_list_path_executables | \rev | \cut -d / -f 1 | \rev
 }
 
 _otel_list_path_executables() {
@@ -155,6 +155,11 @@ _otel_filter_commands_by_hint() {
     else
       \grep -xF "$(_otel_resolve_instrumentation_hint "$hint")"
     fi
+  elif \[ -n "${WSL_DISTRO_NAME:-}" ]; then
+    # in WSL, path may include a directory of windows executables
+    # there, a bunch of files have the executable bit set, but are not really executable binaries (like .dll, ....)
+    # usually, they are excluded by the hint, but if there is no hint, lets exclude the usual suspects to increase startup performance
+    \grep -vE '.dll$|.DLL$|.mof$|.config$|.log$|.scr$|.ax$|.NLS$|.json$|.xml$|.xsl$|.xsd$|.ps1xml$|.txt$|.png$|.ico$'
   else
     \cat
   fi
