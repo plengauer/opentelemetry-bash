@@ -1,7 +1,7 @@
 #!/bin/false
 
 _otel_inject_python() {
-  if \[ "$OTEL_SHELL_CONFIG_INJECT_DEEP" = TRUE ] && \[ -d "/opt/opentelemetry_shell/venv" ] && _otel_string_starts_with "$(\eval "$1 -V" | \cut -d ' ' -f 2)" "3." && ! _otel_string_ends_with "$2" /pip && ! _otel_string_ends_with "$2" /pip3; then
+  if \[ "${OTEL_SHELL_CONFIG_INJECT_DEEP:-FALSE}" = TRUE ] && \[ -d "/opt/opentelemetry_shell/venv" ] && _otel_string_starts_with "$(\eval "$1 -V" | \cut -d ' ' -f 2)" "3." && ! _otel_string_ends_with "$2" /pip && ! _otel_string_ends_with "$2" /pip3; then
     local cmdline="$(_otel_dollar_star "$@")"
     local cmdline="${cmdline#\\}"
     if _otel_python_is_customize_injectable; then
@@ -77,7 +77,7 @@ with open('$arg', 'r') as file: # SKIP_DEPENDENCY_CHECK
       local injected=file
     fi
   done
-  if \[ -z "$injected" ]; then
+  if \[ -z "${injected:-}" ]; then
     _otel_python_code_source=stdin
   fi
 }
