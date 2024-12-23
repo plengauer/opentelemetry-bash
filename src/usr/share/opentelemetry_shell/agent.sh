@@ -46,8 +46,8 @@ if \[ "$_otel_shell" = "bash" ]; then
 else
   _otel_source_file_resolver='$0'
 fi
-_otel_source_line_resolver='$LINENO'
-_otel_source_func_resolver='$FUNCNAME'
+_otel_source_line_resolver='${LINENO:-}'
+_otel_source_func_resolver='${FUNCNAME:-}'
 
 if \[ "$_otel_shell" = "bash" ]; then
   shopt -s expand_aliases 1> /dev/null 2> /dev/null
