@@ -35,10 +35,10 @@ _otel_inject_node_args() {
           local base_dir="$(\pwd)"
         fi
         local dir="$base_dir"
-        while [ -n "${dir:-}" ] && ! \[ -d "$dir"/node_modules ] && ! \[ -f "$dir"/package.json ] && ! \[ -f "$dir"/package-lock.json ]; do
+        while [ -n "$dir" ] && ! \[ -d "$dir"/node_modules ] && ! \[ -f "$dir"/package.json ] && ! \[ -f "$dir"/package-lock.json ]; do
           local dir="$(\echo "$dir" | \rev | \cut -sd / -f 2- | \rev)"
         done
-        if \[ -z "${dir:-}" ]; then local dir="$base_dir"; fi
+        if \[ -z "$dir" ]; then local dir="$base_dir"; fi
         if _otel_is_node_injected "$dir"; then
           _otel_escape_args --require /usr/share/opentelemetry_shell/agent.instrumentation.node.deep.link.js
         elif \[ -z "${OTEL_TRACES_EXPORTER:-}" ] || \[ "${OTEL_TRACES_EXPORTER:-}" = console ] || \[ "${OTEL_TRACES_EXPORTER:-}" = otlp ]; then
