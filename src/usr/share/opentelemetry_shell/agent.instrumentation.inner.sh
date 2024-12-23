@@ -9,7 +9,7 @@
 _otel_inject_inner_command_args() {
   local IFS=' 
 '
-  local more_args="$OTEL_SHELL_INJECT_INNER_COMMAND_MORE_ARGS"
+  local more_args="${OTEL_SHELL_INJECT_INNER_COMMAND_MORE_ARGS:-}"
   unset OTEL_SHELL_INJECT_INNER_COMMAND_MORE_ARGS
   _otel_escape_arg "$1"
   local command="$1"
