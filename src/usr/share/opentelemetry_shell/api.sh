@@ -462,7 +462,7 @@ _otel_escape_arg() {
     esac
   fi
   if \[ "$do_escape" = 1 ]; then
-    if \[ "$no_quote" = 1 ]; then local format_string='%s'; else local format_string="'%s'"; fi
+    if \[ "${no_quote:-0}" = 1 ]; then local format_string='%s'; else local format_string="'%s'"; fi
     _otel_escape_arg_format "$format_string" "$1"
   else
     \printf '%s' "$1"
