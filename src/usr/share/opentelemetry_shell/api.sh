@@ -225,7 +225,7 @@ otel_span_deactivate() {
 otel_event_create() {
   local event_name="$1"
   local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.event_handle.pipe"
-  \mkfifo $_otel_mkfifo_flags "$response_pipe"
+  \mkfifo ${_otel_mkfifo_flags:-} "$response_pipe"
   _otel_sdk_communicate "EVENT_CREATE" "$response_pipe" "$event_name"
   \cat "$response_pipe"
   \rm "$response_pipe" 1> /dev/null 2> /dev/null
