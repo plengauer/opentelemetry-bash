@@ -5,11 +5,10 @@ otel_init
 func_fail() {
   return $1
 }
-otel_observe func_fail
-func_fail 0
+otel_observe func_fail 0
 assert_equals 0 $?
-func_fail 1
+otel_observe func_fail 1
 assert_equals 1 $?
-func_fail 42
+otel_observe func_fail 42
 assert_equals 42 $?
 otel_shutdown
