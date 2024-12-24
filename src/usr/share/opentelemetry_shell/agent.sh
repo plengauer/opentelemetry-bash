@@ -6,7 +6,7 @@
 # All other functions and variables are for internal use only and therefore subject to change without notice!  #
 ################################################################################################################
 
-if \[ "$_otel_shell_injected" = "TRUE" ]; then
+if \[ "${_otel_shell_injected:-FALSE}" = "TRUE" ]; then
   return 0
 fi
 _otel_shell_injected=TRUE
