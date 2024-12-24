@@ -12,7 +12,7 @@ _otel_inject_python() {
       \eval "set -- $(_otel_python_inject_args "$@")"
       local command="$1"; shift
       set -- "$command" /opt/opentelemetry_shell/venv/bin/opentelemetry-instrument "${command#\\}" "$@"
-      if \[ "$_otel_python_code_source" = stdin ]; then
+      if \[ "${_otel_python_code_source:-}" = stdin ]; then
         unset _otel_python_code_source
         { \cat /usr/share/opentelemetry_shell/agent.instrumentation.python.deep.py; \cat; } | OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE PYTHONPATH=/opt/opentelemetry_shell/venv/lib/"$(\ls /opt/opentelemetry_shell/venv/lib/)"/site-packages/:"$PYTHONPATH" OTEL_BSP_MAX_EXPORT_BATCH_SIZE=1 _otel_call "$@"
       else
