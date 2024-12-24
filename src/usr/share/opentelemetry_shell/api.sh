@@ -202,7 +202,7 @@ otel_span_traceparent() {
 
 otel_span_activate() {
   local span_handle="$1"
-  export TRACEPARENT_STACK="${TRACEPARENT:-}/$TRACEPARENT_STACK"
+  export TRACEPARENT_STACK="${TRACEPARENT:-}/${TRACEPARENT_STACK:-}"
   export TRACEPARENT="$(otel_span_traceparent "$span_handle")"
   if \[ -z "${TRACESTATE:-}" ]; then export TRACESTATE=""; fi
 }
