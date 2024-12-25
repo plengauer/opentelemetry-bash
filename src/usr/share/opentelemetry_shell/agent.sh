@@ -132,7 +132,6 @@ _otel_list_aliased_commands() {
 
 _otel_list_builtin_commands() {
   \echo printf
-  \echo type
   \echo printenv
   \echo cd
   \echo pwd
@@ -142,7 +141,6 @@ _otel_list_builtin_commands() {
   if \[ "$_otel_shell" = "bash" ]; then
     \echo pushd
     \echo popd
-    \echo hash
     \echo history
   fi
 }
