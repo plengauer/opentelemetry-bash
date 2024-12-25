@@ -23,7 +23,7 @@ for dir in unit sdk auto integration; do
     echo "running $file"
     # export OTEL_SHELL_EXPERIMENTAL_OBSERVE_PIPES=TRUE
     options=''
-    if [ "$SHELL" != 'busybox sh' ]; then
+    if [ "$SHELL" = bash ]; then
       options="$options -p"
     fi
     timeout $((60 * 60 * 3)) $SHELL $options $file && echo "SUCCEEDED" || (echo "FAILED" && cat $OTEL_EXPORT_LOCATION && exit 1)
