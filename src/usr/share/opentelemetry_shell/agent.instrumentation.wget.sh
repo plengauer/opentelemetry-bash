@@ -12,7 +12,7 @@ _otel_propagate_wget() {
     export OTEL_SHELL_INJECT_HTTP_HANDLE_FILE="$(\mktemp -u)_opentelemetry_shell_$$.wget.handle"
     local OLD_LD_PRELOAD="${LD_PRELOAD:-}"
     export LD_PRELOAD=/opt/opentelemetry_shell/libinjecthttpheader.so
-    if \[ -n "$OLD_PRELOAD" ]; then
+    if \[ -n "$OLD_LD_PRELOAD" ]; then
       export LD_PRELOAD="$LD_PRELOAD:$OLD_LD_PRELOAD"
     fi
   fi
