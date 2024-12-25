@@ -26,7 +26,7 @@ _otel_propagate_curl() {
   \wait "$stderr_pid"
   \rm "$stderr_pipe"
   if \[ -f /opt/opentelemetry_shell/libinjecthttpheader.so ]; then
-    if \[ -n "$OLD_LD_PRELOAD" ]; then
+    if \[ -n "${OLD_LD_PRELOAD:-}" ]; then
       export LD_PRELOAD="$OLD_LD_PRELOAD"
     else
       unset LD_PRELOAD
