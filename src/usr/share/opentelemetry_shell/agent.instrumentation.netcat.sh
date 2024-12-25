@@ -66,7 +66,7 @@ _otel_netcat_parse_request() {
     \printf '%s' "$line" | _otel_binary_write
     return 0
   fi
-  if _otel_binary_contains_null "$line" || ! _otel_string_starts_with "$(\printf '%s' "$line" | _otel_binary_write | \cut -sd ' ' -f 3)" HTTP/; then
+  if _otel_binary_contains_null "$line" || ! _otel_string_starts_with "$(\printf '%s' "$line" | _otel_binary_write | \cut -sd ' ' -f 3 || \true)" HTTP/; then
     \echo -n '' > "$span_handle_file"
     \printf '%s' "$line" | _otel_binary_write
     \printf '\n'
@@ -139,7 +139,7 @@ _otel_netcat_parse_response() {
     \printf '%s' "$line" | _otel_binary_write
     return 0
   fi
-  if _otel_binary_contains_null "$line" || ! _otel_string_starts_with "$(\printf '%s' "$line" | _otel_binary_write)" HTTP/; then
+  if _otel_binary_contains_null "$line" || ! _otel_string_starts_with "$(\printf '%s' "$line" | _otel_binary_write || \true)" HTTP/; then
     \cat "$span_handle_file" > /dev/null 2> /dev/null
     \printf '%s' "$line" | _otel_binary_write
     \printf '\n'
@@ -238,14 +238,14 @@ _otel_netcat_parse_args() {
 _otel_is_ip() {
   case "$1" in
     *.*.*.*)
-      for part in $(\echo "$1" | \tr '.' ' '); do
+      for part in $(\echo "$1" | \tr '.' ' ' || \true); do
         case "$part" in
           ""|*[!0-9]*) return 1;;
         esac
       done
       return 0;;
     *:*:*:*:*:*:*:*)
-      for part in $(\echo "$1" | \tr ':' ' '); do
+      for part in $(\echo "$1" | \tr ':' ' ' || \true); do
         case "$part" in
           ""|*[!0-9a-fA-F]*) return 1;;
         esac
@@ -303,7 +303,7 @@ _otel_binary_read() {
   local __line=""
   local eos=0
   while \true; do
-    local byte="$(\timeout "${OTEL_SHELL_CONFIG_NETCAT_READ_TIMEOUT:-0}" \dd bs=1 count=1 2> /dev/null | \xxd -p)"
+    local byte="$(\timeout "${OTEL_SHELL_CONFIG_NETCAT_READ_TIMEOUT:-0}" \dd bs=1 count=1 2> /dev/null | \xxd -p || \true)"
     if \[ "$byte" = '' ]; then local eos=1; break; fi
     if \[ "$byte" = 0a ]; then break; fi
     local __line="$__line$byte"
