@@ -433,7 +433,7 @@ fi
 
 _otel_escape_stdin() {
   local first=1
-  while IFS= read -r line; do
+  while IFS= \read -r line; do
     if \[ "$first" = 1 ]; then local first=0; else \echo -n " "; fi
     _otel_escape_arg "$line"
   done
