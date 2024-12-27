@@ -200,6 +200,9 @@ You can configure the underlying SDK with the same variables as any other OpenTe
 
 Flags that are marked as `stable` are tested and verified in tests and real-world scenarios. Flags marked as `experimental` are new features that are tested but still lack long-term verification in real-world applications. They will eventually reach `stable` or `unsafe`. Flags marked as `unsafe` have implicit assumptions about the nature of the instrumented scripts and will therefore never reach `stable`.
 
+## Limitations
+Currently, we do not support restricted mode in shells (`set -r`).
+
 ## Traces
 The API described below is for manually creating and customizing spans. We recommend to do this only if the automatic instrumentation is not sufficient.
 

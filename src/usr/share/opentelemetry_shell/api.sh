@@ -13,6 +13,11 @@ if \[ -n "$OTEL_SHELL_TRACES_ENABLE" ] || \[ -n "$OTEL_SHELL_METRICS_ENABLE" ] |
   export OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=delta
 fi
 
+# check environment
+case "$-" in
+  *r*) \echo "WARNING The OpenTelemetry shell API does not support restricted mode (set -r)!" >&2; exit 1;;
+esac
+
 # basic setup
 if \[ -z "$TMPDIR" ]; then TMPDIR=/tmp; fi
 _otel_shell_pipe_dir="${OTEL_SHELL_PIPE_DIR:-$TMPDIR}"

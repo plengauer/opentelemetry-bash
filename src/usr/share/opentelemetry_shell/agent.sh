@@ -11,6 +11,10 @@ if \[ "$_otel_shell_injected" = "TRUE" ]; then
 fi
 _otel_shell_injected=TRUE
 
+case "$-" in
+  *r*) \echo "WARNING OpenTelemetry for shell does not support restricted mode (set -r)!" >&2; return 0;;
+esac
+
 _otel_shell_conservative_exec="$OTEL_SHELL_CONSERVATIVE_EXEC"
 unset OTEL_SHELL_CONSERVATIVE_EXEC
 
