@@ -1,7 +1,5 @@
 #/bin/bash
-set -ex
-echo hello world stdout
-echo hello world stderr >&2
+set -e
 if [ "$GITHUB_JOB" != observe ]; then echo "Job name must be 'observe'!" >&2; exit 1; fi
 
 . ../shared/github.sh
