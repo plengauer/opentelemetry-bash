@@ -108,7 +108,10 @@ _otel_auto_instrument() {
 }
 
 _otel_list_special_auto_instrument_files() {
-  \echo /usr/share/opentelemetry_shell/agent.instrumentation.*.sh
+  case "$-" in
+    *f*) \ls /usr/share/opentelemetry_shell | \grep -E '^agent.instrumentation.*.sh$' | while read -r _otel_file_name; do \echo /usr/share/opentelemetry_shell/"$_otel_file_name"; done;;
+    *) \echo /usr/share/opentelemetry_shell/agent.instrumentation.*.sh;;
+  esac
 }
 
 _otel_list_all_commands() {
