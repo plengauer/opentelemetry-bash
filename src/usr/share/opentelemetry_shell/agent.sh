@@ -141,7 +141,7 @@ _otel_list_builtin_commands() {
   if \type compgen 1> /dev/null 2> /dev/null; then
     \compgen -b
   else
-    \echo break cd chdir command . echo eval exec exit export false getopts hash jobs local printf pwd read return set shift times trap true : type umask unalias unset wait alias ulimit test [ kill
+    for _otel_builtin in break cd chdir command . echo eval exec exit export false getopts hash jobs local printf pwd read return set shift times trap true : type umask unalias unset wait alias ulimit test [ kill; do \echo "$_otel_builtin"; done
   fi
 }
 
