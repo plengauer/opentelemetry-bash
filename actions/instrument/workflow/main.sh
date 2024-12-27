@@ -1,5 +1,5 @@
 #/bin/bash
-set -e
+set -ex
 if [ "$GITHUB_JOB" != observe ]; then echo "Job name must be 'observe'!" >&2; exit 1; fi
 
 . ../shared/github.sh
