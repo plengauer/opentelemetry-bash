@@ -13,6 +13,11 @@ if \[ -n "${OTEL_SHELL_TRACES_ENABLE:-}" ] || \[ -n "${OTEL_SHELL_METRICS_ENABLE
   export OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=delta
 fi
 
+# check environment
+case "$-" in
+  *r*) \echo "WARNING The OpenTelemetry shell API does not support restricted mode (set -r)!" >&2; exit 1;;
+esac
+
 # basic setup
 if \[ -z "${TMPDIR:-}" ]; then TMPDIR=/tmp; fi
 _otel_shell_pipe_dir="${OTEL_SHELL_PIPE_DIR:-$TMPDIR}"
@@ -391,7 +396,7 @@ if ! \type which 1> /dev/null 2> /dev/null; then
   fi
 fi
 
-if \[ "$_otel_shell" = dash ] || \[ "$_otel_shell" = 'busybox sh' ]; then # TODO its only old dashes
+if \[ "$_otel_shell" = dash ] || \[ "$_otel_shell" = 'busybox sh' ]; then # LEGACY this seems to be only necessary for old dashes on focal
   # old versions of dash dont set env vars properly
   # more specifically they do not make variables that are set in front of commands part of the child process env vars but only of the local execution environment
   _otel_call() {
