@@ -390,7 +390,7 @@ if ! \type which 1> /dev/null 2> /dev/null; then
   fi
 fi
 
-if \[ "$_otel_shell" = dash ] || \[ "$_otel_shell" = 'busybox sh' ]; then # TODO its only old dashes
+if \[ "$_otel_shell" = dash ] || \[ "$_otel_shell" = 'busybox sh' ]; then # LEGACY this seems to be only necessary for old dashes on focal
   # old versions of dash dont set env vars properly
   # more specifically they do not make variables that are set in front of commands part of the child process env vars but only of the local execution environment
   _otel_call() {
