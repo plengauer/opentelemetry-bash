@@ -11,6 +11,10 @@ if \[ "$_otel_shell_injected" = "TRUE" ]; then
 fi
 _otel_shell_injected=TRUE
 
+case "$-" in
+  *r*) \echo "WARNING OpenTelemetry for shell does not support restricted mode (set -r)!" >&2; return 0;;
+esac
+
 _otel_shell_conservative_exec="$OTEL_SHELL_CONSERVATIVE_EXEC"
 unset OTEL_SHELL_CONSERVATIVE_EXEC
 
@@ -104,7 +108,10 @@ _otel_auto_instrument() {
 }
 
 _otel_list_special_auto_instrument_files() {
-  \echo /usr/share/opentelemetry_shell/agent.instrumentation.*.sh
+  case "$-" in
+    *f*) \ls /usr/share/opentelemetry_shell | \grep -E '^agent.instrumentation.*.sh$' | while read -r _otel_file_name; do \echo /usr/share/opentelemetry_shell/"$_otel_file_name"; done;;
+    *) \echo /usr/share/opentelemetry_shell/agent.instrumentation.*.sh;;
+  esac
 }
 
 _otel_list_all_commands() {
