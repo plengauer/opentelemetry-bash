@@ -81,7 +81,7 @@ _otel_netcat_parse_request() {
   local method="$(\printf '%s' "$line" | \cut -sd ' ' -f 1)"
   local path_and_query="$(\printf '%s' "$line" | \cut -sd ' ' -f 2)"
   local headers="$(\mktemp)"
-  while read -r line; do
+  while \read -r line; do
     local line="$(\printf '%s' "$line" | \tr -d '\r')"
     if \[ "${#line}" = 0 ]; then break; fi
     \echo "$line" >> "$headers"
@@ -118,7 +118,7 @@ _otel_netcat_parse_request() {
     \printf '%s\r\n' "tracestate: $TRACESTATE"
     otel_span_deactivate "$span_handle"
   fi
-  while read -r line; do
+  while \read -r line; do
     \printf '%s\r\n' "$line"
     local key="$(\printf '%s' "$line" | \cut -d ' ' -f 1 | \tr -d : | \tr '[:upper:]' '[:lower:]')"
     local value="$(\printf '%s' "$line" | \cut -d ' ' -f 2-)"
