@@ -35,7 +35,7 @@ _otel_call_and_record_subprocesses() {
 # 582400 +++ killed by SIGINT +++
 _otel_record_subprocesses() {
   local root_span_handle="$1"
-  while read -r line; do
+  while \read -r line; do
     local operation=""
     case "$line" in
       *' '*' (To be restarted)') ;;
@@ -119,7 +119,7 @@ _otel_record_subprocesses() {
           \printf '%s' "$kvps"
         else
           \printf '%s' "$kvps" | \tr -d ' ' | \tr '_' '.' | \tr ',' '\n'
-        fi | while read -r kvp; do otel_event_attribute "$event_handle" "$kvp"; done
+        fi | while \read -r kvp; do otel_event_attribute "$event_handle" "$kvp"; done
         otel_event_add "$event_handle" "${span_handle:-$root_span_handle}"
         ;;
       *) ;;

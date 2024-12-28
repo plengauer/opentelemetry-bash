@@ -71,7 +71,7 @@ _otel_pipe_curl_stderr() {
   local ip=""
   local port=""
   local is_receiving=1
-  while read -r line; do
+  while \read -r line; do
     if _otel_string_starts_with "$line" "* Connected to "; then
       local host="$(\printf '%s' "$line" | \cut -d ' ' -f 4)"
       local ip="$(\printf '%s' "$line" | \cut -d ' ' -f 5 | \tr -d '()')"
