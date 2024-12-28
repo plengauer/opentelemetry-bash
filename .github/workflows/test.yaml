@@ -211,35 +211,35 @@ jobs:
             fi
           ' | sudo docker run -v $(pwd)/package.deb:/root/package.deb -v $(pwd)/package.rpm:/root/package.rpm --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
 
-#  install-manual-user:
-#    needs: [ smoke ]
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v4
-#      - run: cat INSTALL.sh | sh -e
-#      - run: type otel.sh
+  install-manual-user:
+    needs: [ smoke ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cat INSTALL.sh | sh -e
+      - run: type otel.sh
 
-#  install-manual-os:
-#    needs: [ prepare-images, smoke ]
-#    runs-on: ubuntu-latest
-#    strategy:
-#      matrix:
-#        image: ${{ fromJSON(needs.prepare-images.outputs.images) }}
-#    steps:
-#      - uses: actions/checkout@v4
-#      - run: |
-#          {
-#            echo '
-#              if type apt-get; then apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install wget curl jq gawk sudo
-#              elif type dnf; then dnf -y install wget jq gawk sudo
-#              elif type yum; then yum -y install wget jq gawk sudo
-#              elif type zypper; then zypper --non-interactive install wget jq gawk sudo
-#              else exit 1
-#              fi
-#            '
-#            cat INSTALL.sh
-#            echo type otel.sh
-#          } | sudo docker run --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
+  install-manual-os:
+    needs: [ prepare-images, smoke ]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image: ${{ fromJSON(needs.prepare-images.outputs.images) }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          {
+            echo '
+              if type apt-get; then apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install wget curl jq gawk sudo
+              elif type dnf; then dnf -y install wget jq gawk sudo
+              elif type yum; then yum -y install wget jq gawk sudo
+              elif type zypper; then zypper --non-interactive install wget jq gawk sudo
+              else exit 1
+              fi
+            '
+            cat INSTALL.sh
+            echo type otel.sh
+          } | sudo docker run --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
 
   linux-shell:
     needs: [ prepare-images, prepare-shells, smoke ]
@@ -427,7 +427,7 @@ jobs:
           retention-days: 90
 
   join:
-    needs: [upgrade, system-upgrade, dependency, linux-shell, windows-shell, action]
+    needs: [upgrade, system-upgrade, dependency, linux-shell, windows-shell, action, install-manual-user, install-manual-os]
     runs-on: ubuntu-latest
     outputs:
       success: ${{ steps.tests.outputs.success }}
