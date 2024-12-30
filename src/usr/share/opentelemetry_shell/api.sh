@@ -7,10 +7,10 @@
 
 # translate legacy config
 if \[ -n "$OTEL_SHELL_TRACES_ENABLE" ] || \[ -n "$OTEL_SHELL_METRICS_ENABLE" ] || \[ -n "$OTEL_SHELL_LOGS_ENABLE" ]; then
-  \[ "$OTEL_SHELL_TRACES_ENABLE" = TRUE ] && export OTEL_TRACES_EXPORTER=otlp || export OTEL_TRACES_EXPORTER=""
-  \[ "$OTEL_SHELL_METRICS_ENABLE" = TRUE ] && export OTEL_METRICS_EXPORTER=otlp || export OTEL_METRICS_EXPORTER=""
-  \[ "$OTEL_SHELL_LOGS_ENABLE" = TRUE ] && export OTEL_LOGS_EXPORTER=otlp || export OTEL_LOGS_EXPORTER=""
-  export OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=delta
+  \[ "$OTEL_SHELL_TRACES_ENABLE" = TRUE ] && \export OTEL_TRACES_EXPORTER=otlp || \export OTEL_TRACES_EXPORTER=""
+  \[ "$OTEL_SHELL_METRICS_ENABLE" = TRUE ] && \export OTEL_METRICS_EXPORTER=otlp || \export OTEL_METRICS_EXPORTER=""
+  \[ "$OTEL_SHELL_LOGS_ENABLE" = TRUE ] && \export OTEL_LOGS_EXPORTER=otlp || \export OTEL_LOGS_EXPORTER=""
+  \export OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=delta
 fi
 
 # check environment
@@ -206,18 +206,18 @@ otel_span_traceparent() {
 
 otel_span_activate() {
   local span_handle="$1"
-  export TRACEPARENT_STACK="$TRACEPARENT/$TRACEPARENT_STACK"
-  export TRACEPARENT="$(otel_span_traceparent "$span_handle")"
-  if \[ -z "$TRACESTATE" ]; then export TRACESTATE=""; fi
+  \export TRACEPARENT_STACK="$TRACEPARENT/$TRACEPARENT_STACK"
+  \export TRACEPARENT="$(otel_span_traceparent "$span_handle")"
+  if \[ -z "$TRACESTATE" ]; then \export TRACESTATE=""; fi
 }
 
 otel_span_deactivate() {
   if _otel_string_contains "$TRACEPARENT_STACK" /; then
-    export TRACEPARENT="${TRACEPARENT_STACK%%/*}"
-    export TRACEPARENT_STACK="${TRACEPARENT_STACK#*/}"
+    \export TRACEPARENT="${TRACEPARENT_STACK%%/*}"
+    \export TRACEPARENT_STACK="${TRACEPARENT_STACK#*/}"
   else
-    export TRACEPARENT="$TRACEPARENT_STACK"
-    export TRACEPARENT_STACK=""
+    \export TRACEPARENT="$TRACEPARENT_STACK"
+    \export TRACEPARENT_STACK=""
   fi
   if \[ -z "$TRACEPARENT" ]; then
     unset TRACEPARENT_STACK
