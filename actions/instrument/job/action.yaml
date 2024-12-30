@@ -11,4 +11,4 @@ inputs:
     default: '${{ job.status }}'
   cache:
     description: 'Whether to use GitHub Actions Cache to cache dependencies'
-    default: false
+    default: true
