@@ -7,6 +7,7 @@ if [ -n "$GITHUB_TOKEN" ] && type debconf-set-selections; then
   echo gitaptly gitaptly/GITHUB_API_TOKEN string $GITHUB_TOKEN | sudo debconf-set-selections
 fi
 curl --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/abom-http/releases/latest https://api.github.com/repos/plengauer/gitaptly/releases/latest | jq -r '.assets[].browser_download_url' | grep '.deb$' | xargs wget
+ls
 DEBIAN_FRONTEND=noninteractive sudo -E apt-get install -y ./*.deb
 sleep 5
 curl http://127.0.0.1:8000/dists/stable/main/binary-all/Packages | grep '^Filename: ' | cut -d ' ' -f 2- | head -n1 | xargs -I {} wget http://127.0.0.1:8000/{}
