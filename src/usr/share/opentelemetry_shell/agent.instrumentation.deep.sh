@@ -19,6 +19,7 @@ _otel_alias_prepend posh _otel_inject_deep
 _otel_alias_prepend yash _otel_inject_deep
 _otel_alias_prepend bosh _otel_inject_deep
 _otel_alias_prepend fish _otel_inject_deep
+_otel_alias_prepend rbash _otel_inject_deep
 
 _otel_alias_prepend make _otel_inject_deep
 _otel_alias_prepend cmake _otel_inject_deep
