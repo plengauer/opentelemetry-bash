@@ -3,10 +3,20 @@
   "extends": [
     "config:recommended"
   ],
-  "dependencyDashboard": true,
+  "configMigration": true,
   "prHourlyLimit": 0,
   "prConcurrentLimit": 0,
   "automerge": true,
-  "automergeType": "pr",
-  "ignoreUnstable": false
+  "packageRules": [
+    {
+      "groupName": "opentelemetry-python monorepo",
+      "matchManagers": [
+        "pip_requirements"
+      ],
+      "ignoreUnstable": false,
+      "matchPackageNames": [
+        "/^opentelemetry-/"
+      ]
+    }
+  ]
 }
