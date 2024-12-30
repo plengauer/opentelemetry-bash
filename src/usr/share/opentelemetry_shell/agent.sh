@@ -379,11 +379,11 @@ _otel_instrument_and_source() {
 
 _otel_inject_and_exec_directly() { # this function assumes there is no fd fuckery
   if \[ "$#" = 1 ]; then
-    export OTEL_SHELL_CONSERVATIVE_EXEC=TRUE
+    \export OTEL_SHELL_CONSERVATIVE_EXEC=TRUE
     _otel_sdk_communicate 'SPAN_AUTO_END'
     if \[ -n "$_otel_commandline_override" ]; then
-      export OTEL_SHELL_COMMANDLINE_OVERRIDE="$_otel_commandline_override"
-      export OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$PPID"
+      \export OTEL_SHELL_COMMANDLINE_OVERRIDE="$_otel_commandline_override"
+      \export OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$PPID"
     fi
     \eval '"exec"' "$(\xargs -0 sh -c '. otelapi.sh; _otel_escape_args "$@"' sh < /proc/$$/cmdline)"
   fi
@@ -395,10 +395,10 @@ _otel_inject_and_exec_directly() { # this function assumes there is no fd fucker
   otel_span_end "$span_id"
   _otel_sdk_communicate 'SPAN_AUTO_END'
   
-  export TRACEPARENT="$my_traceparent"
-  export OTEL_SHELL_AUTO_INJECTED=TRUE
-  export OTEL_SHELL_COMMANDLINE_OVERRIDE="$(_otel_command_self)"
-  export OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$PPID"
+  \export TRACEPARENT="$my_traceparent"
+  \export OTEL_SHELL_AUTO_INJECTED=TRUE
+  \export OTEL_SHELL_COMMANDLINE_OVERRIDE="$(_otel_command_self)"
+  \export OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="$PPID"
   shift
   \exec sh -c '. otel.sh
 eval "$(_otel_escape_args "$@")"' sh "$@"
@@ -434,7 +434,7 @@ _otel_record_exec() {
   otel_span_deactivate "$span_id"
   otel_span_end "$span_id"
   _otel_sdk_communicate 'SPAN_AUTO_END'
-  export TRACEPARENT="$my_traceparent"
+  \export TRACEPARENT="$my_traceparent"
 }
 
 command() {
