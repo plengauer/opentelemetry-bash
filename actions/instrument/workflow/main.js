@@ -8,4 +8,4 @@ function run(executable, args = []) {
   });
 }
 
-run('/bin/sh', [ '-e', __dirname + '/main.sh' ])
+run('/bin/bash', [ '-e', __dirname + '/main.sh' ])

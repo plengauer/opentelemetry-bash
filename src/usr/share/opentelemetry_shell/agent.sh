@@ -11,6 +11,10 @@ if \[ "$_otel_shell_injected" = "TRUE" ]; then
 fi
 _otel_shell_injected=TRUE
 
+case "$-" in
+  *r*) \echo "WARNING OpenTelemetry for shell does not support restricted mode (set -r)!" >&2; return 0;;
+esac
+
 _otel_shell_conservative_exec="$OTEL_SHELL_CONSERVATIVE_EXEC"
 unset OTEL_SHELL_CONSERVATIVE_EXEC
 
@@ -104,7 +108,10 @@ _otel_auto_instrument() {
 }
 
 _otel_list_special_auto_instrument_files() {
-  \echo /usr/share/opentelemetry_shell/agent.instrumentation.*.sh
+  case "$-" in
+    *f*) \ls /usr/share/opentelemetry_shell | \grep -E '^agent.instrumentation.*.sh$' | while \read -r _otel_file_name; do \echo /usr/share/opentelemetry_shell/"$_otel_file_name"; done;;
+    *) \echo /usr/share/opentelemetry_shell/agent.instrumentation.*.sh;;
+  esac
 }
 
 _otel_list_all_commands() {
@@ -119,7 +126,7 @@ _otel_list_path_commands() {
 }
 
 _otel_list_path_executables() {
-  \echo "$PATH" | \tr ':' '\n' | while read dir; do if \[ "$_otel_shell" = 'busybox sh' ]; then "$(\which find)" "$dir" -maxdepth 1 -type f,l -executable 2> /dev/null; else \find "$dir" -maxdepth 1 -type f,l -executable 2> /dev/null; fi; done
+  \echo "$PATH" | \tr ':' '\n' | while \read dir; do if \[ "$_otel_shell" = 'busybox sh' ]; then "$(\which find)" "$dir" -maxdepth 1 -type f,l -executable 2> /dev/null; else \find "$dir" -maxdepth 1 -type f,l -executable 2> /dev/null; fi; done
 }
 
 _otel_list_alias_commands() {
@@ -131,17 +138,10 @@ _otel_list_aliased_commands() {
 }
 
 _otel_list_builtin_commands() {
-  \echo printf
-  \echo printenv
-  \echo cd
-  \echo pwd
-  \echo wait
-  \echo ulimit
-  \echo umask
-  if \[ "$_otel_shell" = "bash" ]; then
-    \echo pushd
-    \echo popd
-    \echo history
+  if \type compgen 1> /dev/null 2> /dev/null; then
+    \compgen -b
+  else
+    for _otel_builtin in break cd chdir command . echo eval exec exit export false getopts hash jobs local printf pwd read return set shift times trap true : type umask unalias unset wait alias ulimit test [ kill; do \echo "$_otel_builtin"; done
   fi
 }
 
@@ -191,7 +191,9 @@ _otel_filter_commands_by_mode() {
 }
 
 _otel_filter_commands_by_special() {
-  \grep -vE '^(alias|unalias|\.|source|exec|hash)$' | \grep -vE '^(OTEL_|_otel_|otel_)'
+  # we need to exclude all well-known builtins that would change their semantics if they are used in an alias or within a function.
+  # for example, set resets options but also arguments of the current script and/or function. since instrumentation is done via functions, instrumenting set would change its behavior
+  \grep -vE '^(break|command|continue|builtin|\.|source|eval|exec|exit|export|hash|local|return|set|shift|trap|:|unalias|unset|alias)$' | \grep -vE '^(OTEL_|_otel_|otel_)'
 }
 
 _otel_filter_by_validity() {
@@ -209,7 +211,7 @@ _otel_deshebangify() {
 _otel_resolve_shebang() {
   local path="$(\which "$1" 2> /dev/null)"
   if \[ -z "$path" ] || ! \[ -x "$path" ]; then return 1; fi
-  read -r first_line < "$path"
+  \read -r first_line < "$path"
   if ! _otel_string_starts_with "$first_line" "#!"; then return 2; fi
   local shebang="${first_line#\#\!}"
   local shebang="${shebang#"${shebang%%[![:space:]]*}"}"
@@ -349,7 +351,7 @@ _otel_instrument_and_source() {
   local command="$(eval '\echo $'"$(($n+1))")"
   local file="$(eval '\echo $'"$(($n+2))")"
   if \[ -f "$file" ]; then _otel_auto_instrument "$file"; fi
-  \eval "'$command' '$file' $(if \[ $# -gt $(($n + 2)) ]; then \seq $(($n + 2 + 1)) $#; else \seq 1 $n; fi | while read i; do \echo '"$'"$i"'"'; done | _otel_line_join)"
+  \eval "'$command' '$file' $(if \[ $# -gt $(($n + 2)) ]; then \seq $(($n + 2 + 1)) $#; else \seq 1 $n; fi | while \read i; do \echo '"$'"$i"'"'; done | _otel_line_join)"
 }
 
 _otel_inject_and_exec_directly() { # this function assumes there is no fd fuckery
