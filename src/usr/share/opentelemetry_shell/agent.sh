@@ -329,7 +329,7 @@ _otel_unalias_and_reinstrument() {
 _otel_hash_and_reinstrument() {
   shift
   local exit_code=0
-  \hash "$@" || local exit_code="$?"
+  \hash "$@" # || local exit_code="$?"
   if \[ "$1" = -r ]; then
     local aliases_pre="$(\mktemp)"
     local aliases_new="$(\mktemp)"
