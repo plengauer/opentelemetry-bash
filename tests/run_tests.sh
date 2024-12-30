@@ -22,7 +22,7 @@ for dir in unit sdk auto integration; do
     ( while true; do cat $OTEL_SHELL_SDK_OUTPUT_REDIRECT >> $OTEL_EXPORT_LOCATION; done ) &
     echo "running $file"
     # export OTEL_SHELL_EXPERIMENTAL_OBSERVE_PIPES=TRUE
-    options='-f -o pipefail $file'
+    options='-f -o pipefail'
     if [ "$SHELL" = bash ]; then
       options="$options -p"
     fi
