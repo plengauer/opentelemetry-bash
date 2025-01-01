@@ -2,7 +2,7 @@ name: Autorerun
 
 on:
   workflow_run:
-    workflows: 'Test Branch'
+    workflows: [ 'Test Branch', 'Publish' ]
     types: completed
 
 concurrency:
