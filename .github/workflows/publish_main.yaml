@@ -1,27 +1,24 @@
 name: Publish
 
 on:
-  push:
+  workflow_run:
+    workflows: 'Test Branch'
     branches: main
-    paths: 'VERSION'
-  workflow_dispatch:
+    types: completed
 
 jobs:
-  test:
-    uses: ./.github/workflows/test.yaml
-
   publish:
-    needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: write
       id-token: write
       attestations: write
     steps:
+      # TODO how to abort if already published or how to only do this iv version was changed in the last commit?
       - uses: actions/checkout@v4
       - run: echo "version=$(cat VERSION)" >> "$GITHUB_OUTPUT"
         id: version
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4 # TODO where to get the artifact from?
         with:
           name: packages
       - uses: actions/attest-build-provenance@v2
