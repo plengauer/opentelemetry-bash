@@ -1,5 +1,8 @@
 name: 'OpenTelemetry Jobs'
 description: 'Observe Github Jobs with OpenTelemetry'
+branding:
+  icon: 'activity'
+  color: 'blue'
 runs:
   using: 'node20'
   pre: 'inject_and_init.js'
