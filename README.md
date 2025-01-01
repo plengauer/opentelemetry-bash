@@ -131,7 +131,7 @@ Note: the apt repo only acts as a facade to offer a better debian-native install
 # Security
 Since version 3.43.0, this project generates artifact attestations to establish provenance for builds (<a href="https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations/using-artifact-attestations-to-establish-provenance-for-builds">link</a>) to harden against supply chain attacks. Download any build artifact from the repositories above or directly from the releases of this repository and use the following code snippet to verify that the package has indeed been built at this location.
 ```bash
-gh attestation verify./package.deb -R plengauer/opentelemetry-bash
+gh attestation verify ./package.deb -R plengauer/opentelemetry-bash
 ```
 
 # Documentation
