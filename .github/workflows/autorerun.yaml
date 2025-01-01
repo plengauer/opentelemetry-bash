@@ -6,7 +6,7 @@ on:
     - cron: '0 0 * * *'
 
 jobs:
-  bump:
+  rerun:
     runs-on: ubuntu-latest
     steps:
       - uses: plengauer/autorerun@v0.3.0
