@@ -125,7 +125,7 @@ _otel_netcat_parse_request() {
     otel_span_attribute_typed "$span_handle" string[1] http.request.header."$key"="$value"
   done < "$headers"
   \printf '\r\n'
-  if \[ -n "$length" ]; then # TODO this shoudl transparently pipe the entire request through, even if it is not in line with content-length (or content-length hasn't been set at all)
+  if \[ -n "${length:-}" ]; then # TODO this should transparently pipe the entire request through, even if it is not in line with content-length (or content-length hasn't been set at all)
     \head -c "$length"
   fi
   \rm "$headers" 2> /dev/null
@@ -183,7 +183,7 @@ _otel_netcat_parse_response() {
 _otel_netcat_parse_args() {
   local is_server_side="$1"; shift
   local span_handle="$1"; shift
-  if \[ -n "$NCAT_PROTO" ]; then
+  if \[ -n "${NCAT_PROTO:-}" ]; then
     otel_span_attribute_typed "$span_handle" string network.transport="$NCAT_PROTO"
     otel_span_attribute_typed "$span_handle" string network.peer.address="$NCAT_REMOTE_ADDR"
     otel_span_attribute_typed "$span_handle" int network.peer.port="$NCAT_REMOTE_PORT"

@@ -1,5 +1,5 @@
 #!/bin/sh -e
-if [ "$OTEL_SHELL_AUTO_INJECTED" = TRUE ]; then
+if [ "${OTEL_SHELL_AUTO_INJECTED:-FALSE}" = TRUE ]; then
   exec "$@"
 else
   . otelapi.sh

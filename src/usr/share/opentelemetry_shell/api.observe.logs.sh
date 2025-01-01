@@ -10,7 +10,7 @@ _otel_call_and_record_logs() {
   local call_command="$1"; shift
   local traceparent="$TRACEPARENT"
   local stderr_logs="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.stderr.logs.pipe"
-  \mkfifo $_otel_mkfifo_flags "$stderr_logs"
+  \mkfifo ${_otel_mkfifo_flags:-} "$stderr_logs"
   while IFS= \read -r line; do _otel_log_record "$traceparent" "$line"; \echo "$line" >&2; done < "$stderr_logs" &
   local stderr_pid="$!"
   local exit_code=0

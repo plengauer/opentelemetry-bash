@@ -1,8 +1,8 @@
 #!/bin/bash
 
 assert_equals() {
-  if [ "$1" != "$2" ]; then
-    \echo "ASSERT FAILED $1 != $2" 1>&2
+  if [ "${1:-}" != "${2:-}" ]; then
+    \echo "ASSERT FAILED ${1:-} != ${2:-}" 1>&2
     exit 1
   fi
 }
@@ -24,7 +24,7 @@ assert_ends_with() {
 }
 
 resolve_span() {
-  local selector="$1"
+  local selector="${1:-}"
   if [ -n "$selector" ]; then
     local selector=' | select('"$selector"')'
   fi
