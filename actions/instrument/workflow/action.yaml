@@ -1,5 +1,8 @@
 name: 'OpenTelemetry Workflow'
 description: 'Observe Github Workflows with OpenTelemetry'
+branding:
+  icon: 'activity'
+  color: 'blue'
 runs:
   using: 'node20'
   main: 'main.js'
