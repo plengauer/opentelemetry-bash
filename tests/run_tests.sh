@@ -24,7 +24,7 @@ for dir in unit sdk auto integration; do
     # export OTEL_SHELL_EXPERIMENTAL_OBSERVE_PIPES=TRUE
     options='-u -f'
     if [ "$SHELL" = bash ]; then
-      options="$options -p"
+      options="$options -p -o pipefail"
     fi
     timeout $((60 * 60 * 3)) $SHELL $options $file && echo "SUCCEEDED" || (echo "FAILED" && cat $OTEL_EXPORT_LOCATION && exit 1)
   done
