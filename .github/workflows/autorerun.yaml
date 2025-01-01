@@ -9,6 +9,6 @@ jobs:
   rerun:
     runs-on: ubuntu-latest
     steps:
-      - uses: plengauer/autorerun@v0.1.0
+      - uses: plengauer/autorerun@v0.3.0
         with:
           github_token: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
