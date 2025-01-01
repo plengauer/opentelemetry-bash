@@ -128,6 +128,12 @@ sudo apt-get install opentelemetry-shell
 
 Note: the apt repo only acts as a facade to offer a better debian-native installation option, internally it redirects the apt client to the releases of this repository.
 
+# Security
+Since version 3.43.0, this project generates artifact attestations to establish provenance for builds (<a href="https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations/using-artifact-attestations-to-establish-provenance-for-builds">link</a>) to harden against supply chain attacks. Download any build artifact from the repositories above or directly from the releases of this repository and use the following code snippet to verify that the package has indeed been built at this location.
+```bash
+gh attestation verify ./package.deb -R plengauer/opentelemetry-bash
+```
+
 # Documentation
 You can either use the fully automatic instrumentation (recommended) or just import the API to do everything manually. In both cases, you can use the API to manually create customized spans and metrics. However, the automatic approach creates rich spans and logs fully automatically. We recommend to use the manual approach only to augment the automatic approach where necessary.
 
