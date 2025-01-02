@@ -1,14 +1,13 @@
 name: Publish
 
 on:
-  workflow_run:
-    workflows: 'Test Branch'
+  push:
+    paths: VERSION
     branches: main
-    types: completed
 
 jobs:
   test: 
-     uses: ./.github/workflows/test.yaml
+    uses: ./.github/workflows/test.yaml
 
   publish:
     needs: test
