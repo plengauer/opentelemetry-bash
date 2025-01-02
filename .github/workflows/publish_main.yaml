@@ -6,7 +6,7 @@ on:
     branches: main
 
 jobs:
-  test: 
+  test:
     uses: ./.github/workflows/test.yaml
 
   publish:
