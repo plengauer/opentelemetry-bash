@@ -9,6 +9,11 @@ echo '
 import os
 os.execl('/bin/echo', 'echo', 'hello', 'world', '0')
 ' | python3
+assert_equals 0 $?
+span="$(resolve_span '.name == "echo hello world 0"')"
+assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
+assert_not_equals null $(\echo "$span" | jq -r '.parent_id')
+
 echo '
 import os
 os.execv('/bin/echo', [ 'echo', 'hello', 'world', '1' ])
