@@ -231,6 +231,7 @@ jobs:
             (this PR is automatically generated)
           reviewers: ${{ steps.reviewers.outputs.reviewers }}
           delete-branch: true
+      - run: sleep 60 # make sure PR state is updated and API can catch up
       - uses: peter-evans/enable-pull-request-automerge@v3
         if: steps.open-pr.outputs.pull-request-number != null
         with:
