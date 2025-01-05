@@ -16,7 +16,7 @@ printenv | grep -E '^OTEL_|^TRACEPARENT=|^TRACESTATE=' | grep -v HEADERS > "$env
 node upload_artifact.js opentelemetry "$env_dir"/.env
 rm -r "$env_dir"
 otel_span_deactivate "$span_handle"
-while [ "$(github_workflow jobs | jq -r '.jobs[] | select(.status != "completed") | .name' | wc -l)" -gt 1 ]; do sleep 5; done
+while [ "$(github_workflow jobs | jq -r '.jobs[] | select(.status != "completed") | .name' | wc -l)" -gt 1 ]; do sleep 13; done
 if [ "$(github_workflow jobs | jq -r '.jobs[] | select(.status == "completed") | select(.conclusion == "failure") | .name' | wc -l)" -gt 0 ]; then otel_span_error "$span_handle"; fi
 otel_span_end "$span_handle"
 otel_shutdown
