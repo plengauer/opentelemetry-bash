@@ -3,8 +3,6 @@ description: 'Observe Github Workflows with OpenTelemetry'
 runs:
   using: 'node20'
   main: 'main.js'
-  env:
-    GITHUB_TOKEN: '${{ inputs.github_token }}'
 inputs:
   github_token:
     description: 'A GitHub token for API access (read-only)'
