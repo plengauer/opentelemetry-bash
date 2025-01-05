@@ -6,7 +6,7 @@ runs:
 inputs:
   github_token:
     description: 'A GitHub token for API access (read-only)'
-    default: '${{ secrets.GITHUB_TOKEN }}'
+    default: '${{ github.token }}'
   cache:
     description: 'Whether to use GitHub Actions Cache to cache dependencies'
     default: false
