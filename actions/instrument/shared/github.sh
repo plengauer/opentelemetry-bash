@@ -1,7 +1,6 @@
 #!/bin/false
 
 github() {
-  printenv >&2
   url="$GITHUB_API_URL"/"$1"?per_page=100
   curl --no-progress-meter --fail --retry 16 --retry-all-errors --header "Authorization: Bearer $INPUT_GITHUB_TOKEN" --head "$url" \
     | grep '^link: ' | cut -d ' '  -f 2- | tr -d ' <>' | tr ',' '\n' \
