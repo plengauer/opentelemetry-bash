@@ -11,7 +11,7 @@ inputs:
     default: '${{ job.status }}'
   github_token:
     description: 'A GitHub token for API access (read-only)'
-    default: '${{ github.token }}'
+    default: '${{ secrets.GITHUB_TOKEN }}'
   cache:
     description: 'Whether to use GitHub Actions Cache to cache dependencies'
     default: false
