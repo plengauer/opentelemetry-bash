@@ -22,11 +22,11 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
     steps:
-      - run: |
-          echo '${{ github.event }}' | jq -r .assets[].browser_download_url | grep '.deb$' | xargs wget --header="Authorization: Bearer $GITHUB_TOKEN"
-          sudo apt-get -y install ./*.deb
       - env:
           GITHUB_TOKEN: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
+        run: |
+          echo '${{ github.event }}' | jq -r .assets[].browser_download_url | grep '.deb$' | xargs wget --header="Authorization: Bearer $GITHUB_TOKEN"
+          sudo apt-get -y install ./*.deb
       - uses: actions/checkout@v4
       - id: demo
         env:
