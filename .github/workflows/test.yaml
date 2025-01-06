@@ -273,7 +273,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
-      - uses: Vampire/setup-wsl@v4.0.0
+      - uses: Vampire/setup-wsl@v4.1.0
         with:
           wsl-version: ${{ matrix.version }}
       - shell: wsl-bash {0}
