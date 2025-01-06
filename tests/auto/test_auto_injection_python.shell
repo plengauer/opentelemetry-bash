@@ -7,7 +7,7 @@ export OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE
 
 echo '
 import os
-os.execl('/bin/echo', 'echo', 'hello', 'world', '0')
+os.execl("/bin/echo", "echo", "hello", "world", "0")
 ' | python3
 assert_equals 0 $?
 span="$(resolve_span '.name == "echo hello world 0"')"
@@ -16,7 +16,7 @@ assert_not_equals null $(\echo "$span" | jq -r '.parent_id')
 
 echo '
 import os
-os.execv('/bin/echo', [ 'echo', 'hello', 'world', '1' ])
+os.execv("/bin/echo", [ "echo", "hello", "world", "1" ])
 ' | python3
 assert_equals 0 $?
 span="$(resolve_span '.name == "echo hello world 1"')"
@@ -25,7 +25,7 @@ assert_not_equals null $(\echo "$span" | jq -r '.parent_id')
 
 echo '
 import os
-os.spawnl(os.P_WAIT, '/bin/echo', 'echo', 'hello', 'world', '2')
+os.spawnl(os.P_WAIT, "/bin/echo", "echo", "hello", "world", "2")
 ' | python3
 assert_equals 0 $?
 span="$(resolve_span '.name == "echo hello world 2"')"
@@ -34,7 +34,7 @@ assert_not_equals null $(\echo "$span" | jq -r '.parent_id')
 
 echo '
 import os
-os.spawnlp(os.P_WAIT, 'echo', 'echo', 'hello', 'world', '3')
+os.spawnlp(os.P_WAIT, "echo", "echo", "hello", "world", "3")
 ' | python3
 assert_equals 0 $?
 span="$(resolve_span '.name == "echo hello world 3"')"
@@ -43,7 +43,7 @@ assert_not_equals null $(\echo "$span" | jq -r '.parent_id')
 
 echo '
 import os
-os.spawnv(os.P_WAIT, '/bin/echo', ['echo', 'hello', 'world', '4'])
+os.spawnv(os.P_WAIT, "/bin/echo", ["echo", "hello", "world", "4"])
 ' | python3
 assert_equals 0 $?
 span="$(resolve_span '.name == "echo hello world 4"')"
@@ -52,7 +52,7 @@ assert_not_equals null $(\echo "$span" | jq -r '.parent_id')
 
 echo '
 import os
-os.spawnvp(os.P_WAIT, 'echo', ['echo', 'hello', 'world', '5'])
+os.spawnvp(os.P_WAIT, "echo", ["echo", "hello", "world", "5"])
 ' | python3
 assert_equals 0 $?
 span="$(resolve_span '.name == "echo hello world 5"')"
@@ -61,7 +61,7 @@ assert_not_equals null $(\echo "$span" | jq -r '.parent_id')
 
 echo '
 import subprocess
-subprocess.run(['echo', 'hello', 'world', '6'])
+subprocess.run(["echo", "hello", "world", "6"])
 ' | python3
 assert_equals 0 $?
 span="$(resolve_span '.name == "echo hello world 6"')"
@@ -70,7 +70,7 @@ assert_not_equals null $(\echo "$span" | jq -r '.parent_id')
 
 echo '
 import subprocess
-subprocess.run('echo "hello" "world" "7"', shell=True)
+subprocess.run("echo hello world 7", shell=True)
 ' | python3
 assert_equals 0 $?
 span="$(resolve_span '.name == "echo hello world 7"')"
@@ -79,7 +79,7 @@ assert_not_equals null $(\echo "$span" | jq -r '.parent_id')
 
 printf '%s' '
 import subprocess
-with subprocess.Popen(['echo', 'hello', 'world', '8'], stdout=subprocess.DEVNULL) as proc:
+with subprocess.Popen(["echo", "hello", "world", "8"], stdout=subprocess.DEVNULL) as proc:
   pass
 ' | python3
 assert_equals 0 $?
@@ -89,7 +89,7 @@ assert_not_equals null $(\echo "$span" | jq -r '.parent_id')
 
 printf '%s' '
 import subprocess
-with subprocess.Popen(['echo', 'hello', 'world', '9'], stdout=subprocess.DEVNULL) as proc:
+with subprocess.Popen(["echo", "hello", "world", "9"], stdout=subprocess.DEVNULL) as proc:
   pass
 ' | python3
 assert_equals 0 $?
