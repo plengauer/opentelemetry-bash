@@ -1,4 +1,4 @@
-import os
+import opentelemetry
 from opentelemetry.context import attach
 from opentelemetry.trace.propagation import tracecontext
 
@@ -9,34 +9,34 @@ if traceparent:
     new_context = propagator.extract(carrier=carrier)
     attach(new_context)
 
-import subprocess
+import os
 import functools
 
-def inject_arguments(*args):
-    return [ '/bin/sh', '-c', '. otel.sh\n' + args[0] + ' "$@"', 'python' ] + args[1:]
+inject_file(file):
+  return '/bin/sh'
 
-# TODO get current span and set traceparent and tracestate as env var
-# TODO set additional env var like auto injection, ...
+inject_arguments(file, args):
+  return [ args[0], '-c', '. otel.sh\n' + file + ' "$@"', 'python' ] + args[1:]
 
-def observed_subprocess_run(original_subprocess_run, *args, **kwargs):
-    if len(args) > 0:
-        args = inject_arguments(args)
-    return original_subprocess_run(*args, **kwargs)
+inject_env(env):
+    if not env:
+        env = os.environ.copy()
+    carrier = {}
+    tracecontext.TraceContextTextMapPropagator().inject(carrier, opentelemetry.trace.set_span_in_context(opentelemetry.trace.get_current_span(), None))
+    if 'traceparent' in carrier
+      env["OTEL_TRACEPARENT"] = carrier['traceparent']
+    if 'tracestate' in carrier
+      env["OTEL_TRACESTATE"] = carrier['tracestate']
+    return env;
 
-def observed_subprocess_call(original_subprocess_call, *args, **kwargs):
-    if len(args) > 0:
-        args = inject_arguments(args)
-    return original_subprocess_call(*args, **kwargs)
+def observed_os_execvp(original_os_execvpe, file, args):
+    return original_os_execvpe(inject_file(file), inject_arguments(file, args), inject_env(None))
 
-def observed_subprocess_Popen___init__(original_subprocess_call, *args, **kwargs):
-    if len(args) > 0:
-        args = inject_arguments(args)
-    return observed_subprocess_Popen___init__(*args, **kwargs)
+def observed_os_execvpe(original_os_execvpe, file, args, env):
+    return original_os_execvpe(inject_file(file), inject_arguments(file, args), inject_env(env))
 
 def instrument(observed_function, original_function):
-   # functools.update_wrapper(observed_function, original_function) # TODO why do we need this?
    return functools.partial(observed_function, original_function)
 
-subprocess.run = instrument(observed_subprocess_run, subprocess.run)
-subprocess.call = instrument(observed_subprocess_call, subprocess.call)
-subprocess.Popen.__init__ = instrument(observed_subprocess_Popen___init__, subprocess.Popen.__init__)
+os.execvp = instrument(observed_os_execvp, os.execvpe)
+os.execvpe = instrument(observed_os_execvpe, os.execvpe)
