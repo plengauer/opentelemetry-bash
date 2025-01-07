@@ -8,6 +8,10 @@ on:
     - cron: "0 0 * * *"
   workflow_call:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   verify-python-dependency:
     runs-on: ubuntu-latest
