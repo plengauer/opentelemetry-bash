@@ -12,27 +12,29 @@ if traceparent:
 import os
 import functools
 
-inject_file(file):
+def inject_file(file):
   return '/bin/sh'
 
-inject_arguments(file, args):
+def inject_arguments(file, args):
   return [ args[0], '-c', '. otel.sh\n' + file + ' "$@"', 'python' ] + args[1:]
 
-inject_env(env):
+def inject_env(env):
     if not env:
         env = os.environ.copy()
     carrier = {}
     tracecontext.TraceContextTextMapPropagator().inject(carrier, opentelemetry.trace.set_span_in_context(opentelemetry.trace.get_current_span(), None))
-    if 'traceparent' in carrier
+    if 'traceparent' in carrier:
       env["OTEL_TRACEPARENT"] = carrier['traceparent']
-    if 'tracestate' in carrier
+    if 'tracestate' in carrier:
       env["OTEL_TRACESTATE"] = carrier['tracestate']
     return env;
 
 def observed_os_execvp(original_os_execvpe, file, args):
+    print('EXECVP: ' + file + ' ' + ','.join(args), file=sys.stderr);
     return original_os_execvpe(inject_file(file), inject_arguments(file, args), inject_env(None))
 
 def observed_os_execvpe(original_os_execvpe, file, args, env):
+    print('EXECVPE: ' + file + ' ' + ','.join(args), file=sys.stderr);
     return original_os_execvpe(inject_file(file), inject_arguments(file, args), inject_env(env))
 
 def instrument(observed_function, original_function):
