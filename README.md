@@ -176,7 +176,7 @@ observe:
         OTEL_SERVICE_NAME: ${{ secrets.SERVICE_NAME }}
         # ...
 ```
-If you define that job to create a single root span for all other jobs, only the step in this root job has to be configured. The configuration will be propagated to the other jobs. The only exception to that are OpenTelemetry SDK Header configurations because they often contain API tokens and we cannot securely propagate these between jobs.
+If you define that job to create a single root span for all other jobs, only the step in this root job has to be configured. The configuration will be propagated securely to the other jobs.
 
 ## Manual Instrumentation
 Import the API by referencing the `otelapi.sh` file. This is only necessary if you do not choose a fully automatic approach described above. In case you use automatic instrumentation, the API will be imported automatically for you.
