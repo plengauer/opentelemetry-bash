@@ -3,7 +3,7 @@ if ! which python3; then exit 0; fi
 
 . otel.sh
 
-set -s
+set -x
 \echo '
 import os
 os.execv("/bin/echo", [ "echo", "hello", "world", "1" ])
