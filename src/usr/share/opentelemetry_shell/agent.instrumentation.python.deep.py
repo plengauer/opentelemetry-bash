@@ -35,8 +35,8 @@ def observed_os_execv(original_os_execve, file, args):
 def observed_os_execve(original_os_execve, file, args, env):
     return original_os_execve(inject_file(file), inject_arguments(file, args), inject_env(env))
 
-def observed_os_execvp(original_os_execvp, file, args):
-    return original_os_execvp(inject_file(file), inject_arguments(file, args), inject_env(None))
+def observed_os_execvp(original_os_execvpe, file, args):
+    return original_os_execvpe(inject_file(file), inject_arguments(file, args), inject_env(None))
 
 def observed_os_execvpe(original_os_execvpe, file, args, env):
     return original_os_execvpe(inject_file(file), inject_arguments(file, args), inject_env(env))
@@ -46,5 +46,5 @@ def instrument(observed_function, original_function):
 
 os.execv = instrument(observed_os_execv, os.execve)
 os.execve = instrument(observed_os_execve, os.execve)
-os.execvp = instrument(observed_os_execvp, os.execvp)
+os.execvp = instrument(observed_os_execvp, os.execvpe)
 os.execvpe = instrument(observed_os_execvpe, os.execvpe)
