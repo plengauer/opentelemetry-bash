@@ -12,7 +12,7 @@ try:
         carrier = { "traceparent": traceparent }
         new_context = propagator.extract(carrier=carrier)
         attach(new_context)
-
+    
     def inject_env(env):
         if not env:
             env = os.environ.copy()
@@ -38,7 +38,7 @@ def inject_file(file):
 def inject_arguments(file, args):
   if type(args) is tuple:
       args = list(args)
-  return [ args[0], '-c', '. otel.sh\n_otel_inject "' + file + '" "$@"', 'python' ] + args[1:]
+  return [ args[0], '-c', '. otel.sh\n_otel_inject "' + str(file) + '" "$@"', 'python' ] + args[1:]
 
 def observed_os_execv(original_os_execve, file, args):
   print('os.execv(' + str(file) + ', ' + str(args) + ')', file=sys.stderr)
@@ -46,8 +46,8 @@ def observed_os_execv(original_os_execve, file, args):
   return original_os_execve(inject_file(file), inject_arguments(file, args), inject_env(None))
 
 def observed_os_execve(original_os_execve, file, args, env):
-  print('os.execv(' + str(file) + ', ' + str(args) + ', ' + str(env) + ')', file=sys.stderr)
-  print('os.execv(' + inject_file(file) + ', [' + ','.join(inject_arguments(file, args)) + '], ' + str(inject_env(env)) + ')', file=sys.stderr)
+  print('os.execve(' + str(file) + ', ' + str(args) + ', ' + str(env) + ')', file=sys.stderr)
+  print('os.execve(' + inject_file(file) + ', [' + ','.join(inject_arguments(file, args)) + '], ' + str(inject_env(env)) + ')', file=sys.stderr)
   return original_os_execve(inject_file(file), inject_arguments(file, args), inject_env(env))
 
 # def observed_os_execvp(original_os_execvpe, file, args):
