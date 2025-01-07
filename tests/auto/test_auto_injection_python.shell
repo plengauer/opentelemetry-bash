@@ -3,10 +3,12 @@ if ! which python3; then exit 0; fi
 
 . otel.sh
 
-echo '
+set -s
+\echo '
 import os
 os.execv("/bin/echo", [ "echo", "hello", "world", "1" ])
 ' | python3
+set +x
 assert_equals 0 $?
 span="$(resolve_span '.name == "echo hello world 1"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | jq -r '.kind')
