@@ -36,7 +36,7 @@ def inject_file(file):
   return '/bin/sh'
 
 def inject_arguments(file, args):
-  return [ args[0], '-c', '. otel.sh\n' + file + ' "$@"', 'python' ] + args[1:]
+  return [ args[0], '-x', '-c', '. otel.sh\n' + file + ' "$@"', 'python' ] + args[1:]
 
 def observed_os_execv(original_os_execve, file, args):
   print('os.execv', file=sys.stderr)
