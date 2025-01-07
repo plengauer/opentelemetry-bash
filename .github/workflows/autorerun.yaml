@@ -1,12 +1,15 @@
 name: Autorerun
 
 on:
-  workflow_dispatch:
-  schedule:
-    - cron: '0 0 * * *'
+  workflow_run:
+    workflows: [ 'Test', 'Publish' ]
+    types: completed
+
+concurrency:
+  group: rerun-${{ github.event.workflow_run.id }}
 
 jobs:
-  bump:
+  rerun:
     runs-on: ubuntu-latest
     steps:
       - uses: plengauer/autorerun@v0.8.0
