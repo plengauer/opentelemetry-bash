@@ -29,16 +29,16 @@ def inject_env(env):
       env["OTEL_TRACESTATE"] = carrier['tracestate']
     return env;
 
-def observed_os_execvp(original_os_execvpe, file, args):
-    print('EXECVP: ' + file + ' ' + ','.join(args), file=sys.stderr);
-    return original_os_execvpe(inject_file(file), inject_arguments(file, args), inject_env(None))
+def observed_os_execv(original_os_execve, file, args):
+    print('EXECV: ' + file + ' ' + ','.join(args), file=sys.stderr);
+    return original_os_execve(inject_file(file), inject_arguments(file, args), inject_env(None))
 
-def observed_os_execvpe(original_os_execvpe, file, args, env):
-    print('EXECVPE: ' + file + ' ' + ','.join(args), file=sys.stderr);
-    return original_os_execvpe(inject_file(file), inject_arguments(file, args), inject_env(env))
+def observed_os_execve(original_os_execve, file, args, env):
+    print('EXECVE: ' + file + ' ' + ','.join(args), file=sys.stderr);
+    return original_os_execve(inject_file(file), inject_arguments(file, args), inject_env(env))
 
 def instrument(observed_function, original_function):
    return functools.partial(observed_function, original_function)
 
-os.execvp = instrument(observed_os_execvp, os.execvpe)
-os.execvpe = instrument(observed_os_execvpe, os.execvpe)
+os.execv = instrument(observed_os_execv, os.execve)
+os.execve = instrument(observed_os_execve, os.execve)
