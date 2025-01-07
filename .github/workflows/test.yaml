@@ -132,6 +132,7 @@ jobs:
     strategy:
       matrix:
         image: ${{ fromJSON(needs.prepare-images.outputs.images_upgradeable) }}
+      fail-fast: false
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -177,6 +178,7 @@ jobs:
       matrix:
         image: ${{ fromJSON(needs.prepare-images.outputs.images) }}
         dependency: ${{ fromJSON(needs.prepare-dependency.outputs.dependencies) }}
+      fail-fast: false
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -225,6 +227,7 @@ jobs:
     strategy:
       matrix:
         image: ${{ fromJSON(needs.prepare-images.outputs.images) }}
+      fail-fast: false
     steps:
       - uses: actions/checkout@v4
       - run: |
@@ -367,6 +370,7 @@ jobs:
     timeout-minutes: 15
     strategy: 
       matrix: ${{ fromJSON(needs.prepare-performance.outputs.matrix) }}
+      fail-fast: false
     steps:
       - if: matrix.tag_name == '~local'
         uses: actions/download-artifact@v4
