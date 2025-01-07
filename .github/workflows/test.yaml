@@ -1,41 +1,92 @@
 name: Test
 
 on:
+  push:
+    branches:
+      - '**'
+  schedule:
+    - cron: "0 0 * * *"
   workflow_call:
 
-env:
-  IMAGE_DEBIAN_OLDEST: 'debian:oldstable'
-  IMAGE_DEBIAN_STABLE: 'debian:stable'
-  IMAGE_DEBIAN_LATEST: 'debian:testing'
-  IMAGE_DEBIAN_DEV: 'debian:unstable'
-  IMAGE_DEBIAN_SLIM_OLDEST: 'debian:oldstable-slim'
-  IMAGE_DEBIAN_SLIM_STABLE: 'debian:stable-slim'
-  IMAGE_DEBIAN_SLIM_LATEST: 'debian:testing-slim'
-  IMAGE_DEBIAN_SLIM_DEV: 'debian:unstable-slim'
-  IMAGE_UBUNTU_OLDEST: 'ubuntu:focal' # needs manual maintenance on April 2025 (https://ubuntu.com/about/release-cycle)
-  IMAGE_UBUNTU_STABLE: 'ubuntu:latest'
-  IMAGE_UBUNTU_LATEST: 'ubuntu:rolling'
-  IMAGE_UBUNTU_DEV: 'ubuntu:devel'
-  IMAGE_CENTOS_OLDEST: '' # CentOS is EOL
-  IMAGE_CENTOS_STABLE: '' # CentOS is EOL
-  IMAGE_CENTOS_LATEST: 'centos:latest'
-  IMAGE_CENTOS_DEV: 'centos:latest'
-  IMAGE_FEDORA_OLDEST: 'fedora:40' # needs manual maintenance on June 2025 (https://docs.fedoraproject.org/en-US/releases/lifecycle/)
-  IMAGE_FEDORA_STABLE: 'fedora:41' # needs manual maintenance on June 2025 (https://docs.fedoraproject.org/en-US/releases/lifecycle/)
-  IMAGE_FEDORA_LATEST: 'fedora:latest'
-  IMAGE_FEDORA_DEV: 'fedora:rawhide'
-  IMAGE_RHEL_OLDEST: 'redhat/ubi8:latest' # needs manual maintenance
-  IMAGE_RHEL_STABLE: 'redhat/ubi9:latest' # needs manual maintenance
-  IMAGE_RHEL_LATEST: 'redhat/ubi9:latest' # needs manual maintenance
-  IMAGE_RHEL_DEV: '' # not public
-  IMAGE_OPENSUSE_OLDEST: 'opensuse/leap:15.5' # needs manual maintenance on January 2025 (https://endoflife.date/opensuse)
-  IMAGE_OPENSUSE_STABLE: 'opensuse/leap:latest'
-  IMAGE_OPENSUSE_LATEST: 'opensuse/tumbleweed:latest'
-  IMAGE_OPENSUSE_DEV: '' # not public
-
 jobs:
+  verify-python-dependency:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          min_version_otel="$(curl https://pypi.org/project/opentelemetry-api/ | grep -F -- 'Python :: ' | cut -d ':' -f 3 | tr -d ' ' | grep -F -- 3. | cut -d . -f 2 | sort -n | head -n 1)"
+          min_version_otel="${min_version_otel:-8}"
+          min_version_shell="$(cat src/DEBIAN/control | grep '^Pre-Depends:' | tr ',' '\n' | grep -F -- 'python3 (>=' | cut -d '(' -f 2- | cut -d ')' -f 1 | cut -d ' ' -f 2 | cut -d . -f 2)"
+          [ "$min_version_shell" -ge "$min_version_otel" ]
+
+  verify-debian-dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get -y install apt-file
+      - run: sudo apt-file update
+      - run: |
+          process_packages() { sed 's/^awk$/gawk/g' | sed 's/^python3$/python3-minimal/g'; }
+          process_commands() { sed 's/^awk$/gawk/g' | grep -vE '^which$' | grep -vE '^print$' | grep -vE '^rpm$';  }
+          patternify() { grep -v '^$' | grep -P '^[a-zA-Z0-9/_.-]+$' | while read -r pattern; do echo '^'"$pattern"'$'; done }
+          verify() {
+            local dependencies="$(cat src/DEBIAN/control | grep -E "$1" | cut -d : -f 2- | tr '|' ',' | tr ',' '\n' | cut -d '(' -f 1 | tr -d ' ' | process_packages | patternify)"
+            cat | while read -r file; do echo "Verifying $file" >&2; echo "$file"; done | xargs cat \
+              | grep -v 'SKIP_DEPENDENCY_CHECK' | while read -r line; do line="${line%%#*}"; printf '%s\n' "$line"; done \
+              | grep -oP '(^[[:space:]]*|\$\()\\?[a-zA-Z/][a-zA-Z0-9/_.-]*($|[[:space:]])' \
+              | while read -r command; do command="${command% }"; command="${command# }"; command="${command#\$\(}"; command="${command#\\}"; [ "${#command}" -gt 1 ] && printf '%s\n' "$command" || true; done \
+              | grep -vE '^_otel|^otel_|^OTEL_' | grep -vE "$(compgen -b | patternify)" | grep -vE "$(compgen -k | patternify)" | process_commands \
+              | sort -u | while read -r command; do
+                printf '%s' "$command ... "
+                apt-file search /"$command" | grep -E "/$command\$" | grep -E ': /bin/|: /sbin/|: /usr/bin/|: /usr/sbin/|: /usr/local/bin/|: /usr/local/sbin/' | cut -d : -f 1 | grep -q "$dependencies" && echo OK || echo UNAVAILABLE
+              done | tee /dev/stderr | grep -q 'UNAVAILABLE' && return 1 || return 0
+          }
+          find src/DEBIAN | grep -vE '^src/DEBIAN$|^src/DEBIAN/control$|^src/DEBIAN/triggers$' | verify '^Pre-Depends:' && find src -iname '*.sh' | grep -vE '^src/DEBIAN/' | verify '^Pre-Depends:|^Depends:|^Recommends:|^Suggests:'
+
   build:
-    uses: ./.github/workflows/build.yaml
+    needs: [verify-python-dependency, verify-debian-dependencies]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./src
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install devscripts debhelper alien
+      - run: sed -i "s/__VERSION__/$(cat ../VERSION)/g" DEBIAN/control
+      - run: dpkg-deb --root-owner-group -Zgzip --build . ../package.deb
+      - run: |
+          alien --to-rpm --scripts --keep-version --generate ../package.deb
+          rpm_dir=$(echo */*.spec | rev | cut -d / -f 2- | rev)
+          {
+            dependencies_format_deb_to_rpm() {
+              tr '(' ' ' | tr -d ')' | sed 's/=/= /g' | sed 's/|/ or /g' | sed 's/.*/(&)/g'
+            }
+
+            dependencies_content_deb_to_rpm() {
+              grep -v 'python3-venv' | sed 's/^awk$/gawk | mawk/g' | sed 's/^dpkg$/rpm/g' | sed 's/^xxd$/xxd | vim-common | vim/g'
+            }
+          
+            echo -n 'Requires: ' && cat DEBIAN/control | grep -E '^Pre-Depends:|^Depends:|^Recommends:' | cut -d ' ' -f 2- | tr ',' '\n' | tr -d ' ' | grep -v '^$' | dependencies_content_deb_to_rpm | dependencies_format_deb_to_rpm | tr '\n' ' ' && echo
+            echo "AutoReq: no"
+            echo "BuildArch: noarch"
+            cat "$rpm_dir"/*.spec | while read -r line; do
+              case "$line" in
+                '%post'*)
+                  cat DEBIAN/triggers | grep -v '^$' | cut -d ' ' -f 2 | rev | cut -d / -f 1 | rev | sort -u | grep -v python3 | while read -r package; do
+                    cat "$rpm_dir"/*.spec | sed -n '/^%post/,/^$/p' | sed 's/^%post/%triggerin -- '"$package"'/g'
+                    cat "$rpm_dir"/*.spec | sed -n '/^%post/,/^$/p' | sed 's/^%post/%triggerun -- '"$package"'/g'
+                  done
+                  ;;
+                *) ;;
+              esac
+              printf '%s\n' "$line"
+            done
+          } > rpm.spec && rm "$rpm_dir"/*.spec
+          rpmbuild -bb --buildroot="$(cat rpm.spec | grep '^Buildroot: ' | cut -d ' ' -f 2)" rpm.spec
+          mv ../*.rpm ../package.rpm
+      - uses: actions/upload-artifact@v4
+        with:
+          name: packages
 
   smoke:
     needs: build
@@ -87,6 +138,35 @@ jobs:
     outputs:
       images: ${{ steps.dynamic.outputs.images }}
       images_upgradeable: ${{ steps.dynamic.outputs.images_upgradeable }}
+    env:
+      IMAGE_DEBIAN_OLDEST: 'debian:oldstable'
+      IMAGE_DEBIAN_STABLE: 'debian:stable'
+      IMAGE_DEBIAN_LATEST: 'debian:testing'
+      IMAGE_DEBIAN_DEV: 'debian:unstable'
+      IMAGE_DEBIAN_SLIM_OLDEST: 'debian:oldstable-slim'
+      IMAGE_DEBIAN_SLIM_STABLE: 'debian:stable-slim'
+      IMAGE_DEBIAN_SLIM_LATEST: 'debian:testing-slim'
+      IMAGE_DEBIAN_SLIM_DEV: 'debian:unstable-slim'
+      IMAGE_UBUNTU_OLDEST: 'ubuntu:focal' # needs manual maintenance on April 2025 (https://ubuntu.com/about/release-cycle)
+      IMAGE_UBUNTU_STABLE: 'ubuntu:latest'
+      IMAGE_UBUNTU_LATEST: 'ubuntu:rolling'
+      IMAGE_UBUNTU_DEV: 'ubuntu:devel'
+      IMAGE_CENTOS_OLDEST: '' # CentOS is EOL
+      IMAGE_CENTOS_STABLE: '' # CentOS is EOL
+      IMAGE_CENTOS_LATEST: 'centos:latest'
+      IMAGE_CENTOS_DEV: 'centos:latest'
+      IMAGE_FEDORA_OLDEST: 'fedora:40' # needs manual maintenance on June 2025 (https://docs.fedoraproject.org/en-US/releases/lifecycle/)
+      IMAGE_FEDORA_STABLE: 'fedora:41' # needs manual maintenance on June 2025 (https://docs.fedoraproject.org/en-US/releases/lifecycle/)
+      IMAGE_FEDORA_LATEST: 'fedora:latest'
+      IMAGE_FEDORA_DEV: 'fedora:rawhide'
+      IMAGE_RHEL_OLDEST: 'redhat/ubi8:latest' # needs manual maintenance
+      IMAGE_RHEL_STABLE: 'redhat/ubi9:latest' # needs manual maintenance
+      IMAGE_RHEL_LATEST: 'redhat/ubi9:latest' # needs manual maintenance
+      IMAGE_RHEL_DEV: '' # not public
+      IMAGE_OPENSUSE_OLDEST: 'opensuse/leap:15.5' # needs manual maintenance on January 2025 (https://endoflife.date/opensuse)
+      IMAGE_OPENSUSE_STABLE: 'opensuse/leap:latest'
+      IMAGE_OPENSUSE_LATEST: 'opensuse/tumbleweed:latest'
+      IMAGE_OPENSUSE_DEV: '' # not public
     steps:
       - uses: actions/checkout@v4
       - id: key
