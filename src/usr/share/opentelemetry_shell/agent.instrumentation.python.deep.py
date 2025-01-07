@@ -39,11 +39,11 @@ def inject_arguments(file, args):
   return [ args[0], '-c', '. otel.sh\n' + file + ' "$@"', 'python' ] + args[1:]
 
 def observed_os_execv(original_os_execve, file, args):
-  print('os.execv(' + inject_file(file) + ', [' + ','.join(inject_arguments(args)) + '], ' + str(inject_env(None)) + ')', file=sys.stderr)
+  print('os.execv(' + inject_file(file) + ', [' + ','.join(inject_arguments(file, args)) + '], ' + str(inject_env(None)) + ')', file=sys.stderr)
   return original_os_execve(inject_file(file), inject_arguments(file, args), inject_env(None))
 
 def observed_os_execve(original_os_execve, file, args, env):
-  print('os.execve(' + inject_file(file) + ', [' + ','.join(inject_arguments(args)) + '], ' + str(inject_env(env)) + ')', file=sys.stderr)
+  print('os.execve(' + inject_file(file) + ', [' + ','.join(inject_arguments(file, args)) + '], ' + str(inject_env(env)) + ')', file=sys.stderr)
   return original_os_execve(inject_file(file), inject_arguments(file, args), inject_env(env))
 
 # def observed_os_execvp(original_os_execvpe, file, args):
