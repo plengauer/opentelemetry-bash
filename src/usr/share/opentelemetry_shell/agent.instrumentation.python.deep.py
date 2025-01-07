@@ -36,6 +36,8 @@ def inject_file(file):
   return '/bin/sh'
 
 def inject_arguments(file, args):
+  if type(args) is tuple:
+      args = list(args)
   return [ args[0], '-c', '. otel.sh\n_otel_inject "' + file + '" "$@"', 'python' ] + args[1:]
 
 def observed_os_execv(original_os_execve, file, args):
