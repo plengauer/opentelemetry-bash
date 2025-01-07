@@ -132,6 +132,7 @@ jobs:
     strategy:
       matrix:
         image: ${{ fromJSON(needs.prepare-images.outputs.images_upgradeable) }}
+      fail-fast: false
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -177,6 +178,7 @@ jobs:
       matrix:
         image: ${{ fromJSON(needs.prepare-images.outputs.images) }}
         dependency: ${{ fromJSON(needs.prepare-dependency.outputs.dependencies) }}
+      fail-fast: false
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -225,6 +227,7 @@ jobs:
     strategy:
       matrix:
         image: ${{ fromJSON(needs.prepare-images.outputs.images) }}
+      fail-fast: false
     steps:
       - uses: actions/checkout@v4
       - run: |
@@ -273,7 +276,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
-      - uses: Vampire/setup-wsl@v4.0.0
+      - uses: Vampire/setup-wsl@v4.1.0
         with:
           wsl-version: ${{ matrix.version }}
       - shell: wsl-bash {0}
@@ -331,7 +334,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           issue-message: "Hello, thanks for adding an issue for the first time!"
           pr-message: "Hello, thanks for contributing for the first time!"
-      - uses: renovatebot/github-action@v41.0.7 # integration, node action with call to docker, docker flags that make injection more complicated, then call a node script via exec that already is injected with otel
+      - uses: renovatebot/github-action@v41.0.8 # integration, node action with call to docker, docker flags that make injection more complicated, then call a node script via exec that already is injected with otel
         env:
           RENOVATE_DRY_RUN: full
           RENOVATE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -367,6 +370,7 @@ jobs:
     timeout-minutes: 15
     strategy: 
       matrix: ${{ fromJSON(needs.prepare-performance.outputs.matrix) }}
+      fail-fast: false
     steps:
       - if: matrix.tag_name == '~local'
         uses: actions/download-artifact@v4

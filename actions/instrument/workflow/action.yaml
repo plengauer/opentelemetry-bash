@@ -6,4 +6,4 @@ runs:
 inputs:
   cache:
     description: 'Whether to use GitHub Actions Cache to cache dependencies'
-    default: false
+    default: true

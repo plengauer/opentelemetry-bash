@@ -6,7 +6,7 @@
 # All other functions and variables are for internal use only and therefore subject to change without notice!  #
 ################################################################################################################
 
-if \[ "$_otel_shell_injected" = "TRUE" ]; then
+if \[ "${_otel_shell_injected:-FALSE}" = "TRUE" ]; then
   return 0
 fi
 _otel_shell_injected=TRUE
@@ -15,13 +15,13 @@ case "$-" in
   *r*) \echo "WARNING OpenTelemetry for shell does not support restricted mode (set -r)!" >&2; return 0;;
 esac
 
-_otel_shell_conservative_exec="$OTEL_SHELL_CONSERVATIVE_EXEC"
+_otel_shell_conservative_exec="${OTEL_SHELL_CONSERVATIVE_EXEC:-FALSE}"
 unset OTEL_SHELL_CONSERVATIVE_EXEC
 
 \. /usr/share/opentelemetry_shell/api.sh
 _otel_package_version opentelemetry-shell > /dev/null # to build the cache outside a subshell
 
-if \[ "$_otel_shell" = "bash" ] && \[ -n "$BASHPID" ] && \[ "$$" != "$BASHPID" ]; then
+if \[ "$_otel_shell" = "bash" ] && \[ -n "${BASHPID:-}" ] && \[ "$$" != "$BASHPID" ]; then
   \echo "WARNING The OpenTelemetry shell file for auto-instrumentation is sourced in a subshell, automatic instrumentation will only be active within that subshell!" >&2
 fi
 
@@ -30,13 +30,13 @@ case "$-" in
   *)   _otel_is_interactive=FALSE;;
 esac
 
-if \[ -n "$OTEL_SHELL_AUTO_INSTRUMENTATION_HINT" ]; then
+if \[ -n "${OTEL_SHELL_AUTO_INSTRUMENTATION_HINT:-}" ]; then
   _otel_shell_auto_instrumentation_hint="$OTEL_SHELL_AUTO_INSTRUMENTATION_HINT"
   unset OTEL_SHELL_AUTO_INSTRUMENTATION_HINT
-elif \[ "$_otel_is_interactive" = "TRUE" ]; then
-  \echo "WARNING When using OpenTelemetry in an interactive shell for the first time after startup, it may take some time to create the instrumentation cache! Subsequent interactive shells will start faster. This performance impact does not apply in non-interactive shells, like scripts or invocations with -c." >&2
+elif \[ "$_otel_is_interactive" = TRUE ]; then
+  \echo "WARNING When using OpenTelemetry in an interactive shell for the first time after startup, it may take some time to create the instrumentation cache! Subsequent interactive shells will start faster. This performance impact does NOT apply in non-interactive shells, like scripts or invocations with -c." >&2
   _otel_shell_auto_instrumentation_hint=""
-elif \[ "$OTEL_SHELL_IS_DYNAMIC" = TRUE ]; then
+elif \[ "${OTEL_SHELL_IS_DYNAMIC:-}" = TRUE ]; then
   _otel_shell_auto_instrumentation_hint=""
   unset OTEL_SHELL_IS_DYNAMIC
 elif \[ -f "$0" ] && \[ "$(\readlink -f "$0")" != "$(\readlink -f "/proc/$$/exe")" ]; then
@@ -50,8 +50,8 @@ if \[ "$_otel_shell" = "bash" ]; then
 else
   _otel_source_file_resolver='$0'
 fi
-_otel_source_line_resolver='$LINENO'
-_otel_source_func_resolver='$FUNCNAME'
+_otel_source_line_resolver='${LINENO:-}'
+_otel_source_func_resolver='${FUNCNAME:-}'
 
 if \[ "$_otel_shell" = "bash" ]; then
   shopt -s expand_aliases 1> /dev/null 2> /dev/null
@@ -67,7 +67,7 @@ _otel_auto_instrument() {
   ## (1) using the hint - will not work when scripts are changing or called the same but very fast!
   ## (2) using the resolved hint - will not work when new executables are added onto the system or their shebang changes or new bash.rc aliases are added
   ## (3) using the filtered list of commands - will work in every case but slowest
-  local cache_key="$({ _otel_list_path_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_hint "$hint" | \sort -u; \alias; \echo "$PATH" "$_otel_shell_conservative_exec" "$OTEL_SHELL_CONFIG_INSTRUMENT_MINIMALLY"; } | \md5sum | \cut -d ' ' -f 1)"
+  local cache_key="$({ _otel_list_path_commands | _otel_filter_commands_by_special | _otel_filter_commands_by_hint "$hint" | \sort -u; \alias; \echo "$PATH" "$_otel_shell_conservative_exec" "${OTEL_SHELL_CONFIG_INSTRUMENT_MINIMALLY:-}"; } | \md5sum | \cut -d ' ' -f 1)"
   local cache_file="$TMPDIR/opentelemetry_shell_$(_otel_package_version opentelemetry-shell)"_"$_otel_shell"_instrumentation_cache_"$cache_key".aliases
   if \[ -f "$cache_file" ]; then
     \eval "$(\grep -vh '_otel_alias_prepend ' $(_otel_list_special_auto_instrument_files))"
@@ -97,7 +97,7 @@ _otel_auto_instrument() {
   \alias .='_otel_instrument_and_source "$#" "$@" .'
   if \[ "$_otel_shell" = bash ]; then \alias source='_otel_instrument_and_source "$#" "$@" source'; fi
   if \[ "$_otel_shell_conservative_exec" = TRUE ]; then
-    if \[ -n "$LINENO" ]; then
+    if \[ -n "${LINENO:-}" ]; then
       \alias exec='eval "$(_otel_inject_and_exec_by_location "'$_otel_source_file_resolver'" "'$_otel_source_line_resolver'")"; exec'
     else
       \alias exec='_otel_record_exec; exec'
@@ -181,7 +181,7 @@ _otel_filter_commands_by_instrumentation() {
 }
 
 _otel_filter_commands_by_mode() {
-  if \[ "$OTEL_SHELL_CONFIG_INSTRUMENT_MINIMALLY" = TRUE ]; then
+  if \[ "${OTEL_SHELL_CONFIG_INSTRUMENT_MINIMALLY:-FALSE}" = TRUE ]; then
     local non_internal_instrumentations="$(\alias | \grep OTEL_SHELL_SPAN_KIND_OVERRIDE | \grep -v OTEL_SHELL_SPAN_KIND_OVERRIDE=INTERNAL | \sed 's/^alias //g' | \cut -d = -f 1)"
     if \[ -n "$non_internal_instrumentations" ]; then
       \grep -F "$non_internal_instrumentations"
@@ -283,7 +283,7 @@ _otel_alias_prepend() {
     fi
     while _otel_string_starts_with "$previous_command" "OTEL_"; do local previous_command="${previous_command#* }"; done
     local overrides="OTEL_SHELL_COMMAND_TYPE_OVERRIDE=$command_type"
-    if \[ -n "$span_kind" ]; then local overrides="$overrides OTEL_SHELL_SPAN_KIND_OVERRIDE=$span_kind"; fi
+    if \[ -n "${span_kind:-}" ]; then local overrides="$overrides OTEL_SHELL_SPAN_KIND_OVERRIDE=$span_kind"; fi
     local previous_otel_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep '^_otel_' | _otel_line_join)"
     local previous_alias_command="$(\printf '%s' "$previous_command" | _otel_line_split | \grep -v '^_otel_' | _otel_line_join)"
     case "$previous_alias_command" in
@@ -460,13 +460,13 @@ _otel_inject() {
 
 _otel_start_script() {
   otel_init || return $?
-  if \[ -n "$SSH_CLIENT"  ] && \[ -n "$SSH_CONNECTION" ] && \[ "$PPID" != 0 ] && \[ "$(\cat /proc/$PPID/cmdline | \tr -d '\000' | \cut -d ' ' -f 1)" = "sshd:" ]; then
+  if \[ -n "${SSH_CLIENT:-}"  ] && \[ -n "${SSH_CONNECTION:-}" ] && \[ "${PPID:-}" != 0 ] && \[ "$(\cat /proc/$PPID/cmdline | \tr -d '\000' | \cut -d ' ' -f 1)" = "sshd:" ]; then
     _root_span_handle="$(otel_span_start SERVER ssh)"
     otel_span_attribute_typed $_root_span_handle string ssh.ip="$(\echo $SSH_CONNECTION | \cut -d ' ' -f 3)"
     otel_span_attribute_typed $_root_span_handle int ssh.port="$(\echo $SSH_CONNECTION | \cut -d ' ' -f 4)"
     otel_span_attribute_typed $_root_span_handle string network.peer.ip="$(\echo $SSH_CLIENT | \cut -d ' ' -f 1)"
     otel_span_attribute_typed $_root_span_handle int network.peer.port="$(\echo $SSH_CLIENT | \cut -d ' ' -f 2)"
-  elif \[ -n "$SERVER_SOFTWARE"  ] && \[ -n "$SCRIPT_NAME" ] && \[ -n "$SERVER_NAME" ] && \[ -n "$SERVER_PROTOCOL" ] && ! \[ "$OTEL_SHELL_AUTO_INJECTED" = "TRUE" ] && \[ "$PPID" != 0 ] && \[ "$(\cat "/proc/$PPID/cmdline" | \tr '\000' ' ' | \cut -d ' ' -f 1 | \rev | \cut -d / -f 1 | \rev)" = "python3" ]; then
+  elif \[ -n "${SERVER_SOFTWARE:-}"  ] && \[ -n "${SCRIPT_NAME:-}" ] && \[ -n "${SERVER_NAME:-}" ] && \[ -n "${SERVER_PROTOCOL:-}" ] && ! \[ "${OTEL_SHELL_AUTO_INJECTED:FALSE}" = "TRUE" ] && \[ "${PPID:-}" != 0 ] && \[ "$(\cat "/proc/$PPID/cmdline" | \tr '\000' ' ' | \cut -d ' ' -f 1 | \rev | \cut -d / -f 1 | \rev)" = "python3" ]; then
     _root_span_handle="$(otel_span_start SERVER GET)"
     otel_span_attribute_typed $_root_span_handle string network.protocol.name=http
     otel_span_attribute_typed $_root_span_handle string network.transport=tcp
@@ -485,26 +485,26 @@ _otel_start_script() {
     _root_span_handle="$(otel_span_start SERVER "$(\echo "$cmdline" | \cut -d . -f 2- | \cut -d ' ' -f 1)")"
     otel_span_attribute_typed $_root_span_handle string debian.package.name="$(\echo "$cmdline" | \rev | \cut -d / -f 1 | \rev | \cut -d . -f 1)"
     otel_span_attribute_typed $_root_span_handle string debian.package.operation="$(\echo "$cmdline" | \cut -d . -f 2-)"
-  elif \[ "$GITHUB_ACTIONS" = true ] && \[ -n "$GITHUB_RUN_ID" ] && \[ -n "$GITHUB_WORKFLOW" ] && ( \[ "$OTEL_SHELL_IS_GITHUB_ACTION_ROOT" = TRUE ] || \[ "$PPID" != 0 ] && \[ "$(\cat /proc/$PPID/cmdline | \tr '\000-\037' ' ' | \cut -d ' ' -f 1 | \rev | \cut -d / -f 1 | \rev)" = "Runner.Worker" ] ); then
+  elif \[ "${GITHUB_ACTIONS:-false}" = true ] && \[ -n "${GITHUB_RUN_ID:-}" ] && \[ -n "${GITHUB_WORKFLOW:-}" ] && ( \[ "${OTEL_SHELL_IS_GITHUB_ACTION_ROOT:-FALSE}" = TRUE ] || \[ "${PPID:-}" != 0 ] && \[ "$(\cat /proc/$PPID/cmdline | \tr '\000-\037' ' ' | \cut -d ' ' -f 1 | \rev | \cut -d / -f 1 | \rev)" = "Runner.Worker" ] ); then
     unset OTEL_SHELL_IS_GITHUB_ACTION_ROOT
     local name="$GITHUB_WORKFLOW"
     local kind=CONSUMER
-    if \[ -n "$GITHUB_JOB" ]; then local name="$name / $GITHUB_JOB"; local kind=CONSUMER; fi
-    if \[ -n "$GITHUB_STEP" ]; then local name="$name / $GITHUB_STEP"; local kind=SERVER
-    elif \[ -n "$GITHUB_ACTION" ]; then local name="$name / $GITHUB_ACTION"; local kind=INTERNAL; fi
+    if \[ -n "${GITHUB_JOB:-}" ]; then local name="$name / $GITHUB_JOB"; local kind=CONSUMER; fi
+    if \[ -n "${GITHUB_STEP:-}" ]; then local name="$name / $GITHUB_STEP"; local kind=SERVER
+    elif \[ -n "${GITHUB_ACTION:-}" ]; then local name="$name / $GITHUB_ACTION"; local kind=INTERNAL; fi
     _root_span_handle="$(otel_span_start "$kind" "$name")"
-  elif ! \[ "$OTEL_SHELL_AUTO_INJECTED" = TRUE ] && \[ -z "$TRACEPARENT" ]; then
+  elif ! \[ "${OTEL_SHELL_AUTO_INJECTED:-FALSE}" = TRUE ] && \[ -z "${TRACEPARENT:-}" ]; then
     _root_span_handle="$(otel_span_start SERVER "$(_otel_command_self)")"
-  elif ! \[ "$OTEL_SHELL_AUTO_INJECTED" = TRUE ] && \[ -n "$TRACEPARENT" ]; then
+  elif ! \[ "${OTEL_SHELL_AUTO_INJECTED:-FALSE}" = TRUE ] && \[ -n "${TRACEPARENT:-}" ]; then
     _root_span_handle="$(otel_span_start INTERNAL "$(_otel_command_self)")"
   fi
-  if \[ -n "$_root_span_handle" ]; then otel_span_activate "$_root_span_handle"; fi
+  if \[ -n "${_root_span_handle:-}" ]; then otel_span_activate "$_root_span_handle"; fi
   unset OTEL_SHELL_AUTO_INJECTED
 }
 
 _otel_end_script() {
   local exit_code="$?"
-  if \[ -n "$_root_span_handle" ]; then
+  if \[ -n "${_root_span_handle:-}" ]; then
     if \[ "$exit_code" -ne 0 ]; then
       otel_span_error "$_root_span_handle"
     fi

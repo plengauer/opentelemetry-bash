@@ -63,7 +63,7 @@ _otel_inject_parallel_gnu_arguments() {
       local in_exec=1
       \echo -n "-q $_otel_shell -c '. otel.sh
 "
-      if \[ "$OTEL_SHELL_EXPERIMENTAL_INSTRUMENT_MINIMALLY" = TRUE ]; then
+      if \[ "${OTEL_SHELL_EXPERIMENTAL_INSTRUMENT_MINIMALLY:-}" = TRUE ]; then
         no_quote=1 _otel_escape_arg "$arg"
       else
         no_quote=1 _otel_escape_arg "otel_observe $arg"
