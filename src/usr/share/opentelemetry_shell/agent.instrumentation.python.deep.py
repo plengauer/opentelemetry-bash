@@ -1,3 +1,5 @@
+import os
+
 try:
     import opentelemetry
     from opentelemetry.context import attach
@@ -27,7 +29,6 @@ except ModuleNotFoundError:
             env = os.environ.copy()
         return env
 
-import os
 import functools
 
 def inject_file(file):
