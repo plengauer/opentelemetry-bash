@@ -57,38 +57,38 @@ span="$(resolve_span '.name == "echo hello world 5"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | \jq -r '.kind')
 assert_not_equals null $(\echo "$span" | \jq -r '.parent_id')
 
-echo '
+printf '%s' '
 import subprocess
-subprocess.run(["echo", "hello", "world", "6"])
+with subprocess.Popen(["echo", "hello", "world", "6"], stdout=subprocess.DEVNULL) as proc:
+  pass
 ' | python3
 assert_equals 0 $?
 span="$(resolve_span '.name == "echo hello world 6"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | \jq -r '.kind')
 assert_not_equals null $(\echo "$span" | \jq -r '.parent_id')
 
-echo '
+printf '%s' '
 import subprocess
-subprocess.run("echo hello world 7", shell=True)
+with subprocess.Popen(["echo", "hello", "world", "7"], stdout=subprocess.DEVNULL) as proc:
+  pass
 ' | python3
 assert_equals 0 $?
 span="$(resolve_span '.name == "echo hello world 7"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | \jq -r '.kind')
 assert_not_equals null $(\echo "$span" | \jq -r '.parent_id')
 
-printf '%s' '
+echo '
 import subprocess
-with subprocess.Popen(["echo", "hello", "world", "8"], stdout=subprocess.DEVNULL) as proc:
-  pass
+subprocess.run(["echo", "hello", "world", "8"])
 ' | python3
 assert_equals 0 $?
 span="$(resolve_span '.name == "echo hello world 8"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | \jq -r '.kind')
 assert_not_equals null $(\echo "$span" | \jq -r '.parent_id')
 
-printf '%s' '
+echo '
 import subprocess
-with subprocess.Popen(["echo", "hello", "world", "9"], stdout=subprocess.DEVNULL) as proc:
-  pass
+subprocess.run("echo hello world 9", shell=True)
 ' | python3
 assert_equals 0 $?
 span="$(resolve_span '.name == "echo hello world 9"')"
