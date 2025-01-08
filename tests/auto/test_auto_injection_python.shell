@@ -3,16 +3,12 @@ if ! which python3; then exit 0; fi
 
 . otel.sh
 
-which echo
-ls -la /snap/bin/echo
-readlink -f /snap/bin/echo
-
 echo '
 import os
 os.spawnlp(os.P_WAIT, "echo", "echo", "hello", "world", "3")
 ' | python3
 assert_equals 0 $?
-span="$(resolve_span '.name == "echo hello world 3"')"
+span="$(resolve_span '.name == "/usr/bin/echo hello world 3"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | \jq -r '.kind')
 assert_not_equals null $(\echo "$span" | \jq -r '.parent_id')
 
@@ -51,7 +47,7 @@ import os
 os.spawnlp(os.P_WAIT, "echo", "echo", "hello", "world", "3")
 ' | python3
 assert_equals 0 $?
-span="$(resolve_span '.name == "echo hello world 3"')"
+span="$(resolve_span '.name == "/usr/bin/echo hello world 3"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | \jq -r '.kind')
 assert_not_equals null $(\echo "$span" | \jq -r '.parent_id')
 
@@ -69,7 +65,7 @@ import os
 os.spawnvp(os.P_WAIT, "echo", ["echo", "hello", "world", "5"])
 ' | python3
 assert_equals 0 $?
-span="$(resolve_span '.name == "echo hello world 5"')"
+span="$(resolve_span '.name == "/usr/bin/echo hello world 5"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | \jq -r '.kind')
 assert_not_equals null $(\echo "$span" | \jq -r '.parent_id')
 
