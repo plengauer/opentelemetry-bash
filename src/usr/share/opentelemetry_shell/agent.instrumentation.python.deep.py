@@ -20,9 +20,9 @@ try:
         carrier = {}
         tracecontext.TraceContextTextMapPropagator().inject(carrier, opentelemetry.trace.set_span_in_context(opentelemetry.trace.get_current_span(), None))
         if 'traceparent' in carrier:
-          env["OTEL_TRACEPARENT"] = carrier["traceparent"]
+            env["OTEL_TRACEPARENT"] = carrier["traceparent"]
         if 'tracestate' in carrier:
-          env["OTEL_TRACESTATE"] = carrier["tracestate"]
+            env["OTEL_TRACESTATE"] = carrier["tracestate"]
         return env;
         
 except ModuleNotFoundError:
@@ -40,11 +40,13 @@ def inject_arguments(file, args):
     try:
         file = file.decode()
     except (UnicodeDecodeError, AttributeError):
-      pass
+        pass
+    if not '/' in file:
+        file = './' + file
+    if not os.path.exists(file) or not os.path.isfile(file) or not os.access(file, os.X_OK):
+        raise FileNotFoundError(file) # python will just trial and error all possible paths if the 'p' variants of exec are used
     if type(args) is tuple:
         args = list(args)
-    if '/' in file and (not os.path.exists(file) or not os.path.isfile(file) or not os.access(file, os.X_OK)):
-        raise FileNotFoundError(file) # python will just trial and error all possible paths if the 'p' variants of exec are used
     return [ args[0], '-c', '. otel.sh\n_otel_inject "' + str(file) + '" "$@"', 'python' ] + args[1:]
 
 def observed_os_execv(original_os_execve, file, args):
@@ -54,8 +56,9 @@ def observed_os_execve(original_os_execve, file, args, env):
     return original_os_execve(inject_file(file), inject_arguments(file, args), inject_env(env))
 
 def observed_subprocess_Popen___init__(original_subprocess_Popen___init__, self, *args, **kwargs):
+    # TODO handle shell
     kwargs['env'] = inject_env(kwargs.get('env', None))
-    args = tolist(args)
+    args = list(args)
     args = ([ inject_file(args[0]) ] + inject_arguments(args[0], args[1:]))
     return original_subprocess_Popen___init__(self, *args, **kwargs);
 
