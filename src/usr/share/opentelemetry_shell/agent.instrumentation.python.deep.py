@@ -36,18 +36,22 @@ def inject_file(file):
   return '/bin/sh'
 
 def inject_arguments(file, args):
+  try:
+    file = file.decode()
+  except (UnicodeDecodeError, AttributeError):
+    pass
   if type(args) is tuple:
       args = list(args)
   return [ args[0], '-c', '. otel.sh\n_otel_inject "' + str(file) + '" "$@"', 'python' ] + args[1:]
 
 def observed_os_execv(original_os_execve, file, args):
-  print('os.execv(' + str(file) + ', ' + str(args) + ')', file=sys.stderr)
-  print('os.execv(' + inject_file(file) + ', [' + ','.join(inject_arguments(file, args)) + '], ' + str(inject_env(None)) + ')', file=sys.stderr)
+  # print('os.execv(' + str(file) + ', ' + str(args) + ')', file=sys.stderr)
+  # print('os.execv(' + inject_file(file) + ', [' + ','.join(inject_arguments(file, args)) + '], ' + str(inject_env(None)) + ')', file=sys.stderr)
   return original_os_execve(inject_file(file), inject_arguments(file, args), inject_env(None))
 
 def observed_os_execve(original_os_execve, file, args, env):
-  print('os.execve(' + str(file) + ', ' + str(args) + ', ' + str(env) + ')', file=sys.stderr)
-  print('os.execve(' + inject_file(file) + ', [' + ','.join(inject_arguments(file, args)) + '], ' + str(inject_env(env)) + ')', file=sys.stderr)
+  # print('os.execve(' + str(file) + ', ' + str(args) + ', ' + str(env) + ')', file=sys.stderr)
+  # print('os.execve(' + inject_file(file) + ', [' + ','.join(inject_arguments(file, args)) + '], ' + str(inject_env(env)) + ')', file=sys.stderr)
   return original_os_execve(inject_file(file), inject_arguments(file, args), inject_env(env))
 
 # def observed_os_execvp(original_os_execvpe, file, args):
