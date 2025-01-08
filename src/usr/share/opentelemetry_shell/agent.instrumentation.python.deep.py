@@ -47,26 +47,19 @@ def inject_arguments(file, args):
   return [ args[0], '-c', '. otel.sh\n_otel_inject "' + str(file) + '" "$@"', 'python' ] + args[1:]
 
 def observed_os_execv(original_os_execve, file, args):
-  # print('os.execv(' + str(file) + ', ' + str(args) + ')', file=sys.stderr)
-  # print('os.execv(' + inject_file(file) + ', [' + ','.join(inject_arguments(file, args)) + '], ' + str(inject_env(None)) + ')', file=sys.stderr)
   return original_os_execve(inject_file(file), inject_arguments(file, args), inject_env(None))
 
 def observed_os_execve(original_os_execve, file, args, env):
-  # print('os.execve(' + str(file) + ', ' + str(args) + ', ' + str(env) + ')', file=sys.stderr)
-  # print('os.execve(' + inject_file(file) + ', [' + ','.join(inject_arguments(file, args)) + '], ' + str(inject_env(env)) + ')', file=sys.stderr)
   return original_os_execve(inject_file(file), inject_arguments(file, args), inject_env(env))
 
-# def observed_os_execvp(original_os_execvpe, file, args):
-#    return original_os_execvpe(inject_file(file), inject_arguments(file, args), inject_env(None))
-
-# def observed_os_execvpe(original_os_execvpe, file, args, env):
-#    return original_os_execvpe(inject_file(file), inject_arguments(file, args), inject_env(env))
+def observed_subprocess_Popen___init__(original_subprocess_Popen___init__, self, args, **kwargs) {
+  kwargs['env'] = inject_env(kwargs.get('env', None))
+  return original_subprocess_Popen___init__(self, [ inject_file(args[0]) ] + inject_arguments(args[0], args[1:]), **kwargs);
+}
 
 def instrument(observed_function, original_function):
    return functools.partial(observed_function, original_function)
 
 os.execv = instrument(observed_os_execv, os.execve)
 os.execve = instrument(observed_os_execve, os.execve)
-# os.execvp = instrument(observed_os_execvp, os.execvpe)
-# os.execvpe = instrument(observed_os_execvpe, os.execvpe)
-# print('INSTRUMENTED', file=sys.stderr)
+subprocess.Popen.__init__ = instrument(observed_subprocess_Popen___init__, subprocess.Popen.__init__);
