@@ -3,6 +3,20 @@ if ! which python3; then exit 0; fi
 
 . otel.sh
 
+
+
+echo '
+import os
+os.spawnlp(os.P_WAIT, "echo", "echo", "hello", "world", "3")
+' | python3
+assert_equals 0 $?
+span="$(resolve_span '.name == "echo hello world 3"')"
+assert_equals "SpanKind.INTERNAL" $(\echo "$span" | \jq -r '.kind')
+assert_not_equals null $(\echo "$span" | \jq -r '.parent_id')
+
+
+
+
 echo '
 import os
 os.execl("/bin/echo", "echo", "hello", "world", "0")
