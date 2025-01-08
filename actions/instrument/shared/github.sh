@@ -2,12 +2,12 @@
 
 github() {
   url="$GITHUB_API_URL"/"$1"?per_page=100
-  curl --no-progress-meter --fail --retry 16 --retry-all-errors --head "$url" \
+  curl --no-progress-meter --fail --retry 16 --retry-all-errors --header "Authorization: Bearer $INPUT_GITHUB_TOKEN" --head "$url" \
     | grep '^link: ' | cut -d ' '  -f 2- | tr -d ' <>' | tr ',' '\n' \
     | grep 'rel="last"' | cut -d ';' -f1 | cut -d '?' -f 2- | tr '&' '\n' \
     | grep '^page=' | cut -d = -f 2 \
     | xargs seq 1 | while IFS= read -r page; do
-      curl --no-progress-meter --fail --retry 16 --retry-all-errors "$url"\&page="$page"
+      curl --no-progress-meter --fail --retry 16 --retry-all-errors --header "Authorization: Bearer $INPUT_GITHUB_TOKEN" "$url"\&page="$page"
     done
 }
 export -f github

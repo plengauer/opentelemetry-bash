@@ -1,9 +1,15 @@
 name: 'OpenTelemetry Workflow'
 description: 'Observe Github Workflows with OpenTelemetry'
+branding:
+  icon: 'activity'
+  color: 'blue'
 runs:
   using: 'node20'
   main: 'main.js'
 inputs:
+  github_token:
+    description: 'A GitHub token for API access (read-only)'
+    default: '${{ github.token }}'
   cache:
     description: 'Whether to use GitHub Actions Cache to cache dependencies'
-    default: false
+    default: true

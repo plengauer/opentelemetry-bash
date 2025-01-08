@@ -1,0 +1,63 @@
+name: Publish
+
+on:
+  push:
+    paths: VERSION
+    branches: main
+
+jobs:
+  test:
+    uses: ./.github/workflows/test.yaml
+
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "version=$(cat VERSION)" >> "$GITHUB_OUTPUT"
+        id: version
+      - uses: actions/download-artifact@v4
+        with:
+          name: packages
+      - uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: ./package.deb
+          subject-name: opentelemetry-shell_${{ steps.version.outputs.version }}.deb
+      - uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: ./package.rpm
+          subject-name: opentelemetry-shell_${{ steps.version.outputs.version }}.rpm
+      - uses: actions/create-release@v1
+        id: create_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          release_name: Release v${{ steps.version.outputs.version }}
+          draft: true
+          prerelease: false
+      - uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./package.deb
+          asset_name: opentelemetry-shell_${{ steps.version.outputs.version }}.deb
+          asset_content_type: application/octet-stream
+      - uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./package.rpm
+          asset_name: opentelemetry-shell_${{ steps.version.outputs.version }}.rpm
+          asset_content_type: application/octet-stream
+      - uses: eregon/publish-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
+        with:
+          release_id: ${{ steps.create_release.outputs.id }}
