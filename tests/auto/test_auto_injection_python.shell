@@ -3,7 +3,9 @@ if ! which python3; then exit 0; fi
 
 . otel.sh
 
-
+which echo
+ls -la /snap/bin/echo
+readlink -f /snap/bin/echo
 
 echo '
 import os
