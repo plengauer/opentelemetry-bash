@@ -53,7 +53,7 @@ def observed_os_execv(original_os_execve, file, args):
 def observed_os_execve(original_os_execve, file, args, env):
   return original_os_execve(inject_file(file), inject_arguments(file, args), inject_env(env))
 
-def observed_subprocess_Popen___init__(original_subprocess_Popen___init__, self, args, **kwargs):
+def observed_subprocess_Popen___init__(original_subprocess_Popen___init__, self, *args, **kwargs):
   kwargs['env'] = inject_env(kwargs.get('env', None))
   return original_subprocess_Popen___init__(self, [ inject_file(args[0]) ] + inject_arguments(args[0], args[1:]), **kwargs);
 
