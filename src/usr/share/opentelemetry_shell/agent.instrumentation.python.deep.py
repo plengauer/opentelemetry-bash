@@ -1,5 +1,6 @@
 import sys
 import os
+import subprocess
 
 try:
     import opentelemetry
