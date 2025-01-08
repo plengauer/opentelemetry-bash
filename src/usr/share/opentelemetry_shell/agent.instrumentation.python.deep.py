@@ -55,7 +55,7 @@ def observed_os_execve(original_os_execve, file, args, env):
 
 def observed_subprocess_Popen___init__(original_subprocess_Popen___init__, self, *args, **kwargs):
   kwargs['env'] = inject_env(kwargs.get('env', None))
-  return original_subprocess_Popen___init__(self, [ inject_file(args[0]) ] + inject_arguments(args[0], args[1:]), **kwargs);
+  return original_subprocess_Popen___init__(self, *([ inject_file(args[0]) ] + inject_arguments(args[0], args[1:])), **kwargs);
 
 def instrument(observed_function, original_function):
    return functools.partial(observed_function, original_function)
