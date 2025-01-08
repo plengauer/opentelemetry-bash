@@ -42,6 +42,8 @@ def inject_arguments(file, args):
     pass
   if type(args) is tuple:
       args = list(args)
+  if '/' in file and (not os.path.exists(file) or not os.path.isfile(file) or not os.access(file, os.X_OK)):
+    raise FileNotFoundError(file) # python will just trial and error all possible paths if the 'p' variants of exec are used
   return [ args[0], '-x', '-c', '. otel.sh\n_otel_inject "' + str(file) + '" "$@"', 'python' ] + args[1:]
 
 def observed_os_execv(original_os_execve, file, args):
