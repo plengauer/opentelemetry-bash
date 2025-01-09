@@ -55,8 +55,15 @@ def observed_os_execv(original_os_execve, file, args):
 def observed_os_execve(original_os_execve, file, args, env):
     return original_os_execve(inject_file(file), inject_arguments(file, args), inject_env(env))
 
-def observed_subprocess_Popen___init__(original_subprocess_Popen___init__, self, args, **kwargs):
-    print('subprocess.Popen(' + str(self) + ', ' + str(args) + ', ' + str(kwargs) + ')', file=sys.stderr)
+def instrument(observed_function, original_function):
+    return functools.partial(observed_function, original_function)
+
+os.execv = instrument(observed_os_execv, os.execve)
+os.execve = instrument(observed_os_execve, os.execve)
+
+original_subprocess_Popen___init__ = subprocess.Popen.__init__
+def observed_subprocess_Popen___init__(self, *args, **kwargs):
+    print('subprocess.Popen(' + str(args) + ', ' + str(kwargs) + ')', file=sys.stderr)
     args = list(args)
     # TODO handle shell
     print('subprocess.Popen([' + ','.join(args) + '], ' + str(kwargs) + ')', file=sys.stderr)
@@ -64,10 +71,4 @@ def observed_subprocess_Popen___init__(original_subprocess_Popen___init__, self,
     args = ([ inject_file(args[0]) ] + inject_arguments(args[0], args[1:]))
     print('subprocess.Popen([' + ','.join(args) + '], ' + str(kwargs) + ')', file=sys.stderr)
     return original_subprocess_Popen___init__(self, args, **kwargs);
-
-def instrument(observed_function, original_function):
-    return functools.partial(observed_function, original_function)
-
-os.execv = instrument(observed_os_execv, os.execve)
-os.execve = instrument(observed_os_execve, os.execve)
-subprocess.Popen.__init__ = instrument(observed_subprocess_Popen___init__, subprocess.Popen.__init__);
+subprocess.Popen.__init__ = observed_subprocess_Popen___init__
