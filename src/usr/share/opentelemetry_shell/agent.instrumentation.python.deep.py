@@ -36,16 +36,18 @@ import functools
 def inject_file(file):
     return '/bin/sh'
 
-def inject_arguments(file, args):
+def inject_arguments(file, args, is_file=True):
     try:
         file = file.decode()
     except (UnicodeDecodeError, AttributeError):
         pass
-    if not '/' in file:
-        file = './' + file
-    if not os.path.exists(file) or not os.path.isfile(file) or not os.access(file, os.X_OK):
-        raise FileNotFoundError(file) # python will just trial and error all possible paths if the 'p' variants of exec are used
-    return [ '-c', '. otel.sh\n_otel_inject "' + str(file) + '" "$@"', 'python' ] + args
+    if is_file:
+        if not '/' in file:
+            file = './' + file
+        if not os.path.exists(file) or not os.path.isfile(file) or not os.access(file, os.X_OK):
+            raise FileNotFoundError(file) # python will just trial and error all possible paths if the 'p' variants of exec are used
+        file = '_otel_inject "' + file + "'"
+    return [ '-c', '. otel.sh\n' + file + ' "$@"', 'python' ] + args
 
 original_os_execve = os.execve
 original_subprocess_Popen___init__ = subprocess.Popen.__init__
@@ -65,8 +67,9 @@ def observed_subprocess_Popen___init__(self, *args, **kwargs):
     if len(args) > 0 and type(args[0]) is list:
         args = args[0]
     print('subprocess.Popen([' + ','.join(args) + '], ' + str(kwargs) + ')', file=sys.stderr)
+    args = ([ inject_file(args[0]) ] + inject_arguments(args[0], args[1:], kwargs.get('shell', False)))
     kwargs['env'] = inject_env(kwargs.get('env', None))
-    args = ([ inject_file(args[0]) ] + inject_arguments(args[0], args[1:]))
+    kwargs['shell'] = False # TODO commandline override and no auto injection like node
     print('subprocess.Popen([' + ','.join(args) + '], ' + str(kwargs) + ')', file=sys.stderr)
     return original_subprocess_Popen___init__(self, args, **kwargs);
 
