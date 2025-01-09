@@ -55,9 +55,8 @@ def observed_os_execv(original_os_execve, file, args):
 def observed_os_execve(original_os_execve, file, args, env):
     return original_os_execve(inject_file(file), inject_arguments(file, args), inject_env(env))
 
-def observed_subprocess_Popen___init__(original_subprocess_Popen___init__, self, **kwargs):
-    print('subprocess.Popen(' + str(kwargs) + ')', file=sys.stderr)
-    print('subprocess.Popen(' + str(args) + ', ' + str(kwargs) + ')', file=sys.stderr)
+def observed_subprocess_Popen___init__(original_subprocess_Popen___init__, self, args, **kwargs):
+    print('subprocess.Popen(' + str(self) + ', ' + str(args) + ', ' + str(kwargs) + ')', file=sys.stderr)
     args = list(args)
     # TODO handle shell
     print('subprocess.Popen([' + ','.join(args) + '], ' + str(kwargs) + ')', file=sys.stderr)
