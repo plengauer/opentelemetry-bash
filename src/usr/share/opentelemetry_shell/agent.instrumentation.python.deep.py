@@ -53,12 +53,12 @@ original_subprocess_Popen___init__ = subprocess.Popen.__init__
 def observed_os_execv(file, args):
     if type(args) is tuple:
         args = list(args)
-    return original_os_execve(inject_file(file), args[0] + inject_arguments(file, args[1:]), inject_env(None))
+    return original_os_execve(inject_file(file), [ args[0] ] + inject_arguments(file, args[1:]), inject_env(None))
 
 def observed_os_execve(file, args, env):
     if type(args) is tuple:
         args = list(args)
-    return original_os_execve(inject_file(file), args[0] + inject_arguments(file, args[1:]), inject_env(env))
+    return original_os_execve(inject_file(file), [ args[0] ] + inject_arguments(file, args[1:]), inject_env(env))
 
 def observed_subprocess_Popen___init__(self, *args, **kwargs):
     args = list(args)
