@@ -1,6 +1,6 @@
 {
   "dependencies": {
     "@actions/cache": "4.0.0",
-    "@actions/artifact": "2.2.0"
+    "@actions/artifact": "2.2.1"
   }
 }
