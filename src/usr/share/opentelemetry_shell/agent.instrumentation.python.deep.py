@@ -68,7 +68,7 @@ def observed_subprocess_Popen___init__(self, *args, **kwargs):
         args = args[0]
     print('subprocess.Popen([' + ','.join(args) + '], ' + str(kwargs) + ')', file=sys.stderr)
     kwargs['env'] = inject_env(kwargs.get('env', None))
-    args = ([ inject_file(args[0]) ] + inject_arguments(args[0], args[1:]))
+    args = ([ inject_file(args[0]) ] + inject_arguments(args[0], args))
     print('subprocess.Popen([' + ','.join(args) + '], ' + str(kwargs) + ')', file=sys.stderr)
     return original_subprocess_Popen___init__(self, args, **kwargs);
 subprocess.Popen.__init__ = observed_subprocess_Popen___init__
