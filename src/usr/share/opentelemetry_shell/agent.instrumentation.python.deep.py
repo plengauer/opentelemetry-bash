@@ -66,11 +66,13 @@ def observed_subprocess_Popen___init__(self, *args, **kwargs):
     args = list(args)
     if len(args) > 0 and type(args[0]) is list:
         args = args[0]
-    print('subprocess.Popen([' + ','.join(args) + '], ' + str(kwargs) + ')', file=sys.stderr)
     args = ([ inject_file(args[0]) ] + inject_arguments(args[0], args[1:], not kwargs.get('shell', False)))
     kwargs['env'] = inject_env(kwargs.get('env', None))
-    kwargs['shell'] = False # TODO commandline override and no auto injection like node
-    print('subprocess.Popen([' + ','.join(args) + '], ' + str(kwargs) + ')', file=sys.stderr)
+    if kwargs.get('shell', False):
+        kwargs['env']['OTEL_SHELL_COMMANDLINE_OVERRIDE'] = '/bin/sh -c ' + ' '.join(args)
+        kwargs['env']['OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE'] = str(os.getpid())
+        kwargs['env']['OTEL_SHELL_AUTO_INJECTED'] = 'FALSE'
+        kwargs['shell'] = False
     return original_subprocess_Popen___init__(self, args, **kwargs);
 
 os.execv = observed_os_execv
