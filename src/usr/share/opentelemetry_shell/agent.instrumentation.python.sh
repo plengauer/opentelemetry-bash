@@ -80,7 +80,7 @@ $arg"
       \echo -n ' '
       local arg="$1"; shift
       _otel_escape_arg "$(\cat /usr/share/opentelemetry_shell/agent.instrumentation.python.deep.py)
-import runpy
+import runpy # SKIP_DEPENDENCY_CHECK
 runpy.run_module('$arg', run_name='__main__')"
       local injected=module
     elif \[ -f "$arg" ]; then
