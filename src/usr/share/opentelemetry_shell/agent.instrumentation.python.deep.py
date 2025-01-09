@@ -47,13 +47,13 @@ def inject_arguments(file, args):
         raise FileNotFoundError(file) # python will just trial and error all possible paths if the 'p' variants of exec are used
     if type(args) is tuple:
         args = list(args)
-    return [ args[0], '-c', '. otel.sh\n_otel_inject "' + str(file) + '" "$@"', 'python' ] + args[1:]
+    return [ '-c', '. otel.sh\n_otel_inject "' + str(file) + '" "$@"', 'python' ] + args
 
 def observed_os_execv(original_os_execve, file, args):
-    return original_os_execve(inject_file(file), inject_arguments(file, args), inject_env(None))
+    return original_os_execve(inject_file(file), args[0] + inject_arguments(file, args[1:]), inject_env(None))
 
 def observed_os_execve(original_os_execve, file, args, env):
-    return original_os_execve(inject_file(file), inject_arguments(file, args), inject_env(env))
+    return original_os_execve(inject_file(file), args[0] + inject_arguments(file, args[1:]), inject_env(env))
 
 def instrument(observed_function, original_function):
     return functools.partial(observed_function, original_function)
@@ -68,7 +68,7 @@ def observed_subprocess_Popen___init__(self, *args, **kwargs):
         args = args[0]
     print('subprocess.Popen([' + ','.join(args) + '], ' + str(kwargs) + ')', file=sys.stderr)
     kwargs['env'] = inject_env(kwargs.get('env', None))
-    args = ([ inject_file(args[0]) ] + inject_arguments(args[0], args))
+    args = ([ inject_file(args[0]) ] + inject_arguments(args[0], args[1:]))
     print('subprocess.Popen([' + ','.join(args) + '], ' + str(kwargs) + ')', file=sys.stderr)
     return original_subprocess_Popen___init__(self, args, **kwargs);
 subprocess.Popen.__init__ = observed_subprocess_Popen___init__
