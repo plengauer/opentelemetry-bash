@@ -68,7 +68,7 @@ assert_equals "SpanKind.INTERNAL" $(\echo "$span" | \jq -r '.kind')
 assert_not_equals null $(\echo "$span" | \jq -r '.parent_id')
 
 dir=$(mktemp -d)
-python3 -m venv "$dir"/venv || exit 1
+python3 -m venv --system-site-packages "$dir"/venv || exit 1
 . "$dir"/venv/bin/activate
 pip3 install opentelemetry-distro opentelemetry-exporter-otlp
 opentelemetry-bootstrap --action install || exit 1
