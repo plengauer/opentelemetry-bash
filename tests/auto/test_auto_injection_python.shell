@@ -59,7 +59,7 @@ assert_not_equals null $(\echo "$span" | \jq -r '.parent_id')
 
 printf '%s' '
 import subprocess
-with subprocess.Popen(["echo", "hello", "world", "6"], stdout=subprocess.DEVNULL) as proc:
+with subprocess.Popen(["/usr/bin/echo", "hello", "world", "6"], stdout=subprocess.DEVNULL) as proc:
   pass
 ' | python3
 assert_equals 0 $?
@@ -69,7 +69,7 @@ assert_not_equals null $(\echo "$span" | \jq -r '.parent_id')
 
 printf '%s' '
 import subprocess
-with subprocess.Popen(["echo", "hello", "world", "7"], stdout=subprocess.DEVNULL) as proc:
+with subprocess.Popen(["/usr/bin/echo", "hello", "world", "7"], stdout=subprocess.DEVNULL) as proc:
   pass
 ' | python3
 assert_equals 0 $?
@@ -79,7 +79,7 @@ assert_not_equals null $(\echo "$span" | \jq -r '.parent_id')
 
 echo '
 import subprocess
-subprocess.run(["echo", "hello", "world", "8"])
+subprocess.run(["/usr/bin/echo", "hello", "world", "8"])
 ' | python3
 assert_equals 0 $?
 span="$(resolve_span '.name == "echo hello world 8"')"
