@@ -75,6 +75,13 @@ _otel_python_inject_args() {
       _otel_escape_arg "$(\cat /usr/share/opentelemetry_shell/agent.instrumentation.python.deep.py)
 $arg"
       local injected=cmdline
+    elif \[ "$arg" = -m ]; then
+      _otel_escape_args -c
+      \echo -n ' '
+      local arg="$1"; shift
+      _otel_escape_arg "$(\cat /usr/share/opentelemetry_shell/agent.instrumentation.python.deep.py)
+import runpy
+runpy.run_module('$arg', run_name='__main__')"
     elif \[ -f "$arg" ]; then
       _otel_escape_args -c "$(\cat /usr/share/opentelemetry_shell/agent.instrumentation.python.deep.py)
 with open('$arg', 'r') as file: # SKIP_DEPENDENCY_CHECK
