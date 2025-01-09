@@ -63,8 +63,8 @@ os.execve = instrument(observed_os_execve, os.execve)
 
 original_subprocess_Popen___init__ = subprocess.Popen.__init__
 def observed_subprocess_Popen___init__(self, *args, **kwargs):
-    print('subprocess.Popen(' + str(args) + ', ' + str(kwargs) + ')', file=sys.stderr)
     args = list(args)
+    print('subprocess.Popen(' + ','.join(args) + ', ' + str(kwargs) + ')', file=sys.stderr)
     # TODO handle shell
     print('subprocess.Popen([' + ','.join(args) + '], ' + str(kwargs) + ')', file=sys.stderr)
     kwargs['env'] = inject_env(kwargs.get('env', None))
