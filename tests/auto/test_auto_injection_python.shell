@@ -103,7 +103,7 @@ assert_not_equals null $(\echo "$span" | \jq -r '.parent_id')
 
 echo '
 import subprocess
-subprocess.run(["echo", "hello", "world", 10"], shell=True)
+subprocess.run(["echo", "hello", "world", "10"], shell=True)
 ' | python3
 assert_equals 0 $?
 span="$(resolve_span '.name == "echo hello world 10"')"
