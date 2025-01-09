@@ -67,11 +67,18 @@ span="$(resolve_span '.name == "echo hello world 6"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | \jq -r '.kind')
 assert_not_equals null $(\echo "$span" | \jq -r '.parent_id')
 
+dir=$(mktemp -d)
+python3 -m venv --system-site-packages "$dir"/venv || exit 1
+. "$dir"/venv/bin/activate
+pip3 install requests
+pip3 install opentelemetry-distro opentelemetry-exporter-otlp
+opentelemetry-bootstrap --action install || exit 1
 printf '%s' '
 import subprocess
 with subprocess.Popen(["/usr/bin/echo", "hello", "world", "7"], stdout=subprocess.DEVNULL) as proc:
   pass
 ' | python3
+deactivate
 assert_equals 0 $?
 span="$(resolve_span '.name == "echo hello world 7"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | \jq -r '.kind')
