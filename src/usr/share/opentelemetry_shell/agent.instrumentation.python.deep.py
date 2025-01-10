@@ -50,7 +50,7 @@ def inject_arguments(file, args, is_file=True):
         if not os.path.exists(file) or not os.path.isfile(file) or not os.access(file, os.X_OK):
             raise FileNotFoundError(file) # python will just trial and error all possible paths if the 'p' variants of exec are used
         arg_zero = file;
-        file = "_otel_inject '" + file + "'"
+        # file = "_otel_inject '" + file + "'"
     else:
         arg_zero = 'python'
     return [ '-c', '. otel.sh\n' + file + ' "$@"', arg_zero ] + args
