@@ -200,7 +200,7 @@ _otel_filter_commands_by_special() {
 }
 
 _otel_filter_by_validity() {
-  \grep -E '^[a-zA-Z0-9._\[][a-zA-Z0-9 ._-]*$'
+  \grep -aE '^[a-zA-Z0-9._\[][a-zA-Z0-9 ._-]*$'
 }
 
 _otel_deshebangify() {
