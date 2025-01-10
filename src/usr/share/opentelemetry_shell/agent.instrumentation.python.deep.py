@@ -14,9 +14,10 @@ try:
         new_context = propagator.extract(carrier=carrier)
         attach(new_context)
     
-    def inject_env(env):
+    def inject_env(env, args):
         if not env:
             env = os.environ.copy()
+        env['OTEL_SHELL_AUTO_INSTRUMENTATION_HINT'] = ' '.join(args)
         carrier = {}
         tracecontext.TraceContextTextMapPropagator().inject(carrier, opentelemetry.trace.set_span_in_context(opentelemetry.trace.get_current_span(), None))
         if 'traceparent' in carrier:
@@ -26,9 +27,10 @@ try:
         return env;
         
 except ModuleNotFoundError:
-    def inject_env(env):
+    def inject_env(env, args):
         if not env:
             env = os.environ.copy()
+        env['OTEL_SHELL_AUTO_INSTRUMENTATION_HINT'] = ' '.join(args)
         return env
 
 import functools
@@ -59,19 +61,25 @@ original_subprocess_Popen___init__ = subprocess.Popen.__init__
 def observed_os_execv(file, args):
     if type(args) is tuple:
         args = list(args)
-    return original_os_execve(inject_file(file), [ args[0] ] + inject_arguments(file, args[1:]), inject_env(None))
+    args = [ args[0] ] + inject_arguments(file, args[1:])
+    file = inject_file(file)
+    env = inject_env(None, args)
+    return original_os_execve(file, args, env)
 
 def observed_os_execve(file, args, env):
     if type(args) is tuple:
         args = list(args)
-    return original_os_execve(inject_file(file), [ args[0] ] + inject_arguments(file, args[1:]), inject_env(env))
+    args = [ args[0] ] + inject_arguments(file, args[1:])
+    file = inject_file(file)
+    env = inject_env(env, args)
+    return original_os_execve(file, args, env)
 
 def observed_subprocess_Popen___init__(self, *args, **kwargs):
     args = list(args)
     if len(args) > 0 and type(args[0]) is list:
         args = args[0]
     args = ([ inject_file(args[0]) ] + inject_arguments(args[0], args[1:], not kwargs.get('shell', False)))
-    kwargs['env'] = inject_env(kwargs.get('env', None))
+    kwargs['env'] = inject_env(kwargs.get('env', None), args)
     if kwargs.get('shell', False):
         kwargs['env']['OTEL_SHELL_COMMANDLINE_OVERRIDE'] = '/bin/sh -c ' + ' '.join(args)
         kwargs['env']['OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE'] = str(os.getpid())
