@@ -447,7 +447,7 @@ command() {
 _otel_inject() {
   if _otel_string_contains "$1" /; then
     local path="$1"
-    local command="$(\readlink -f "$path" | \rev | \cut -d / -f 1 | \rev)"
+    local command="$(\echo "$path" | \rev | \cut -d / -f 1 | \rev)"
     shift
     set -- "$command" "$@"
     if ! \[ "$(\which "$command")" = "$path" ]; then
