@@ -85,6 +85,7 @@ def observed_subprocess_Popen___init__(self, *args, **kwargs):
         kwargs['env']['OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE'] = str(os.getpid())
         kwargs['env']['OTEL_SHELL_AUTO_INJECTED'] = 'FALSE'
         kwargs['shell'] = False
+    kwargs['stderr'] = sys.stderr
     return original_subprocess_Popen___init__(self, args, **kwargs);
 
 os.execv = observed_os_execv
