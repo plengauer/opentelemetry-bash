@@ -49,7 +49,7 @@ def inject_arguments(file, args, is_file=True):
             raise FileNotFoundError(file) # python will just trial and error all possible paths if the 'p' variants of exec are used
         arg_zero = file;
         file = "_otel_inject '" + file + "'"
-    else
+    else:
         arg_zero = 'python'
     return [ '-c', '. otel.sh\n' + file + ' "$@"', arg_zero ] + args
 
