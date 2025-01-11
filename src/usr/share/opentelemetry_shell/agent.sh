@@ -464,6 +464,7 @@ _otel_inject() {
     if \[ -n "$instrumentation" ]; then
       local instrumentation="${instrumentation#*=}"
       local instrumentation="${instrumentation% *}"
+      local instrumentation="$(\printf '%s' "$instrumentation" | _otel_line_split | \grep -v '^OTEL_' | _otel_line_join)"
     else
       local instrumentation=_otel_observe
     fi
