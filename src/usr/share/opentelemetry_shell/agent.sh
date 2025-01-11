@@ -468,7 +468,8 @@ _otel_inject() {
     else
       local instrumentation=_otel_observe
     fi
-    \eval "set -- $instrumentation "'"$@"'
+    # \echo "DEBUG DEBUG DEBUG set -- $instrumentation "
+    \eval "set -- $instrumentation $(_otel_escape_args "$@")"
   fi
   \eval "$(_otel_escape_args "$@")"
 }
