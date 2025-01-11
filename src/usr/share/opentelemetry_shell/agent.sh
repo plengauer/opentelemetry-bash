@@ -446,14 +446,22 @@ command() {
 
 _otel_inject() {
   if _otel_string_contains "$1" /; then
-    local path="$1"
+    local path="$1"; shift
     local command="$(\echo "$path" | \rev | \cut -d / -f 1 | \rev)"
-    shift
     set -- "$command" "$@"
     if ! \[ "$(\which "$command")" = "$path" ]; then
       local PATH="$(\readlink -f "$path" | \rev | \cut -d / -f 2- | \rev):$PATH"
       _otel_auto_instrument "$_otel_shell_auto_instrumentation_hint"
     fi
+  fi
+  \eval "$(_otel_escape_args "$@")"
+}
+
+_otel_inject() {
+  if _otel_string_contains "$1" /; then
+    local path="$1"; shift
+    local command_string="$(\alias "${path##*/}" 2> /dev/null)"
+    \eval "set -- ${command_string% *} '$path' "'"$@"'
   fi
   \eval "$(_otel_escape_args "$@")"
 }
