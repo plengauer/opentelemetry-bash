@@ -460,9 +460,8 @@ _otel_inject() {
 _otel_inject() {
   if _otel_string_contains "$1" /; then
     local path="$1"
-    local instrumentation="$(\alias "${path##*/}" 2> /dev/null | _otel_unquote)"
+    local instrumentation="$(_otel_resolve_alias "${path##*/}")"
     if \[ -n "$instrumentation" ]; then
-      local instrumentation="${instrumentation#*=}"
       local instrumentation="${instrumentation% *}"
       local instrumentation="$(\printf '%s' "$instrumentation" | _otel_line_split | \grep -v '^OTEL_' | _otel_line_join)"
     else
