@@ -459,9 +459,12 @@ _otel_inject() {
 
 _otel_inject() {
   if _otel_string_contains "$1" /; then
-    local path="$1"; shift
+    local path="$1"
     local command_string="$(\alias "${path##*/}" 2> /dev/null)"
-    \eval "set -- ${command_string% *} '$path' "'"$@"'
+    if \[ -n "$command_string" ]; then
+      shift
+      \eval "set -- ${command_string% *} '$path' "'"$@"'
+    fi
   fi
   \eval "$(_otel_escape_args "$@")"
 }
