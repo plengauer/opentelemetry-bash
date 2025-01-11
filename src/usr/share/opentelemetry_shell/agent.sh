@@ -460,7 +460,7 @@ _otel_inject() {
 _otel_inject() {
   if _otel_string_contains "$1" /; then
     local path="$1"
-    local instrumentation="$(\alias "${path##*/}" 2> /dev/null)"
+    local instrumentation="$(\alias "${path##*/}" 2> /dev/null | _otel_unquote)"
     if \[ -n "$instrumentation" ]; then
       local instrumentation="${instrumentation#*=}"
       local instrumentation="${instrumentation% *}"
