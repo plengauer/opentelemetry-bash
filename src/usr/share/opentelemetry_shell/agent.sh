@@ -460,11 +460,14 @@ _otel_inject() {
 _otel_inject() {
   if _otel_string_contains "$1" /; then
     local path="$1"
-    local command_string="$(\alias "${path##*/}" 2> /dev/null)"
-    if \[ -n "$command_string" ]; then
-      shift
-      \eval "set -- ${command_string% *} '$path' "'"$@"'
+    local instrumentation="$(\alias "${path##*/}" 2> /dev/null)"
+    if \[ -n "$instrumentation" ]; then
+      local instrumentation="${instrumentation#*=}"
+      local instrumentation="${instrumentation% *}"
+    else
+      local instrumentation=_otel_observe
     fi
+    \eval "set -- $instrumentation "'"$@"'
   fi
   \eval "$(_otel_escape_args "$@")"
 }
