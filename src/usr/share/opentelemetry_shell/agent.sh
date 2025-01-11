@@ -30,6 +30,7 @@ case "$-" in
   *)   _otel_is_interactive=FALSE;;
 esac
 
+set -x
 if \[ -n "${OTEL_SHELL_AUTO_INSTRUMENTATION_HINT:-}" ]; then
   _otel_shell_auto_instrumentation_hint="$OTEL_SHELL_AUTO_INSTRUMENTATION_HINT"
   unset OTEL_SHELL_AUTO_INSTRUMENTATION_HINT
@@ -44,6 +45,7 @@ elif \[ -f "$0" ] && \[ "$(\readlink -f "$0")" != "$(\readlink -f "/proc/$$/exe"
 else
   _otel_shell_auto_instrumentation_hint="$(_otel_resolve_command_self)"
 fi
+set +x
 
 if \[ "$_otel_shell" = "bash" ]; then
   _otel_source_file_resolver='${BASH_SOURCE[0]}'
