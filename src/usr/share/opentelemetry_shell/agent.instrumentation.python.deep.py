@@ -79,7 +79,9 @@ def observed_subprocess_Popen___init__(self, *args, **kwargs):
     if len(args) > 0 and type(args[0]) is list:
         args = args[0]
     print('subprocess.Popen([' + ','.join(args) + '],' + str(kwargs) + ')', file=sys.stderr)
-    args = ([ inject_file(args[0]) ] + inject_arguments(args[0], args[1:], not kwargs.get('shell', False)))
+    args = ([ inject_file(args[0]) ] + inject_arguments(inject_file(kwargs.get('executable', args[0])), args[1:], not kwargs.get('shell', False)))
+    if kwargs.get('executable'):
+        kwargs['executable'] = inject_file(kwargs['executable'])
     kwargs['env'] = inject_env(kwargs.get('env', None), args)
     if kwargs.get('shell', False):
         kwargs['env']['OTEL_SHELL_COMMANDLINE_OVERRIDE'] = '/bin/sh -c ' + ' '.join(args)
