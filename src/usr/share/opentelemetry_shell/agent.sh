@@ -170,7 +170,7 @@ _otel_filter_commands_by_hint() {
 
 _otel_resolve_instrumentation_hint() {
   local hint="$1"
-  { \[ -f "$hint" ] && \[ "$(\readlink -f "$hint")" != "$(\readlink -f "/proc/$$/exe")" ] && \[ "$(\readlink -f "$hint")" != "/usr/share/opentelemetry_shell/opentelemetry_shell.sh" ] && \cat "$hint" || \echo "$hint"; } | \tr -s ' $=";(){}/\\!#~^'\' '\n' | _otel_filter_by_validity | \sort -u
+  { \[ -f "$hint" ] && \[ "$(\readlink -f "$hint")" != "$(\readlink -f "/proc/$$/exe")" ] && \[ "$(\readlink -f "$hint")" != /usr/share/opentelemetry_shell/agent.sh ] && \cat "$hint" || \echo "$hint"; } | tee /dev/stderr | \tr -s ' $=";(){}/\\!#~^'\' '\n' | tee /dev/stderr | _otel_filter_by_validity | tee /dev/stderr | \sort -u | tee /dev/stderr
 }
 
 _otel_filter_commands_by_instrumentation() {
