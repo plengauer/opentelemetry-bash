@@ -4,7 +4,7 @@ import subprocess
 
 def inject_env_minimal(env, args):
     env['OTEL_SHELL_AUTO_INSTRUMENTATION_HINT'] = ' '.join(args)
-    env['OTEL_SHELL_COMMANDLINE_OVERRIDE'] = '/bin/sh -c ' + ' '.join(args)
+    env['OTEL_SHELL_COMMANDLINE_OVERRIDE'] = ' '.join(args)
     env['OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE'] = str(os.getpid())
     return env
 
