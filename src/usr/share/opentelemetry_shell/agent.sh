@@ -459,6 +459,11 @@ _otel_inject() {
 
 _otel_inject() {
   if _otel_string_contains "$1" /; then
+    \echo "DEBUG DEBUG DEBUG $path ${path##*/}" >&2
+    \echo "DEBUG DEBUG DEBUG $(_otel_resolve_instrumentation_hint "$_otel_shell_auto_instrumentation_hint")" >&2
+    \alias >&2
+    \echo "DEBUG DEBUG DEBUG $(\alias "${path##*/}")" >&2
+    \echo "DEBUG DEBUG DEBUG $(_otel_resolve_alias "${path##*/}")" >&2
     local path="$1"
     local instrumentation="$(_otel_resolve_alias "${path##*/}")"
     if \[ -n "$instrumentation" ]; then
@@ -468,8 +473,6 @@ _otel_inject() {
       local instrumentation=_otel_observe
     fi
     \echo "DEBUG DEBUG DEBUG set -- $instrumentation $(_otel_escape_args "$@")" >&2
-    \echo "DEBUG DEBUG DEBUG $(_otel_resolve_instrumentation_hint "$_otel_shell_auto_instrumentation_hint")" >&2
-    \alias
     \eval "set -- $instrumentation $(_otel_escape_args "$@")"
   fi
   \eval "$(_otel_escape_args "$@")"
