@@ -459,12 +459,12 @@ _otel_inject() {
 
 _otel_inject() {
   if _otel_string_contains "$1" /; then
+    local path="$1"
     \echo "DEBUG DEBUG DEBUG $path ${path##*/}" >&2
     \echo "DEBUG DEBUG DEBUG $(_otel_resolve_instrumentation_hint "$_otel_shell_auto_instrumentation_hint")" >&2
     \alias >&2
     \echo "DEBUG DEBUG DEBUG $(\alias "${path##*/}")" >&2
     \echo "DEBUG DEBUG DEBUG $(_otel_resolve_alias "${path##*/}")" >&2
-    local path="$1"
     local instrumentation="$(_otel_resolve_alias "${path##*/}")"
     if \[ -n "$instrumentation" ]; then
       local instrumentation="${instrumentation% *}"
