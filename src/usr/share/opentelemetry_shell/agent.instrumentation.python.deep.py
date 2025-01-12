@@ -80,7 +80,7 @@ def observed_subprocess_Popen___init__(self, *args, **kwargs):
         args = args[0]
     if len(args) > 0 and type(args[0]) is tuple:
         args = list(args[0])
-    print('subprocess.Popen([' + ','.join(args) + '],' + str(kwargs) + ')', file=sys.stderr)
+    # print('subprocess.Popen([' + ','.join(args) + '],' + str(kwargs) + ')', file=sys.stderr)
     args = ([ inject_file(kwargs.get('executable', args[0])) ] + inject_arguments(kwargs.get('executable', args[0]), args[1:], not kwargs.get('shell', False)))
     if kwargs.get('executable'):
         kwargs['executable'] = inject_file(kwargs['executable'])
@@ -90,8 +90,8 @@ def observed_subprocess_Popen___init__(self, *args, **kwargs):
         kwargs['env']['OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE'] = str(os.getpid())
         kwargs['env']['OTEL_SHELL_AUTO_INJECTED'] = 'FALSE'
         kwargs['shell'] = False
-    print('subprocess.Popen([' + ','.join(args) + '],' + str(kwargs) + ')', file=sys.stderr)    
-    kwargs['stderr'] = sys.stderr    
+    # print('subprocess.Popen([' + ','.join(args) + '],' + str(kwargs) + ')', file=sys.stderr)    
+    # kwargs['stderr'] = sys.stderr    
     return original_subprocess_Popen___init__(self, args, **kwargs);
 
 os.execv = observed_os_execv
