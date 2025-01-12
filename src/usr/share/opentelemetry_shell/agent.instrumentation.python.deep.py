@@ -21,14 +21,13 @@ try:
         attach(new_context)
     
     def inject_env(env, args):
-        env = inject_env_minimal(env, args)
         carrier = {}
         tracecontext.TraceContextTextMapPropagator().inject(carrier, opentelemetry.trace.set_span_in_context(opentelemetry.trace.get_current_span(), None))
         if 'traceparent' in carrier:
             env["OTEL_TRACEPARENT"] = carrier["traceparent"]
         if 'tracestate' in carrier:
             env["OTEL_TRACESTATE"] = carrier["tracestate"]
-        return env;
+        return inject_env_minimal(env, args)
         
 except ModuleNotFoundError:
     def inject_env(env, args):
