@@ -225,6 +225,7 @@ jobs:
         with:
           token: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
           commit-message: "Update demo"
+          base: main
           branch: "demos/${{ matrix.demo_directory }}"
           title: "Update Demo ${{ matrix.demo_directory }}"
           body: |
