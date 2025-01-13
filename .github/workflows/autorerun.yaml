@@ -4,6 +4,8 @@ on:
   workflow_run:
     workflows: [ 'Test', 'Publish' ]
     types: completed
+  schedule:
+    - cron: '0 0 * * *'
 
 concurrency:
   group: rerun-${{ github.event.workflow_run.id }}
