@@ -21,7 +21,8 @@ jobs:
           echo "
           const https = require('https');
           const options = {
-            hostname: 'google.com',
+            // hostname: 'google.com',
+            hostname: 'www.example.com',
             port: 443,
             path: '/',
             method: 'GET'
