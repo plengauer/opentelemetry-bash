@@ -18,7 +18,7 @@ jobs:
     steps:
       - run: |
           curl -v https://www.example.com
-          echo '
+          echo "
           const https = require('https');
           const options = {
             hostname: 'example.com',
@@ -28,7 +28,7 @@ jobs:
           };
           const req = https.request(options, (res) => console.log(res.statusCode));
           req.end();
-          ' > index.js
+          " > index.js
           node index.js
           wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh
           . otel.sh
