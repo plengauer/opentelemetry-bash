@@ -68,7 +68,10 @@ const options = {
   hostname: 'example.com',
   port: 443,
   path: '/',
-  method: 'GET'
+  method: 'GET',
+  headers: {
+    'Connection': 'close'
+  }
 };
 const req = https.request(options, (res) => {});
 req.end();
@@ -96,7 +99,10 @@ const options = {
   hostname: 'example.com',
   port: 443,
   path: '/',
-  method: 'GET'
+  method: 'GET',
+  headers: {
+    'Connection': 'close'
+  }
 };
 const req = https.request(options, (res) => {});
 req.end();
