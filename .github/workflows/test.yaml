@@ -30,14 +30,14 @@ jobs:
           req.end();
           " > index.js
 
-          curl -v https://www.example.com
-          node index.js
+          echo 1 && curl -v https://www.example.com
+          echo 2 && node index.js
           
           wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh
           . otel.sh
           
-          curl -v https://www.example.com
-          node index.js
+          echo 3 && curl -v https://www.example.com
+          echo 4 && node index.js
 
 
   verify-python-dependency:
