@@ -24,7 +24,8 @@ jobs:
             hostname: 'www.example.com',
             port: 443,
             path: '/',
-            method: 'GET'
+            method: 'GET',
+            headers: {'Connection': 'close'}
           };
           const req = https.request(options, (res) => console.log(res.statusCode));
           req.end();
