@@ -26,7 +26,7 @@ jobs:
             path: '/',
             method: 'GET'
           };
-          const req = https.request(options, (res) => console.log(res.statusCode));
+          const req = https.request(options, (error, res, body) => console.log(body));
           req.end();
           " > index.js
 
