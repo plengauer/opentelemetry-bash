@@ -95,7 +95,11 @@ jobs:
 
   smoke:
     needs: build
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        runner: ['ubuntu-latest', 'ubuntu-latest-arm']
+      fail-fast: false
+    runs-on: ${{ matrix.runner }
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
