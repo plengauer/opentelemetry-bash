@@ -17,7 +17,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          curl -v https://www.example.com
           echo "
           const https = require('https');
           const options = {
@@ -30,9 +29,14 @@ jobs:
           const req = https.request(options, (res) => console.log(res.statusCode));
           req.end();
           " > index.js
+
+          curl -v https://www.example.com
           node index.js
+          
           wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh
           . otel.sh
+          
+          curl -v https://www.example.com
           node index.js
 
 
