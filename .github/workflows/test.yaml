@@ -99,7 +99,7 @@ jobs:
       matrix:
         runner: ['ubuntu-latest', 'ubuntu-latest-arm']
       fail-fast: false
-    runs-on: ${{ matrix.runner }
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
