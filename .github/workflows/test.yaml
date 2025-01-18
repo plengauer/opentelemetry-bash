@@ -13,33 +13,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  experiment:
-    runs-on: ubuntu-latest
-    steps:
-      - run: |
-          echo "
-          const https = require('https');
-          const options = {
-            // hostname: 'google.com',
-            hostname: 'www.example.com',
-            port: 443,
-            path: '/',
-            method: 'GET',
-            headers: {'Connection': 'close'}
-          };
-          const req = https.request(options, (res) => console.log(res.statusCode));
-          req.end();
-          " > index.js
-          
-          echo 1 && curl -v https://www.example.com
-          echo 2 && node index.js
-          
-          wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh
-          . otel.sh
-          
-          echo 3 && curl -v https://www.example.com
-          echo 4 && node index.js
-
 
   verify-python-dependency:
     runs-on: ubuntu-latest
