@@ -97,7 +97,7 @@ jobs:
     needs: build
     strategy:
       matrix:
-        runner: ['ubuntu-latest', 'ubuntu-latest-arm']
+        runner: ['ubuntu-latest', 'ubuntu-24.04-arm']
       fail-fast: false
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 20
