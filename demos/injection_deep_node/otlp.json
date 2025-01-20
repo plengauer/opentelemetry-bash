@@ -24,7 +24,7 @@
           {
             "key": "telemetry.sdk.version",
             "value": {
-              "stringValue": "1.29.0"
+              "stringValue": "1.30.1"
             }
           },
           {
@@ -36,55 +36,49 @@
           {
             "key": "vcs.commit.id",
             "value": {
-              "stringValue": "b28a4d8db186c3ddcf3b3807a72dbc1a21094898"
-            }
-          },
-          {
-            "key": "vcs.branch.name",
-            "value": {
-              "stringValue": "main"
+              "stringValue": "2092839c6028ac1355ec17967cb84013970130ed"
             }
           },
           {
             "key": "github.workflow",
             "value": {
-              "stringValue": "Publish"
+              "stringValue": "Refresh Demos"
             }
           },
           {
             "key": "github.run_id",
             "value": {
-              "stringValue": "12338760964"
+              "stringValue": "12869693465"
             }
           },
           {
             "key": "github.run_number",
             "value": {
-              "stringValue": "77"
+              "stringValue": "12"
             }
           },
           {
             "key": "github.actor",
             "value": {
-              "stringValue": "plengauer"
+              "stringValue": "actions-bot-pl"
             }
           },
           {
             "key": "github.sha",
             "value": {
-              "stringValue": "b28a4d8db186c3ddcf3b3807a72dbc1a21094898"
+              "stringValue": "2092839c6028ac1355ec17967cb84013970130ed"
             }
           },
           {
             "key": "github.ref",
             "value": {
-              "stringValue": "refs/heads/main"
+              "stringValue": "refs/tags/v4.47.0"
             }
           },
           {
             "key": "process.pid",
             "value": {
-              "intValue": "8351"
+              "intValue": "7874"
             }
           },
           {
@@ -162,17 +156,17 @@
         {
           "scope": {
             "name": "@opentelemetry/instrumentation-http",
-            "version": "0.56.0"
+            "version": "0.57.1"
           },
           "spans": [
             {
-              "traceId": "8aba5fb8ecb716b739ded14b862a1566",
-              "spanId": "da07735047ee5d26",
-              "parentSpanId": "d253eab2d7f74d21",
+              "traceId": "5c975d5f092aa5cda27f413108ca77c8",
+              "spanId": "fe8c23df55e362d9",
+              "parentSpanId": "31a0ae7bc737dc2d",
               "name": "GET",
               "kind": 3,
-              "startTimeUnixNano": "1734305801794000000",
-              "endTimeUnixNano": "1734305982287019182",
+              "startTimeUnixNano": "1737381947607000000",
+              "endTimeUnixNano": "1737382097573507106",
               "attributes": [
                 {
                   "key": "http.url",
@@ -207,7 +201,7 @@
                 {
                   "key": "net.peer.ip",
                   "value": {
-                    "stringValue": "93.184.215.14"
+                    "stringValue": "23.192.228.80"
                   }
                 },
                 {
@@ -271,7 +265,7 @@
           {
             "key": "telemetry.sdk.version",
             "value": {
-              "stringValue": "4.42.1"
+              "stringValue": "4.47.0"
             }
           },
           {
@@ -283,7 +277,7 @@
           {
             "key": "github.sha",
             "value": {
-              "stringValue": "b28a4d8db186c3ddcf3b3807a72dbc1a21094898"
+              "stringValue": "2092839c6028ac1355ec17967cb84013970130ed"
             }
           },
           {
@@ -313,43 +307,43 @@
           {
             "key": "github.event.ref",
             "value": {
-              "stringValue": "refs/heads/main"
+              "stringValue": "refs/tags/v4.47.0"
             }
           },
           {
             "key": "github.event.ref.sha",
             "value": {
-              "stringValue": "b28a4d8db186c3ddcf3b3807a72dbc1a21094898"
+              "stringValue": "2092839c6028ac1355ec17967cb84013970130ed"
             }
           },
           {
             "key": "github.event.ref.name",
             "value": {
-              "stringValue": "main"
+              "stringValue": "v4.47.0"
             }
           },
           {
             "key": "github.event.actor.id",
             "value": {
-              "stringValue": "100447901"
+              "stringValue": "170979611"
             }
           },
           {
             "key": "github.event.actor.name",
             "value": {
-              "stringValue": "plengauer"
+              "stringValue": "actions-bot-pl"
             }
           },
           {
             "key": "github.event.name",
             "value": {
-              "stringValue": "workflow_dispatch"
+              "stringValue": "release"
             }
           },
           {
             "key": "github.workflow.run.id",
             "value": {
-              "stringValue": "12338760964"
+              "stringValue": "12869693465"
             }
           },
           {
@@ -361,25 +355,25 @@
           {
             "key": "github.workflow.ref",
             "value": {
-              "stringValue": "plengauer/opentelemetry-bash/.github/workflows/publish_main.yaml@refs/heads/main"
+              "stringValue": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v4.47.0"
             }
           },
           {
             "key": "github.workflow.sha",
             "value": {
-              "stringValue": "b28a4d8db186c3ddcf3b3807a72dbc1a21094898"
+              "stringValue": "2092839c6028ac1355ec17967cb84013970130ed"
             }
           },
           {
             "key": "github.workflow.name",
             "value": {
-              "stringValue": "Publish"
+              "stringValue": "Refresh Demos"
             }
           },
           {
             "key": "github.job.name",
             "value": {
-              "stringValue": "demo-generate"
+              "stringValue": "generate"
             }
           },
           {
@@ -409,13 +403,13 @@
           {
             "key": "process.pid",
             "value": {
-              "intValue": "7587"
+              "intValue": "7101"
             }
           },
           {
             "key": "process.parent_pid",
             "value": {
-              "intValue": "2583"
+              "intValue": "2135"
             }
           },
           {
@@ -496,18 +490,18 @@
         {
           "scope": {
             "name": "shell",
-            "version": "4.42.1"
+            "version": "4.47.0"
           },
           "spans": [
             {
-              "traceId": "8aba5fb8ecb716b739ded14b862a1566",
-              "spanId": "d253eab2d7f74d21",
-              "parentSpanId": "033d736c1171e128",
+              "traceId": "5c975d5f092aa5cda27f413108ca77c8",
+              "spanId": "31a0ae7bc737dc2d",
+              "parentSpanId": "d07ca18589fb12a8",
               "flags": 768,
               "name": "node index.js",
               "kind": 1,
-              "startTimeUnixNano": "1734305800598444193",
-              "endTimeUnixNano": "1734305982306486601",
+              "startTimeUnixNano": "1737381946183793511",
+              "endTimeUnixNano": "1737382097591717541",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -567,14 +561,14 @@
               "status": {}
             },
             {
-              "traceId": "8aba5fb8ecb716b739ded14b862a1566",
-              "spanId": "033d736c1171e128",
+              "traceId": "5c975d5f092aa5cda27f413108ca77c8",
+              "spanId": "d07ca18589fb12a8",
               "parentSpanId": "",
               "flags": 256,
               "name": "bash -e demo.sh",
               "kind": 2,
-              "startTimeUnixNano": "1734305800585576341",
-              "endTimeUnixNano": "1734305982306634347",
+              "startTimeUnixNano": "1737381946171429047",
+              "endTimeUnixNano": "1737382097591846542",
               "status": {}
             }
           ]
