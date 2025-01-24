@@ -5,9 +5,9 @@ if ! which python3; then exit 0; fi
 
 dir=$(mktemp -d)
 python3 -m venv --system-site-packages "$dir"/venv || exit 1
+set -x
 pip3 install requests
-. "$dir"/venv/bin/activate
-deactivate
+set +x
 
 exit 1
 
