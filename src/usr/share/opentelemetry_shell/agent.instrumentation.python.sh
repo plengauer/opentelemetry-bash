@@ -6,13 +6,13 @@ _otel_inject_python() { # subprocess.Popen(['/tmp/tmp.TAwDcuoM1r/venv/bin/python
     local cmdline="${cmdline#\\}"
     _otel_python_inject_args "$@" > /dev/null
     \eval "set -- $(_otel_python_inject_args "$@")"
-    if \[ "${OTEL_SHELL_CONFIG_INJECT_DEEP:-FALSE}" = TRUE ]; then
-      local command="$1"; shift
-      set -- "$command" /opt/opentelemetry_shell/venv/bin/opentelemetry-instrument "${command#\\}" "$@"
-    fi
     local python_path="${PYTHONPATH:-}"
     if ! _otel_string_ends_with "${2:-}" /pip && ! _otel_string_ends_with "${2:-}" /pip3 && ! \[ "${3:-}" = ensurepip ]; then
       local python_path=/opt/opentelemetry_shell/venv/lib/"$(\ls /opt/opentelemetry_shell/venv/lib/)"/site-packages/:"$python_path"
+      if \[ "${OTEL_SHELL_CONFIG_INJECT_DEEP:-FALSE}" = TRUE ]; then
+        local command="$1"; shift
+        set -- "$command" /opt/opentelemetry_shell/venv/bin/opentelemetry-instrument "${command#\\}" "$@"
+      fi
     fi
     if \[ "${_otel_python_code_source:-}" = stdin ]; then
       unset _otel_python_code_source
