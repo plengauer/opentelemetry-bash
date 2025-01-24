@@ -3,86 +3,13 @@ if ! which python3; then exit 0; fi
 
 . otel.sh
 
-export OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE
-
-echo '
-import requests
-requests.get("http://example.com/foo")
-' | python3 | grep -v -F '"parent_id": null,' | grep -- '/foo' || exit 1
-
-python3 -c '
-import requests
-requests.get("http://example.com/bar")
-' | grep -v -F '"parent_id": null,' | grep -- '/bar' || exit 1
-
-echo '
-import requests
-requests.get("http://example.com/baz")
-' > script.py
-python3 script.py | grep -v -F '"parent_id": null,' | grep -- '/baz' || exit 1
-
 dir=$(mktemp -d)
 python3 -m venv --system-site-packages "$dir"/venv || exit 1
-. "$dir"/venv/bin/activate
-pip install requests
-echo '
-import requests
-requests.get("http://example.com/venv")
-' | python | grep -v -F '"parent_id": null,' | grep -- '/venv' || exit 1
-deactivate
-
-dir=$(mktemp -d)
-python3 -m venv --system-site-packages "$dir"/venv || exit 1
-. "$dir"/venv/bin/activate
 pip3 install requests
-pip3 install opentelemetry-distro opentelemetry-exporter-otlp
-opentelemetry-bootstrap --action install || exit 1
-script=$(mktemp -u).py
-echo '
-import requests
-requests.get("http://example.com/instrumented")
-' | opentelemetry-instrument python3 | grep -v -F '"parent_id": null,' | grep -- '/instrumented' || exit 1
-deactivate
-
-dir=$(mktemp -d)
-python3 -m venv "$dir"/venv || exit 1
 . "$dir"/venv/bin/activate
-pip install requests
-echo '
-import requests
-requests.get("http://example.com/venv_deep_stdin")
-' | python | grep -v -F '"parent_id": null,' | grep -- '/venv_deep_stdin' || exit 1
 deactivate
 
-dir=$(mktemp -d)
-python3 -m venv "$dir"/venv || exit 1
-. "$dir"/venv/bin/activate
-pip install requests
-python -c '
-import requests
-requests.get("http://example.com/venv_deep_c")
-' | grep -v -F '"parent_id": null,' | grep -- '/venv_deep_c' || exit 1
-deactivate
-
-dir=$(mktemp -d)
-python3 -m venv "$dir"/venv || exit 1
-. "$dir"/venv/bin/activate
-pip install requests
-echo '
-import requests
-requests.get("http://example.com/venv_deep_file")
-' > "$dir"/script.py
-python "$dir"/script.py | grep -v -F '"parent_id": null,' | grep -- '/venv_deep_file' || exit 1
-deactivate
-
-exit 0
-
-
-
-
-
-#### move to front
-
+exit 1
 
 echo '
 import os
@@ -190,3 +117,75 @@ assert_equals 0 $?
 span="$(resolve_span '.name == "echo hello world 10"')"
 assert_equals "SpanKind.INTERNAL" $(\echo "$span" | \jq -r '.kind')
 assert_not_equals null $(\echo "$span" | \jq -r '.parent_id')
+
+export OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE
+
+echo '
+import requests
+requests.get("http://example.com/foo")
+' | python3 | grep -v -F '"parent_id": null,' | grep -- '/foo' || exit 1
+
+python3 -c '
+import requests
+requests.get("http://example.com/bar")
+' | grep -v -F '"parent_id": null,' | grep -- '/bar' || exit 1
+
+echo '
+import requests
+requests.get("http://example.com/baz")
+' > script.py
+python3 script.py | grep -v -F '"parent_id": null,' | grep -- '/baz' || exit 1
+
+dir=$(mktemp -d)
+python3 -m venv --system-site-packages "$dir"/venv || exit 1
+. "$dir"/venv/bin/activate
+pip install requests
+echo '
+import requests
+requests.get("http://example.com/venv")
+' | python | grep -v -F '"parent_id": null,' | grep -- '/venv' || exit 1
+deactivate
+
+dir=$(mktemp -d)
+python3 -m venv --system-site-packages "$dir"/venv || exit 1
+. "$dir"/venv/bin/activate
+pip3 install requests
+pip3 install opentelemetry-distro opentelemetry-exporter-otlp
+opentelemetry-bootstrap --action install || exit 1
+script=$(mktemp -u).py
+echo '
+import requests
+requests.get("http://example.com/instrumented")
+' | opentelemetry-instrument python3 | grep -v -F '"parent_id": null,' | grep -- '/instrumented' || exit 1
+deactivate
+
+dir=$(mktemp -d)
+python3 -m venv "$dir"/venv || exit 1
+. "$dir"/venv/bin/activate
+pip install requests
+echo '
+import requests
+requests.get("http://example.com/venv_deep_stdin")
+' | python | grep -v -F '"parent_id": null,' | grep -- '/venv_deep_stdin' || exit 1
+deactivate
+
+dir=$(mktemp -d)
+python3 -m venv "$dir"/venv || exit 1
+. "$dir"/venv/bin/activate
+pip install requests
+python -c '
+import requests
+requests.get("http://example.com/venv_deep_c")
+' | grep -v -F '"parent_id": null,' | grep -- '/venv_deep_c' || exit 1
+deactivate
+
+dir=$(mktemp -d)
+python3 -m venv "$dir"/venv || exit 1
+. "$dir"/venv/bin/activate
+pip install requests
+echo '
+import requests
+requests.get("http://example.com/venv_deep_file")
+' > "$dir"/script.py
+python "$dir"/script.py | grep -v -F '"parent_id": null,' | grep -- '/venv_deep_file' || exit 1
+deactivate
