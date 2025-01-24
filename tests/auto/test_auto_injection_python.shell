@@ -9,7 +9,7 @@ python3 -m venv --system-site-packages "$dir"/venv || exit 1
 \echo "$PATH"
 \alias pip3
 \which pip3
-pip3 install requests
+pip3 install requests 2>&1 | grep writable && exit 1
 deactivate
 
 exit 1
