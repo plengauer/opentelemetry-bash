@@ -14,6 +14,8 @@ _otel_inject_python() { # subprocess.Popen(['/tmp/tmp.TAwDcuoM1r/venv/bin/python
         local command="$1"; shift
         set -- "$command" /opt/opentelemetry_shell/venv/bin/opentelemetry-instrument "${command#\\}" "$@"
       fi
+    else
+      local python_path="$(\printf '%s' "$python_path" | \tr ':' '\n' | grep -v '^/opt/opentelemetry_shell/venv/lib/' | tr '\n' ':')"
     fi
 \echo "DEBUG DEBUG DEBUG PYTHON_PATH=$python_path $*" >&2
     if \[ "${_otel_python_code_source:-}" = stdin ]; then
