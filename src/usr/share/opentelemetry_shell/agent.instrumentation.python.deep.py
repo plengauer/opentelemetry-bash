@@ -80,6 +80,7 @@ def observed_subprocess_Popen___init__(self, *args, **kwargs):
         args = args[0]
     if len(args) > 0 and type(args[0]) is tuple:
         args = list(args[0])
+    original_args = args
     kwargs['env'] = inject_env(kwargs.get('env', os.environ.copy()), args)
     args = ([ inject_file(kwargs.get('executable', args[0])) ] + inject_arguments(kwargs.get('executable', args[0]), args[1:], not kwargs.get('shell', False)))
     if kwargs.get('executable'):
@@ -87,6 +88,7 @@ def observed_subprocess_Popen___init__(self, *args, **kwargs):
     if kwargs.get('shell', False):
         kwargs['env']['OTEL_SHELL_AUTO_INJECTED'] = 'FALSE'
         kwargs['shell'] = False
+    print('subprocess.Popen(' + str(original_args) + ' => ' + str(args) + ')', file=sys.stderr)
     return original_subprocess_Popen___init__(self, args, **kwargs);
 
 os.execv = observed_os_execv
