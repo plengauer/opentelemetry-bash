@@ -2,19 +2,20 @@
 
 _otel_inject_python() { # subprocess.Popen(['/tmp/tmp.TAwDcuoM1r/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip'] => ['/bin/sh', '-c', '. otel.sh\n_otel_inject \'/tmp/tmp.TAwDcuoM1r/venv/bin/python3\' "$@"', '/tmp/tmp.TAwDcuoM1r/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip'])
   if \[ -d "/opt/opentelemetry_shell/venv" ] && _otel_string_starts_with "$(\eval "$1 -V" | \cut -d ' ' -f 2)" "3."; then
-\echo "DEBUG DEBUG DEBUG $*" >&2
+\echo "DEBUG DEBUG DEBUG 0 $*" >&2
     local cmdline="$(_otel_dollar_star "$@")"
     local cmdline="${cmdline#\\}"
     _otel_python_inject_args "$@" > /dev/null
     \eval "set -- $(_otel_python_inject_args "$@")"
     local python_path="${PYTHONPATH:-}"
-    if \false && ! _otel_string_ends_with "${2:-}" /pip && ! _otel_string_ends_with "${2:-}" /pip3 && ! (\[ "${2:-}" = -m ] && \[ "${3:-}" = ensurepip ]); then
+    if ! _otel_string_ends_with "${2:-}" /pip && ! _otel_string_ends_with "${2:-}" /pip3 && ! (\[ "${2:-}" = -m ] && \[ "${3:-}" = ensurepip ]); then
       local python_path=/opt/opentelemetry_shell/venv/lib/"$(\ls /opt/opentelemetry_shell/venv/lib/)"/site-packages/:"$python_path"
       if \[ "${OTEL_SHELL_CONFIG_INJECT_DEEP:-FALSE}" = TRUE ]; then
         local command="$1"; shift
         set -- "$command" /opt/opentelemetry_shell/venv/bin/opentelemetry-instrument "${command#\\}" "$@"
       fi
     fi
+\echo "DEBUG DEBUG DEBUG 1 $*" >&2
     if \[ "${_otel_python_code_source:-}" = stdin ]; then
       unset _otel_python_code_source
       { \cat /usr/share/opentelemetry_shell/agent.instrumentation.python.deep.py; \cat; } | OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE PYTHONPATH="$python_path" OTEL_BSP_MAX_EXPORT_BATCH_SIZE=1 _otel_call "$@"
