@@ -6,12 +6,8 @@ if ! which python3; then exit 0; fi
 dir=$(mktemp -d)
 python3 -m venv --system-site-packages "$dir"/venv || exit 1
 . "$dir"/venv/bin/activate
+\echo "$PATH"
 \alias pip3
-\unalias pip3
-\which pip3
-\. "$dir"/venv/bin/activate
-\alias pip3
-\unalias pip3
 \which pip3
 set -x
 pip3 install requests
