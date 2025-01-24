@@ -10,7 +10,7 @@ dir=$(mktemp -d)
 \alias pip3
 \which pip3
 set -x
-\pip3 install requests
+pip3 install requests
 set +x
 deactivate
 
