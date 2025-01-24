@@ -25,7 +25,7 @@ jobs:
       - env:
           GITHUB_TOKEN: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
         run: |
-          echo '${{ toJson(github.event.release) }}' | jq -r .assets[].browser_download_url | grep '.deb$' | xargs wget --header="Authorization: Bearer $GITHUB_TOKEN"
+          cat "$GITHUB_EVENT_PATH" | jq -r .release.assets[].browser_download_url | grep '.deb$' | xargs wget --header="Authorization: Bearer $GITHUB_TOKEN"
           sudo apt-get -y install ./*.deb
       - uses: actions/checkout@v4
       - id: demo
@@ -225,6 +225,7 @@ jobs:
         with:
           token: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
           commit-message: "Update demo"
+          base: main
           branch: "demos/${{ matrix.demo_directory }}"
           title: "Update Demo ${{ matrix.demo_directory }}"
           body: |

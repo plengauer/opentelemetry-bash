@@ -95,7 +95,11 @@ jobs:
 
   smoke:
     needs: build
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        runner: ['ubuntu-latest', 'ubuntu-24.04-arm']
+      fail-fast: false
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
@@ -169,7 +173,7 @@ jobs:
       IMAGE_RHEL_STABLE: 'redhat/ubi9:latest' # needs manual maintenance
       IMAGE_RHEL_LATEST: 'redhat/ubi9:latest' # needs manual maintenance
       IMAGE_RHEL_DEV: '' # not public
-      IMAGE_OPENSUSE_OLDEST: 'opensuse/leap:15.5' # needs manual maintenance on January 2025 (https://endoflife.date/opensuse)
+      IMAGE_OPENSUSE_OLDEST: 'opensuse/leap:15.6' # needs manual maintenance on January 2026 (https://endoflife.date/opensuse)
       IMAGE_OPENSUSE_STABLE: 'opensuse/leap:latest'
       IMAGE_OPENSUSE_LATEST: 'opensuse/tumbleweed:latest'
       IMAGE_OPENSUSE_DEV: '' # not public
@@ -420,7 +424,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           issue-message: "Hello, thanks for adding an issue for the first time!"
           pr-message: "Hello, thanks for contributing for the first time!"
-      - uses: renovatebot/github-action@v41.0.8 # integration, node action with call to docker, docker flags that make injection more complicated, then call a node script via exec that already is injected with otel
+      - uses: renovatebot/github-action@v41.0.10 # integration, node action with call to docker, docker flags that make injection more complicated, then call a node script via exec that already is injected with otel
         env:
           RENOVATE_DRY_RUN: full
           RENOVATE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
