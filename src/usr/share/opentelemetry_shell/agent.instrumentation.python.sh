@@ -1,7 +1,7 @@
 #!/bin/false
 
-_otel_inject_python() {
-  if \[ -d "/opt/opentelemetry_shell/venv" ] && _otel_string_starts_with "$(\eval "$1 -V" | \cut -d ' ' -f 2)" "3." && ! _otel_string_ends_with "${2:-}" /pip && ! _otel_string_ends_with "${2:-}" /pip3; then
+_otel_inject_python() { # subprocess.Popen(['/tmp/tmp.TAwDcuoM1r/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip'] => ['/bin/sh', '-c', '. otel.sh\n_otel_inject \'/tmp/tmp.TAwDcuoM1r/venv/bin/python3\' "$@"', '/tmp/tmp.TAwDcuoM1r/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip'])
+  if \[ -d "/opt/opentelemetry_shell/venv" ] && _otel_string_starts_with "$(\eval "$1 -V" | \cut -d ' ' -f 2)" "3." && ! _otel_string_ends_with "${2:-}" /pip && ! _otel_string_ends_with "${2:-}" /pip3 && ! \[ "${3:-}" = ensurepip ]; then
     local cmdline="$(_otel_dollar_star "$@")"
     local cmdline="${cmdline#\\}"
     if _otel_python_is_customize_injectable && \false; then
