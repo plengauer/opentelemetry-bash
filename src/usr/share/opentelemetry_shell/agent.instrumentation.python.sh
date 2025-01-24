@@ -2,6 +2,7 @@
 
 _otel_inject_python() {
   if \[ -d "/opt/opentelemetry_shell/venv" ] && _otel_string_starts_with "$(\eval "$1 -V" | \cut -d ' ' -f 2)" "3." && ! _otel_string_ends_with "${2:-}" /pip && ! _otel_string_ends_with "${2:-}" /pip3; then
+\echo "DEBUG DEBUG DEBUG injecting into $*" >&2
     local cmdline="$(_otel_dollar_star "$@")"
     local cmdline="${cmdline#\\}"
     if _otel_python_is_customize_injectable && \false; then
