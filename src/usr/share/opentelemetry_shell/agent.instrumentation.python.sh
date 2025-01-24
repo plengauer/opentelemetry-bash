@@ -1,7 +1,7 @@
 #!/bin/false
 
 _otel_inject_python() { # subprocess.Popen(['/tmp/tmp.TAwDcuoM1r/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip'] => ['/bin/sh', '-c', '. otel.sh\n_otel_inject \'/tmp/tmp.TAwDcuoM1r/venv/bin/python3\' "$@"', '/tmp/tmp.TAwDcuoM1r/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip'])
-  if \[ -d "/opt/opentelemetry_shell/venv" ] && _otel_string_starts_with "$(\eval "$1 -V" | \cut -d ' ' -f 2)" "3." && ! _otel_string_ends_with "${2:-}" /pip && ! _otel_string_ends_with "${2:-}" /pip3 && ! \[ "${3:-}" = ensurepip ]; then
+  if \[ -d "/opt/opentelemetry_shell/venv" ] && _otel_string_starts_with "$(\eval "$1 -V" | \cut -d ' ' -f 2)" "3."; then
     local cmdline="$(_otel_dollar_star "$@")"
     local cmdline="${cmdline#\\}"
     _otel_python_inject_args "$@" > /dev/null
@@ -10,11 +10,15 @@ _otel_inject_python() { # subprocess.Popen(['/tmp/tmp.TAwDcuoM1r/venv/bin/python
       local command="$1"; shift
       set -- "$command" /opt/opentelemetry_shell/venv/bin/opentelemetry-instrument "${command#\\}" "$@"
     fi
+    local python_path="${PYTHONPATH:-}"
+    if ! _otel_string_ends_with "${2:-}" /pip && ! _otel_string_ends_with "${2:-}" /pip3 && ! \[ "${3:-}" = ensurepip ]; then
+      local python_path=/opt/opentelemetry_shell/venv/lib/"$(\ls /opt/opentelemetry_shell/venv/lib/)"/site-packages/:"$python_path"
+    fi
     if \[ "${_otel_python_code_source:-}" = stdin ]; then
       unset _otel_python_code_source
-      { \cat /usr/share/opentelemetry_shell/agent.instrumentation.python.deep.py; \cat; } | OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE PYTHONPATH=/opt/opentelemetry_shell/venv/lib/"$(\ls /opt/opentelemetry_shell/venv/lib/)"/site-packages/:"${PYTHONPATH:-}" OTEL_BSP_MAX_EXPORT_BATCH_SIZE=1 _otel_call "$@"
+      { \cat /usr/share/opentelemetry_shell/agent.instrumentation.python.deep.py; \cat; } | OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE PYTHONPATH="$python_path" OTEL_BSP_MAX_EXPORT_BATCH_SIZE=1 _otel_call "$@"
     else
-      OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE PYTHONPATH=/opt/opentelemetry_shell/venv/lib/"$(\ls /opt/opentelemetry_shell/venv/lib/)"/site-packages/:"${PYTHONPATH:-}" OTEL_BSP_MAX_EXPORT_BATCH_SIZE=1 _otel_call "$@"
+      OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE PYTHONPATH="$python_path" OTEL_BSP_MAX_EXPORT_BATCH_SIZE=1 _otel_call "$@"
     fi
   else
     _otel_call "$@"
