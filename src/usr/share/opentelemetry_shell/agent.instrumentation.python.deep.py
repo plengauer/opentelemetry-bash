@@ -61,7 +61,6 @@ original_subprocess_Popen___init__ = subprocess.Popen.__init__
 def observed_os_execv(file, args):
     if type(args) is tuple:
         args = list(args)
-    # print('os.execv(' + str(args) + ')', file=sys.stderr)
     env = inject_env(os.environ.copy(), args)
     args = [ args[0] ] + inject_arguments(file, args[1:])
     file = inject_file(file)
@@ -70,7 +69,6 @@ def observed_os_execv(file, args):
 def observed_os_execve(file, args, env):
     if type(args) is tuple:
         args = list(args)
-    # print('os.execve(' + str(args) + ')', file=sys.stderr)
     env = inject_env(env, args)
     args = [ args[0] ] + inject_arguments(file, args[1:])
     file = inject_file(file)
@@ -82,7 +80,6 @@ def observed_subprocess_Popen___init__(self, *args, **kwargs):
         args = args[0]
     if len(args) > 0 and type(args[0]) is tuple:
         args = list(args[0])
-    # print('subprocess.Popen(' + str(args) + ')', file=sys.stderr)
     kwargs['env'] = inject_env(kwargs.get('env', os.environ.copy()), args)
     args = ([ inject_file(kwargs.get('executable', args[0])) ] + inject_arguments(kwargs.get('executable', args[0]), args[1:], not kwargs.get('shell', False)))
     if kwargs.get('executable'):
