@@ -30,12 +30,15 @@ _otel_inject_python() {
 }
 
 _otel_can_inject_python_otel() {
+set -x
   case "$_otel_python_code_source" in
     file) ! _otel_string_ends_with "$_otel_python_file" /pip && ! _otel_string_ends_with "$_otel_python_file" /pip3 ;;
     module) \[ "$_otel_python_module" != pip ] && \[ "$_otel_python_module" != ensurepip ] ;;
     *) \true ;;
   esac
-  return "$?"
+  local result="$?"
+set +x
+  return "$result"
 }
 
 _otel_inject_opentelemetry_instrument() {
