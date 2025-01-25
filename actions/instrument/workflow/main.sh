@@ -3,6 +3,7 @@ set -e
 if [ -z "${INPUT_WORKFLOW_RUN_ID:-}" ] && [ -z "${INPUT_WORKFLOW_RUN_ATTEMPT:-}" ]; then exec bash ./main_legacy.sh; fi
 
 . ../shared/github.sh
+# TODO check based on input workflow run id, if this is same as own workflow id, cancel ourselves
 OTEL_SHELL_CONFIG_INSTALL_DEEP=FALSE bash -e ../shared/install.sh
 
 export OTEL_SERVICE_NAME="${OTEL_SERVICE_NAME:-"$(echo "$GITHUB_REPOSITORY" | cut -d / -f 2-) CI"}" # TODO where to get this from?
