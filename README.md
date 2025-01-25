@@ -166,9 +166,12 @@ To automatically monitor your Github Workflows on job level and to auto-inject i
 - run: ...
 ```
 
-Optionally, setup a dedicted job that is used to collect all jobs under a single root span representing the entire workflow. The job has to have exactly the name below and must neither depend on any other job nor being depent on.
+Optionally, setup a dedicted workflow that is used to collect all jobs under a single root span representing the entire workflow. The workflow has to be a separate workflow and not just a job in the observed workflow itself.
 ```yaml
-observe:
+name: OpenTelemetry
+on:
+  workflow_run:
+export:
   runs-on: ubuntu-latest
   steps:
     - uses: plengauer/opentelemetry-bash/actions/instrument/workflow@main
