@@ -58,6 +58,7 @@ _otel_inject_opentelemetry_instrument() {
 }
 
 _otel_python_inject_args() {
+set -x
   if \[ "${1#\\}" = opentelemetry-instrument ] || _otel_string_ends_with "$1" /opentelemetry-instrument; then
     _otel_escape_arg "$1"; shift
     \echo -n ' '
@@ -93,6 +94,7 @@ with open('$arg', 'r') as file: # SKIP_DEPENDENCY_CHECK
     fi
   done
   _otel_python_code_source="${_otel_python_code_source:-stdin}"
+set +x
 }
 
 _otel_alias_prepend python _otel_inject_python
