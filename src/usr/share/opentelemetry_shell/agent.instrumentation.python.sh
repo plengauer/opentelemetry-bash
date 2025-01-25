@@ -44,18 +44,6 @@ _otel_inject_opentelemetry_instrument() {
   fi
 }
 
-_otel_python_is_customize_injectable() {
- ! _otel_python_is_venv_active || _otel_python_is_venv_customize_injectable
-}
-
-_otel_python_is_venv_active() {
-  \[ -n "${VIRTUAL_ENV:-}" ]
-}
-
-_otel_python_is_venv_customize_injectable() {
-  \[ -d "${VIRTUAL_ENV:-}" ] && \cat "$VIRTUAL_ENV"/pyvenv.cfg | \grep -q -- '^include-system-site-packages = true$'
-}
-
 _otel_python_inject_args() {
   if \[ "${1#\\}" = opentelemetry-instrument ] || _otel_string_ends_with "$1" /opentelemetry-instrument; then
     _otel_escape_arg "$1"; shift
