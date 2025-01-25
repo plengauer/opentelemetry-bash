@@ -30,14 +30,12 @@ _otel_inject_python() {
 }
 
 _otel_can_inject_python_otel() {
-set -x
   case "$_otel_python_code_source" in
     file) ! _otel_string_ends_with "$_otel_python_file" /pip && ! _otel_string_ends_with "$_otel_python_file" /pip3 ;;
     module) \[ "$_otel_python_module" != pip ] && \[ "$_otel_python_module" != ensurepip ] ;;
     *) \true ;;
   esac
   local result="$?"
-set +x
   return "$result"
 }
 
@@ -58,7 +56,6 @@ _otel_inject_opentelemetry_instrument() {
 }
 
 _otel_python_inject_args() {
-set -x
   if \[ "${1#\\}" = opentelemetry-instrument ] || _otel_string_ends_with "$1" /opentelemetry-instrument; then
     _otel_escape_arg "$1"; shift
     \echo -n ' '
@@ -94,7 +91,6 @@ with open('$arg', 'r') as file: # SKIP_DEPENDENCY_CHECK
     fi
   done
   _otel_python_code_source="${_otel_python_code_source:-stdin}"
-set +x
 }
 
 _otel_alias_prepend python _otel_inject_python
