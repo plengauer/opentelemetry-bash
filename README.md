@@ -171,13 +171,14 @@ Optionally, setup a dedicted workflow that is used to collect all jobs under a s
 name: OpenTelemetry
 on:
   workflow_run:
-export:
-  runs-on: ubuntu-latest
-  steps:
-    - uses: plengauer/opentelemetry-bash/actions/instrument/workflow@main
-      env:
-        OTEL_SERVICE_NAME: ${{ secrets.SERVICE_NAME }}
-        # ...
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: plengauer/opentelemetry-bash/actions/instrument/workflow@main
+        env:
+          OTEL_SERVICE_NAME: ${{ secrets.SERVICE_NAME }}
+          # ...
 ```
 If you define that job to create a single root span for all other jobs, only the step in this root job has to be configured. The configuration will be propagated securely to the other jobs.
 
