@@ -26,8 +26,8 @@ docker_path="$(which docker)"
 sudo mv "$docker_path" "$(pwd)"
 sudo gcc -o "$docker_path" forward.c -DEXECUTABLE=/bin/bash -DARG1="$(pwd)"/decorate_action_docker.sh -DARG2="$(pwd)"/docker
 
-if github_workflow jobs | jq -r '.jobs[] | select(.status != "completed") | .name' | grep -q '^observe$'; then
-  while ! github_workflow artifacts | jq -r '.artifacts[].name' | grep -q '^opentelemetry$'; do sleep 3; done
+if gh_curl_paginated /actions/runs/"$GITHUB_RUN_ID"/attempt/"$GITHUB_RUN_ATTEMPT"/jobs'?page=100' | jq -r '.jobs[] | select(.status != "completed") | .name' | grep -q '^observe$'; then
+  while ! gh_curl_paginated /actions/runs/"$GITHUB_RUN_ID"/attempt/"$GITHUB_RUN_ATTEMPT"/artifacts'?page=100' | jq -r '.artifacts[].name' | grep -q '^opentelemetry$'; do sleep 3; done
 fi
 env_dir="$(mktemp -d)"
 node download_artifact.js opentelemetry "$env_dir" || true
