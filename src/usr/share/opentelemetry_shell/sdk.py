@@ -150,7 +150,7 @@ def handle(scope, version, command, arguments):
                 GithubActionResourceDetector(),
                 OsResourceDetector(),
                 OTELResourceDetector(),
-            ]).merge(Resource.create(resource))
+            ]).merge(Resource.create(resource)) if os.environ.get('DISABLE_RESOURCE_DETECTION', 'FALSE') == 'FALSE' else Resource.create(resource)
 
         traces_exporters = os.environ.get('OTEL_TRACES_EXPORTER', 'otlp')
         metrics_exporters = os.environ.get('OTEL_METRICS_EXPORTER', 'otlp')
