@@ -21,4 +21,4 @@ while [ "$(gh_jobs "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" | jq -r '.jobs[] | sel
 if [ "$(gh_jobs "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" | jq -r '.jobs[] | select(.status == "completed") | select(.conclusion == "failure") | .name' | wc -l)" -gt 0 ]; then otel_span_error "$span_handle"; fi
 otel_span_end "$span_handle"
 otel_shutdown
-node delete_artifact.js opentelemetry
+gh_artifact_delete opentelemetry
