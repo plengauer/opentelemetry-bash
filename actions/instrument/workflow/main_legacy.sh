@@ -14,11 +14,11 @@ otel_span_activate "$span_handle"
 env_dir="$(mktemp -d)"
 # printenv | grep -E '^OTEL_|^TRACEPARENT=|^TRACESTATE=' | sort -R | openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:"$INPUT_GITHUB_TOKEN" | base64 > "$env_dir"/.env
 printenv | grep -E '^OTEL_|^TRACEPARENT=|^TRACESTATE=' | grep -v 'HEADER' > "$env_dir"/.env
-gh_artifact_upload opentelemetry "$env_dir"/.env
+gh_artifact_upload "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" opentelemetry "$env_dir"/.env
 rm -r "$env_dir"
 otel_span_deactivate "$span_handle"
 while [ "$(gh_jobs "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" | jq -r '.jobs[] | select(.status != "completed") | .name' | wc -l)" -gt 1 ]; do sleep 13; done
 if [ "$(gh_jobs "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" | jq -r '.jobs[] | select(.status == "completed") | select(.conclusion == "failure") | .name' | wc -l)" -gt 0 ]; then otel_span_error "$span_handle"; fi
 otel_span_end "$span_handle"
 otel_shutdown
-gh_artifact_delete opentelemetry
+gh_artifact_delete "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" opentelemetry
