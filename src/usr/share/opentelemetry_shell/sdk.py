@@ -101,15 +101,15 @@ class MyIdGenerator(RandomIdGenerator):
     
     def generate_trace_id(self):
         trace_id = super(MyIdGenerator, self).generate_trace_id()
-        if First:
-            First = False
+        if self.first:
+            self.first = False
             trace_id = int(os.environ.get('OTEL_TRACE_ID_OVERRIDE', str(trace_id)))
         return trace_id
     
     def generate_span_id(self):
         span_id = super(MyIdGenerator, self).generate_span_id()
-        if First:
-            First = False
+        if self.first:
+            self.first = False
             span_id = int(os.environ.get('OTEL_SPAN_ID_OVERRIDE', str(span_id)))
         return span_id
 
