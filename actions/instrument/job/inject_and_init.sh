@@ -30,7 +30,7 @@ if gh_jobs "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" | jq -r '.jobs[] | select(.sta
   while ! gh_artifacts "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" | jq -r '.artifacts[].name' | grep -q '^opentelemetry$'; do sleep 3; done
 fi
 env_dir="$(mktemp -d)"
-gh_artifact_download opentelemetry "$env_dir" || true
+gh_artifact_download opentelemetry "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" "$env_dir" || true
 if [ -f "$env_dir"/.env ]; then
   # mv "$env_dir"/.env "$env_dir"/.env.encrypted
   # cat "$env_dir"/.env.encrypted | base64 --decode | openssl enc -d -aes-256-cbc -pbkdf2 -pass pass:"$INPUT_GITHUB_TOKEN" > "$env_dir"/.env
