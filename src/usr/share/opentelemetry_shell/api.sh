@@ -77,7 +77,18 @@ _otel_resource_attributes() {
   _otel_resource_attribute string telemetry.sdk.name=opentelemetry
   _otel_resource_attribute string telemetry.sdk.language=shell
   _otel_resource_attribute string telemetry.sdk.version="$(_otel_package_version opentelemetry-shell)"
+  _otel_resource_attributes_service
+  _otel_resource_attributes_process
+}
 
+_otel_resource_attributes_service() {
+  _otel_resource_attribute string service.name="${OTEL_SERVICE_NAME:-unknown_service}"
+  _otel_resource_attribute string service.version="${OTEL_SERVICE_VERSION:-}"
+  _otel_resource_attribute string service.namespace="${OTEL_SERVICE_NAMESPACE:-}"
+  _otel_resource_attribute string service.instance.id="${OTEL_SERVICE_INSTANCE_ID:-}"
+}
+
+_otel_resource_attributes_process() {
   local process_command="$(_otel_command_self)"
   local process_executable_path="$(\readlink -f "/proc/$$/exe")"
   local process_executable_name="${process_executable_path##*/}" # "$(\printf '%s' "$process_executable_path" | \rev | \cut -d / -f 1 | \rev)"
@@ -105,11 +116,6 @@ _otel_resource_attributes() {
   esac
   _otel_resource_attribute string process.runtime.version="$(_otel_package_version "$process_executable_name")"
   _otel_resource_attribute string process.runtime.options="$-"
-
-  _otel_resource_attribute string service.name="${OTEL_SERVICE_NAME:-unknown_service}"
-  _otel_resource_attribute string service.version="${OTEL_SERVICE_VERSION:-}"
-  _otel_resource_attribute string service.namespace="${OTEL_SERVICE_NAMESPACE:-}"
-  _otel_resource_attribute string service.instance.id="${OTEL_SERVICE_INSTANCE_ID:-}"
 }
 
 _otel_resource_attribute() {
