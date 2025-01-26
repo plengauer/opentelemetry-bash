@@ -13,6 +13,7 @@ gh_curl_paginated() {
       | xargs seq 1 || true
   } | while read -r page; do echo "$@"'&page='"$page"; done | xargs parallel gh_curl :::
 }
+export -f gh_curl_paginated
 
 gh_releases() {
   GITHUB_REPOSITORY="$GITHUB_ACTION_REPOSITORY" gh_curl_paginated /releases
