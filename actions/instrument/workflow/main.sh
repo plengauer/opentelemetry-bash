@@ -25,12 +25,12 @@ workflow_json="$(mktemp)"
 jq < "$GITHUB_EVENT_PATH" > "$workflow_json" .workflow_run
 workflow_span_handle="$(otel_span_start CONSUMER "$(jq < "$workflow_json" -r .name)")" # TODO fix start time
 otel_span_activate "$workflow_span_handle"
-gh_curl_paginated /actions/runs/"$INPUT_WORKFLOW_RUN_ID"/attempt/"$INPUT_WORKFLOW_RUN_ATTEMPT"/jobs'?page=100' | jq -r '.jobs[] | [.id, .conclusion, .started_at, .completed_at, .name] | @csv' | while IFS=, read -r job_id job_conclusion job_started_at job_completed_at job_name; do
+gh_jobs "$INPUT_WORKFLOW_RUN_ID" "$INPUT_WORKFLOW_RUN_ATTEMPT" | jq -r '.jobs[] | [.id, .conclusion, .started_at, .completed_at, .name] | @csv' | while IFS=, read -r job_id job_conclusion job_started_at job_completed_at job_name; do
   # TODO check if job has been created by checking the artifacts, if so continue
   # TODO of not continue, and check which steps are missing?
   job_span_handle="$(otel_span_start CONSUMER "$job_name)")" # TODO fix start time
   otel_span_activate "$job_span_handle"
-  gh_curl /actions/runs/"$INPUT_WORKFLOW_RUN_ID"/attempt/"$INPUT_WORKFLOW_RUN_ATTEMPT"/jobs/"$job_id" | jq -r '.steps[] | [.conclusion, .started_at, .completed_at, .name] | @csv' | while IFS=, read -r step_conclusion step_started_at step_completed_at step_name; do
+  gh_job "$INPUT_WORKFLOW_RUN_ID" "$INPUT_WORKFLOW_RUN_ATTEMPT" "$job_id" | jq -r '.steps[] | [.conclusion, .started_at, .completed_at, .name] | @csv' | while IFS=, read -r step_conclusion step_started_at step_completed_at step_name; do
     step_span_handle="$(otel_span_start INTERNAL "$step_name)")" # TODO fix start time
     # TODO fetch logs?
     if [ "$step_conclusion" = failure ]; then otel_span_error "$job_span_handle"; fi
