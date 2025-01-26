@@ -17,7 +17,9 @@ export OTEL_TRACES_EXPORTER=console
 export OTEL_SHELL_SDK_OUTPUT_REDIRECT=/dev/stderr
 . otelapi.sh
 export OTEL_DISABLE_RESOURCE_DETECTION=TRUE # todo re-add resource attributes based on workflow
-_otel_resource_attributes_process() { ; }
+_otel_resource_attributes_process() {
+  :
+}
 # TODO what to use as span service? could we also get it from a foreign artifact?
 trace_id=123 # TODO get it from a foreign artifact from the workflow
 span_id=123 # TODO get it from a foreign artifact from the workflow
