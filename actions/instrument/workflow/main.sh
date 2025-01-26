@@ -21,9 +21,10 @@ _otel_resource_attributes_process() {
   :
 }
 # TODO what to use as span service? could we also get it from a foreign artifact?
-trace_id=123 # TODO get it from a foreign artifact from the workflow
-span_id=123 # TODO get it from a foreign artifact from the workflow
-# TODO configure sdk to use the above trace_id and span_id if available for the first root span 
+gh_artifact_download "$INPUT_WORKFLOW_RUN_ID" "$INPUT_WORKFLOW_RUN_ATTEMPT" opentelemetry_root opentelemetry_root || true
+if [ -f opentelemetry_root/trace.id ]; then export OTEL_TRACE_ID_OVERRIDE="$(cat opentelemetry_root/trace.id)"; fi
+if [ -f opentelemetry_root/span.id ]; then export OTEL_SPAN_ID_OVERRIDE="$(cat opentelemetry_root/span.id)"; fi
+rm -rf opentelemetry_root
 otel_init
 
 workflow_span_handle="$(otel_span_start CONSUMER "$(jq < "$workflow_json" -r .name)")" # TODO fix start time
