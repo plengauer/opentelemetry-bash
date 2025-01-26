@@ -11,7 +11,7 @@ from opentelemetry_resourcedetector_docker import DockerResourceDetector
 from opentelemetry_resourcedetector_kubernetes import KubernetesResourceDetector
 
 from opentelemetry.trace import SpanKind
-from opentelemetry.sdk.trace import Span, StatusCode, TracerProvider, sampling
+from opentelemetry.sdk.trace import Span, StatusCode, TracerProvider, sampling, id_generator
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor, BatchSpanProcessor, ConsoleSpanExporter
 from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
@@ -96,7 +96,7 @@ class OracleResourceDetector(ResourceDetector):
         response.raise_for_status()  # Raise an exception for 4xx or 5xx status codes
         return response.json()
 
-class MyIdGenerator(RandomIdGenerator):
+class MyIdGenerator(id_generator.RandomIdGenerator):
     trace_id = None
     span_id = None
 
