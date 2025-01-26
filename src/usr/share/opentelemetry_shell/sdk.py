@@ -97,21 +97,31 @@ class OracleResourceDetector(ResourceDetector):
         return response.json()
 
 class MyIdGenerator(RandomIdGenerator):
-    first = True
+    trace_id = None
+    span_id = None
+
+    __init__(self):
+        traceparent = os.environ.get('OTEL_ID_GENERATOR_OVERRIDE_TRACEPARENT', None)
+        if traceparent:
+            context = opentelemetry.trace.get_current_span(TraceContextTextMapPropagator().extract({'traceparent': traceparent})).get_span_context()
+            self.trace_id = context.trace_id
+            self.span_id = context.span_id
     
     def generate_trace_id(self):
-        trace_id = super(MyIdGenerator, self).generate_trace_id()
-        if self.first:
-            self.first = False
-            trace_id = int(os.environ.get('OTEL_TRACE_ID_OVERRIDE', str(trace_id)))
-        return trace_id
+        if self.trace_id:
+            trace_id = self.trace_id
+            self.trace_id = None
+            return trace_id
+        else
+            return super(MyIdGenerator, self).generate_trace_id()
     
     def generate_span_id(self):
-        span_id = super(MyIdGenerator, self).generate_span_id()
-        if self.first:
-            self.first = False
-            span_id = int(os.environ.get('OTEL_SPAN_ID_OVERRIDE', str(span_id)))
-        return span_id
+        if self.span_id:
+            span_id = self.span_id
+            self.span_id = None
+            return span_id
+        else
+            return super(MyIdGenerator, self).generate_trace_id()
 
 resource = {}
 spans = {}
