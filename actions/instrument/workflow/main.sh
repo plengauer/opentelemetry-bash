@@ -7,7 +7,6 @@ OTEL_SHELL_CONFIG_INSTALL_DEEP=FALSE bash -e ../shared/install.sh
 
 export OTEL_SERVICE_NAME="${OTEL_SERVICE_NAME:-"$(echo "$GITHUB_REPOSITORY" | cut -d / -f 2-) CI"}" # TODO where to get this from?
 
-
 workflow_json="$(mktemp)"
 jq < "$GITHUB_EVENT_PATH" > "$workflow_json" .workflow_run
 if [ "$INPUT_WORKFLOW_RUN_ID" != "$(jq < "$workflow_json" .id)" ] || [ "$INPUT_WORKFLOW_RUN_ATTEMPT" != "$(jq < "$workflow_json" .run_attempt)" ]; then gh_workflow_run "$INPUT_WORKFLOW_RUN_ID" "$INPUT_WORKFLOW_RUN_ATTEMPT" > "$workflow_json"; fi
@@ -44,7 +43,7 @@ gh_jobs "$INPUT_WORKFLOW_RUN_ID" "$INPUT_WORKFLOW_RUN_ATTEMPT" | jq -r '.jobs[] 
   otel_span_end "$job_span_handle" # TODO fix end time
 done
 otel_span_deactivate "$workflow_span_handle"
-# TODO mark span as failed if conclusion is failure
+if [ "$(jq < "$workflow_json" .conclusion -r)" = failure ]; then otel_span_error "$workflow_span_handle"; fi
 otel_span_end "$workflow_span_handle" # TODO fix end time
 
 otel_shutdown
