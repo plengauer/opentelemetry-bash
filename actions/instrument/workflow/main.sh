@@ -25,13 +25,13 @@ jq < "$GITHUB_EVENT_PATH" > "$workflow_json" .workflow_run
 if [ "$INPUT_WORKFLOW_RUN_ID" != "$(jq < "$workflow_json" .id)" ] || [ "$INPUT_WORKFLOW_RUN_ATTEMPT" != "$(jq < "$workflow_json" .run_attempt)" ]; then gh_workflow_run "$INPUT_WORKFLOW_RUN_ID" "$INPUT_WORKFLOW_RUN_ATTEMPT" > "$workflow_json"; fi
 workflow_span_handle="$(otel_span_start CONSUMER "$(jq < "$workflow_json" -r .name)")" # TODO fix start time
 otel_span_activate "$workflow_span_handle"
-gh_jobs "$INPUT_WORKFLOW_RUN_ID" "$INPUT_WORKFLOW_RUN_ATTEMPT" | jq -r '.jobs[] | [.id, .conclusion, .started_at, .completed_at, .name] | @tsv' | while IFS=, read -r job_id job_conclusion job_started_at job_completed_at job_name; do
+gh_jobs "$INPUT_WORKFLOW_RUN_ID" "$INPUT_WORKFLOW_RUN_ATTEMPT" | jq -r '.jobs[] | [.id, .conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | while IFS=, read -r job_id job_conclusion job_started_at job_completed_at job_name; do
   echo "$job_name" >&2
   # TODO check if job has been created by checking the artifacts, if so continue
   # TODO of not continue, and check which steps are missing?
   job_span_handle="$(otel_span_start CONSUMER "$job_name)")" # TODO fix start time
   otel_span_activate "$job_span_handle"
-  gh_job "$INPUT_WORKFLOW_RUN_ID" "$INPUT_WORKFLOW_RUN_ATTEMPT" "$job_id" | jq -r '.steps[] | [.conclusion, .started_at, .completed_at, .name] | @tsv' | while IFS=, read -r step_conclusion step_started_at step_completed_at step_name; do
+  gh_job "$INPUT_WORKFLOW_RUN_ID" "$INPUT_WORKFLOW_RUN_ATTEMPT" "$job_id" | jq -r '.steps[] | [.conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | while IFS=, read -r step_conclusion step_started_at step_completed_at step_name; do
     echo "$step_name" >&2
     step_span_handle="$(otel_span_start INTERNAL "$step_name)")" # TODO fix start time
     # TODO fetch logs?
