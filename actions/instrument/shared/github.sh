@@ -25,15 +25,15 @@ gh_workflow_run() {
 }
 
 gh_jobs() {
-  gh_curl_paginated /actions/runs/"$1"/attempt/"$2"/jobs'?per_page=100'
+  gh_curl_paginated /actions/runs/"$1"/attempts/"$2"/jobs'?per_page=100'
 }
 
 gh_job() {
-  gh_curl /actions/runs/"$1"/attempt/"$2"/jobs/"$3"
+  gh_curl /actions/runs/"$1"/attempts/"$2"/jobs/"$3"
 }
 
 gh_artifacts() {
-  gh_curl_paginated /actions/runs/"$GITHUB_RUN_ID"/attempt/"$GITHUB_RUN_ATTEMPT"/artifacts'?per_page=100'
+  gh_curl_paginated /actions/runs/"$GITHUB_RUN_ID"/attempts/"$GITHUB_RUN_ATTEMPT"/artifacts'?per_page=100'
 }
 
 gh_artifact_download() {
