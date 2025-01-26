@@ -28,17 +28,25 @@ sudo gcc -o "$docker_path" forward.c -DEXECUTABLE=/bin/bash -DARG1="$(pwd)"/deco
 
 if gh_jobs "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" | jq -r '.jobs[] | select(.status != "completed") | .name' | grep -q '^observe$'; then
   while ! gh_artifacts "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" | jq -r '.artifacts[].name' | grep -q '^opentelemetry$'; do sleep 3; done
+  env_dir="$(mktemp -d)"
+  gh_artifact_download opentelemetry "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" "$env_dir" || true
+  if [ -f "$env_dir"/.env ]; then
+    # mv "$env_dir"/.env "$env_dir"/.env.encrypted
+    # cat "$env_dir"/.env.encrypted | base64 --decode | openssl enc -d -aes-256-cbc -pbkdf2 -pass pass:"$INPUT_GITHUB_TOKEN" > "$env_dir"/.env
+    while read -r line; do
+      export "$line"
+    done < "$env_dir"/.env
+  fi
+  rm -r "$env_dir"
+else
+  . otelapi.sh
+  otel_init
+  opentelemetry_root_dir="$(mktemp -d)"
+  otel_span_traceparent "$(otel_span_start INTERNAL dummy)" > "$opentelemetry_root_dir"/traceparent
+  gh_artifact_upload opentelemetry_root "$opentelemetry_root_dir"/traceparent
+  rm -rf "$opentelemetry_root_dir"
+  otel_shutdown
 fi
-env_dir="$(mktemp -d)"
-gh_artifact_download opentelemetry "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" "$env_dir" || true
-if [ -f "$env_dir"/.env ]; then
-  # mv "$env_dir"/.env "$env_dir"/.env.encrypted
-  # cat "$env_dir"/.env.encrypted | base64 --decode | openssl enc -d -aes-256-cbc -pbkdf2 -pass pass:"$INPUT_GITHUB_TOKEN" > "$env_dir"/.env
-  while read -r line; do
-    export "$line"
-  done < "$env_dir"/.env
-fi
-rm -r "$env_dir"
 
 export OTEL_SERVICE_NAME="${OTEL_SERVICE_NAME:-"$(echo "$GITHUB_REPOSITORY" | cut -d / -f 2-) CI"}"
 
