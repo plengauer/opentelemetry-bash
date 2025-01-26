@@ -20,6 +20,10 @@ gh_releases() {
 }
 export -f gh_releases
 
+gh_workflow_run() {
+  gh_curl /actions/runs/"$1"/attempt/"$2"
+}
+
 gh_jobs() {
   gh_curl_paginated /actions/runs/"$1"/attempt/"$2"/jobs'?per_page=100'
 }
