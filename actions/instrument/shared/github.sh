@@ -44,6 +44,7 @@ gh_artifact_download() {
     const outputPath = process.argv[3];
     const client = new DefaultArtifactClient()
     const findBy = {
+      token: "'"$INPUT_GITHUB_TOKEN"'"
       workflowRunId: '"$1"',
     }
     client.listArtifacts({ findBy })
