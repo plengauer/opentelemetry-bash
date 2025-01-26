@@ -16,7 +16,7 @@ gh_curl_paginated() {
 export -f gh_curl_paginated
 
 gh_releases() {
-  GITHUB_REPOSITORY="$GITHUB_ACTION_REPOSITORY" gh_curl_paginated /releases
+  GITHUB_REPOSITORY="$GITHUB_ACTION_REPOSITORY" gh_curl_paginated /releases | tee /dev/stderr
 }
 export -f gh_releases
 
