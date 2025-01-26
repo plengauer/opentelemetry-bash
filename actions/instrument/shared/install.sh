@@ -1,5 +1,5 @@
 #!/bin/sh -e
-cp ../shared/package.json . && npm install && rm package.json && cp ../shared/*.js .
+cp ../shared/package.json . && npm install && rm package.json
 export GITHUB_ACTION_REPOSITORY="${GITHUB_ACTION_REPOSITORY:-"$GITHUB_REPOSITORY"}"
 action_tag_name="$(echo "$GITHUB_ACTION_REF" | cut -sd @ -f 2-)"
 if [ -z "$action_tag_name" ]; then action_tag_name="v$(cat ../../../VERSION)"; fi
