@@ -22,7 +22,11 @@ gh_job() {
   gh_curl /actions/runs/"$1"/attempt/"$2"/jobs/"$3"
 }
 
-gh_download_artifact() {
+gh_artifacts() {
+  gh_curl_paginated /actions/runs/"$GITHUB_RUN_ID"/attempt/"$GITHUB_RUN_ATTEMPT"/artifacts'?page=100'
+}
+
+gh_artifact_download() {
   node -e '
     const { DefaultArtifactClient } = require("@actions/artifact");
     const artifactName = process.argv[2];
@@ -31,23 +35,23 @@ gh_download_artifact() {
     client.listArtifacts()
       .then(response => response.artifacts.find(artifact => artifact.name == artifactName)?.id)
       .then(id => id ? client.downloadArtifact(id, { path: outputPath }) : null);
-  ' "$@"
+  ' "$3" "$4"
 }
 
-gh_upload_artifact() {
+gh_artifact_upload() {
   node -e '
     const path = require('path');
     const { DefaultArtifactClient } = require('@actions/artifact');
     const artifactName = process.argv[2];
     const fullPath = process.argv[3];
     new DefaultArtifactClient().uploadArtifact(artifactName, [ fullPath ], path.dirname(fullPath));
-  ' "$@"
+  ' "$3" "$4"
 }
 
-gh_delete_artifact() {
+gh_artifact_delete() {
   node -e '
     const { DefaultArtifactClient } = require('@actions/artifact');
     const artifactName = process.argv[2];
     new DefaultArtifactClient().deleteArtifact(artifactName);
-  ' "$@"
+  ' "$3"
 }
