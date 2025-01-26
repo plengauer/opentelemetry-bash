@@ -29,7 +29,7 @@ gh_jobs() {
 }
 
 gh_job() {
-  gh_curl /actions/runs/"$1"/attempts/"$2"/jobs/"$3" -v
+  gh_curl /actions/jobs/"$3"
 }
 
 gh_artifacts() {
