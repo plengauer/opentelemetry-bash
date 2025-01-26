@@ -21,7 +21,7 @@ _otel_resource_attributes_process() {
   :
 }
 # TODO what to use as span service? could we also get it from a foreign artifact?
-gh_artifact_download "$INPUT_WORKFLOW_RUN_ID" "$INPUT_WORKFLOW_RUN_ATTEMPT" opentelemetry_root opentelemetry_root || true
+gh_artifact_download "$INPUT_WORKFLOW_RUN_ID" "$INPUT_WORKFLOW_RUN_ATTEMPT" opentelemetry_root_"$INPUT_WORKFLOW_RUN_ATTEMPT" opentelemetry_root || true
 if [ -f opentelemetry_root/traceparent ]; then export OTEL_ID_GENERATOR_OVERRIDE_TRACEPARENT="$(cat opentelemetry_root/traceparent)"; fi
 rm -rf opentelemetry_root
 otel_init
