@@ -12,8 +12,8 @@ jq < "$GITHUB_EVENT_PATH" > "$workflow_json" .workflow_run
 if [ "$INPUT_WORKFLOW_RUN_ID" != "$(jq < "$workflow_json" .id)" ] || [ "$INPUT_WORKFLOW_RUN_ATTEMPT" != "$(jq < "$workflow_json" .run_attempt)" ]; then gh_workflow_run "$INPUT_WORKFLOW_RUN_ID" "$INPUT_WORKFLOW_RUN_ATTEMPT" > "$workflow_json"; fi
 
 # TODO for now debug outout
-export OTEL_TRACES_EXPORTER=console
-export OTEL_SHELL_SDK_OUTPUT_REDIRECT=/dev/stderr
+# export OTEL_TRACES_EXPORTER=console
+# export OTEL_SHELL_SDK_OUTPUT_REDIRECT=/dev/stderr
 . otelapi.sh
 export OTEL_DISABLE_RESOURCE_DETECTION=TRUE # todo re-add resource attributes based on workflow
 _otel_resource_attributes_process() {
