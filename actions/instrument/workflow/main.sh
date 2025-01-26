@@ -36,8 +36,7 @@ jq < "$jobs_json" -r '. | [.id, .conclusion, .started_at, .completed_at, .name] 
   # TODO of not continue, and check which steps are missing?
   job_span_handle="$(otel_span_start CONSUMER "$job_name")" # TODO fix start time
   otel_span_activate "$job_span_handle"
-  cat "$jobs_json" | grep -F "$job_id" >&2
-  jq < "$jobs_json" -r '. | select(.id == "'"$job_id"'") | .steps[] | [.conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | while read -r step_conclusion step_started_at step_completed_at step_name; do
+  jq < "$jobs_json" -r '. | select(.id == '"$job_id"') | .steps[] | [.conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | while read -r step_conclusion step_started_at step_completed_at step_name; do
     echo "$job_name / $step_name" >&2
     step_span_handle="$(otel_span_start INTERNAL "$step_name")" # TODO fix start time
     # TODO fetch logs?
