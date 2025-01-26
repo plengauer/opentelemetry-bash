@@ -96,6 +96,23 @@ class OracleResourceDetector(ResourceDetector):
         response.raise_for_status()  # Raise an exception for 4xx or 5xx status codes
         return response.json()
 
+class MyIdGenerator(RandomIdGenerator):
+    first = True
+    
+    def generate_trace_id(self):
+        trace_id = super(MyIdGenerator, self).generate_trace_id()
+        if First:
+            First = False
+            trace_id = int(os.environ.get('OTEL_TRACE_ID_OVERRIDE', str(trace_id)))
+        return trace_id
+    
+    def generate_span_id(self):
+        span_id = super(MyIdGenerator, self).generate_span_id()
+        if First:
+            First = False
+            span_id = int(os.environ.get('OTEL_SPAN_ID_OVERRIDE', str(span_id)))
+        return span_id
+
 resource = {}
 spans = {}
 next_span_id = 0
@@ -178,7 +195,7 @@ def handle(scope, version, command, arguments):
                 sampler = sampling.ParentBased(sampling.TradeIdRatioBased(float(sampling_strategy_arg)))
             else:
                 raise Exception('Unknown sampler: ' + sampler)
-            tracer_provider = TracerProvider(sampler=sampler, resource=final_resources)
+            tracer_provider = TracerProvider(sampler=sampler, resource=final_resources, id_generator=MyIdGenerator())
             for traces_exporter in traces_exporters.split(','):
                 if traces_exporter == '':
                     pass
