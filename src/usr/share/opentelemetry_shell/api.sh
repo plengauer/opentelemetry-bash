@@ -120,7 +120,7 @@ _otel_resource_attributes_process() {
 }
 
 _otel_resource_attributes_custom() {
-  ; # this is intentionally empty to declare after import
+  : # this is intentionally empty to declare after import
 }
 
 _otel_resource_attribute() {
