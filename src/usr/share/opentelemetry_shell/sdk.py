@@ -100,7 +100,7 @@ class MyIdGenerator(id_generator.RandomIdGenerator):
     trace_id = None
     span_id = None
 
-    __init__(self):
+    def __init__(self):
         traceparent = os.environ.get('OTEL_ID_GENERATOR_OVERRIDE_TRACEPARENT', None)
         if traceparent:
             context = opentelemetry.trace.get_current_span(TraceContextTextMapPropagator().extract({'traceparent': traceparent})).get_span_context()
