@@ -38,20 +38,21 @@ gh_artifacts() {
 }
 
 gh_artifact_download() {
-  # TODO use run id and attempt
   node -e '
     const { DefaultArtifactClient } = require("@actions/artifact");
     const artifactName = process.argv[2];
     const outputPath = process.argv[3];
     const client = new DefaultArtifactClient()
-    client.listArtifacts()
+    const findBy = {
+      workflowRunId: '"$1"',
+    }
+    client.listArtifacts({ findBy })
       .then(response => response.artifacts.find(artifact => artifact.name == artifactName)?.id)
-      .then(id => id ? client.downloadArtifact(id, { path: outputPath }) : null);
+      .then(id => id ? client.downloadArtifact(id, { path: outputPath, findBy }) : null);
   ' "$3" "$4"
 }
 
 gh_artifact_upload() {
-  # TODO use run id and attempt
   node -e '
     const path = require('path');
     const { DefaultArtifactClient } = require('@actions/artifact');
@@ -62,7 +63,6 @@ gh_artifact_upload() {
 }
 
 gh_artifact_delete() {
-  # TODO use run id and attempt
   node -e '
     const { DefaultArtifactClient } = require('@actions/artifact');
     const artifactName = process.argv[2];
