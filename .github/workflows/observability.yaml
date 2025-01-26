@@ -3,9 +3,13 @@ name: OpenTelemetry
 on:
   workflow_run:
     workflows: Test
+  push: # just for test
 
 jobs:
   export:
     runs-on: ubuntu-latest
     steps:
       - uses: plengauer/opentelemetry-bash/actions/instrument/workflow@main
+        with:
+          workflow_run_id: 12969807143
+          workflow_run_attempt: 1
