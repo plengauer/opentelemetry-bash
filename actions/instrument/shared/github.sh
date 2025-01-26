@@ -27,6 +27,7 @@ gh_artifacts() {
 }
 
 gh_artifact_download() {
+  # TODO use run id and attempt
   node -e '
     const { DefaultArtifactClient } = require("@actions/artifact");
     const artifactName = process.argv[2];
@@ -39,6 +40,7 @@ gh_artifact_download() {
 }
 
 gh_artifact_upload() {
+  # TODO use run id and attempt
   node -e '
     const path = require('path');
     const { DefaultArtifactClient } = require('@actions/artifact');
@@ -49,6 +51,7 @@ gh_artifact_upload() {
 }
 
 gh_artifact_delete() {
+  # TODO use run id and attempt
   node -e '
     const { DefaultArtifactClient } = require('@actions/artifact');
     const artifactName = process.argv[2];
