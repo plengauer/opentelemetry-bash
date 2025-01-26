@@ -1,7 +1,7 @@
 #!/bin/false
 
 gh_curl() {
-  curl --no-progress-meter -H "Authorization: Bearer $INPUT_GITHUB_TOKEN" "${GITHUB_API_URL:-https://api.github.com}"/repos/"$GITHUB_REPOSITORY""$@"
+  curl --no-progress-meter --fail --retry 16 -H "Authorization: Bearer $INPUT_GITHUB_TOKEN" "${GITHUB_API_URL:-https://api.github.com}"/repos/"$GITHUB_REPOSITORY""$@"
 }
 export -f gh_curl
 
@@ -16,7 +16,7 @@ gh_curl_paginated() {
 export -f gh_curl_paginated
 
 gh_releases() {
-  GITHUB_REPOSITORY="$GITHUB_ACTION_REPOSITORY" gh_curl_paginated /releases | tee /dev/stderr
+  GITHUB_REPOSITORY="$GITHUB_ACTION_REPOSITORY" gh_curl_paginated /releases'?per_page=100' | tee /dev/stderr
 }
 export -f gh_releases
 
@@ -29,7 +29,7 @@ gh_job() {
 }
 
 gh_artifacts() {
-  gh_curl_paginated /actions/runs/"$GITHUB_RUN_ID"/attempt/"$GITHUB_RUN_ATTEMPT"/artifacts'?page=100'
+  gh_curl_paginated /actions/runs/"$GITHUB_RUN_ID"/attempt/"$GITHUB_RUN_ATTEMPT"/artifacts'?per_page=100'
 }
 
 gh_artifact_download() {
