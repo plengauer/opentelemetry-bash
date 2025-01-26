@@ -9,7 +9,7 @@ jobs:
   export:
     runs-on: ubuntu-latest
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/workflow@main
+      - uses: plengauer/opentelemetry-bash/actions/instrument/workflow@1094-redesign-root-github-workflow-span # change to main
         with:
           workflow_run_id: 12969807143
           workflow_run_attempt: 1
