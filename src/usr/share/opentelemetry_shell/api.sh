@@ -169,18 +169,20 @@ otel_span_current() {
 }
 
 otel_span_start() {
+  if _otel_string_starts_with "${1:-}" @; then local time="${1#@}"; shift; fi
   local kind="$1"
   local name="$2"
   local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.span_handle.pipe"
   \mkfifo ${_otel_mkfifo_flags:-} "$response_pipe"
-  _otel_sdk_communicate "SPAN_START" "$response_pipe" "${TRACEPARENT:-}" "${TRACESTATE:-}" "$kind" "$name"
+  _otel_sdk_communicate "SPAN_START" "$response_pipe" "${TRACEPARENT:-}" "${TRACESTATE:-}" "${time:-auto}" "$kind" "$name"
   \cat "$response_pipe"
   \rm "$response_pipe" 1> /dev/null 2> /dev/null
 }
 
 otel_span_end() {
   local span_handle="$1"
-  _otel_sdk_communicate "SPAN_END" "$span_handle"
+  if _otel_string_starts_with "${2:-}" @; then local time="${2#@}"; fi
+  _otel_sdk_communicate "SPAN_END" "$span_handle" "${time:-auto}"
 }
 
 otel_span_name() {
