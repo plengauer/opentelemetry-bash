@@ -5,7 +5,6 @@ import traceback
 import json
 import requests
 from datetime import datetime
-import pytz
 
 import opentelemetry
 
@@ -264,9 +263,7 @@ def handle(scope, version, command, arguments):
         if time == 'auto':
             time = None
         else:
-            dt = datetime.strptime(iso_timestamp, "%Y-%m-%dT%H:%M:%SZ")
-            dt = dt.replace(tzinfo=pytz.UTC)
-            time = int(dt.timestamp())
+            time = int(datetime.strptime(iso_timestamp, "%Y-%m-%dT%H:%M:%SZ").timestamp())
         kind = tokens[4]
         name = tokens[5]
         span_id = next_span_id
@@ -283,9 +280,7 @@ def handle(scope, version, command, arguments):
         if time == 'auto':
             time = None
         else:
-            dt = datetime.strptime(iso_timestamp, "%Y-%m-%dT%H:%M:%SZ")
-            dt = dt.replace(tzinfo=pytz.UTC)
-            time = int(dt.timestamp())
+            time = int(datetime.strptime(iso_timestamp, "%Y-%m-%dT%H:%M:%SZ").timestamp())
         span : Span = spans[span_id]
         span.end(end_time=time)
         del spans[span_id]
