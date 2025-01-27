@@ -400,8 +400,6 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: packages
-        env:
-          OTEL_SHELL_CONFIG_GITHUB_INJECT_ON_MAIN: 'TRUE'
       - uses: ./actions/instrument/job
         with:
           cache: ${{ matrix.cache }}
@@ -409,6 +407,7 @@ jobs:
           OTEL_METRICS_EXPORTER: console
           OTEL_LOGS_EXPORTER: console
           OTEL_TRACES_EXPORTER: console
+          OTEL_SHELL_CONFIG_GITHUB_INJECT_ON_MAIN: 'TRUE'
       - run: | # check if install succeeded
           type otel.sh && type strace
       - run: | # check if instrumentation happened
