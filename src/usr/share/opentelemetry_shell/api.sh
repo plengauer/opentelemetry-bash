@@ -448,10 +448,11 @@ _otel_escape_stdin() {
 _otel_escape_args() {
   # for arg in "$@"; do \echo "$arg"; done | _otel_escape_in # this may seem correct, but it doesnt handle linefeeds in arguments correctly
   local first=1
-  for arg in "$@"; do
+  for _otel_escape_args__arg in "$@"; do
     if \[ "$first" = 1 ]; then local first=0; else \echo -n " "; fi
-    _otel_escape_arg "$arg"
+    _otel_escape_arg "$_otel_escape_args__arg"
   done
+  unset _otel_escape_args__arg
 }
 
 _otel_escape_arg() {

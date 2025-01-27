@@ -168,7 +168,7 @@ _otel_filter_commands_by_hint() {
 
 _otel_resolve_instrumentation_hint() {
   local hint="$1"
-  { \[ -f "$hint" ] && \[ "$(\readlink -f "$hint")" != "$(\readlink -f "/proc/$$/exe")" ] && \[ "$(\readlink -f "$hint")" != "/usr/share/opentelemetry_shell/opentelemetry_shell.sh" ] && \cat "$hint" || \echo "$hint"; } | \tr -s ' $=";(){}/\\!#~^'\' '\n' | _otel_filter_by_validity | \sort -u
+  { \[ -f "$hint" ] && \[ "$(\readlink -f "$hint")" != "$(\readlink -f "/proc/$$/exe")" ] && \[ "$(\readlink -f "$hint")" != /usr/share/opentelemetry_shell/agent.sh ] && \cat "$hint" || \echo "$hint"; } | \tr -s ' $=";(){}/\\!#~^'\' '\n' | _otel_filter_by_validity | \sort -u
 }
 
 _otel_filter_commands_by_instrumentation() {
@@ -200,7 +200,7 @@ _otel_filter_commands_by_special() {
 }
 
 _otel_filter_by_validity() {
-  \grep -E '^[a-zA-Z0-9._\[][a-zA-Z0-9 ._-]*$'
+  \grep -aE '^[a-zA-Z0-9._\[][a-zA-Z0-9 ._-]*$'
 }
 
 _otel_deshebangify() {
@@ -446,14 +446,28 @@ command() {
 
 _otel_inject() {
   if _otel_string_contains "$1" /; then
-    local path="$1"
-    local command="$(\readlink -f "$path" | \rev | \cut -d / -f 1 | \rev)"
-    shift
+    local path="$1"; shift
+    local command="$(\echo "$path" | \rev | \cut -d / -f 1 | \rev)"
     set -- "$command" "$@"
     if ! \[ "$(\which "$command")" = "$path" ]; then
       local PATH="$(\readlink -f "$path" | \rev | \cut -d / -f 2- | \rev):$PATH"
       _otel_auto_instrument "$_otel_shell_auto_instrumentation_hint"
     fi
+  fi
+  \eval "$(_otel_escape_args "$@")"
+}
+
+_otel_inject() {
+  if _otel_string_contains "$1" /; then
+    local path="$1"
+    local instrumentation="$(_otel_resolve_alias "${path##*/}")"
+    if \[ -n "$instrumentation" ]; then
+      local instrumentation="${instrumentation% *}"
+      local instrumentation="$(\printf '%s' "$instrumentation" | _otel_line_split | \grep -v '^OTEL_' | _otel_line_join)"
+    else
+      local instrumentation=_otel_observe
+    fi
+    \eval "set -- $instrumentation $(_otel_escape_args "$@")"
   fi
   \eval "$(_otel_escape_args "$@")"
 }
