@@ -16,6 +16,11 @@ jobs:
   verify-python-dependency:
     runs-on: ubuntu-latest
     steps:
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v4.48.0
+        env:
+          OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
+          OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
+          OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT }}'
       - uses: actions/checkout@v4
       - run: |
           min_version_otel="$(curl https://pypi.org/project/opentelemetry-api/ | grep -F -- 'Python :: ' | cut -d ':' -f 3 | tr -d ' ' | grep -F -- 3. | cut -d . -f 2 | sort -n | head -n 1)"
@@ -26,6 +31,11 @@ jobs:
   verify-debian-dependencies:
     runs-on: ubuntu-latest
     steps:
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v4.48.0
+        env:
+          OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
+          OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
+          OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT }}'
       - uses: actions/checkout@v4
       - run: sudo apt-get update && sudo apt-get -y install apt-file
       - run: sudo apt-file update
@@ -54,6 +64,11 @@ jobs:
       run:
         working-directory: ./src
     steps:
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v4.48.0
+        env:
+          OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
+          OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
+          OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT }}'
       - uses: actions/checkout@v4
       - run: sudo apt-get update && sudo apt-get install devscripts debhelper alien
       - run: sed -i "s/__VERSION__/$(cat ../VERSION)/g" DEBIAN/control
@@ -115,6 +130,11 @@ jobs:
     outputs:
       matrix: ${{ steps.dynamic-matrix.outputs.matrix }}
     steps:
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v4.48.0
+        env:
+          OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
+          OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
+          OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT }}'
       - run: |
           curl --no-progress-meter --fail --retry 16 --retry-all-errors --header "Authorization: Bearer $GITHUB_TOKEN" --head https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases?per_page=100 \
             | tr '[:upper:]' '[:lower:]' | grep '^link: ' | cut -d ' '  -f 2- | tr -d ' <>' | tr ',' '\n' | grep 'rel="last"' | cut -d ';' -f 1 | cut -d '?' -f 2- | tr '&' '\n' | grep '^page=' | cut -d = -f 2 \
@@ -178,6 +198,11 @@ jobs:
       IMAGE_OPENSUSE_LATEST: 'opensuse/tumbleweed:latest'
       IMAGE_OPENSUSE_DEV: '' # not public
     steps:
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v4.48.0
+        env:
+          OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
+          OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
+          OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT }}'
       - uses: actions/checkout@v4
       - id: key
         run: printenv | grep -E '^IMAGE_' | md5sum | cut -d ' ' -f 1 | xargs -I '{}' echo "key={}" >> "$GITHUB_OUTPUT"
@@ -207,6 +232,11 @@ jobs:
     outputs:
       shells: ${{ steps.dynamic.outputs.shells }}
     steps:
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v4.48.0
+        env:
+          OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
+          OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
+          OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT }}'
       - uses: actions/checkout@v4
       - run: |
           {
@@ -256,6 +286,11 @@ jobs:
     outputs:
       dependencies: ${{ steps.dynamic.outputs.dependencies }}
     steps:
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v4.48.0
+        env:
+          OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
+          OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
+          OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT }}'
       - uses: actions/checkout@v4
       - run: cat src/DEBIAN/triggers | cut -sd ' ' -f 2- | rev | cut -sd / -f 1 | rev | grep -v '^$' | grep -v '^python3$' | sort -u | while read -r dependency; do echo "\"$dependency\""; done | jq -s -r tostring | xargs -0 -I {} echo 'dependencies={}' >> "$GITHUB_OUTPUT"
         id: dynamic
@@ -448,6 +483,11 @@ jobs:
     outputs:
       matrix: ${{ steps.dynamic-matrix.outputs.matrix }}
     steps:
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v4.48.0
+        env:
+          OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
+          OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
+          OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT }}'
       - run: |
           { echo '~local'; curl --no-progress-meter --fail --retry 16 --retry-all-errors --header "Authorization: Bearer $GITHUB_TOKEN" https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases | jq -r .[].tag_name | head --lines=10; } | jq -nR '{"include": [inputs | select(length > 0) | {tag_name: .}]}' | tr -d '\n' | xargs -0 -I {} echo 'matrix={}' >> "$GITHUB_OUTPUT"
         id: dynamic-matrix
@@ -491,6 +531,11 @@ jobs:
     needs: performance
     runs-on: ubuntu-latest
     steps:
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v4.48.0
+        env:
+          OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
+          OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
+          OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT }}'
       - uses: actions/download-artifact@v4
         with:
           pattern: 'performance.*.list'
