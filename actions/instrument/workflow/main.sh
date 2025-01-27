@@ -14,15 +14,11 @@ if [ "$INPUT_WORKFLOW_RUN_ID" != "$(jq < "$workflow_json" .id)" ] || [ "$INPUT_W
 jobs_json="$(mktemp)"
 gh_jobs "$INPUT_WORKFLOW_RUN_ID" "$INPUT_WORKFLOW_RUN_ATTEMPT" | jq .jobs[] > "$jobs_json"
 
-# TODO for now debug outout
-# export OTEL_TRACES_EXPORTER=console
-# export OTEL_SHELL_SDK_OUTPUT_REDIRECT=/dev/stderr
 . otelapi.sh
 export OTEL_DISABLE_RESOURCE_DETECTION=TRUE # todo re-add resource attributes based on workflow
 _otel_resource_attributes_process() {
   :
 }
-# TODO what to use as span service? could we also get it from a foreign artifact?
 gh_artifact_download "$INPUT_WORKFLOW_RUN_ID" "$INPUT_WORKFLOW_RUN_ATTEMPT" opentelemetry_root_"$INPUT_WORKFLOW_RUN_ATTEMPT" opentelemetry_root || true
 if [ -f opentelemetry_root/traceparent ]; then export OTEL_ID_GENERATOR_OVERRIDE_TRACEPARENT="$(cat opentelemetry_root/traceparent)"; fi
 rm -rf opentelemetry_root
@@ -31,9 +27,8 @@ otel_init
 workflow_span_handle="$(otel_span_start CONSUMER "$(jq < "$workflow_json" -r .name)")" # TODO fix start time
 otel_span_activate "$workflow_span_handle"
 jq < "$jobs_json" -r '. | [.id, .conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | while read -r job_id job_conclusion job_started_at job_completed_at job_name; do
+  if [ -n "${OTEL_ID_GENERATOR_OVERRIDE_TRACEPARENT:-}" ]; then continue; fi
   echo "$job_name" >&2
-  # TODO check if job has been created by checking the artifacts, if so continue
-  # TODO of not continue, and check which steps are missing?
   job_span_handle="$(otel_span_start CONSUMER "$job_name")" # TODO fix start time
   otel_span_activate "$job_span_handle"
   jq < "$jobs_json" -r '. | select(.id == '"$job_id"') | .steps[] | [.conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | while read -r step_conclusion step_started_at step_completed_at step_name; do
