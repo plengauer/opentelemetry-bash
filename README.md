@@ -166,7 +166,7 @@ To automatically monitor your Github Workflows on job level and to auto-inject i
 - run: ...
 ```
 
-Optionally, setup a dedicted workflow that is used to collect all jobs under a single root span representing the entire workflow. The workflow has to be a separate workflow and not just a job in the observed workflow itself.
+Optionally, setup a dedicted workflow that is used to collect all jobs under a single root span representing the entire workflow. The workflow has to be a separate workflow and not just a job in the observed workflow itself. It must be triggered by a workflow_run (see below) by the workflow that the root span should be created for. This workflow will also fill gaps by creating spans for jobs that have not been injected into.
 ```yaml
 name: OpenTelemetry
 on:
