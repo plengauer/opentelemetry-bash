@@ -16,7 +16,7 @@ int otel_span_start(FILE *sdk, const char *type, const char *name) {
   if (mkfifo(sdk_response, 0666) != 0) { free(buffer); return -1; }
 
   memset(buffer, 0, buffer_size);
-  sprintf(buffer, "SPAN_START %s %s %s %s %s\n", sdk_response, getenv("TRACEPARENT"), getenv("TRACESTATE"), type, name);
+  sprintf(buffer, "SPAN_START %s %s %s %s %s %s\n", sdk_response, getenv("TRACEPARENT"), getenv("TRACESTATE"), "auto", type, name);
   fwrite(buffer, sizeof(char), strlen(buffer), sdk);
   fflush(sdk);
 
