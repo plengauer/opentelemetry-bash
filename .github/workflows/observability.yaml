@@ -2,7 +2,7 @@ name: OpenTelemetry
 
 on:
   workflow_run:
-    workflows: ['Test', 'Publish', 'Refresh Demos', 'Renovate', 'Autoapprove', 'Autoversion', 'Autorerun' ]
+    workflows: ['Test', 'Publish', 'Refresh Demos', 'Renovate', 'Autoversion', 'Autoapprove', 'Autorerun' ]
   push: # just for test
 
 jobs:
