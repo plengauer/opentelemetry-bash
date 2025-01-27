@@ -276,7 +276,7 @@ def handle(scope, version, command, arguments):
     elif command == 'SPAN_END':
         tokens = arguments.split(' ', 1)
         span_id = tokens[0]
-        time = tokens[2]
+        time = tokens[1]
         if time == 'auto':
             time = None
         else:
