@@ -75,7 +75,6 @@ root4job() {
   otel_span_deactivate "$span_handle"
   trap root4job_end SIGUSR1
   while true; do sleep 1; done
-  # gh_artifact_upload "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" opentelemetry_root_job_"$GITHUB_RUN_ATTEMPT" "$traceparent_file" # TODO we need to file a job id
 }
 export -f root4job
 
