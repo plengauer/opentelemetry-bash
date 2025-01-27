@@ -263,7 +263,7 @@ def handle(scope, version, command, arguments):
         time = tokens[3]
         if time == 'auto':
             time = None
-        else
+        else:
             dt = datetime.strptime(iso_timestamp, "%Y-%m-%dT%H:%M:%SZ")
             dt = dt.replace(tzinfo=pytz.UTC)
             time = int(dt.timestamp())
@@ -282,7 +282,7 @@ def handle(scope, version, command, arguments):
         time = tokens[2]
         if time == 'auto':
             time = None
-        else
+        else:
             dt = datetime.strptime(iso_timestamp, "%Y-%m-%dT%H:%M:%SZ")
             dt = dt.replace(tzinfo=pytz.UTC)
             time = int(dt.timestamp())
