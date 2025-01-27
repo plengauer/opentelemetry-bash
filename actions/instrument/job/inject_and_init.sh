@@ -39,6 +39,17 @@ if gh_jobs "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" | jq -r '.jobs[] | select(.sta
   fi
   rm -r "$env_dir"
 else
+  job_full_name="$GITHUB_JOB"
+  job_arguments="$(printf '%s' "$INPUT___JOB_MATRIX" | jq -r '. | [.. | scalars] | @tsv' | sed 's/\t/, /g')"
+  if [ -n "$job_arguments" ]; then job_full_name="$job_full_name ($job_arguments)"; fi
+  job_id="$(gh_jobs "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" | jq -r '.jobs[] | [.id, .name] | @tsv' | sed 's/\t/ /g' | grep " $job_full_name"'$' | cut -d ' ' -f 1)"
+  opentelemetry_job_dir="$(mktemp -d)"
+  if [ "$(printf '%s' "$job_id" | wc -l)" -gt 1 ]; then
+    touch "$opentelemetry_job_dir"/"$job_id"
+    gh_artifact_upload "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" opentelemetry_job_"$job_id" "$opentelemetry_job_dir"/"$job_id"
+    rm -rf "$opentelemetry_job_dir"
+  fi
+  
   . otelapi.sh
   otel_init
   opentelemetry_root_dir="$(mktemp -d)"
