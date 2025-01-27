@@ -4,6 +4,9 @@ import time
 import traceback
 import json
 import requests
+from datetime import datetime
+import pytz
+
 import opentelemetry
 
 from opentelemetry.sdk.resources import Resource, ResourceDetector, OTELResourceDetector, OsResourceDetector, get_aggregated_resources
@@ -250,26 +253,41 @@ def handle(scope, version, command, arguments):
         opentelemetry.trace.get_tracer_provider().shutdown()
         opentelemetry.metrics.get_meter_provider().shutdown()
         opentelemetry._logs.get_logger_provider().shutdown()
-        raise EOFError
+        raise EOFError        
     elif command == 'SPAN_START':
         global next_span_id
-        tokens = arguments.split(' ', 4)
+        tokens = arguments.split(' ', 5)
         response_path = tokens[0]
         traceparent = tokens[1]
         tracestate = tokens[2]
-        kind = tokens[3]
-        name = tokens[4]
+        time = tokens[3]
+        if time == 'auto':
+            time = None
+        else
+            dt = datetime.strptime(iso_timestamp, "%Y-%m-%dT%H:%M:%SZ")
+            dt = dt.replace(tzinfo=pytz.UTC)
+            time = int(dt.timestamp())
+        kind = tokens[4]
+        name = tokens[5]
         span_id = next_span_id
         next_span_id = next_span_id + 1
-        span = opentelemetry.trace.get_tracer(scope, version).start_span(name, kind=SpanKind[kind.upper()], context=TraceContextTextMapPropagator().extract({'traceparent': traceparent, 'tracestate': tracestate}))
+        span = opentelemetry.trace.get_tracer(scope, version).start_span(name, kind=SpanKind[kind.upper()], context=TraceContextTextMapPropagator().extract({'traceparent': traceparent, 'tracestate': tracestate}), start_time=time)
         spans[str(span_id)] = span
         with open(response_path, 'w') as response:
             response.write(str(span_id))
         auto_end = False
     elif command == 'SPAN_END':
-        span_id = arguments
+        tokens = arguments.split(' ', 1)
+        span_id = tokens[0]
+        time = tokens[2]
+        if time == 'auto':
+            time = None
+        else
+            dt = datetime.strptime(iso_timestamp, "%Y-%m-%dT%H:%M:%SZ")
+            dt = dt.replace(tzinfo=pytz.UTC)
+            time = int(dt.timestamp())
         span : Span = spans[span_id]
-        span.end()
+        span.end(end_time=time)
         del spans[span_id]
     elif command == 'SPAN_HANDLE':
         tokens = arguments.split(' ', 1)
