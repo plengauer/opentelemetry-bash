@@ -24,24 +24,24 @@ if [ -f opentelemetry_root/traceparent ]; then export OTEL_ID_GENERATOR_OVERRIDE
 rm -rf opentelemetry_root
 otel_init
 
-workflow_span_handle="$(otel_span_start CONSUMER "$(jq < "$workflow_json" -r .name)")" # TODO fix start time
+workflow_span_handle="$(otel_span_start @"$(jq < "$workflow_json" -r .started_at)" CONSUMER "$(jq < "$workflow_json" -r .name)")"
 otel_span_activate "$workflow_span_handle"
 jq < "$jobs_json" -r '. | [.id, .conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | tee /dev/stderr | while read -r job_id job_conclusion job_started_at job_completed_at job_name; do
   if [ -n "${OTEL_ID_GENERATOR_OVERRIDE_TRACEPARENT:-}" ]; then continue; fi
-  job_span_handle="$(otel_span_start CONSUMER "$job_name")" # TODO fix start time
+  job_span_handle="$(otel_span_start @"$job_started_at" CONSUMER "$job_name")"
   otel_span_activate "$job_span_handle"
   jq < "$jobs_json" -r '. | select(.id == '"$job_id"') | .steps[] | [.conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | tee /dev/stderr | while read -r step_conclusion step_started_at step_completed_at step_name; do
-    step_span_handle="$(otel_span_start INTERNAL "$step_name")" # TODO fix start time
+    step_span_handle="$(otel_span_start @"$step_started_at" INTERNAL "$step_name")"
     # TODO fetch logs?
     if [ "$step_conclusion" = failure ]; then otel_span_error "$job_span_handle"; fi
-    otel_span_end "$step_span_handle" # TODO fix end time
+    otel_span_end "$step_span_handle" @"$step_completed_at"
   done
   otel_span_deactivate "$job_span_handle"
   if [ "$job_conclusion" = failure ]; then otel_span_error "$job_span_handle"; fi
-  otel_span_end "$job_span_handle" # TODO fix end time
+  otel_span_end "$job_span_handle" @"$job_completed_at"
 done
 otel_span_deactivate "$workflow_span_handle"
 if [ "$(jq < "$workflow_json" .conclusion -r)" = failure ]; then otel_span_error "$workflow_span_handle"; fi
-otel_span_end "$workflow_span_handle" # TODO fix end time
+otel_span_end "$workflow_span_handle" @"$(jq < "$workflow_json" -r .completed_at)"
 
 otel_shutdown
