@@ -112,7 +112,7 @@ class MyIdGenerator(id_generator.RandomIdGenerator):
             trace_id = self.trace_id
             self.trace_id = None
             return trace_id
-        else
+        else:
             return super(MyIdGenerator, self).generate_trace_id()
     
     def generate_span_id(self):
@@ -120,7 +120,7 @@ class MyIdGenerator(id_generator.RandomIdGenerator):
             span_id = self.span_id
             self.span_id = None
             return span_id
-        else
+        else:
             return super(MyIdGenerator, self).generate_trace_id()
 
 resource = {}
