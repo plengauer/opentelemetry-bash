@@ -121,7 +121,7 @@ class MyIdGenerator(id_generator.RandomIdGenerator):
             self.span_id = None
             return span_id
         else:
-            return super(MyIdGenerator, self).generate_trace_id()
+            return super(MyIdGenerator, self).generate_span_id()
 
 resource = {}
 spans = {}
