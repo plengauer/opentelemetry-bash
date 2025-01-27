@@ -259,16 +259,16 @@ def handle(scope, version, command, arguments):
         response_path = tokens[0]
         traceparent = tokens[1]
         tracestate = tokens[2]
-        time = tokens[3]
-        if time == 'auto':
-            time = None
+        start_time = tokens[3]
+        if start_time == 'auto':
+            start_time = None
         else:
-            time = int(datetime.strptime(iso_timestamp, "%Y-%m-%dT%H:%M:%SZ").timestamp())
+            start_time = int(datetime.strptime(iso_timestamp, "%Y-%m-%dT%H:%M:%SZ").timestamp())
         kind = tokens[4]
         name = tokens[5]
         span_id = next_span_id
         next_span_id = next_span_id + 1
-        span = opentelemetry.trace.get_tracer(scope, version).start_span(name, kind=SpanKind[kind.upper()], context=TraceContextTextMapPropagator().extract({'traceparent': traceparent, 'tracestate': tracestate}), start_time=time)
+        span = opentelemetry.trace.get_tracer(scope, version).start_span(name, kind=SpanKind[kind.upper()], context=TraceContextTextMapPropagator().extract({'traceparent': traceparent, 'tracestate': tracestate}), start_time=start_time)
         spans[str(span_id)] = span
         with open(response_path, 'w') as response:
             response.write(str(span_id))
@@ -276,13 +276,13 @@ def handle(scope, version, command, arguments):
     elif command == 'SPAN_END':
         tokens = arguments.split(' ', 1)
         span_id = tokens[0]
-        time = tokens[1]
-        if time == 'auto':
-            time = None
+        end_time = tokens[1]
+        if end_time == 'auto':
+            end_time = None
         else:
-            time = int(datetime.strptime(iso_timestamp, "%Y-%m-%dT%H:%M:%SZ").timestamp())
+            end_time = int(datetime.strptime(iso_timestamp, "%Y-%m-%dT%H:%M:%SZ").timestamp())
         span : Span = spans[span_id]
-        span.end(end_time=time)
+        span.end(end_time=end_time)
         del spans[span_id]
     elif command == 'SPAN_HANDLE':
         tokens = arguments.split(' ', 1)
