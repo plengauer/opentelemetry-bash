@@ -26,13 +26,11 @@ otel_init
 
 workflow_span_handle="$(otel_span_start CONSUMER "$(jq < "$workflow_json" -r .name)")" # TODO fix start time
 otel_span_activate "$workflow_span_handle"
-jq < "$jobs_json" -r '. | [.id, .conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | while read -r job_id job_conclusion job_started_at job_completed_at job_name; do
+jq < "$jobs_json" -r '. | [.id, .conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | tee /dev/stderr | while read -r job_id job_conclusion job_started_at job_completed_at job_name; do
   if [ -n "${OTEL_ID_GENERATOR_OVERRIDE_TRACEPARENT:-}" ]; then continue; fi
-  echo "$job_name" >&2
   job_span_handle="$(otel_span_start CONSUMER "$job_name")" # TODO fix start time
   otel_span_activate "$job_span_handle"
-  jq < "$jobs_json" -r '. | select(.id == '"$job_id"') | .steps[] | [.conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | while read -r step_conclusion step_started_at step_completed_at step_name; do
-    echo "$job_name / $step_name" >&2
+  jq < "$jobs_json" -r '. | select(.id == '"$job_id"') | .steps[] | [.conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | tee /dev/stderr | while read -r step_conclusion step_started_at step_completed_at step_name; do
     step_span_handle="$(otel_span_start INTERNAL "$step_name")" # TODO fix start time
     # TODO fetch logs?
     if [ "$step_conclusion" = failure ]; then otel_span_error "$job_span_handle"; fi
