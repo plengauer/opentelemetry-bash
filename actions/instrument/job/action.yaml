@@ -12,6 +12,8 @@ inputs:
   __job_status:
     description: 'INTERNAL ONLY - DO NOT SET MANUALLY'
     default: '${{ job.status }}'
+  __job_matrix:
+    desccription: 'INTERNAL ONLY - DO NOT SET MANUALLY'
   github_token:
     description: 'A GitHub token for API access (read-only)'
     default: '${{ github.token }}'
