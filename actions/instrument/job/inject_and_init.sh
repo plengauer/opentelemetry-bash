@@ -52,14 +52,14 @@ else
   fi
 
   opentelemetry_root_dir="$(mktemp -d)"
-  while ! gh_artifact_download "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" opentelemetry_root_"$GITHUB_RUN_ATTEMPT" "$opentelemetry_root_dir" && ! [ -r "$opentelemetry_root_dir"/traceparent ]; then
+  while ! gh_artifact_download "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" opentelemetry_root_"$GITHUB_RUN_ATTEMPT" "$opentelemetry_root_dir" || ! [ -r "$opentelemetry_root_dir"/traceparent ]; do
     . otelapi.sh
     otel_init
     otel_span_traceparent "$(otel_span_start INTERNAL dummy)" > "$opentelemetry_root_dir"/traceparent
     gh_artifact_upload "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" opentelemetry_root_"$GITHUB_RUN_ATTEMPT" "$opentelemetry_root_dir"/traceparent || true
     rm -rf "$opentelemetry_root_dir"
     otel_shutdown
-  fi
+  done
   export OTEL_TRACEPARENT="$(cat "$opentelemetry_root_dir"/traceparent)"
   rm -rf "$opentelemetry_root_dir"
 fi
