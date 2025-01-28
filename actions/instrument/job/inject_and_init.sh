@@ -40,16 +40,12 @@ if gh_jobs "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" | jq .jobs[] | tee "$jobs_json
   fi
   rm -r "$env_dir"
 else
-  job_full_name="$GITHUB_JOB"
+  OTEL_SHELL_GITHUB_JOB="$GITHUB_JOB"
   job_arguments="$(printf '%s' "$INPUT___JOB_MATRIX" | jq -r '. | [.. | scalars] | @tsv' | sed 's/\t/, /g')"
-  if [ -n "$job_arguments" ]; then job_full_name="$job_full_name ($job_arguments)"; fi
-  job_id="$(cat "$jobs_json" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" | jq -r '. | [.id, .name] | @tsv' | sed 's/\t/ /g' | grep " $job_full_name"'$' | cut -d ' ' -f 1)"
-  opentelemetry_job_dir="$(mktemp -d)"
-  if [ "$(printf '%s' "$job_id" | wc -l)" -gt 1 ]; then
-    touch "$opentelemetry_job_dir"/"$job_id"
-    gh_artifact_upload "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" opentelemetry_job_"$job_id" "$opentelemetry_job_dir"/"$job_id"
-    rm -rf "$opentelemetry_job_dir"
-  fi
+  if [ -n "$job_arguments" ]; then OTEL_SHELL_GITHUB_JOB="$OTEL_SHELL_GITHUB_JOB ($job_arguments)"; fi
+  export OTEL_SHELL_GITHUB_JOB
+  GITHUB_JOB_ID="$(cat "$jobs_json" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" | jq -r '. | [.id, .name] | @tsv' | sed 's/\t/ /g' | grep " $job_full_name"'$' | cut -d ' ' -f 1)"
+  if [ "$(printf '%s' "$job_id" | wc -l)" -gt 1 ]; then export GITHUB_JOB_ID; fi
 
   opentelemetry_root_dir="$(mktemp -d)"
   while ! gh_artifact_download "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" opentelemetry_workflow_run_"$GITHUB_RUN_ATTEMPT" "$opentelemetry_root_dir" || ! [ -r "$opentelemetry_root_dir"/traceparent ]; do
@@ -86,6 +82,12 @@ root4job() {
   span_handle="$(otel_span_start CONSUMER "$GITHUB_WORKFLOW / $GITHUB_JOB")"
   otel_span_activate "$span_handle"
   echo "$TRACEPARENT" > "$traceparent_file"
+  if [ -n "${GITHUB_JOB_ID:-}" ]; then
+    opentelemetry_job_dir="$(mktemp -d)"
+    echo "$TRACEPARENT" > "$opentelemetry_job_dir"/traceparent
+    gh_artifact_upload "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" opentelemetry_job_"$job_id" "$opentelemetry_job_dir"/traceparent
+    rm -rf "$opentelemetry_job_dir"
+  fi
   otel_span_deactivate "$span_handle"
   trap root4job_end SIGUSR1
   while true; do sleep 1; done
