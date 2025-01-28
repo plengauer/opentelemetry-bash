@@ -39,8 +39,6 @@ gh_artifacts() {
 gh_artifact_download() {
   node -e '
     const { DefaultArtifactClient } = require("@actions/artifact");
-    const artifactName = process.argv[2];
-    const outputPath = process.argv[3];
     const client = new DefaultArtifactClient()
     const findBy = {
       token: "'"$INPUT_GITHUB_TOKEN"'",
@@ -49,25 +47,22 @@ gh_artifact_download() {
       workflowRunId: '"$1"',
     }
     client.listArtifacts({ findBy })
-      .then(response => response.artifacts.find(artifact => artifact.name == artifactName)?.id)
-      .then(id => id ? client.downloadArtifact(id, { path: outputPath, findBy }) : null);
-  ' "$3" "$4"
+      .then(response => response.artifacts.find(artifact => artifact.name == "'"$3"'")?.id)
+      .then(id => id ? client.downloadArtifact(id, { path: "'"$4"'", findBy }) : null);
+  '
 }
 
 gh_artifact_upload() {
   node -e '
     const path = require("path");
     const { DefaultArtifactClient } = require("@actions/artifact");
-    const artifactName = process.argv[2];
-    const fullPath = process.argv[3];
-    new DefaultArtifactClient().uploadArtifact(artifactName, [ fullPath ], path.dirname(fullPath));
-  ' "$3" "$4"
+    new DefaultArtifactClient().uploadArtifact("'"$3"'", [ "'"$4"'" ], path.dirname("'"$4"'"));
+  '
 }
 
 gh_artifact_delete() {
   node -e '
     const { DefaultArtifactClient } = require("@actions/artifact");
-    const artifactName = process.argv[2];
-    new DefaultArtifactClient().deleteArtifact(artifactName);
-  ' "$3"
+    new DefaultArtifactClient().deleteArtifact("'"$3"'");
+  '
 }
