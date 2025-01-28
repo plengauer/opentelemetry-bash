@@ -26,7 +26,7 @@ otel_init
 
 workflow_span_handle="$(otel_span_start @"$(jq < "$workflow_json" -r .started_at)" CONSUMER "$(jq < "$workflow_json" -r .name)")"
 otel_span_activate "$workflow_span_handle"
-jq < "$jobs_json" -r '. | [.id, .conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | grep -v "$(gh_artifacts "$INPUT_WORKFLOW_RUN_ID"  "$INPUT_WORKFLOW_RUN_ATTEMPT" | jq -r .name | grep '^opentelemetry_job_' | cut -d _ -f 3)" | while read -r job_id job_conclusion job_started_at job_completed_at job_name; do
+jq < "$jobs_json" -r '. | [.id, .conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | grep -v "$(gh_artifacts "$INPUT_WORKFLOW_RUN_ID" | jq -r .artifacts[].name | grep '^opentelemetry_job_' | cut -d _ -f 3)" | while read -r job_id job_conclusion job_started_at job_completed_at job_name; do
   job_span_handle="$(otel_span_start @"$job_started_at" CONSUMER "$job_name")"
   otel_span_activate "$job_span_handle"
   jq < "$jobs_json" -r '. | select(.id == '"$job_id"') | .steps[] | [.conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | while read -r step_conclusion step_started_at step_completed_at step_name; do
