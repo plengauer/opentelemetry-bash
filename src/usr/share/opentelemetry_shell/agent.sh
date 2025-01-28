@@ -489,7 +489,7 @@ _otel_start_script() {
     unset OTEL_SHELL_IS_GITHUB_ACTION_ROOT
     local name="$GITHUB_WORKFLOW"
     local kind=CONSUMER
-    if \[ -n "${GITHUB_JOB:-}" ]; then local name="$name / $GITHUB_JOB"; local kind=CONSUMER; fi
+    if \[ -n "${GITHUB_JOB:-}" ]; then local name="$name / ${OTEL_SHELL_GITHUB_JOB:-$GITHUB_JOB}"; local kind=CONSUMER; fi
     if \[ -n "${GITHUB_STEP:-}" ]; then local name="$name / $GITHUB_STEP"; local kind=SERVER
     elif \[ -n "${GITHUB_ACTION:-}" ]; then local name="$name / $GITHUB_ACTION"; local kind=INTERNAL; fi
     _root_span_handle="$(otel_span_start "$kind" "$name")"
