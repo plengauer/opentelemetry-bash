@@ -52,7 +52,7 @@ else
     . otelapi.sh
     otel_init
     otel_span_traceparent "$(otel_span_start INTERNAL dummy)" > "$opentelemetry_root_dir"/traceparent
-    gh_artifact_upload "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" opentelemetry_root_"$GITHUB_RUN_ATTEMPT" "$opentelemetry_root_dir"/traceparent || true
+    gh_artifact_upload "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" opentelemetry_workflow_run_"$GITHUB_RUN_ATTEMPT" "$opentelemetry_root_dir"/traceparent || true
     otel_shutdown
   done
   export OTEL_TRACEPARENT="$(cat "$opentelemetry_root_dir"/traceparent)"
