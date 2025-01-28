@@ -56,8 +56,8 @@ gh_artifact_download() {
 
 gh_artifact_upload() {
   node -e '
-    const path = require('path');
-    const { DefaultArtifactClient } = require('@actions/artifact');
+    const path = require("path");
+    const { DefaultArtifactClient } = require("@actions/artifact");
     const artifactName = process.argv[2];
     const fullPath = process.argv[3];
     new DefaultArtifactClient().uploadArtifact(artifactName, [ fullPath ], path.dirname(fullPath));
@@ -66,7 +66,7 @@ gh_artifact_upload() {
 
 gh_artifact_delete() {
   node -e '
-    const { DefaultArtifactClient } = require('@actions/artifact');
+    const { DefaultArtifactClient } = require("@actions/artifact");
     const artifactName = process.argv[2];
     new DefaultArtifactClient().deleteArtifact(artifactName);
   ' "$3"
