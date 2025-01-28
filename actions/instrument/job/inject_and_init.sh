@@ -85,7 +85,7 @@ root4job() {
   if [ -n "${GITHUB_JOB_ID:-}" ]; then
     opentelemetry_job_dir="$(mktemp -d)"
     echo "$TRACEPARENT" > "$opentelemetry_job_dir"/traceparent
-    gh_artifact_upload "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" opentelemetry_job_"$job_id" "$opentelemetry_job_dir"/traceparent
+    gh_artifact_upload "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" opentelemetry_job_"$GITHUB_JOB_ID" "$opentelemetry_job_dir"/traceparent
     rm -rf "$opentelemetry_job_dir"
   fi
   otel_span_deactivate "$span_handle"
