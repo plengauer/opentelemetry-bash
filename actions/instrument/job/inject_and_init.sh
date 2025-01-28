@@ -44,7 +44,7 @@ else
   job_arguments="$(printf '%s' "$INPUT___JOB_MATRIX" | jq -r '. | [.. | scalars] | @tsv' | sed 's/\t/, /g')"
   if [ -n "$job_arguments" ]; then OTEL_SHELL_GITHUB_JOB="$OTEL_SHELL_GITHUB_JOB ($job_arguments)"; fi
   export OTEL_SHELL_GITHUB_JOB
-  GITHUB_JOB_ID="$(cat "$jobs_json" | jq -r '. | [.id, .name] | @tsv' | sed 's/\t/ /g' | grep " $job_full_name"'$' | cut -d ' ' -f 1)"
+  GITHUB_JOB_ID="$(cat "$jobs_json" | jq -r '. | [.id, .name] | @tsv' | sed 's/\t/ /g' | grep " $OTEL_SHELL_GITHUB_JOB"'$' | cut -d ' ' -f 1)"
   if [ "$(printf '%s' "$job_id" | wc -l)" -gt 1 ]; then export GITHUB_JOB_ID; fi
 
   opentelemetry_root_dir="$(mktemp -d)"
