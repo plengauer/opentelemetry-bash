@@ -7,10 +7,11 @@ OTEL_SHELL_CONFIG_INSTALL_DEEP=FALSE bash -e ../shared/install.sh
 
 export OTEL_SERVICE_NAME="${OTEL_SERVICE_NAME:-"$(echo "$GITHUB_REPOSITORY" | cut -d / -f 2-) CI"}"
 
-set -x
 workflow_json="$(mktemp)"
 jq < "$GITHUB_EVENT_PATH" > "$workflow_json" .workflow_run
 if [ "$INPUT_WORKFLOW_RUN_ID" != "$(jq < "$workflow_json" .id)" ] || [ "$INPUT_WORKFLOW_RUN_ATTEMPT" != "$(jq < "$workflow_json" .run_attempt)" ]; then gh_workflow_run "$INPUT_WORKFLOW_RUN_ID" "$INPUT_WORKFLOW_RUN_ATTEMPT" > "$workflow_json"; fi
+if [ "$(jq < "$workflow_json" -r .status)" != completed ]; then exit 1; fi
+cat "$workflow_json"
 
 jobs_json="$(mktemp)"
 gh_jobs "$INPUT_WORKFLOW_RUN_ID" "$INPUT_WORKFLOW_RUN_ATTEMPT" | jq .jobs[] > "$jobs_json"
@@ -27,7 +28,7 @@ otel_init
 
 workflow_span_handle="$(otel_span_start @"$(jq < "$workflow_json" -r .run_started_at)" CONSUMER "$(jq < "$workflow_json" -r .name)")"
 otel_span_activate "$workflow_span_handle"
-jq < "$jobs_json" -r '. | [.id, .conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | grep -v "$(gh_artifacts "$INPUT_WORKFLOW_RUN_ID" | jq -r .artifacts[].name | grep '^opentelemetry_job_' | cut -d _ -f 3)" | while read -r job_id job_conclusion job_started_at job_completed_at job_name; do
+jq < "$jobs_json" -r '. | [.id, .conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | tee /dev/stderr | grep -v "$(gh_artifacts "$INPUT_WORKFLOW_RUN_ID" | jq -r .artifacts[].name | tee /dev/stderr | grep '^opentelemetry_job_' | cut -d _ -f 3)" | while read -r job_id job_conclusion job_started_at job_completed_at job_name; do
   job_span_handle="$(otel_span_start @"$job_started_at" CONSUMER "$job_name")"
   otel_span_activate "$job_span_handle"
   jq < "$jobs_json" -r '. | select(.id == '"$job_id"') | .steps[] | [.conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | while read -r step_conclusion step_started_at step_completed_at step_name; do
