@@ -20,6 +20,10 @@ gh_releases() {
 }
 export -f gh_releases
 
+gh_workflow_runs() {
+  gh_curl /actions/runs
+}
+
 gh_workflow_run() {
   gh_curl /actions/runs/"$1"/attempts/"$2"
 }
