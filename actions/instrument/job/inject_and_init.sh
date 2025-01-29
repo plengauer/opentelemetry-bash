@@ -57,7 +57,7 @@ else
     rm "$opentelemetry_root_dir"/traceparent
     otel_shutdown
   done
-  export OTEL_TRACEPARENT="$(cat "$opentelemetry_root_dir"/traceparent)"
+  export TRACEPARENT="$(cat "$opentelemetry_root_dir"/traceparent)"
   rm -rf "$opentelemetry_root_dir"
 fi
 rm "$jobs_json"
