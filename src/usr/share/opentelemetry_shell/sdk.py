@@ -263,11 +263,6 @@ def handle(scope, version, command, arguments):
         if start_time == 'auto':
             start_time = None
         else:
-            print(start_time, file=sys.stderr)
-            print(datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%SZ"), file=sys.stderr)
-            print(datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc), file=sys.stderr)
-            print(datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc).timestamp(), file=sys.stderr)
-            print(datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc).timestamp() * 1e9, file=sys.stderr)
             start_time = int(datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc).timestamp() * 1e9)
         kind = tokens[4]
         name = tokens[5]
