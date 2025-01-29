@@ -252,7 +252,7 @@ def handle(scope, version, command, arguments):
         opentelemetry.trace.get_tracer_provider().shutdown()
         opentelemetry.metrics.get_meter_provider().shutdown()
         opentelemetry._logs.get_logger_provider().shutdown()
-        raise EOFError        
+        raise EOFError
     elif command == 'SPAN_START':
         global next_span_id
         tokens = arguments.split(' ', 5)
