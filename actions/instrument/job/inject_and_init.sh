@@ -45,8 +45,8 @@ else
   if [ -n "$job_arguments" ]; then OTEL_SHELL_GITHUB_JOB="$OTEL_SHELL_GITHUB_JOB ($job_arguments)"; fi
   export OTEL_SHELL_GITHUB_JOB
   GITHUB_JOB_ID="$(cat "$jobs_json" | jq -r '. | [.id, .name] | @tsv' | sed 's/\t/ /g' | grep " $OTEL_SHELL_GITHUB_JOB"'$' | cut -d ' ' -f 1)"
-  if [ "$(printf '%s' "$job_id" | wc -l)" -gt 1 ]; then export GITHUB_JOB_ID; fi
-  echo "guessing GitHub job id to be $GITHUB_JOB_ID" >&2
+  if [ "$(printf '%s' "$GITHUB_JOB_ID" | wc -l)" = 1 ]; then export GITHUB_JOB_ID; fi
+  echo "Guessing GitHub job id to be $GITHUB_JOB_ID" >&2
   
   opentelemetry_root_dir="$(mktemp -d)"
   while ! gh_artifact_download "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" opentelemetry_workflow_run_"$GITHUB_RUN_ATTEMPT" "$opentelemetry_root_dir" || ! [ -r "$opentelemetry_root_dir"/traceparent ]; do
