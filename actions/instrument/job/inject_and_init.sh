@@ -40,6 +40,7 @@ if gh_jobs "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" | jq .jobs[] | tee "$jobs_json
   fi
   rm -r "$env_dir"
 else
+  printenv | grep '^INPUT_'
   set -x
   OTEL_SHELL_GITHUB_JOB="$GITHUB_JOB"
   job_arguments="$(printf '%s' "$INPUT___JOB_MATRIX" | jq -r '. | [.. | scalars] | @tsv' | sed 's/\t/, /g')"
