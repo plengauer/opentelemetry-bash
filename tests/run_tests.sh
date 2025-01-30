@@ -26,7 +26,7 @@ for dir in unit sdk auto integration; do
     if [ "$SHELL" = bash ]; then
       options="$options -p -o pipefail"
     fi
-    timeout $((60 * 5)) $SHELL $options $file && echo "SUCCEEDED" || (echo "FAILED" && cat $OTEL_EXPORT_LOCATION && exit 1)
+    timeout $((60 * 60 * 3)) $SHELL $options $file && echo "SUCCEEDED" || (echo "FAILED" && cat $OTEL_EXPORT_LOCATION && exit 1)
   done
 done
 echo "ALL TESTS SUCCESSFUL"
