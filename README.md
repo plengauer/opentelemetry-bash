@@ -171,6 +171,9 @@ Optionally, setup a dedicted workflow that is used to collect all jobs under a s
 name: OpenTelemetry
 on:
   workflow_run:
+    workflows: [Build, Test, Publish] # TODO list the workflows that should be observed
+    types:
+      - completed
 jobs:
   export:
     runs-on: ubuntu-latest
