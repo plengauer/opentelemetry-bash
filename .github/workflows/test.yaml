@@ -48,7 +48,7 @@ jobs:
             cat | while read -r file; do echo "Verifying $file" >&2; echo "$file"; done | xargs cat \
               | grep -v 'SKIP_DEPENDENCY_CHECK' | while read -r line; do line="${line%%#*}"; printf '%s\n' "$line"; done \
               | grep -oP '(^[[:space:]]*|\$\()\\?[a-zA-Z/][a-zA-Z0-9/_.-]*($|[[:space:]])' \
-              | tee /dev/stderr | while read -r command; do echo "DEBUG DEBUG DEBUG 0 $command" >&2; command="${command% }"; command="${command# }"; command="${command#\$\(}"; command="${command#\\}"; echo "DEBUG DEBUG DEBUG 1 $command" >&2; [ "${#command}" -gt 1 ] && printf '%s\n' "$command" || true; done \
+              | tee /dev/stderr | while \read -r command; do echo "DEBUG DEBUG DEBUG 0 $command" >&2; command="${command% }"; command="${command# }"; command="${command#\$\(}"; command="${command#\\}"; echo "DEBUG DEBUG DEBUG 1 $command" >&2; [ "${#command}" -gt 1 ] && printf '%s\n' "$command" || true; done \
               | grep -vE '^_otel|^otel_|^OTEL_' | grep -vE "$(compgen -b | patternify)" | grep -vE "$(compgen -k | patternify)" | process_commands \
               | sort -u | while read -r command; do
                 printf '%s' "$command ... "
