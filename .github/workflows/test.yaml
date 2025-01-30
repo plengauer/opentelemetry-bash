@@ -16,7 +16,7 @@ jobs:
   verify-python-dependency:
     runs-on: ubuntu-latest
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.0.0
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v4.43.0
         env:
           OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
@@ -31,7 +31,7 @@ jobs:
   verify-debian-dependencies:
     runs-on: ubuntu-latest
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.0.0
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v4.43.0
         env:
           OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
@@ -60,7 +60,7 @@ jobs:
   verify-triggers:
     runs-on: ubuntu-latest
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.0.0
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v4.43.0
         env:
           OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
@@ -79,7 +79,7 @@ jobs:
       run:
         working-directory: ./src
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.0.0
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v4.43.0
         env:
           OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
@@ -145,7 +145,7 @@ jobs:
     outputs:
       matrix: ${{ steps.dynamic-matrix.outputs.matrix }}
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.0.0
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v4.43.0
         env:
           OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
@@ -213,7 +213,7 @@ jobs:
       IMAGE_OPENSUSE_LATEST: 'opensuse/tumbleweed:latest'
       IMAGE_OPENSUSE_DEV: '' # not public
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.0.0
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v4.43.0
         env:
           OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
@@ -247,7 +247,7 @@ jobs:
     outputs:
       shells: ${{ steps.dynamic.outputs.shells }}
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.0.0
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v4.43.0
         env:
           OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
@@ -301,7 +301,7 @@ jobs:
     outputs:
       dependencies: ${{ steps.dynamic.outputs.dependencies }}
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.0.0
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v4.43.0
         env:
           OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
@@ -528,7 +528,7 @@ jobs:
     outputs:
       matrix: ${{ steps.dynamic-matrix.outputs.matrix }}
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.0.0
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v4.43.0
         env:
           OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
@@ -576,7 +576,7 @@ jobs:
     needs: performance
     runs-on: ubuntu-latest
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.0.0
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v4.43.0
         env:
           OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
