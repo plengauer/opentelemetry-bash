@@ -3,6 +3,8 @@ name: OpenTelemetry
 on:
   workflow_run:
     workflows: ['Test', 'Publish', 'Refresh Demos', 'Renovate', 'Autoversion', 'Autoapprove', 'Autorerun' ]
+    types:
+      - completed
 
 jobs:
   export:
