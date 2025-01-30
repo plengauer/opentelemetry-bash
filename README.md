@@ -166,15 +166,19 @@ To automatically monitor your Github Workflows on job level and to auto-inject i
 - run: ...
 ```
 
-Optionally, setup a dedicted job that is used to collect all jobs under a single root span representing the entire workflow. The job has to have exactly the name below and must neither depend on any other job nor being depent on.
+Optionally, setup a dedicted workflow that is used to collect all jobs under a single root span representing the entire workflow. The workflow has to be a separate workflow and not just a job in the observed workflow itself. It must be triggered by a workflow_run (see below) by the workflow that the root span should be created for. This workflow will also fill gaps by creating spans for jobs that have not been injected into.
 ```yaml
-observe:
-  runs-on: ubuntu-latest
-  steps:
-    - uses: plengauer/opentelemetry-bash/actions/instrument/workflow@main
-      env:
-        OTEL_SERVICE_NAME: ${{ secrets.SERVICE_NAME }}
-        # ...
+name: OpenTelemetry
+on:
+  workflow_run:
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: plengauer/opentelemetry-bash/actions/instrument/workflow@main
+        env:
+          OTEL_SERVICE_NAME: ${{ secrets.SERVICE_NAME }}
+          # ...
 ```
 If you define that job to create a single root span for all other jobs, only the step in this root job has to be configured. The configuration will be propagated securely to the other jobs.
 

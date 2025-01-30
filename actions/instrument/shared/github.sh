@@ -1,18 +1,72 @@
 #!/bin/false
 
-github() {
-  url="$GITHUB_API_URL"/"$1"?per_page=100
-  curl --no-progress-meter --fail --retry 16 --retry-all-errors --header "Authorization: Bearer $INPUT_GITHUB_TOKEN" --head "$url" \
-    | grep '^link: ' | cut -d ' '  -f 2- | tr -d ' <>' | tr ',' '\n' \
-    | grep 'rel="last"' | cut -d ';' -f1 | cut -d '?' -f 2- | tr '&' '\n' \
-    | grep '^page=' | cut -d = -f 2 \
-    | xargs seq 1 | while IFS= read -r page; do
-      curl --no-progress-meter --fail --retry 16 --retry-all-errors --header "Authorization: Bearer $INPUT_GITHUB_TOKEN" "$url"\&page="$page"
-    done
+gh_curl() {
+  curl --no-progress-meter --fail --retry 16 -H "Authorization: Bearer $INPUT_GITHUB_TOKEN" "${GITHUB_API_URL:-https://api.github.com}"/repos/"$GITHUB_REPOSITORY""$@"
 }
-export -f github
+export -f gh_curl
 
-github_workflow() {
-  github repos/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/"$1"
+gh_curl_paginated() {
+  {
+    gh_curl "$@" --head | grep '^link: ' | cut -d ' '  -f 2- | tr -d ' <>' | tr ',' '\n' \
+      | grep 'rel="last"' | cut -d ';' -f1 | cut -d '?' -f 2- | tr '&' '\n' \
+      | grep '^page=' | cut -d = -f 2 \
+      | xargs seq 1 || true
+  } | while read -r page; do echo "$@"'&page='"$page"; done | xargs parallel gh_curl :::
 }
-export -f github_workflow
+export -f gh_curl_paginated
+
+gh_releases() {
+  GITHUB_REPOSITORY="$GITHUB_ACTION_REPOSITORY" gh_curl_paginated /releases'?per_page=100'
+}
+export -f gh_releases
+
+gh_workflow_runs() {
+  gh_curl /actions/runs
+}
+
+gh_workflow_run() {
+  gh_curl /actions/runs/"$1"/attempts/"$2"
+}
+
+gh_jobs() {
+  gh_curl_paginated /actions/runs/"$1"/attempts/"$2"/jobs'?per_page=100'
+}
+
+gh_job() {
+  gh_curl /actions/jobs/"$3"
+}
+
+gh_artifacts() {
+  gh_curl_paginated /actions/runs/"$1"/artifacts'?per_page=100'
+}
+
+gh_artifact_download() {
+  node -e '
+    const { DefaultArtifactClient } = require("@actions/artifact");
+    const client = new DefaultArtifactClient()
+    const findBy = {
+      token: "'"$INPUT_GITHUB_TOKEN"'",
+      repositoryOwner: "'"${GITHUB_REPOSITORY%%/*}"'",
+      repositoryName: "'"${GITHUB_REPOSITORY#*/}"'",
+      workflowRunId: '"$1"',
+    }
+    client.listArtifacts({ findBy })
+      .then(response => response.artifacts.find(artifact => artifact.name == "'"$3"'")?.id)
+      .then(id => id ? client.downloadArtifact(id, { path: "'"$4"'", findBy }) : null);
+  '
+}
+
+gh_artifact_upload() {
+  node -e '
+    const path = require("path");
+    const { DefaultArtifactClient } = require("@actions/artifact");
+    new DefaultArtifactClient().uploadArtifact("'"$3"'", [ "'"$4"'" ], path.dirname("'"$4"'"));
+  '
+}
+
+gh_artifact_delete() {
+  node -e '
+    const { DefaultArtifactClient } = require("@actions/artifact");
+    new DefaultArtifactClient().deleteArtifact("'"$3"'");
+  '
+}

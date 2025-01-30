@@ -77,7 +77,19 @@ _otel_resource_attributes() {
   _otel_resource_attribute string telemetry.sdk.name=opentelemetry
   _otel_resource_attribute string telemetry.sdk.language=shell
   _otel_resource_attribute string telemetry.sdk.version="$(_otel_package_version opentelemetry-shell)"
+  _otel_resource_attributes_service
+  _otel_resource_attributes_process
+  _otel_resource_attributes_custom
+}
 
+_otel_resource_attributes_service() {
+  _otel_resource_attribute string service.name="${OTEL_SERVICE_NAME:-unknown_service}"
+  _otel_resource_attribute string service.version="${OTEL_SERVICE_VERSION:-}"
+  _otel_resource_attribute string service.namespace="${OTEL_SERVICE_NAMESPACE:-}"
+  _otel_resource_attribute string service.instance.id="${OTEL_SERVICE_INSTANCE_ID:-}"
+}
+
+_otel_resource_attributes_process() {
   local process_command="$(_otel_command_self)"
   local process_executable_path="$(\readlink -f "/proc/$$/exe")"
   local process_executable_name="${process_executable_path##*/}" # "$(\printf '%s' "$process_executable_path" | \rev | \cut -d / -f 1 | \rev)"
@@ -105,11 +117,10 @@ _otel_resource_attributes() {
   esac
   _otel_resource_attribute string process.runtime.version="$(_otel_package_version "$process_executable_name")"
   _otel_resource_attribute string process.runtime.options="$-"
+}
 
-  _otel_resource_attribute string service.name="${OTEL_SERVICE_NAME:-unknown_service}"
-  _otel_resource_attribute string service.version="${OTEL_SERVICE_VERSION:-}"
-  _otel_resource_attribute string service.namespace="${OTEL_SERVICE_NAMESPACE:-}"
-  _otel_resource_attribute string service.instance.id="${OTEL_SERVICE_INSTANCE_ID:-}"
+_otel_resource_attributes_custom() {
+  : # this is intentionally empty to declare after import
 }
 
 _otel_resource_attribute() {
@@ -158,18 +169,20 @@ otel_span_current() {
 }
 
 otel_span_start() {
+  if _otel_string_starts_with "${1:-}" @; then local time="${1#@}"; shift; else local time=auto; fi
   local kind="$1"
   local name="$2"
   local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.span_handle.pipe"
   \mkfifo ${_otel_mkfifo_flags:-} "$response_pipe"
-  _otel_sdk_communicate "SPAN_START" "$response_pipe" "${TRACEPARENT:-}" "${TRACESTATE:-}" "$kind" "$name"
+  _otel_sdk_communicate "SPAN_START" "$response_pipe" "${TRACEPARENT:-}" "${TRACESTATE:-}" "$time" "$kind" "$name"
   \cat "$response_pipe"
   \rm "$response_pipe" 1> /dev/null 2> /dev/null
 }
 
 otel_span_end() {
   local span_handle="$1"
-  _otel_sdk_communicate "SPAN_END" "$span_handle"
+  if _otel_string_starts_with "${2:-}" @; then local time="${2#@}"; else local time=auto; fi
+  _otel_sdk_communicate "SPAN_END" "$span_handle" "$time"
 }
 
 otel_span_name() {

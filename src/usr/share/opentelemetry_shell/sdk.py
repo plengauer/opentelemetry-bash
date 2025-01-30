@@ -4,6 +4,8 @@ import time
 import traceback
 import json
 import requests
+from datetime import datetime, timezone
+
 import opentelemetry
 
 from opentelemetry.sdk.resources import Resource, ResourceDetector, OTELResourceDetector, OsResourceDetector, get_aggregated_resources
@@ -11,7 +13,7 @@ from opentelemetry_resourcedetector_docker import DockerResourceDetector
 from opentelemetry_resourcedetector_kubernetes import KubernetesResourceDetector
 
 from opentelemetry.trace import SpanKind
-from opentelemetry.sdk.trace import Span, StatusCode, TracerProvider, sampling
+from opentelemetry.sdk.trace import Span, StatusCode, TracerProvider, sampling, id_generator
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor, BatchSpanProcessor, ConsoleSpanExporter
 from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
@@ -96,6 +98,33 @@ class OracleResourceDetector(ResourceDetector):
         response.raise_for_status()  # Raise an exception for 4xx or 5xx status codes
         return response.json()
 
+class MyIdGenerator(id_generator.RandomIdGenerator):
+    trace_id = None
+    span_id = None
+
+    def __init__(self):
+        traceparent = os.environ.get('OTEL_ID_GENERATOR_OVERRIDE_TRACEPARENT', None)
+        if traceparent:
+            context = opentelemetry.trace.get_current_span(TraceContextTextMapPropagator().extract({'traceparent': traceparent})).get_span_context()
+            self.trace_id = context.trace_id
+            self.span_id = context.span_id
+    
+    def generate_trace_id(self):
+        if self.trace_id:
+            trace_id = self.trace_id
+            self.trace_id = None
+            return trace_id
+        else:
+            return super(MyIdGenerator, self).generate_trace_id()
+    
+    def generate_span_id(self):
+        if self.span_id:
+            span_id = self.span_id
+            self.span_id = None
+            return span_id
+        else:
+            return super(MyIdGenerator, self).generate_span_id()
+
 resource = {}
 spans = {}
 next_span_id = 0
@@ -150,7 +179,7 @@ def handle(scope, version, command, arguments):
                 GithubActionResourceDetector(),
                 OsResourceDetector(),
                 OTELResourceDetector(),
-            ]).merge(Resource.create(resource))
+            ]).merge(Resource.create(resource)) if os.environ.get('OTEL_DISABLE_RESOURCE_DETECTION', 'FALSE') == 'FALSE' else Resource.create(resource)
 
         traces_exporters = os.environ.get('OTEL_TRACES_EXPORTER', 'otlp')
         metrics_exporters = os.environ.get('OTEL_METRICS_EXPORTER', 'otlp')
@@ -178,7 +207,7 @@ def handle(scope, version, command, arguments):
                 sampler = sampling.ParentBased(sampling.TradeIdRatioBased(float(sampling_strategy_arg)))
             else:
                 raise Exception('Unknown sampler: ' + sampler)
-            tracer_provider = TracerProvider(sampler=sampler, resource=final_resources)
+            tracer_provider = TracerProvider(sampler=sampler, resource=final_resources, id_generator=MyIdGenerator())
             for traces_exporter in traces_exporters.split(','):
                 if traces_exporter == '':
                     pass
@@ -226,23 +255,34 @@ def handle(scope, version, command, arguments):
         raise EOFError
     elif command == 'SPAN_START':
         global next_span_id
-        tokens = arguments.split(' ', 4)
+        tokens = arguments.split(' ', 5)
         response_path = tokens[0]
         traceparent = tokens[1]
         tracestate = tokens[2]
-        kind = tokens[3]
-        name = tokens[4]
+        start_time = tokens[3]
+        if start_time == 'auto':
+            start_time = None
+        else:
+            start_time = int(datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc).timestamp() * 1e9)
+        kind = tokens[4]
+        name = tokens[5]
         span_id = next_span_id
         next_span_id = next_span_id + 1
-        span = opentelemetry.trace.get_tracer(scope, version).start_span(name, kind=SpanKind[kind.upper()], context=TraceContextTextMapPropagator().extract({'traceparent': traceparent, 'tracestate': tracestate}))
+        span = opentelemetry.trace.get_tracer(scope, version).start_span(name, kind=SpanKind[kind.upper()], context=TraceContextTextMapPropagator().extract({'traceparent': traceparent, 'tracestate': tracestate}), start_time=start_time)
         spans[str(span_id)] = span
         with open(response_path, 'w') as response:
             response.write(str(span_id))
         auto_end = False
     elif command == 'SPAN_END':
-        span_id = arguments
+        tokens = arguments.split(' ', 1)
+        span_id = tokens[0]
+        end_time = tokens[1]
+        if end_time == 'auto':
+            end_time = None
+        else:
+            end_time = int(datetime.strptime(end_time, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc).timestamp() * 1e9)
         span : Span = spans[span_id]
-        span.end()
+        span.end(end_time=end_time)
         del spans[span_id]
     elif command == 'SPAN_HANDLE':
         tokens = arguments.split(' ', 1)

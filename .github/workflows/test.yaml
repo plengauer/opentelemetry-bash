@@ -399,7 +399,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  action:
+  github-job:
     needs: smoke
     runs-on: ubuntu-latest
     timeout-minutes: 60
@@ -420,6 +420,7 @@ jobs:
           OTEL_METRICS_EXPORTER: console
           OTEL_LOGS_EXPORTER: console
           OTEL_TRACES_EXPORTER: console
+          OTEL_SHELL_CONFIG_GITHUB_INJECT_ON_MAIN: 'TRUE'
       - run: | # check if install succeeded
           type otel.sh && type strace
       - run: | # check if instrumentation happened
@@ -455,6 +456,32 @@ jobs:
            image=ubuntu:latest
            update=TRUE
            shell=bash
+
+  github-workflow:
+    needs:  smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: packages
+      - id: workflow_run
+        run: |
+          . ./actions/instrument/shared/github.sh
+          INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} gh_workflow_runs | jq -r '.workflow_runs[] | select(.status == "completed") | [ .id, .run_attempt ] | @tsv' | sed 's/\t/ /g' | head -n 1 | while read -r id run_attempt; do
+            echo "id=$id" >> "$GITHUB_OUTPUT"
+            echo "run_attempt=$run_attempt" >> "$GITHUB_OUTPUT"
+          done
+      - uses: ./actions/instrument/workflow
+        with:
+          workflow_run_id: ${{ steps.workflow_run.outputs.id }}
+          workflow_run_attempt: ${{ steps.workflow_run.outputs.run_attempt }}
+        env:
+          OTEL_METRICS_EXPORTER: console
+          OTEL_LOGS_EXPORTER: console
+          OTEL_TRACES_EXPORTER: console
+          OTEL_SHELL_SDK_OUTPUT_REDIRECT: /dev/stderr
 
   prepare-performance:
     runs-on: ubuntu-latest
@@ -534,7 +561,7 @@ jobs:
           retention-days: 90
 
   join:
-    needs: [upgrade, system-upgrade, dependency, linux-shell, windows-shell, action, install-manual-user, install-manual-os]
+    needs: [upgrade, system-upgrade, dependency, linux-shell, windows-shell, github-job, github-workflow, install-manual-user, install-manual-os]
     runs-on: ubuntu-latest
     outputs:
       success: ${{ steps.tests.outputs.success }}
