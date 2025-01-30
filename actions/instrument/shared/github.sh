@@ -23,22 +23,27 @@ export -f gh_releases
 gh_workflow_runs() {
   gh_curl /actions/runs
 }
+export -f gh_workflow_runs
 
 gh_workflow_run() {
   gh_curl /actions/runs/"$1"/attempts/"$2"
 }
+export -f gh_workflow_run
 
 gh_jobs() {
   gh_curl_paginated /actions/runs/"$1"/attempts/"$2"/jobs'?per_page=100'
 }
+export -f gh_jobs
 
 gh_job() {
   gh_curl /actions/jobs/"$3"
 }
+export -f gh_job
 
 gh_artifacts() {
   gh_curl_paginated /actions/runs/"$1"/artifacts'?per_page=100'
 }
+export -f gh_artifacts
 
 gh_artifact_download() {
   node -e '
@@ -55,6 +60,7 @@ gh_artifact_download() {
       .then(id => id ? client.downloadArtifact(id, { path: "'"$4"'", findBy }) : null);
   '
 }
+export -f gh_artifact_download
 
 gh_artifact_upload() {
   node -e '
@@ -63,6 +69,7 @@ gh_artifact_upload() {
     new DefaultArtifactClient().uploadArtifact("'"$3"'", [ "'"$4"'" ], path.dirname("'"$4"'"));
   '
 }
+export -f gh_artifact_upload
 
 gh_artifact_delete() {
   node -e '
@@ -70,3 +77,4 @@ gh_artifact_delete() {
     new DefaultArtifactClient().deleteArtifact("'"$3"'");
   '
 }
+export -f gh_artifact_delete
