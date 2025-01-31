@@ -155,7 +155,7 @@ jobs:
             | tr '[:upper:]' '[:lower:]' | grep '^link: ' | cut -d ' '  -f 2- | tr -d ' <>' | tr ',' '\n' | grep 'rel="last"' | cut -d ';' -f 1 | cut -d '?' -f 2- | tr '&' '\n' | grep '^page=' | cut -d = -f 2 \
             | xargs seq 1 | xargs -I '{}' curl --no-progress-meter --fail --retry 16 --retry-all-errors --header "Authorization: Bearer $GITHUB_TOKEN" https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases?per_page=100\&page={} | jq -r '.[].tag_name' \
             | grep -v - | grep -v '^v1.0.0$' | grep -v '^v1.1.0$' | grep -v '^v1.12.6$' \
-            | jq -nR '{"include": [inputs | select(length > 0) | {tag_name: .}]}' | tr -d '\n' | xargs -0 -I {} echo 'matrix={}' >> "$GITHUB_OUTPUT"
+            | jq -nR '{"include": [inputs | select(length > 0) | {tag_name: .}]}' | tr -d '\n' | xargs -0 -I {} echo 'matrix={}' | tee /dev/stderr >> "$GITHUB_OUTPUT"
         id: dynamic-matrix
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -239,7 +239,7 @@ jobs:
       - run: |
           [ "$(cat images.json | jq -r '.[].image' | wc -l)" -ge 5 ] # double check that we dont fail everywhere and then run no tests at all
           cat images.json | jq '.[] | select(.type != "dev")'                                                       | jq .image | sort -u | jq -s -r tostring | xargs -0 -I {} echo 'images={}' >> "$GITHUB_OUTPUT"
-          cat images.json | jq '.[] | select(.type != "dev") | select(.type != "latest") | select(.os == "ubuntu")' | jq .image | sort -u | jq -s -r tostring | xargs -0 -I {} echo 'images_upgradeable={}' >> "$GITHUB_OUTPUT"
+          cat images.json | jq '.[] | select(.type != "dev") | select(.type != "latest") | select(.os == "ubuntu")' | jq .image | sort -u | jq -s -r tostring | xargs -0 -I {} echo 'images_upgradeable={}' | tee /dev/stderr >> "$GITHUB_OUTPUT"
         id: dynamic
 
   prepare-shells:
@@ -257,7 +257,7 @@ jobs:
           {
             echo sh
             cat src/DEBIAN/control | grep '^Enhances: ' | tr ' ' '\n' | tr ',' '\n' | grep -v -F 'Enhances:' | grep -v '^$'
-          } | sort -u | while read -r shell; do echo "\"$shell\""; done | jq -s -r tostring | xargs -0 -I {} echo 'shells={}' >> "$GITHUB_OUTPUT"
+          } | sort -u | while read -r shell; do echo "\"$shell\""; done | jq -s -r tostring | xargs -0 -I {} echo 'shells={}' | tee /dev/stderr >> "$GITHUB_OUTPUT"
         id: dynamic
 
   system-upgrade:
@@ -310,7 +310,7 @@ jobs:
       - run: |
           cat src/DEBIAN/triggers | cut -sd ' ' -f 2- | rev | cut -sd / -f 1 | rev | grep -v '^$' \
            | grep -vF "$(cat src/DEBIAN/control | grep '^Pre-Depends:' | cut -d : -f 2- | tr '|' ',' | tr , '\n' | tr -d ' ' | cut -d '(' -f 1)" \
-           | sort -u | while read -r dependency; do echo "\"$dependency\""; done | jq -s -r tostring | xargs -0 -I {} echo 'dependencies={}' >> "$GITHUB_OUTPUT"
+           | sort -u | while read -r dependency; do echo "\"$dependency\""; done | jq -s -r tostring | xargs -0 -I {} echo 'dependencies={}' | /dev/stderr >> "$GITHUB_OUTPUT"
         id: dynamic
 
   dependency:
@@ -534,7 +534,7 @@ jobs:
           OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT }}'
       - run: |
-          { echo '~local'; curl --no-progress-meter --fail --retry 16 --retry-all-errors --header "Authorization: Bearer $GITHUB_TOKEN" https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases | jq -r .[].tag_name | head --lines=10; } | jq -nR '{"include": [inputs | select(length > 0) | {tag_name: .}]}' | tr -d '\n' | xargs -0 -I {} echo 'matrix={}' >> "$GITHUB_OUTPUT"
+          { echo '~local'; curl --no-progress-meter --fail --retry 16 --retry-all-errors --header "Authorization: Bearer $GITHUB_TOKEN" https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases | jq -r .[].tag_name | head --lines=10; } | jq -nR '{"include": [inputs | select(length > 0) | {tag_name: .}]}' | tr -d '\n' | xargs -0 -I {} echo 'matrix={}' | tee /dev/stderr >> "$GITHUB_OUTPUT"
         id: dynamic-matrix
         env:
           GITHUB_TOKEN: ${{ github.token }}
