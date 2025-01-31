@@ -238,8 +238,8 @@ jobs:
           done | jq -s > images.json
       - run: |
           [ "$(cat images.json | jq -r '.[].image' | wc -l)" -ge 5 ] # double check that we dont fail everywhere and then run no tests at all
-          cat images.json | jq '.[] | select(.type != "dev")'                                                       | jq .image | sort -u | jq -s -r tostring | xargs -0 -I {} echo 'images={}' | tee /dev/stderr >> "$GITHUB_OUTPUT"
-          cat images.json | jq '.[] | select(.type != "dev") | select(.type != "latest") | select(.os == "ubuntu")' | jq .image | sort -u | jq -s -r tostring | xargs -0 -I {} echo 'images_upgradeable={}' | tee /dev/stderr >> "$GITHUB_OUTPUT"
+          cat images.json | jq '.[] | select(.type != "dev")'                                                       | jq .image | sort -u | jq -s tostring | xargs -0 -I {} echo 'images={}' | tee /dev/stderr >> "$GITHUB_OUTPUT"
+          cat images.json | jq '.[] | select(.type != "dev") | select(.type != "latest") | select(.os == "ubuntu")' | jq .image | sort -u | jq -s tostring | xargs -0 -I {} echo 'images_upgradeable={}' | tee /dev/stderr >> "$GITHUB_OUTPUT"
         id: dynamic
 
   prepare-shells:
