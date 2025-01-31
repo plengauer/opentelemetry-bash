@@ -238,7 +238,7 @@ jobs:
           done | jq -s > images.json
       - run: |
           [ "$(cat images.json | jq -r '.[].image' | wc -l)" -ge 5 ] # double check that we dont fail everywhere and then run no tests at all
-          cat images.json | jq '.[] | select(.type != "dev")'                                                       | jq .image | sort -u | jq -s -r tostring | xargs -0 -I {} echo 'images={}' >> "$GITHUB_OUTPUT"
+          cat images.json | jq '.[] | select(.type != "dev")'                                                       | jq .image | sort -u | jq -s -r tostring | xargs -0 -I {} echo 'images={}' | tee /dev/stderr >> "$GITHUB_OUTPUT"
           cat images.json | jq '.[] | select(.type != "dev") | select(.type != "latest") | select(.os == "ubuntu")' | jq .image | sort -u | jq -s -r tostring | xargs -0 -I {} echo 'images_upgradeable={}' | tee /dev/stderr >> "$GITHUB_OUTPUT"
         id: dynamic
 
@@ -310,7 +310,7 @@ jobs:
       - run: |
           cat src/DEBIAN/triggers | cut -sd ' ' -f 2- | rev | cut -sd / -f 1 | rev | grep -v '^$' \
            | grep -vF "$(cat src/DEBIAN/control | grep '^Pre-Depends:' | cut -d : -f 2- | tr '|' ',' | tr , '\n' | tr -d ' ' | cut -d '(' -f 1)" \
-           | sort -u | while read -r dependency; do echo "\"$dependency\""; done | jq -s -r tostring | xargs -0 -I {} echo 'dependencies={}' | /dev/stderr >> "$GITHUB_OUTPUT"
+           | sort -u | while read -r dependency; do echo "\"$dependency\""; done | jq -s -r tostring | xargs -0 -I {} echo 'dependencies={}' | tee /dev/stderr >> "$GITHUB_OUTPUT"
         id: dynamic
 
   dependency:
