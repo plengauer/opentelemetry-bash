@@ -18,6 +18,8 @@ gh_jobs "$INPUT_WORKFLOW_RUN_ID" "$INPUT_WORKFLOW_RUN_ATTEMPT" | jq .jobs[] > "$
 artifacts_json="$(mktemp)"
 gh_artifacts "$INPUT_WORKFLOW_RUN_ID" | jq -r .artifacts[] > "$artifacts_json"
 
+echo "::notice ::Observing $(jq < "$workflow_json" -r .html_url)"
+
 . otelapi.sh
 export OTEL_DISABLE_RESOURCE_DETECTION=TRUE # TODO re-add resource attributes based on workflow
 _otel_resource_attributes_process() {
