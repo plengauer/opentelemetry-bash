@@ -74,11 +74,12 @@ _otel_sdk_communicate() {
 }
 
 _otel_resource_attributes() {
+  _otel_resource_attributes_process
+  _otel_resource_attributes_service
   _otel_resource_attribute string telemetry.sdk.name=opentelemetry
   _otel_resource_attribute string telemetry.sdk.language=shell
   _otel_resource_attribute string telemetry.sdk.version="$(_otel_package_version opentelemetry-shell)"
-  _otel_resource_attributes_service
-  _otel_resource_attributes_process
+
   _otel_resource_attributes_custom
 }
 
