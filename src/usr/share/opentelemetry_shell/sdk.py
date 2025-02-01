@@ -443,15 +443,21 @@ def handle(scope, version, command, arguments):
     else:
         return
 
-def convert_type(type, value):
+def convert_type(type, value, base=None):
     if type == 'string':
         return value
     elif type == 'int':
         return int(value)
+    elif type == '+int':
+        return (base if base else 0) + value
     elif type == 'float':
         return float(value)
+    elif type == '+float':
+        return (base if base else 0.0) + value
     elif type == 'string[1]':
         return [ value ];
+    elif type == '+string[1]':
+        return (base if base else []) + value
     elif type == 'auto':
         try:
             return int(value)
