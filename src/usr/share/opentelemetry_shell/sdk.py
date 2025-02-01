@@ -316,7 +316,7 @@ def handle(scope, version, command, arguments):
         if value == '':
             return
         span : Span = spans[span_id]
-        span.set_attribute(key, convert_type(type, value), span.attributes[key])
+        span.set_attribute(key, convert_type(type, value), span.attributes.get(key, None))
     elif command == 'SPAN_TRACEPARENT':
         tokens = arguments.split(' ', 1)
         response_path = tokens[0]
