@@ -124,7 +124,7 @@ export OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE
 echo '
 import requests
 requests.get("http://example.com/foo")
-' | python3 | grep -v -F '"parent_id": null,' | grep -- '/foo' || exit 1
+' | python3 | tee /dev/stderr | grep -v -F '"parent_id": null,' | grep -- '/foo' || exit 1
 
 python3 -c '
 import requests
