@@ -449,15 +449,24 @@ def convert_type(type, value, base=None):
     elif type == 'int':
         return int(value)
     elif type == '+int':
-        return base + convert_type('int', value) if base else convert_type('int', value)
+        if base:
+            return base + convert_type('int', value)
+        else:
+            convert_type('int', value)
     elif type == 'float':
         return float(value)
     elif type == '+float':
-        return base + convert_type('float', value) if base else convert_type('float', value)
+        if base:
+            return base + convert_type('float', value)
+        else:
+            convert_type('float', value)
     elif type == 'string[1]':
         return [ value ];
     elif type == '+string[1]':
-        return base + convert_type('string[1]', value) if base else convert_type('string[1]', value)
+        if base:
+            return base + convert_type('string[1]', value)
+        else:
+            convert_type('string[1]', value)
     elif type == 'auto':
         try:
             return int(value)
