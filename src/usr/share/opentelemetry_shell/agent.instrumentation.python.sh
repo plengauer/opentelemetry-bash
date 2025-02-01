@@ -35,8 +35,7 @@ _otel_can_inject_python_otel() {
     module) \[ "$_otel_python_module" != pip ] && \[ "$_otel_python_module" != ensurepip ] ;;
     *) \true ;;
   esac
-  local result="$?"
-  return "$result"
+  return "$?"
 }
 
 _otel_inject_opentelemetry_instrument() {
