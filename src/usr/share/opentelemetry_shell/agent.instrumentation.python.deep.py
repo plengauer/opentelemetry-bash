@@ -15,10 +15,7 @@ try:
     
     traceparent = os.getenv("TRACEPARENT")
     if traceparent:
-        propagator = tracecontext.TraceContextTextMapPropagator()
-        carrier = { "traceparent": traceparent }
-        new_context = propagator.extract(carrier=carrier)
-        attach(new_context)
+        attach(tracecontext.TraceContextTextMapPropagator().extract(carrier={ "traceparent": traceparent }))
     
     def inject_env(env, args):
         carrier = {}
