@@ -457,7 +457,7 @@ def convert_type(type, value, base=None):
     elif type == 'string[1]':
         return [ value ];
     elif type == '+string[1]':
-        return (base if base else []) + value
+        return (base if base else []) + [ value ]
     elif type == 'auto':
         try:
             return int(value)
