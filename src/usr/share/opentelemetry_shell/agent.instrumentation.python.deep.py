@@ -1,8 +1,8 @@
-print('DEBUG STARTING TO INSTRUMENT', file=sys.stderr)
-
 import sys
 import os
 import subprocess
+
+print('DEBUG STARTING TO INSTRUMENT', file=sys.stderr)
 
 def inject_env_minimal(env, args):
     env['OTEL_SHELL_AUTO_INSTRUMENTATION_HINT'] = ' '.join(args)
