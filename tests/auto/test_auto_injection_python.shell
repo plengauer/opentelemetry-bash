@@ -136,7 +136,7 @@ echo '
 import requests
 requests.get("http://example.com/baz")
 ' > script.py
-python3 script.py | grep -v -F '"parent_id": null,' | grep -- '/baz' || exit 1
+python3 script.py | tee /dev/stderr | grep -v -F '"parent_id": null,' | grep -- '/baz' || exit 1
 
 dir=$(mktemp -d)
 python3 -m venv --system-site-packages "$dir"/venv || exit 1
@@ -145,7 +145,7 @@ pip install requests
 echo '
 import requests
 requests.get("http://example.com/venv")
-' | python | tee /dev/stderr | grep -v -F '"parent_id": null,' | grep -- '/venv' || exit 1
+' | python | grep -v -F '"parent_id": null,' | grep -- '/venv' || exit 1
 deactivate
 
 dir=$(mktemp -d)
@@ -158,7 +158,8 @@ script=$(mktemp -u).py
 echo '
 import requests
 requests.get("http://example.com/instrumented")
-' | opentelemetry-instrument python3 | grep -v -F '"parent_id": null,' | grep -- '/instrumented' || exit 1
+' > "$script"
+opentelemetry-instrument python3 "$script" | grep -v -F '"parent_id": null,' | grep -- '/instrumented' || exit 1
 deactivate
 
 dir=$(mktemp -d)
