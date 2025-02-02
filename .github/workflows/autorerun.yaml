@@ -2,7 +2,7 @@ name: Autorerun
 
 on:
   workflow_run:
-    workflows: [ 'Test', 'Publish' ]
+    workflows: [ 'Test', 'Publish', 'Refresh Demos' ]
     types: completed
   schedule:
     - cron: '0 0 * * *'
@@ -14,7 +14,7 @@ jobs:
   rerun:
     runs-on: ubuntu-latest
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.0.1
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.0.2
         env:
           OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'

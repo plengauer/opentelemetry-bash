@@ -10,7 +10,7 @@ jobs:
     outputs:
       matrix: ${{ steps.demos.outputs.matrix }}
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.0.1
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.0.2
         env:
           OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
@@ -73,7 +73,7 @@ jobs:
           sudo docker start collector
           sleep 10
           cat meta.json | jq -r .setup | (grep -v '^null$' || true) | sh
-          bash -e demo.sh 1> output.stdout 2> output.stderr || true
+          bash -e demo.sh 1> output.stdout 2> output.stderr
           sleep 15
           sudo docker stop collector
           rm config.yaml
