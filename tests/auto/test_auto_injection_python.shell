@@ -120,6 +120,7 @@ assert_equals "SpanKind.INTERNAL" $(\echo "$span" | \jq -r '.kind')
 assert_not_equals null $(\echo "$span" | \jq -r '.parent_id')
 
 export OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE
+echo "$TRACEPARENT"
 
 echo '
 import requests
@@ -157,7 +158,8 @@ script=$(mktemp -u).py
 echo '
 import requests
 requests.get("http://example.com/instrumented")
-' | opentelemetry-instrument python3 | grep -v -F '"parent_id": null,' | grep -- '/instrumented' || exit 1
+' > "$script"
+opentelemetry-instrument python3 "$script" | grep -v -F '"parent_id": null,' | grep -- '/instrumented' || exit 1
 deactivate
 
 dir=$(mktemp -d)

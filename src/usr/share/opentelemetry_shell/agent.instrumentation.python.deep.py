@@ -15,18 +15,15 @@ try:
     
     traceparent = os.getenv("TRACEPARENT")
     if traceparent:
-        propagator = tracecontext.TraceContextTextMapPropagator()
-        carrier = { "traceparent": traceparent }
-        new_context = propagator.extract(carrier=carrier)
-        attach(new_context)
+        attach(tracecontext.TraceContextTextMapPropagator().extract(carrier={ "traceparent": traceparent }))
     
     def inject_env(env, args):
         carrier = {}
         tracecontext.TraceContextTextMapPropagator().inject(carrier, opentelemetry.trace.set_span_in_context(opentelemetry.trace.get_current_span(), None))
         if 'traceparent' in carrier:
-            env["OTEL_TRACEPARENT"] = carrier["traceparent"]
+            env["TRACEPARENT"] = carrier["traceparent"]
         if 'tracestate' in carrier:
-            env["OTEL_TRACESTATE"] = carrier["tracestate"]
+            env["TRACESTATE"] = carrier["tracestate"]
         return inject_env_minimal(env, args)
         
 except ModuleNotFoundError:
