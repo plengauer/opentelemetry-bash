@@ -7,6 +7,7 @@ _otel_inject_python() {
     _otel_python_inject_args "$@" > /dev/null
     local python_path="${PYTHONPATH:-}"
     if _otel_can_inject_python_otel; then
+      unset _otel_python_code_source _otel_python_file _otel_python_module
       \eval "set -- $(_otel_python_inject_args "$@")"
       local python_path=/opt/opentelemetry_shell/venv/lib/"$(\ls /opt/opentelemetry_shell/venv/lib/)"/site-packages/:"$python_path"
       if \[ "${OTEL_SHELL_CONFIG_INJECT_DEEP:-FALSE}" = TRUE ]; then
@@ -14,6 +15,7 @@ _otel_inject_python() {
         set -- "$command" /opt/opentelemetry_shell/venv/bin/opentelemetry-instrument "${command#\\}" "$@"
       fi
     else
+      unset _otel_python_code_source _otel_python_file _otel_python_module
       \eval "set -- $(_otel_python_inject_args "$@")"
       local python_path="$(\printf '%s' "$python_path" | \tr ':' '\n' | \grep -vE '^/opt/opentelemetry_shell/venv/lib/' | \tr '\n' ':')"
     fi
@@ -22,10 +24,10 @@ _otel_inject_python() {
     else
       OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE PYTHONPATH="$python_path" OTEL_BSP_MAX_EXPORT_BATCH_SIZE=1 _otel_call "$@" || local exit_code="$?"
     fi
+    unset _otel_python_code_source _otel_python_file _otel_python_module
   else
     _otel_call "$@" || local exit_code="$?"
   fi
-  unset _otel_python_code_source _otel_python_file _otel_python_module
   return "${exit_code:-0}"
 }
 
