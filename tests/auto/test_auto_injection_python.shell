@@ -12,8 +12,6 @@ python3 -m venv --system-site-packages "$dir"/venv || exit 1
 pip3 install requests 2>&1 | grep writable && exit 1
 deactivate
 
-\echo starting >&2
-
 echo '
 import os
 os.execl("/bin/echo", "echo", "hello", "world", "0")
@@ -138,7 +136,7 @@ echo '
 import requests
 requests.get("http://example.com/baz")
 ' > script.py
-python3 script.py | tee /dev/stderr | grep -v -F '"parent_id": null,' | grep -- '/baz' || exit 1
+python3 script.py | grep -v -F '"parent_id": null,' | grep -- '/baz' || exit 1
 
 dir=$(mktemp -d)
 python3 -m venv --system-site-packages "$dir"/venv || exit 1
@@ -161,7 +159,7 @@ echo '
 import requests
 requests.get("http://example.com/instrumented")
 ' > "$script"
-opentelemetry-instrument python3 "$script" | tee /dev/stderr | grep -v -F '"parent_id": null,' | grep -- '/instrumented' || exit 1
+opentelemetry-instrument python3 "$script" | grep -v -F '"parent_id": null,' | grep -- '/instrumented' || exit 1
 deactivate
 
 dir=$(mktemp -d)
