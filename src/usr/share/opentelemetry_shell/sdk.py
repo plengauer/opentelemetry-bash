@@ -464,6 +464,7 @@ def convert_type(type, value, base=None):
         return [ value ];
     elif type == '+string[1]':
         if base:
+            print(str(base), file=sys.stderr)
             return base + convert_type('string[1]', value)
         else:
             return convert_type('string[1]', value)
