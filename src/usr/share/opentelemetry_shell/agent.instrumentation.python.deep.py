@@ -2,15 +2,12 @@ import sys
 import os
 import subprocess
 
-print('DEBUG STARTING TO INSTRUMENT', file=sys.stderr)
-
 def inject_env_minimal(env, args):
     env['OTEL_SHELL_AUTO_INSTRUMENTATION_HINT'] = ' '.join(args)
     env['OTEL_SHELL_COMMANDLINE_OVERRIDE'] = ' '.join(args)
     env['OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE'] = str(os.getpid())
     return env
 
-print('DEBUG 0', file=sys.stderr)
 try:
     import opentelemetry
     from opentelemetry.context import attach
@@ -32,8 +29,6 @@ try:
 except ModuleNotFoundError:
     def inject_env(env, args):
         return inject_env_minimal(env, args)
-
-print('DEBUG 1', file=sys.stderr)
 
 import functools
 
@@ -57,13 +52,10 @@ def inject_arguments(file, args, is_file=True):
 def inject_file(file):
     return '/bin/sh'
 
-print('DEBUG 2', file=sys.stderr)
-
 original_os_execve = os.execve
 original_subprocess_Popen___init__ = subprocess.Popen.__init__
 
 def observed_os_execv(file, args):
-    print('DEBUG DEBUG DEBUG', file=sys.stderr)
     if type(args) is tuple:
         args = list(args)
     env = inject_env(os.environ.copy(), args)
@@ -72,7 +64,6 @@ def observed_os_execv(file, args):
     return original_os_execve(file, args, env)
 
 def observed_os_execve(file, args, env):
-    print('DEBUG DEBUG DEBUG', file=sys.stderr)
     if type(args) is tuple:
         args = list(args)
     env = inject_env(env, args)
@@ -95,10 +86,6 @@ def observed_subprocess_Popen___init__(self, *args, **kwargs):
         kwargs['shell'] = False
     return original_subprocess_Popen___init__(self, args, **kwargs);
 
-print('DEBUG 3', file=sys.stderr)
-
 os.execv = observed_os_execv
 os.execve = observed_os_execve
 subprocess.Popen.__init__ = observed_subprocess_Popen___init__
-
-print('INSTRUMENTED', file=sys.stderr)
