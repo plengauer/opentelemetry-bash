@@ -5,6 +5,7 @@ _otel_inject_python() {
     local cmdline="$(_otel_dollar_star "$@")"
     local cmdline="${cmdline#\\}"
     _otel_python_inject_args "$@" > /dev/null
+    local my_code_source="$_otel_python_code_source"
     local python_path="${PYTHONPATH:-}"
     if _otel_can_inject_python_otel; then
       unset _otel_python_code_source _otel_python_file _otel_python_module
@@ -19,7 +20,7 @@ _otel_inject_python() {
       \eval "set -- $(_otel_python_inject_args "$@")"
       local python_path="$(\printf '%s' "$python_path" | \tr ':' '\n' | \grep -vE '^/opt/opentelemetry_shell/venv/lib/' | \tr '\n' ':')"
     fi
-    if \[ "${_otel_python_code_source:-}" = stdin ]; then
+    if \[ "${my_code_source:-}" = stdin ]; then
       { \cat /usr/share/opentelemetry_shell/agent.instrumentation.python.deep.py; \cat; } | OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE PYTHONPATH="$python_path" OTEL_BSP_MAX_EXPORT_BATCH_SIZE=1 _otel_call "$@" || local exit_code="$?"
     else
       OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE PYTHONPATH="$python_path" OTEL_BSP_MAX_EXPORT_BATCH_SIZE=1 _otel_call "$@" || local exit_code="$?"
