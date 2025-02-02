@@ -136,7 +136,7 @@ echo '
 import requests
 requests.get("http://example.com/baz")
 ' > script.py
-python3 script.py | tee /dev/stderr | grep -v -F '"parent_id": null,' | grep -- '/baz' || exit 1
+{ set -x; python3 script.py; set +x; } | tee /dev/stderr | grep -v -F '"parent_id": null,' | grep -- '/baz' || exit 1
 
 dir=$(mktemp -d)
 python3 -m venv --system-site-packages "$dir"/venv || exit 1
