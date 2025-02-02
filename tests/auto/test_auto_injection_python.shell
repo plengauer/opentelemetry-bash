@@ -120,6 +120,7 @@ assert_equals "SpanKind.INTERNAL" $(\echo "$span" | \jq -r '.kind')
 assert_not_equals null $(\echo "$span" | \jq -r '.parent_id')
 
 export OTEL_SHELL_CONFIG_INJECT_DEEP=TRUE
+echo "$TRACEPARENT"
 
 echo '
 import requests
