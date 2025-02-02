@@ -1,3 +1,5 @@
+print('DEBUG STARTING TO INSTRUMENT', file=sys.stderr)
+
 import sys
 import os
 import subprocess
@@ -8,6 +10,7 @@ def inject_env_minimal(env, args):
     env['OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE'] = str(os.getpid())
     return env
 
+print('DEBUG 0', file=sys.stderr)
 try:
     import opentelemetry
     from opentelemetry.context import attach
@@ -30,6 +33,8 @@ except ModuleNotFoundError:
     def inject_env(env, args):
         return inject_env_minimal(env, args)
 
+print('DEBUG 1', file=sys.stderr)
+
 import functools
 
 def inject_arguments(file, args, is_file=True):
@@ -51,6 +56,8 @@ def inject_arguments(file, args, is_file=True):
 
 def inject_file(file):
     return '/bin/sh'
+
+print('DEBUG 2', file=sys.stderr)
 
 original_os_execve = os.execve
 original_subprocess_Popen___init__ = subprocess.Popen.__init__
@@ -87,6 +94,8 @@ def observed_subprocess_Popen___init__(self, *args, **kwargs):
         kwargs['env']['OTEL_SHELL_AUTO_INJECTED'] = 'FALSE'
         kwargs['shell'] = False
     return original_subprocess_Popen___init__(self, args, **kwargs);
+
+print('DEBUG 3', file=sys.stderr)
 
 os.execv = observed_os_execv
 os.execve = observed_os_execve
