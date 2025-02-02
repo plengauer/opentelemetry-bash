@@ -125,7 +125,7 @@ echo "$TRACEPARENT"
 echo '
 import requests
 requests.get("http://example.com/foo")
-' | python3 | tee /dev/stderr | grep -v -F '"parent_id": null,' | grep -- '/foo' || exit 1
+' | python3 | grep -v -F '"parent_id": null,' | grep -- '/foo' || exit 1
 
 python3 -c '
 import requests
@@ -145,7 +145,7 @@ pip install requests
 echo '
 import requests
 requests.get("http://example.com/venv")
-' | python | grep -v -F '"parent_id": null,' | grep -- '/venv' || exit 1
+' | python | tee /dev/stderr | grep -v -F '"parent_id": null,' | grep -- '/venv' || exit 1
 deactivate
 
 dir=$(mktemp -d)
