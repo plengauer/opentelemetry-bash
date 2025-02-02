@@ -27,7 +27,6 @@ try:
         return inject_env_minimal(env, args)
         
 except ModuleNotFoundError as error:
-    print(error, file=sys.stderr)
     def inject_env(env, args):
         return inject_env_minimal(env, args)
 
