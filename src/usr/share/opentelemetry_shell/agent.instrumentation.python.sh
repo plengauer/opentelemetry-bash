@@ -1,6 +1,7 @@
 #!/bin/false
 
 _otel_inject_python() {
+set -x
   if \[ -d "/opt/opentelemetry_shell/venv" ] && _otel_string_starts_with "$(\eval "$1 -V" | \cut -d ' ' -f 2)" "3."; then
     local cmdline="$(_otel_dollar_star "$@")"
     local cmdline="${cmdline#\\}"
@@ -26,6 +27,7 @@ _otel_inject_python() {
     _otel_call "$@" || local exit_code="$?"
   fi
   unset _otel_python_code_source _otel_python_file _otel_python_module
+set +x
   return "${exit_code:-0}"
 }
 
