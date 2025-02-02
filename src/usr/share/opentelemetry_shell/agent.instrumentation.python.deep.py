@@ -56,6 +56,7 @@ original_os_execve = os.execve
 original_subprocess_Popen___init__ = subprocess.Popen.__init__
 
 def observed_os_execv(file, args):
+    print('DEBUG DEBUG DEBUG', file=sys.stderr)
     if type(args) is tuple:
         args = list(args)
     env = inject_env(os.environ.copy(), args)
@@ -64,6 +65,7 @@ def observed_os_execv(file, args):
     return original_os_execve(file, args, env)
 
 def observed_os_execve(file, args, env):
+    print('DEBUG DEBUG DEBUG', file=sys.stderr)
     if type(args) is tuple:
         args = list(args)
     env = inject_env(env, args)
