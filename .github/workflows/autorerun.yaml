@@ -2,7 +2,7 @@ name: Autorerun
 
 on:
   workflow_run:
-    workflows: [ 'Test', 'Publish' ]
+    workflows: [ 'Test', 'Publish', 'Refresh Demos' ]
     types: completed
   schedule:
     - cron: '0 0 * * *'
