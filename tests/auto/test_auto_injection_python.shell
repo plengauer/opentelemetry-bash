@@ -12,6 +12,8 @@ python3 -m venv --system-site-packages "$dir"/venv || exit 1
 pip3 install requests 2>&1 | grep writable && exit 1
 deactivate
 
+\echo starting >&2
+
 echo '
 import os
 os.execl("/bin/echo", "echo", "hello", "world", "0")
