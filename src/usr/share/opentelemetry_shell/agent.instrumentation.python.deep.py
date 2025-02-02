@@ -26,7 +26,7 @@ try:
             env["TRACESTATE"] = carrier["tracestate"]
         return inject_env_minimal(env, args)
         
-except ModuleNotFoundError as error:
+except ModuleNotFoundError:
     def inject_env(env, args):
         return inject_env_minimal(env, args)
 
