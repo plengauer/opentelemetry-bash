@@ -122,7 +122,7 @@ _otel_netcat_parse_request() {
     \printf '%s\r\n' "$line"
     local key="$(\printf '%s' "$line" | \cut -d ' ' -f 1 | \tr -d : | \tr '[:upper:]' '[:lower:]')"
     local value="$(\printf '%s' "$line" | \cut -d ' ' -f 2-)"
-    otel_span_attribute_typed "$span_handle" string[1] http.request.header."$key"="$value"
+    otel_span_attribute_typed "$span_handle" +string[1] http.request.header."$key"="$value"
   done < "$headers"
   \printf '\r\n'
   if \[ -n "${length:-}" ]; then # TODO this should transparently pipe the entire request through, even if it is not in line with content-length (or content-length hasn't been set at all)
@@ -166,7 +166,7 @@ _otel_netcat_parse_response() {
     if \[ "${#line}" = 0 ]; then break; fi
     local key="$(\printf '%s' "$line" | \cut -d ' ' -f 1 | \tr -d : | \tr '[:upper:]' '[:lower:]')"
     local value="$(\printf '%s' "$line" | \cut -d ' ' -f 2-)"
-    otel_span_attribute_typed "$span_handle" string[1] http.response.header."$key"="$value"
+    otel_span_attribute_typed "$span_handle" +string[1] http.response.header."$key"="$value"
   done
   local body_size_pipe="$(\mktemp -u)"
   local body_size_file="$(\mktemp)"

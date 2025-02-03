@@ -316,7 +316,7 @@ def handle(scope, version, command, arguments):
         if value == '':
             return
         span : Span = spans[span_id]
-        span.set_attribute(key, convert_type(type, value))
+        span.set_attribute(key, convert_type(type, value, span.attributes.get(key)))
     elif command == 'SPAN_TRACEPARENT':
         tokens = arguments.split(' ', 1)
         response_path = tokens[0]
@@ -443,15 +443,30 @@ def handle(scope, version, command, arguments):
     else:
         return
 
-def convert_type(type, value):
+def convert_type(type, value, base=None):
     if type == 'string':
         return value
     elif type == 'int':
         return int(value)
+    elif type == '+int':
+        if base:
+            return base + convert_type('int', value)
+        else:
+            return convert_type('int', value)
     elif type == 'float':
         return float(value)
+    elif type == '+float':
+        if base:
+            return base + convert_type('float', value)
+        else:
+            return convert_type('float', value)
     elif type == 'string[1]':
         return [ value ];
+    elif type == '+string[1]':
+        if base:
+            return list(base) + convert_type('string[1]', value)
+        else:
+            return convert_type('string[1]', value)
     elif type == 'auto':
         try:
             return int(value)
