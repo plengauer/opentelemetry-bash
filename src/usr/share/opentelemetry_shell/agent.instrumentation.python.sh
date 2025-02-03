@@ -37,7 +37,7 @@ _otel_can_inject_python_otel() {
   case "$_otel_python_code_source" in
     file) ! _otel_string_ends_with "$_otel_python_file" /pip && ! _otel_string_ends_with "$_otel_python_file" /pip3 ;;
     module) \[ "$_otel_python_module" != pip ] && \[ "$_otel_python_module" != ensurepip ] ;;
-    cmdline) ! cat "$_otel_python_command" | grep -q 'runpy.run_module("pip"'
+    cmdline) ! cat "$_otel_python_command" | grep -q 'runpy.run_module("pip"' ;;
     *) \true ;;
   esac
   return "$?"
