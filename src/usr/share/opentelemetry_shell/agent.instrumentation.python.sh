@@ -8,6 +8,7 @@ _otel_inject_python() {
     local my_code_source="$_otel_python_code_source"
     local python_path="${PYTHONPATH:-}"
     if _otel_can_inject_python_otel; then
+      \echo DEBUG DEBUG DEBUG "$*" >&2
       unset _otel_python_code_source _otel_python_file _otel_python_module
       \eval "set -- $(_otel_python_inject_args "$@")"
       local python_path=/opt/opentelemetry_shell/venv/lib/"$(\ls /opt/opentelemetry_shell/venv/lib/)"/site-packages/:"$python_path"
