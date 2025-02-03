@@ -9,7 +9,7 @@ _otel_inject_python() {
     local python_path="${PYTHONPATH:-}"
     if _otel_can_inject_python_otel; then
       \echo DEBUG DEBUG DEBUG "$*" >&2
-      unset _otel_python_code_source _otel_python_file _otel_python_module
+      unset _otel_python_code_source _otel_python_file _otel_python_module _otel_python_command
       \eval "set -- $(_otel_python_inject_args "$@")"
       local python_path=/opt/opentelemetry_shell/venv/lib/"$(\ls /opt/opentelemetry_shell/venv/lib/)"/site-packages/:"$python_path"
       if \[ "${OTEL_SHELL_CONFIG_INJECT_DEEP:-FALSE}" = TRUE ]; then
@@ -17,7 +17,7 @@ _otel_inject_python() {
         set -- "$command" /opt/opentelemetry_shell/venv/bin/opentelemetry-instrument "${command#\\}" "$@"
       fi
     else
-      unset _otel_python_code_source _otel_python_file _otel_python_module
+      unset _otel_python_code_source _otel_python_file _otel_python_module _otel_python_command
       \eval "set -- $(_otel_python_inject_args "$@")"
       local python_path="$(\printf '%s' "$python_path" | \tr ':' '\n' | \grep -vE '^/opt/opentelemetry_shell/venv/lib/' | \tr '\n' ':')"
     fi
@@ -26,7 +26,7 @@ _otel_inject_python() {
     else
       OTEL_SHELL_COMMANDLINE_OVERRIDE="$cmdline" OTEL_SHELL_COMMANDLINE_OVERRIDE_SIGNATURE="0" OTEL_SHELL_AUTO_INJECTED=TRUE PYTHONPATH="$python_path" OTEL_BSP_MAX_EXPORT_BATCH_SIZE=1 _otel_call "$@" || local exit_code="$?"
     fi
-    unset _otel_python_code_source _otel_python_file _otel_python_module
+    unset _otel_python_code_source _otel_python_file _otel_python_module _otel_python_command
   else
     _otel_call "$@" || local exit_code="$?"
   fi
@@ -37,6 +37,7 @@ _otel_can_inject_python_otel() {
   case "$_otel_python_code_source" in
     file) ! _otel_string_ends_with "$_otel_python_file" /pip && ! _otel_string_ends_with "$_otel_python_file" /pip3 ;;
     module) \[ "$_otel_python_module" != pip ] && \[ "$_otel_python_module" != ensurepip ] ;;
+    cmdline) ! cat "$_otel_python_command" | grep -q 'runpy.run_module("pip"'
     *) \true ;;
   esac
   return "$?"
@@ -75,6 +76,7 @@ _otel_python_inject_args() {
       local arg="$1"; shift
       _otel_escape_arg "$(\cat /usr/share/opentelemetry_shell/agent.instrumentation.python.deep.py)
 $arg"
+      _otel_python_command="$arg"
       _otel_python_code_source=cmdline
     elif \[ "$arg" = -m ]; then
       _otel_escape_args -c
