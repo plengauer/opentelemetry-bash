@@ -46,19 +46,21 @@ gh_artifacts() {
 export -f gh_artifacts
 
 gh_artifact_download() {
-  node -e '
-    const { DefaultArtifactClient } = require("@actions/artifact");
-    const client = new DefaultArtifactClient()
-    const findBy = {
-      token: "'"$INPUT_GITHUB_TOKEN"'",
-      repositoryOwner: "'"${GITHUB_REPOSITORY%%/*}"'",
-      repositoryName: "'"${GITHUB_REPOSITORY#*/}"'",
-      workflowRunId: '"$1"',
-    }
-    client.listArtifacts({ findBy })
-      .then(response => response.artifacts.find(artifact => artifact.name == "'"$3"'")?.id)
-      .then(id => id ? client.downloadArtifact(id, { path: "'"$4"'", findBy }) : null);
-  '
+  local artifact_filename="$(mktemp)"
+  gh_curl /actions/runs/"$1"/artifacts'?per_page=1&'name="$3" | jq -r '.artifacts[0].archive_download_url' | xargs wget -O "$artifact_filename" && unzip -d "$4"
+  # node -e '
+  #   const { DefaultArtifactClient } = require("@actions/artifact");
+  #   const client = new DefaultArtifactClient()
+  #   const findBy = {
+  #     token: "'"$INPUT_GITHUB_TOKEN"'",
+  #     repositoryOwner: "'"${GITHUB_REPOSITORY%%/*}"'",
+  #     repositoryName: "'"${GITHUB_REPOSITORY#*/}"'",
+  #     workflowRunId: '"$1"',
+  #   }
+  #   client.listArtifacts({ findBy })
+  #     .then(response => response.artifacts.find(artifact => artifact.name == "'"$3"'")?.id)
+  #     .then(id => id ? client.downloadArtifact(id, { path: "'"$4"'", findBy }) : null);
+  # '
 }
 export -f gh_artifact_download
 
