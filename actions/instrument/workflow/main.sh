@@ -25,6 +25,7 @@ export OTEL_DISABLE_RESOURCE_DETECTION=TRUE # TODO re-add resource attributes ba
 _otel_resource_attributes_process() {
   :
 }
+echo DEBUG DEBUG DEBUG opentelemetry_workflow_run_"$INPUT_WORKFLOW_RUN_ATTEMPT" >&2
 gh_artifact_download "$INPUT_WORKFLOW_RUN_ID" "$INPUT_WORKFLOW_RUN_ATTEMPT" opentelemetry_workflow_run_"$INPUT_WORKFLOW_RUN_ATTEMPT" opentelemetry_workflow_run || true
 if [ -r opentelemetry_workflow_run/traceparent ]; then export OTEL_ID_GENERATOR_OVERRIDE_TRACEPARENT="$(cat opentelemetry_workflow_run/traceparent)"; fi
 rm -rf opentelemetry_workflow_run
