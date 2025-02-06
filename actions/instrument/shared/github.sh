@@ -21,7 +21,7 @@ gh_releases() {
 export -f gh_releases
 
 gh_workflow_runs() {
-  gh_curl /actions/runs
+  gh_curl_paginated /actions/runs'?per_page=100'
 }
 export -f gh_workflow_runs
 
