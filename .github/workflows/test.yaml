@@ -498,7 +498,7 @@ jobs:
            shell=bash
 
   github-workflow:
-    needs:  smoke
+    needs: build # smoke
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
@@ -509,7 +509,7 @@ jobs:
       - id: workflow_run
         run: |
           . ./actions/instrument/shared/github.sh
-          INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} gh_workflow_runs | jq -r '.workflow_runs[] | select(.status == "completed") | select(.name == "Test") | [ .id, .run_attempt ] | @tsv' | sed 's/\t/ /g' | head -n 1 | while read -r id run_attempt; do
+          INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} gh_workflow_runs | jq -r '.workflow_runs[] | select(.status == "completed") | select(.conclusion != "cancelled") | select(.name == "Test") | [ .id, .run_attempt ] | @tsv' | sed 's/\t/ /g' | head -n 1 | while read -r id run_attempt; do
             echo "id=$id" >> "$GITHUB_OUTPUT"
             echo "run_attempt=$run_attempt" >> "$GITHUB_OUTPUT"
           done
