@@ -47,7 +47,7 @@ export -f gh_artifacts
 
 gh_artifact_download() {
   local artifact_filename="$(mktemp)"
-  local download_url="$(gh_curl /actions/runs/"$1"/artifacts'?per_page=1&'name="$3" | jq -r '.artifacts[0].archive_download_url')" | xargs -r -0 wget --header="Authorization: Bearer $INPUT_GITHUB_TOKEN" -O "$artifact_filename" && [ -r "$artifact_filename" ] && unzip "$artifact_filename" -d "$4"
+  gh_curl /actions/runs/"$1"/artifacts'?per_page=1&'name="$3" | jq -r '.artifacts[0].archive_download_url' | xargs -r -0 wget --header="Authorization: Bearer $INPUT_GITHUB_TOKEN" -O "$artifact_filename" && [ -r "$artifact_filename" ] && unzip "$artifact_filename" -d "$4"
   # node -e '
   #   const { DefaultArtifactClient } = require("@actions/artifact");
   #   const client = new DefaultArtifactClient()
