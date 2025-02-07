@@ -73,23 +73,3 @@ if [ "$(jq < "$workflow_json" .conclusion -r)" = failure ]; then otel_span_error
 otel_span_end "$workflow_span_handle" @"$(jq < "$jobs_json" -r .completed_at | sort -r | head -n 1)"
 
 otel_shutdown
-
-
-
-
-
-
-
-    otel_span_attribute_typed $_root_span_handle string github.workflow.name="${GITHUB_WORKFLOW:-}"
-    otel_span_attribute_typed $_root_span_handle string github.job.name="${OTEL_SHELL_GITHUB_JOB:-${GITHUB_JOB:-}}"
-    otel_span_attribute_typed $_root_span_handle string github.step.name="${GITHUB_STEP:-}"
-    otel_span_attribute_typed $_root_span_handle string github.action.name="${GITHUB_ACTION:-}"
-    otel_span_attribute_typed $_root_span_handle int github.workflow_run.id="${GITHUB_RUN_ID:-}"
-    otel_span_attribute_typed $_root_span_handle int github.workflow_run.attempt="${GITHUB_RUN_ATTEMPT:-}"
-    otel_span_attribute_typed $_root_span_handle int github.workflow_run.number="${GITHUB_RUN_NUMBER:-}"
-    otel_span_attribute_typed $_root_span_handle int github.actor.id="${GITHUB_ACTOR_ID:-}"
-    otel_span_attribute_typed $_root_span_handle string github.actor.name="${GITHUB_ACTOR:-}"
-    otel_span_attribute_typed $_root_span_handle string github.event.name="${GITHUB_EVENT_NAME:-}"
-    otel_span_attribute_typed $_root_span_handle string github.event.ref="${GITHUB_REF:-}"
-    otel_span_attribute_typed $_root_span_handle string github.event.ref.sha="${GITHUB_SHA:-}"
-    otel_span_attribute_typed $_root_span_handle string github.event.ref.name="${GITHUB_REF_NAME:-}"
