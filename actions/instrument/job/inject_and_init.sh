@@ -80,9 +80,9 @@ root4job() {
   traceparent_file="$1"
   . otelapi.sh
   otel_init
-  span_handle="$(otel_span_start CONSUMER "$GITHUB_WORKFLOW / ${OTEL_SHELL_GITHUB_JOB:-$GITHUB_JOB}")"
+  span_handle="$(otel_span_start CONSUMER "${OTEL_SHELL_GITHUB_JOB:-$GITHUB_JOB}")"
+  otel_span_attribute_typed $span_handle string github.job.name="${OTEL_SHELL_GITHUB_JOB:-$GITHUB_JOB}"
   otel_span_attribute_typed $span_handle string github.workflow.name="${GITHUB_WORKFLOW:-}"
-  otel_span_attribute_typed $span_handle string github.job.name="${OTEL_SHELL_GITHUB_JOB:-${GITHUB_JOB:-}}"
   otel_span_attribute_typed $span_handle int github.workflow_run.id="${GITHUB_RUN_ID:-}"
   otel_span_attribute_typed $span_handle int github.workflow_run.attempt="${GITHUB_RUN_ATTEMPT:-}"
   otel_span_attribute_typed $span_handle int github.workflow_run.number="${GITHUB_RUN_NUMBER:-}"
