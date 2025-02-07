@@ -501,16 +501,10 @@ _otel_start_script() {
     otel_span_attribute_typed $_root_span_handle string debian.package.operation="$(\echo "$cmdline" | \cut -d . -f 2-)"
   elif \[ "${GITHUB_ACTIONS:-false}" = true ] && \[ -n "${GITHUB_RUN_ID:-}" ] && \[ -n "${GITHUB_WORKFLOW:-}" ] && ( \[ "${OTEL_SHELL_IS_GITHUB_ACTION_ROOT:-FALSE}" = TRUE ] || \[ "${PPID:-}" != 0 ] && \[ "$(\cat /proc/$PPID/cmdline | \tr '\000-\037' ' ' | \cut -d ' ' -f 1 | \rev | \cut -d / -f 1 | \rev)" = "Runner.Worker" ] ); then
     unset OTEL_SHELL_IS_GITHUB_ACTION_ROOT
-    local name="$GITHUB_WORKFLOW"
-    local kind=CONSUMER
-    if \[ -n "${GITHUB_JOB:-}" ]; then local name="$name / ${OTEL_SHELL_GITHUB_JOB:-$GITHUB_JOB}"; local kind=CONSUMER; fi
-    if \[ -n "${GITHUB_STEP:-}" ]; then local name="$name / $GITHUB_STEP"; local kind=SERVER
-    elif \[ -n "${GITHUB_ACTION:-}" ]; then local name="$name / $GITHUB_ACTION"; local kind=INTERNAL; fi
-    _root_span_handle="$(otel_span_start "$kind" "$name")"
-    otel_span_attribute_typed $_root_span_handle string github.workflow.name="${GITHUB_WORKFLOW:-}"
+    _root_span_handle="$(otel_span_start INTERNAL ${GITHUB_STEP:-$GITHUB_ACTION}")"
+    otel_span_attribute_typed $_root_span_handle string github.step.name="${GITHUB_STEP:-$GITHUB_ACTION}"
     otel_span_attribute_typed $_root_span_handle string github.job.name="${OTEL_SHELL_GITHUB_JOB:-${GITHUB_JOB:-}}"
-    otel_span_attribute_typed $_root_span_handle string github.step.name="${GITHUB_STEP:-}"
-    otel_span_attribute_typed $_root_span_handle string github.action.name="${GITHUB_ACTION:-}"
+    otel_span_attribute_typed $_root_span_handle string github.workflow.name="${GITHUB_WORKFLOW:-}"
     otel_span_attribute_typed $_root_span_handle int github.workflow_run.id="${GITHUB_RUN_ID:-}"
     otel_span_attribute_typed $_root_span_handle int github.workflow_run.attempt="${GITHUB_RUN_ATTEMPT:-}"
     otel_span_attribute_typed $_root_span_handle int github.workflow_run.number="${GITHUB_RUN_NUMBER:-}"
