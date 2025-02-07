@@ -89,6 +89,9 @@ root4job() {
   otel_span_attribute_typed $span_handle int github.actor.id="${GITHUB_ACTOR_ID:-}"
   otel_span_attribute_typed $span_handle string github.actor.name="${GITHUB_ACTOR:-}"
   otel_span_attribute_typed $span_handle string github.event.name="${GITHUB_EVENT_NAME:-}"
+  otel_span_attribute_typed $span_handle string github.event.ref="${GITHUB_REF:-}"
+  otel_span_attribute_typed $span_handle string github.event.ref.sha="${GITHUB_SHA:-}"
+  otel_span_attribute_typed $span_handle string github.event.ref.name="${GITHUB_REF_NAME:-}"
   otel_span_activate "$span_handle"
   echo "$TRACEPARENT" > "$traceparent_file"
   if [ -n "${GITHUB_JOB_ID:-}" ]; then
