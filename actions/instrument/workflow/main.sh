@@ -29,7 +29,7 @@ record_attributes() {
   otel_span_attribute_typed $span_handle int github.actor.id="$(jq < "$workflow_json" .actor.id)"
   otel_span_attribute_typed $span_handle string github.actor.name="$(jq < "$workflow_json" -r .actor.login)"
   otel_span_attribute_typed $span_handle string github.event.name="$(jq < "$workflow_json" -r .event)"
-  otel_span_attribute_typed $span_handle string github.event.ref="$(jq < "$workflow_json" -r .head_branch)"
+  otel_span_attribute_typed $span_handle string github.event.ref="/refs/heads/$(jq < "$workflow_json" -r .head_branch)"
   otel_span_attribute_typed $span_handle string github.event.ref.sha="$(jq < "$workflow_json" -r .head_sha)"
   otel_span_attribute_typed $span_handle string github.event.ref.name="$(jq < "$workflow_json" -r .head_branch)"
 }
