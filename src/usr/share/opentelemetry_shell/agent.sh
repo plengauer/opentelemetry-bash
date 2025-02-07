@@ -515,8 +515,8 @@ _otel_start_script() {
     otel_span_attribute_typed $_root_span_handle int github.workflow_run.attempt="${GITHUB_RUN_ATTEMPT:-}"
     otel_span_attribute_typed $_root_span_handle int github.workflow_run.number="${GITHUB_RUN_NUMBER:-}"
     otel_span_attribute_typed $_root_span_handle int github.actor.id="${GITHUB_ACTOR_ID:-}"
-    otel_span_attribute_typed $_root_span_handle int github.actor.name="${GITHUB_ACTOR:-}"
-    otel_span_attribute_typed $_root_span_handle int github.event.name="${GITHUB_EVENT_NAME:-}"
+    otel_span_attribute_typed $_root_span_handle string github.actor.name="${GITHUB_ACTOR:-}"
+    otel_span_attribute_typed $_root_span_handle string github.event.name="${GITHUB_EVENT_NAME:-}"
   elif ! \[ "${OTEL_SHELL_AUTO_INJECTED:-FALSE}" = TRUE ] && \[ -z "${TRACEPARENT:-}" ]; then
     _root_span_handle="$(otel_span_start SERVER "$(_otel_command_self)")"
   elif ! \[ "${OTEL_SHELL_AUTO_INJECTED:-FALSE}" = TRUE ] && \[ -n "${TRACEPARENT:-}" ]; then
