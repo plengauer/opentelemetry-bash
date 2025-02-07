@@ -35,7 +35,7 @@ print(*map(lambda element: element["instrumentation"], libraries), sep="\n") # S
     fi
     if [ -d /opt/opentelemetry_shell/node_modules ]; then
       (cd /usr/share/opentelemetry_shell/ && ln --symbolic ../../../opt/opentelemetry_shell/node_modules node_modules 2> /dev/null || true)
-    di
+    fi
   fi
   true
 else
