@@ -21,7 +21,7 @@ gh_releases() {
 export -f gh_releases
 
 gh_workflow_runs() {
-  gh_curl /actions/runs
+  gh_curl_paginated /actions/runs'?per_page=100'
 }
 export -f gh_workflow_runs
 
@@ -46,19 +46,8 @@ gh_artifacts() {
 export -f gh_artifacts
 
 gh_artifact_download() {
-  node -e '
-    const { DefaultArtifactClient } = require("@actions/artifact");
-    const client = new DefaultArtifactClient()
-    const findBy = {
-      token: "'"$INPUT_GITHUB_TOKEN"'",
-      repositoryOwner: "'"${GITHUB_REPOSITORY%%/*}"'",
-      repositoryName: "'"${GITHUB_REPOSITORY#*/}"'",
-      workflowRunId: '"$1"',
-    }
-    client.listArtifacts({ findBy })
-      .then(response => response.artifacts.find(artifact => artifact.name == "'"$3"'")?.id)
-      .then(id => id ? client.downloadArtifact(id, { path: "'"$4"'", findBy }) : null);
-  '
+  local artifact_filename="$(mktemp)"
+  gh_curl /actions/runs/"$1"/artifacts'?per_page=1&'name="$3" | jq '.artifacts[0].id' | grep -v '^null$' | xargs -r -I '{}' bash -c 'gh_curl "$@"' bash /actions/artifacts/'{}'/zip --head | tr -d '\r' | grep '^location:' | cut -d ' ' -f 2- | xargs -r wget -O "$artifact_filename" && [ -r "$artifact_filename" ] && unzip "$artifact_filename" -d "$4"
 }
 export -f gh_artifact_download
 
