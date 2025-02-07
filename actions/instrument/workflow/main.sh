@@ -32,7 +32,6 @@ otel_init
 
 workflow_span_handle="$(otel_span_start @"$(jq < "$workflow_json" -r .run_started_at)" CONSUMER "$(jq < "$workflow_json" -r .name)")"
 otel_span_attribute_typed $span_handle string github.workflow.name="${GITHUB_WORKFLOW:-}"
-otel_span_attribute_typed $span_handle string github.job.name="${OTEL_SHELL_GITHUB_JOB:-${GITHUB_JOB:-}}"
 otel_span_attribute_typed $span_handle int github.workflow_run.id="${GITHUB_RUN_ID:-}"
 otel_span_attribute_typed $span_handle int github.workflow_run.attempt="${GITHUB_RUN_ATTEMPT:-}"
 otel_span_attribute_typed $span_handle int github.workflow_run.number="${GITHUB_RUN_NUMBER:-}"
