@@ -511,7 +511,7 @@ _otel_start_script() {
     otel_span_attribute_typed $_root_span_handle int github.actor.id="${GITHUB_ACTOR_ID:-}"
     otel_span_attribute_typed $_root_span_handle string github.actor.name="${GITHUB_ACTOR:-}"
     otel_span_attribute_typed $_root_span_handle string github.event.name="${GITHUB_EVENT_NAME:-}"
-    otel_span_attribute_typed $_root_span_handle string github.event.ref="${GITHUB_REF:-}"
+    otel_span_attribute_typed $_root_span_handle string github.event.ref="/refs/heads/${GITHUB_REF:-}"
     otel_span_attribute_typed $_root_span_handle string github.event.ref.sha="${GITHUB_SHA:-}"
     otel_span_attribute_typed $_root_span_handle string github.event.ref.name="${GITHUB_REF_NAME:-}"
   elif ! \[ "${OTEL_SHELL_AUTO_INJECTED:-FALSE}" = TRUE ] && \[ -z "${TRACEPARENT:-}" ]; then
