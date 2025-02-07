@@ -187,7 +187,7 @@ _otel_filter_commands_by_mode() {
     \cat
   fi | if \[ "${OTEL_SHELL_CONFIG_MUTE_BUILTINS:-FALSE}" = TRUE ]; then
     while \read -r command; do
-      \[ _otel_command_type "$command" != builtin ] && \echo "$command" || \true
+      \[ "$(_otel_command_type "$command")" != builtin ] && \echo "$command" || \true
     done
   else
     \cat
