@@ -507,6 +507,16 @@ _otel_start_script() {
     if \[ -n "${GITHUB_STEP:-}" ]; then local name="$name / $GITHUB_STEP"; local kind=SERVER
     elif \[ -n "${GITHUB_ACTION:-}" ]; then local name="$name / $GITHUB_ACTION"; local kind=INTERNAL; fi
     _root_span_handle="$(otel_span_start "$kind" "$name")"
+    otel_span_attribute_typed $_root_span_handle string github.workflow.name="${GITHUB_WORKFLOW:-}"
+    otel_span_attribute_typed $_root_span_handle string github.job.name="${OTEL_SHELL_GITHUB_JOB:-${GITHUB_JOB:-}}"
+    otel_span_attribute_typed $_root_span_handle string github.step.name="${GITHUB_STEP:-}"
+    otel_span_attribute_typed $_root_span_handle string github.action.name="${GITHUB_ACTION:-}"
+    otel_span_attribute_typed $_root_span_handle int github.workflow_run.id="${GITHUB_RUN_ID:-}"
+    otel_span_attribute_typed $_root_span_handle int github.workflow_run.attempt="${GITHUB_RUN_ATTEMPT:-}"
+    otel_span_attribute_typed $_root_span_handle int github.workflow_run.number="${GITHUB_RUN_NUMBER:-}"
+    otel_span_attribute_typed $_root_span_handle int github.actor.id="${GITHUB_ACTOR_ID:-}"
+    otel_span_attribute_typed $_root_span_handle int github.actor.name="${GITHUB_ACTOR:-}"
+    otel_span_attribute_typed $_root_span_handle int github.event.name="${GITHUB_EVENT_NAME:-}"
   elif ! \[ "${OTEL_SHELL_AUTO_INJECTED:-FALSE}" = TRUE ] && \[ -z "${TRACEPARENT:-}" ]; then
     _root_span_handle="$(otel_span_start SERVER "$(_otel_command_self)")"
   elif ! \[ "${OTEL_SHELL_AUTO_INJECTED:-FALSE}" = TRUE ] && \[ -n "${TRACEPARENT:-}" ]; then
