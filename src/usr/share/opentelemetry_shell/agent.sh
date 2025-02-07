@@ -181,13 +181,14 @@ _otel_filter_commands_by_instrumentation() {
 }
 
 _otel_filter_commands_by_mode() {
-  if \[ "${OTEL_SHELL_CONFIG_INSTRUMENT_MINIMALLY:-FALSE}" = TRUE ]; then
-    local non_internal_instrumentations="$(\alias | \grep OTEL_SHELL_SPAN_KIND_OVERRIDE | \grep -v OTEL_SHELL_SPAN_KIND_OVERRIDE=INTERNAL | \sed 's/^alias //g' | \cut -d = -f 1)"
-    if \[ -n "$non_internal_instrumentations" ]; then
-      \grep -F "$non_internal_instrumentations"
-    else
-      \cat > /dev/null
-    fi
+  if \[ "${OTEL_SHELL_CONFIG_MUTE_INTERNAL:-FALSE}" = TRUE ]; then
+    \cat > /dev/null # all of them are internal
+  else
+    \cat
+  fi | if \[ "${OTEL_SHELL_CONFIG_MUTE_BUILTINS:-FALSE}" = TRUE ]; then
+    while \read -r command; do
+      \[ _otel_command_type "$command" != builtin ] && \echo "$command" || \true
+    done
   else
     \cat
   fi
