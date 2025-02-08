@@ -8,21 +8,15 @@ otel_init
 span_handle="$(otel_span_start INTERNAL "${GITHUB_STEP:-$GITHUB_ACTION}")"
 otel_span_attribute_typed $span_handle string github.actions.type=step
 otel_span_attribute_typed $span_handle string github.actions.step.name="${GITHUB_STEP:-$GITHUB_ACTION}"
-otel_span_attribute_typed $span_handle string github.actions.job.name="${OTEL_SHELL_GITHUB_JOB:-${GITHUB_JOB:-}}"
-otel_span_attribute_typed $span_handle string github.actions.workflow.name="${GITHUB_WORKFLOW:-}"
-otel_span_attribute_typed $span_handle int github.actions.workflow_run.id="${GITHUB_RUN_ID:-}"
-otel_span_attribute_typed $span_handle int github.actions.workflow_run.attempt="${GITHUB_RUN_ATTEMPT:-}"
-otel_span_attribute_typed $span_handle int github.actions.workflow_run.number="${GITHUB_RUN_NUMBER:-}"
-otel_span_attribute_typed $span_handle int github.actions.actor.id="${GITHUB_ACTOR_ID:-}"
-otel_span_attribute_typed $span_handle string github.actions.actor.name="${GITHUB_ACTOR:-}"
-otel_span_attribute_typed $span_handle string github.actions.event.name="${GITHUB_EVENT_NAME:-}"
-otel_span_attribute_typed $span_handle string github.actions.event.ref="${GITHUB_REF:-}"
-otel_span_attribute_typed $span_handle string github.actions.event.ref.sha="${GITHUB_SHA:-}"
-otel_span_attribute_typed $span_handle string github.actions.event.ref.name="${GITHUB_REF_NAME:-}"
 otel_span_activate "$span_handle"
 otel_observe _otel_inject_docker "$@"
 exit_code="$?"
-if [ "$exit_code" != 0 ]; then otel_span_error "$span_handle"; touch /tmp/opentelemetry_shell.github.error; fi
+if [ "$exit_code" != 0 ]; then
+  otel_span_attribute_typed $span_handle string github.actions.step.conclusion=failure
+  otel_span_error "$span_handle"; touch /tmp/opentelemetry_shell.github.error
+else
+  otel_span_attribute_typed $span_handle string github.actions.step.conclusion=success
+fi
 otel_span_deactivate "$span_handle"
 otel_span_end "$span_handle"
 otel_shutdown
