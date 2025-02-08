@@ -500,11 +500,6 @@ _otel_start_script() {
     _root_span_handle="$(otel_span_start SERVER "$(\echo "$cmdline" | \cut -d . -f 2- | \cut -d ' ' -f 1)")"
     otel_span_attribute_typed $_root_span_handle string debian.package.name="$(\echo "$cmdline" | \rev | \cut -d / -f 1 | \rev | \cut -d . -f 1)"
     otel_span_attribute_typed $_root_span_handle string debian.package.operation="$(\echo "$cmdline" | \cut -d . -f 2-)"
-  elif \[ "${GITHUB_ACTIONS:-false}" = true ] && \[ -n "${GITHUB_RUN_ID:-}" ] && \[ -n "${GITHUB_WORKFLOW:-}" ] && ( \[ "${OTEL_SHELL_IS_GITHUB_ACTION_ROOT:-FALSE}" = TRUE ] || \[ "${PPID:-}" != 0 ] && \[ "$(\cat /proc/$PPID/cmdline | \tr '\000-\037' ' ' | \cut -d ' ' -f 1 | \rev | \cut -d / -f 1 | \rev)" = "Runner.Worker" ] ); then
-    unset OTEL_SHELL_IS_GITHUB_ACTION_ROOT
-    _root_span_handle="$(otel_span_start INTERNAL "${GITHUB_STEP:-$GITHUB_ACTION}")"
-    otel_span_attribute_typed $_root_span_handle string github.actions.type=step
-    otel_span_attribute_typed $_root_span_handle string github.actions.step.name="${GITHUB_STEP:-$GITHUB_ACTION}"
   elif ! \[ "${OTEL_SHELL_AUTO_INJECTED:-FALSE}" = TRUE ] && \[ -z "${TRACEPARENT:-}" ]; then
     _root_span_handle="$(otel_span_start SERVER "$(_otel_command_self)")"
   elif ! \[ "${OTEL_SHELL_AUTO_INJECTED:-FALSE}" = TRUE ] && \[ -n "${TRACEPARENT:-}" ]; then
