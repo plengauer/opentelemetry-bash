@@ -45,17 +45,23 @@ rm -rf opentelemetry_workflow_run
 otel_init
 
 workflow_span_handle="$(otel_span_start @"$(jq < "$workflow_json" -r .run_started_at)" CONSUMER "$(jq < "$workflow_json" -r .name)")"
+otel_span_attribute_typed "$workflow_span_handle" string github.type=workflow
+otel_span_attribute_typed "$workflow_span_handle" string github.conclusion="$(jq < "$workflow_json" -r .conclusion)"
 record_attributes "$workflow_span_handle"
 otel_span_activate "$workflow_span_handle"
 jq < "$jobs_json" -r '. | [.id, .conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | while read -r job_id job_conclusion job_started_at job_completed_at job_name; do
   if jq < "$artifacts_json" -r .name | grep -q '^opentelemetry_job_'"$job_id"'$'; then continue; fi
   job_span_handle="$(otel_span_start @"$job_started_at" CONSUMER "$job_name")"
+  otel_span_attribute_typed $job_span_handle string github.type=job
+  otel_span_attribute_typed $job_span_handle string github.conclusion="$job_conclusion"
   otel_span_attribute_typed $job_span_handle int github.job.id="$job_id"
   otel_span_attribute_typed $job_span_handle string github.job.name="$job_name"
   record_attributes "$job_span_handle"
   otel_span_activate "$job_span_handle"
   jq < "$jobs_json" -r '. | select(.id == '"$job_id"') | .steps[] | [.conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | while read -r step_conclusion step_started_at step_completed_at step_name; do
     step_span_handle="$(otel_span_start @"$step_started_at" INTERNAL "$step_name")"
+    otel_span_attribute_typed $step_span_handle string github.type=step
+    otel_span_attribute_typed $step_span_handle string github.conclusion="$step_conclusion"
     otel_span_attribute_typed $step_span_handle string github.step.name="$step_name"
     otel_span_attribute_typed $step_span_handle int github.job.id="$job_id"
     otel_span_attribute_typed $step_span_handle string github.job.name="$job_name"
