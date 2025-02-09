@@ -35,9 +35,11 @@ if [ -r opentelemetry_workflow_run/traceparent ]; then export OTEL_ID_GENERATOR_
 rm -rf opentelemetry_workflow_run
 otel_init
 
+link="${GITHUB_SERVER_URL:-https://github.com}"/"$(jq < "$workflow_json" -r .repository.owner.login)"/"$(jq < "$workflow_json" -r .repository.name)"/actions/runs/"$(jq < "$workflow_json" -r .id)"
 workflow_started_at="$(jq < "$workflow_json" -r .run_started_at)"
 workflow_span_handle="$(otel_span_start @"$workflow_started_at" CONSUMER "$(jq < "$workflow_json" -r .name)")"
 otel_span_attribute_typed $workflow_span_handle string github.actions.type=workflow
+otel_span_attribute_typed $workflow_span_handle string github.actions.url="$link"/attempts/"$(jq < "$workflow_json" -r .run_attempt)"
 otel_span_attribute_typed $workflow_span_handle string github.actions.workflow.id="$(jq < "$workflow_json" -r .workflow_id)"
 otel_span_attribute_typed $workflow_span_handle string github.actions.workflow.name="$(jq < "$workflow_json" -r .name)"
 otel_span_attribute_typed $workflow_span_handle int github.actions.workflow_run.id="$(jq < "$workflow_json" .id)"
@@ -56,13 +58,15 @@ jq < "$jobs_json" -r '. | [.id, .conclusion, .started_at, .completed_at, .name] 
   if jq < "$artifacts_json" -r .name | grep -q '^opentelemetry_job_'"$job_id"'$'; then continue; fi
   job_span_handle="$(otel_span_start @"$job_started_at" CONSUMER "$job_name")"
   otel_span_attribute_typed $job_span_handle string github.actions.type=job
+  otel_span_attribute_typed $job_span_handle string github.actions.url="$link"/job/"$job_id"
   otel_span_attribute_typed $job_span_handle int github.actions.job.id="$job_id"
   otel_span_attribute_typed $job_span_handle string github.actions.job.name="$job_name"
   otel_span_attribute_typed $job_span_handle string github.actions.job.conclusion="$job_conclusion"
   otel_span_activate "$job_span_handle"
-  jq < "$jobs_json" -r '. | select(.id == '"$job_id"') | .steps[] | [.conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | while read -r step_conclusion step_started_at step_completed_at step_name; do
+  jq < "$jobs_json" -r '. | select(.id == '"$job_id"') | .steps[] | [.number, .conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | while read -r step_number step_conclusion step_started_at step_completed_at step_name; do
     step_span_handle="$(otel_span_start @"$step_started_at" INTERNAL "$step_name")"
     otel_span_attribute_typed $step_span_handle string github.actions.type=step
+    otel_span_attribute_typed $step_span_handle string github.actions.url="$link"/job/"$job_id"'#'step:"$step_number":1
     otel_span_attribute_typed $step_span_handle string github.actions.step.name="$step_name"
     otel_span_attribute_typed $step_span_handle string github.actions.step.conclusion="$step_conclusion"
     # TODO fetch logs?
