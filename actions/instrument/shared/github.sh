@@ -30,6 +30,11 @@ gh_workflow_run() {
 }
 export -f gh_workflow_run
 
+gh_workflow_run_logs() {
+  wget --header="Authorization: Bearer $INPUT_GITHUB_TOKEN" "${GITHUB_API_URL:-https://api.github.com}"/repos/"$GITHUB_REPOSITORY"/actions/runs/"$1"/attempts/"$2"/logs -O "$3"
+}
+export -f gh_workflow_run_logs
+
 gh_jobs() {
   gh_curl_paginated /actions/runs/"$1"/attempts/"$2"/jobs'?per_page=100'
 }
