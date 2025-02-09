@@ -18,6 +18,10 @@ gh_jobs "$INPUT_WORKFLOW_RUN_ID" "$INPUT_WORKFLOW_RUN_ATTEMPT" | jq .jobs[] > "$
 artifacts_json="$(mktemp)"
 gh_artifacts "$INPUT_WORKFLOW_RUN_ID" | jq -r .artifacts[] > "$artifacts_json"
 
+logs_dir="$(mktemp -d)"
+logs_zip="$(mktemp)"
+gh_workflow_run_logs "$INPUT_WORKFLOW_RUN_ID" "$INPUT_WORKFLOW_RUN_ATTEMPT" "$logs_zip" && unzip "$logs_zip" -d "$logs_dir" && rm "$logs_zip" || true
+
 echo "::notice ::Observing $(jq < "$workflow_json" -r .html_url)"
 
 . otelapi.sh
@@ -71,7 +75,10 @@ jq < "$jobs_json" -r '. | [.id, .conclusion, .started_at, .completed_at, .name] 
     otel_span_attribute_typed $step_span_handle string github.actions.url="$link"/job/"$job_id"'#'step:"$step_number":1
     otel_span_attribute_typed $step_span_handle string github.actions.step.name="$step_name"
     otel_span_attribute_typed $step_span_handle string github.actions.step.conclusion="$step_conclusion"
-    # TODO fetch logs?
+    otel_span_activate "$step_span_handle"
+    step_log_file="$(printf '%s' "$logs_dir"/"$job_name"/"$step_number"_"$step_name".txt | tr -d ':')"
+    [ -r "$step_log_file" ] && cat "$step_log_file" | while read -r line; do _otel_record_log "$TRACEPARENT" "$(printf '%s' "$line" | cut -sd ' ' -f 1)" "$(printf '%s' "$line" | cut -sd ' ' -f 2-)"; done || true
+    otel_span_deactivate "$step_span_handle"
     if [ "$step_conclusion" = failure ]; then otel_span_error "$job_span_handle"; fi
     otel_span_end "$step_span_handle" @"$step_completed_at"
   done
