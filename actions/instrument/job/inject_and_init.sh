@@ -85,6 +85,9 @@ root4job() {
   otel_init
   span_handle="$(otel_span_start CONSUMER "${OTEL_SHELL_GITHUB_JOB:-$GITHUB_JOB}")"
   otel_span_attribute_typed $span_handle string github.actions.type=job
+  if [ -n "$GITHUB_JOB_ID" ]; then
+    otel_span_attribute_typed $span_handle string github.actions.url="${GITHUB_SERVER_URL:-https://github.com}"/"$GITHUB_REPOSITORY"/actions/runs/"$GITHUB_RUN_ID"/job/"$GITHUB_JOB_ID"
+  fi
   otel_span_attribute_typed $span_handle int github.actions.job.id="${GITHUB_JOB_ID:-}"
   otel_span_attribute_typed $span_handle string github.actions.job.name="${OTEL_SHELL_GITHUB_JOB:-$GITHUB_JOB}"
   otel_span_activate "$span_handle"
