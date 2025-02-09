@@ -21,7 +21,7 @@ gh_artifacts "$INPUT_WORKFLOW_RUN_ID" | jq -r .artifacts[] > "$artifacts_json"
 echo "::notice ::Observing $(jq < "$workflow_json" -r .html_url)"
 
 . otelapi.sh
-export OTEL_DISABLE_RESOURCE_DETECTION=TRUE # TODO re-add resource attributes based on workflow
+export OTEL_DISABLE_RESOURCE_DETECTION=TRUE
 _otel_resource_attributes_process() {
   _otel_resource_attribute string github.repository.id="$(jq < "$workflow_json" -r .repository.id)"
   _otel_resource_attribute string github.repository.name="$(jq < "$workflow_json" -r .repository.name)"
