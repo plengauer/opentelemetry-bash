@@ -35,7 +35,8 @@ if [ -r opentelemetry_workflow_run/traceparent ]; then export OTEL_ID_GENERATOR_
 rm -rf opentelemetry_workflow_run
 otel_init
 
-workflow_span_handle="$(otel_span_start @"$(jq < "$workflow_json" -r .run_started_at)" CONSUMER "$(jq < "$workflow_json" -r .name)")"
+workflow_started_at="$(jq < "$workflow_json" -r .run_started_at)"
+workflow_span_handle="$(otel_span_start @"$workflow_started_at" CONSUMER "$(jq < "$workflow_json" -r .name)")"
 otel_span_attribute_typed $workflow_span_handle string github.actions.type=workflow
 otel_span_attribute_typed $workflow_span_handle string github.actions.workflow.id="$(jq < "$workflow_json" -r .workflow_id)"
 otel_span_attribute_typed $workflow_span_handle string github.actions.workflow.name="$(jq < "$workflow_json" -r .name)"
@@ -51,6 +52,7 @@ otel_span_attribute_typed $workflow_span_handle string github.actions.event.ref.
 otel_span_attribute_typed $workflow_span_handle string github.actions.event.ref.name="$(jq < "$workflow_json" -r .head_branch)"
 otel_span_activate "$workflow_span_handle"
 jq < "$jobs_json" -r '. | [.id, .conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | while read -r job_id job_conclusion job_started_at job_completed_at job_name; do
+  if [[ "$job_started_at" < "$workflow_started_at" ]]; then continue; fi
   if jq < "$artifacts_json" -r .name | grep -q '^opentelemetry_job_'"$job_id"'$'; then continue; fi
   job_span_handle="$(otel_span_start @"$job_started_at" CONSUMER "$job_name")"
   otel_span_attribute_typed $job_span_handle string github.actions.type=job
