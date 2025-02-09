@@ -251,15 +251,11 @@ def handle(scope, version, command, arguments):
         traceparent = tokens[1]
         tracestate = tokens[2]
         start_time = tokens[3]
-        if start_time == 'auto':
-            start_time = None
-        else:
-            start_time = int(datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc).timestamp() * 1e9)
         kind = tokens[4]
         name = tokens[5]
         span_id = next_span_id
         next_span_id = next_span_id + 1
-        span = opentelemetry.trace.get_tracer(scope, version).start_span(name, kind=SpanKind[kind.upper()], context=TraceContextTextMapPropagator().extract({'traceparent': traceparent, 'tracestate': tracestate}), start_time=start_time)
+        span = opentelemetry.trace.get_tracer(scope, version).start_span(name, kind=SpanKind[kind.upper()], context=TraceContextTextMapPropagator().extract({'traceparent': traceparent, 'tracestate': tracestate}), start_time=parse_time(start_time))
         spans[str(span_id)] = span
         with open(response_path, 'w') as response:
             response.write(str(span_id))
@@ -268,12 +264,8 @@ def handle(scope, version, command, arguments):
         tokens = arguments.split(' ', 1)
         span_id = tokens[0]
         end_time = tokens[1]
-        if end_time == 'auto':
-            end_time = None
-        else:
-            end_time = int(datetime.strptime(end_time, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc).timestamp() * 1e9)
         span : Span = spans[span_id]
-        span.end(end_time=end_time)
+        span.end(end_time=parse_time(end_time))
         del spans[span_id]
     elif command == 'SPAN_HANDLE':
         tokens = arguments.split(' ', 1)
@@ -433,6 +425,13 @@ def handle(scope, version, command, arguments):
         logger.emit(record)
     else:
         return
+
+def parse_time(time):
+    if time == 'auto':
+        return None
+    time = time.rstrip('Z')
+    time_part, fractional_seconds_part = timestamp.split('.')
+    return datetime.strptime(time_part, "%Y-%m-%dT%H:%M:%S").replace(tzinfo=timezone.utc).timestamp() * 1e9 + int(fractional_seconds_part.ljust(9, '0')[:9])
 
 def convert_type(type, value, base=None):
     if type == 'string':
