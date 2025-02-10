@@ -17,7 +17,7 @@ jobs:
           OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT }}'
-      - uses: plengauer/autoapprove@v0.0.5
+      - uses: plengauer/autoapprove@v0.1.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           user_to_approve: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
