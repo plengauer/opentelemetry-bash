@@ -17,7 +17,7 @@ for dir in unit sdk auto integration; do
     export OTEL_TRACES_EXPORTER=console
     export OTEL_LOGS_EXPORTER=console
     mkfifo --mode=666 "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"
-    while true; do cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" >> "$OTEL_EXPORT_LOCATION"; done &
+    ( while true; do cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT" >> "$OTEL_EXPORT_LOCATION"; done ) &
     pipe_pid="$!"
     echo "running $file"
     options='-u -f'
@@ -27,7 +27,7 @@ for dir in unit sdk auto integration; do
     stdout="$(mktemp -u).out"
     stderr="$(mktemp -u).err"
     timeout $((60 * 60 * 3)) $SHELL $options "$file" 1> "$stdout" 1> "$stderr" && echo "$file SUCCEEDED" || (echo "$file FAILED" && echo "stdout:" && cat "$stdout" && echo "stderr:" && cat "$stderr" && echo "otlp:" && cat "$OTEL_EXPORT_LOCATION" && exit 1)
-    kill -9 "$pipe_pid"
+    kill -9 "$pipe_pid" 2> /dev/null
   done
 done
 echo "ALL TESTS SUCCESSFUL"
