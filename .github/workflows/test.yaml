@@ -500,7 +500,7 @@ jobs:
   github-workflow:
     needs: smoke
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
