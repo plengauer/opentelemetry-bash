@@ -16,7 +16,7 @@ for dir in unit sdk auto integration; do
     export OTEL_EXPORT_LOCATION=$(mktemp -u).sdk.out
     export OTEL_SHELL_SDK_OUTPUT_REDIRECT=$(mktemp -u -p "$(mktemp -d)").pipe
     export OTEL_TRACES_EXPORTER=console
-    export OTEL_METRICS_EXPORTER=console
+    # export OTEL_METRICS_EXPORTER=console
     export OTEL_LOGS_EXPORTER=console
     mkfifo --mode=666 $OTEL_SHELL_SDK_OUTPUT_REDIRECT
     ( while true; do cat $OTEL_SHELL_SDK_OUTPUT_REDIRECT >> $OTEL_EXPORT_LOCATION; done ) &
