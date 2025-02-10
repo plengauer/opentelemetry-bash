@@ -17,7 +17,7 @@ jobs:
           OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT }}'
-      - uses: renovatebot/github-action@v41.0.12
+      - uses: renovatebot/github-action@v41.0.13
         env:
           RENOVATE_REPOSITORIES: ${{ github.repository }}
         with:
