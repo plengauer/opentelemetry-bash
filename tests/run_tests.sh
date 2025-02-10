@@ -24,7 +24,9 @@ for dir in unit sdk auto integration; do
     if [ "$SHELL" = bash ]; then
       options="$options -p -o pipefail"
     fi
-    timeout $((60 * 60 * 3)) $SHELL $options $file && echo "SUCCEEDED" || (echo "FAILED" && cat $OTEL_EXPORT_LOCATION && exit 1)
+    stdout="$(mktemp)"
+    stderr="$(mktemp)"
+    timeout $((60 * 60 * 3)) $SHELL $options "$file" 1> "$stdout" 1> "$stderr" && echo "$file SUCCEEDED" || (echo "$file FAILED" && echo "stdout:" && cat "$stdout" && echo "stderr:" && cat "$stderr" && echo "otlp:" && cat $OTEL_EXPORT_LOCATION && exit 1)
     kill -9 "$pipe_pid"
   done
 done
