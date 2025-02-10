@@ -11,7 +11,7 @@ gh_curl_paginated() {
       | grep 'rel="last"' | cut -d ';' -f1 | cut -d '?' -f 2- | tr '&' '\n' \
       | grep '^page=' | cut -d = -f 2 \
       | xargs seq 1 || true
-  } | while read -r page; do echo "$@"'&page='"$page"; done | xargs parallel gh_curl :::
+  } | while read -r page; do echo "$@"'&page='"$page"; done | xargs -r -n 1 bash -ec 'gh_curl "$@"' bash
 }
 export -f gh_curl_paginated
 
