@@ -432,6 +432,7 @@ def parse_time(time_string):
         time_part, fractional_seconds_part = time_string.split('.')
     except ValueError:
         time_part = time_string
+        fractional_seconds_part = '0'
     return datetime.strptime(time_part, "%Y-%m-%dT%H:%M:%S").replace(tzinfo=timezone.utc).timestamp() * 1e9 + int(fractional_seconds_part.ljust(9, '0')[:9])
 
 def convert_type(type, value, base=None):
