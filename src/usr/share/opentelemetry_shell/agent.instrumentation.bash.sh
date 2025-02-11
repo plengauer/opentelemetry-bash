@@ -19,6 +19,7 @@ _otel_inject_shell_args_with_c_flag() {
         --) local no_more_options=1;;
         --*) _otel_escape_arg "$1"; \echo -n " ";;
         -*file) _otel_escape_arg "$1"; \echo -n " "; shift; _otel_escape_arg "$1"; \echo -n " ";;
+        -o) _otel_escape_arg "$1"; \echo -n " "; shift; _otel_escape_arg "$1"; \echo -n " ";;
         -*c*) local is_script=0; _otel_escape_arg "$1"; \echo -n " ";;
         *) _otel_escape_arg "$1"; \echo -n " ";;
       esac
