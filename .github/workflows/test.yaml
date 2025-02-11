@@ -520,6 +520,7 @@ jobs:
         with:
           workflow_run_id: ${{ steps.workflow_run.outputs.id }}
           workflow_run_attempt: ${{ steps.workflow_run.outputs.run_attempt }}
+          cache: false
         env:
           # OTEL_METRICS_EXPORTER: console
           # OTEL_LOGS_EXPORTER: console
