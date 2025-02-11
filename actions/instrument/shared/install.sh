@@ -3,13 +3,13 @@ export GITHUB_ACTION_REPOSITORY="${GITHUB_ACTION_REPOSITORY:-"$GITHUB_REPOSITORY
 
 cp ../shared/package.json . && npm install && rm package.json
 
-ensure_installed() { type "$1" || sudo apt-get install "$1"; }
+ensure_installed() { type "$1" 2> /dev/null || sudo apt-get install "$1"; }
 ensure_installed curl
 ensure_installed wget
 ensure_installed jq
 ensure_installed sed
 
-if ! type otel.sh; then
+if ! type otel.sh 2> /dev/null; then
   action_tag_name="$(echo "$GITHUB_ACTION_REF" | cut -sd @ -f 2-)"
   if [ -z "$action_tag_name" ]; then action_tag_name="v$(cat ../../../VERSION)"; fi
   if [ -n "$action_tag_name" ]; then
