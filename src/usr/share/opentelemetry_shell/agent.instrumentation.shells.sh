@@ -20,6 +20,7 @@ _otel_inject_shell_args_with_copy() {
         --) local no_more_options=1;;
         --*) _otel_escape_arg "$1"; \echo -n " ";;
         -*file) _otel_escape_arg "$1"; \echo -n " "; shift; _otel_escape_arg "$1"; \echo -n " ";;
+        -o) _otel_escape_arg "$1"; \echo -n " "; shift; _otel_escape_arg "$1"; \echo -n " ";;
         -c) local is_script=0;;
         -*c*) local is_script=0; _otel_escape_arg "$(\printf '%s' "$1" | \sed 's/c//g')"; \echo -n " ";;
         *) _otel_escape_arg "$1"; \echo -n " ";;
