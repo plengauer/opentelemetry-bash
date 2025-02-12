@@ -59,7 +59,7 @@ otel_span_attribute_typed $workflow_span_handle string github.actions.event.ref=
 otel_span_attribute_typed $workflow_span_handle string github.actions.event.ref.sha="$(jq < "$workflow_json" -r .head_sha)"
 otel_span_attribute_typed $workflow_span_handle string github.actions.event.ref.name="$(jq < "$workflow_json" -r .head_branch)"
 otel_span_activate "$workflow_span_handle"
-jq < "$jobs_json" -r '. | [.id, .conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | while read -r job_id job_conclusion job_started_at job_completed_at job_name; do
+jq < "$jobs_json" -r '. | [.id, .conclusion, .started_at, .completed_at, .runner_id, .runner_group_id, .name] | @tsv' | sed 's/\t/ /g' | while read -r job_id job_conclusion job_started_at job_completed_at job_runner_id job_runner_group_id job_name; do
   if [[ "$job_started_at" < "$workflow_started_at" ]]; then continue; fi
   if jq < "$artifacts_json" -r .name | grep -q '^opentelemetry_job_'"$job_id"'$'; then continue; fi
   job_span_handle="$(otel_span_start @"$job_started_at" CONSUMER "$job_name")"
@@ -68,6 +68,20 @@ jq < "$jobs_json" -r '. | [.id, .conclusion, .started_at, .completed_at, .name] 
   otel_span_attribute_typed $job_span_handle int github.actions.job.id="$job_id"
   otel_span_attribute_typed $job_span_handle string github.actions.job.name="$job_name"
   otel_span_attribute_typed $job_span_handle string github.actions.job.conclusion="$job_conclusion"
+  otel_span_attribute_typed $job_span_handle int github.actions.runner.id="$job_runner_id"
+  otel_span_attribute_typed $job_span_handle string github.actions.runner.name="$(jq < "$jobs_json" -r ". | select(.id == $job_id) | .runner_name")"
+  # otel_span_attribute_typed $job_span_handle string github.actions.runner.os=TODO
+  # otel_span_attribute_typed $job_span_handle string github.actions.runner.arch=TODO
+  otel_span_attribute_typed $job_span_handle int github.actions.runner.group.id="$job_runner_group_id"
+  otel_span_attribute_typed $job_span_handle string github.actions.runner.group.name="$(jq < "$jobs_json" -r ". | select(.id == $job_id) | .runner_group_name")"
+  jq < "$jobs_json" -r ". | select(.id == $job_id) | .labels | @tsv" | sed 's/\t/\n/g' | while read -r runner_label; do
+    case "$runner_label" in
+      github-hosted) otel_span_attribute_typed $job_span_handle string github.actions.runner.environment=github-hosted;;
+      self-hosted) otel_span_attribute_typed $job_span_handle string github.actions.runner.environment=self-hosted;;
+      *) ;;
+    esac
+    otel_span_attribute_typed $job_span_handle +string[1] github.actions.runner.group.label="$runner_label"
+  done
   otel_span_activate "$job_span_handle"
   jq < "$jobs_json" -r '. | select(.id == '"$job_id"') | .steps[] | [.number, .conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | while read -r step_number step_conclusion step_started_at step_completed_at step_name; do
     step_span_handle="$(otel_span_start @"$step_started_at" INTERNAL "$step_name")"
