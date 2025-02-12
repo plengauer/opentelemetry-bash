@@ -58,6 +58,10 @@ otel_span_attribute_typed $workflow_span_handle string github.actions.event.name
 otel_span_attribute_typed $workflow_span_handle string github.actions.event.ref="/refs/heads/$(jq < "$workflow_json" -r .head_branch)"
 otel_span_attribute_typed $workflow_span_handle string github.actions.event.ref.sha="$(jq < "$workflow_json" -r .head_sha)"
 otel_span_attribute_typed $workflow_span_handle string github.actions.event.ref.name="$(jq < "$workflow_json" -r .head_branch)"
+if [ "$INPUT_WORKFLOW_RUN_ATTEMPT" -gt 1 ]; then
+  gh_artifact_download "$INPUT_WORKFLOW_RUN_ID" "$((INPUT_WORKFLOW_RUN_ATTEMPT - 1))" opentelemetry_workflow_run_"$((INPUT_WORKFLOW_RUN_ATTEMPT - 1))" opentelemetry_workflow_run_prev || true
+  otel_link_add "$(otel_link_create "$(cat opentelemetry_workflow_run_prev/traceparent)" "")" "$workflow_span_handle"
+fi
 otel_span_activate "$workflow_span_handle"
 jq < "$jobs_json" -r '. | [.id, .conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | while read -r job_id job_conclusion job_started_at job_completed_at job_name; do
   if [[ "$job_started_at" < "$workflow_started_at" ]]; then continue; fi
