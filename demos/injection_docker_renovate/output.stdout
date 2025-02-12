@@ -1,6 +1,6 @@
  WARN: cli config dryRun property has been changed to full
  INFO: Repository started (repository=plengauer/opentelemetry-bash)
-       "renovateVersion": "39.163.0"
+       "renovateVersion": "39.166.1"
  INFO: Dependency extraction complete (repository=plengauer/opentelemetry-bash, baseBranch=main)
        "stats": {
          "managers": {
@@ -14,10 +14,11 @@
        "packageName": "actions/attest-build-provenance",
        "baseUrl": "https://api.github.com/"
  INFO: DRY-RUN: Would commit files to branch renovate/plengauer-opentelemetry-bash-5.x (repository=plengauer/opentelemetry-bash, branch=renovate/plengauer-opentelemetry-bash-5.x)
+ INFO: DRY-RUN: Would update PR #1173 (repository=plengauer/opentelemetry-bash, branch=renovate/plengauer-opentelemetry-bash-5.x)
  INFO: DRY-RUN: Would ensure Dependency Dashboard (repository=plengauer/opentelemetry-bash)
        "title": "Dependency Dashboard"
  INFO: DRY-RUN: Would save repository cache. (repository=plengauer/opentelemetry-bash)
  INFO: Repository finished (repository=plengauer/opentelemetry-bash)
        "cloned": true,
-       "durationMs": 22853
+       "durationMs": 29495
  INFO: Renovate was run at log level "info". Set LOG_LEVEL=debug in environment variables to see extended debug logs.
