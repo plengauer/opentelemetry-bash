@@ -1,0 +1,35 @@
+name: 'Workflow Example'
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.3.1
+        env:
+          OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
+          OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
+          OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT }}'
+      - run: echo hello world, im a compiler (deeply injected), i sometimes fail
+      - run: |
+          [ "$GITHUB_RUN_ATTEMPT" != 1 ]
+
+  test:
+    needs: build
+    strategy:
+      matrix:
+        name: ['foo', 'bar', 'baz']
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo hello world, im a test (not injected)
+
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo hello world, im a publisher (not injected)
+      
