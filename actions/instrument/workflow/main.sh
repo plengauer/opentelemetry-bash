@@ -62,7 +62,7 @@ if [ "$INPUT_WORKFLOW_RUN_ATTEMPT" -gt 1 ] && gh_artifact_download "$INPUT_WORKF
   otel_link_add "$(otel_link_create "$(cat opentelemetry_workflow_run_prev/traceparent)" "")" "$workflow_span_handle"
 fi
 otel_span_activate "$workflow_span_handle"
-jq < "$jobs_json" -r '. | [.id, .conclusion, .started_at, .completed_at, .runner_id, .runner_group_id, .name] | @tsv' | sed 's/\t/ /g' | while read -r job_id job_conclusion job_started_at job_completed_at job_runner_id job_runner_group_id job_name; do
+jq < "$jobs_json" -r '. | [.id, .conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | while read -r job_id job_conclusion job_started_at job_completed_at job_name; do
   if [[ "$job_started_at" < "$workflow_started_at" ]]; then continue; fi
   if jq < "$artifacts_json" -r .name | grep -q '^opentelemetry_job_'"$job_id"'$'; then continue; fi
   job_span_handle="$(otel_span_start @"$job_started_at" CONSUMER "$job_name")"
