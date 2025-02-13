@@ -15,9 +15,6 @@ inputs:
   __job_matrix:
     description: 'INTERNAL ONLY - DO NOT SET MANUALLY'
     default: '${{ toJSON(matrix) }}'
-  __job_runner:
-    description: 'INTERNAL ONLY - DO NOT SET MANUALLY'
-    default: '${{ toJSON(runner) }}'
   github_token:
     description: 'A GitHub token for API access (read-only)'
     default: '${{ github.token }}'
