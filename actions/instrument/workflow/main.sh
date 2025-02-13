@@ -68,12 +68,7 @@ jq < "$jobs_json" -r '. | [.id, .conclusion, .started_at, .completed_at, .runner
   otel_span_attribute_typed $job_span_handle int github.actions.job.id="$job_id"
   otel_span_attribute_typed $job_span_handle string github.actions.job.name="$job_name"
   otel_span_attribute_typed $job_span_handle string github.actions.job.conclusion="$job_conclusion"
-  otel_span_attribute_typed $job_span_handle int github.actions.runner.id="$job_runner_id"
   otel_span_attribute_typed $job_span_handle string github.actions.runner.name="$(jq < "$jobs_json" -r ". | select(.id == $job_id) | .runner_name")"
-  # otel_span_attribute_typed $job_span_handle string github.actions.runner.os=TODO
-  # otel_span_attribute_typed $job_span_handle string github.actions.runner.arch=TODO
-  otel_span_attribute_typed $job_span_handle int github.actions.runner.group.id="$job_runner_group_id"
-  otel_span_attribute_typed $job_span_handle string github.actions.runner.group.name="$(jq < "$jobs_json" -r ". | select(.id == $job_id) | .runner_group_name")"
   jq < "$jobs_json" -r ". | select(.id == $job_id) | .labels | @tsv" | sed 's/\t/\n/g' | while read -r runner_label; do
     case "$runner_label" in
       github-hosted) otel_span_attribute_typed $job_span_handle string github.actions.runner.environment=github-hosted;;
