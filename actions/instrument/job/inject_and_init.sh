@@ -64,6 +64,23 @@ rm "$jobs_json"
 
 export OTEL_SERVICE_NAME="${OTEL_SERVICE_NAME:-"$(echo "$GITHUB_REPOSITORY" | cut -d / -f 2-) CI"}"
 
+observe_rate_limit() {
+  rate_limit="$(mktemp)"
+  while true; do
+    gh_rate_limit > "$rate_limit"
+    cat "$rate_limit" | jq -r '.resources[] | keys[]' | while read -r resource; do
+      # TODO the following needs to be adapted to new api
+      metric_handle="$(otel_metric_create github.api.rate_limit.used)"
+      otel_metric_attribute_typed string "$metric_handle" github.api.resource="$resource"
+      otel_metric_observe "$metric_handle" "$(cat "$rate_limit" | jq -r ".resources.$resource.used")"
+      metric_handle="$(otel_metric_create github.api.rate_limit.remaining)"
+      otel_metric_attribute_typed string "$metric_handle" github.api.resource="$resource"
+      otel_metric_observe "$metric_handle" "$(cat "$rate_limit" | jq -r ".resources.$resource.remaining")"
+    done
+    sleep 5
+  done
+}
+
 root4job_end() {
   if [ -f /tmp/opentelemetry_shell.github.error ]; then
     otel_span_attribute_typed "$span_handle" string github.actions.job.conclusion=failure
@@ -72,6 +89,7 @@ root4job_end() {
     otel_span_attribute_typed "$span_handle" string github.actions.job.conclusion=success
   fi
   otel_span_end "$span_handle"
+  kill -9 "$observe_rate_limit_pid"
   otel_shutdown
   exit 0
 }
@@ -83,6 +101,8 @@ root4job() {
   traceparent_file="$1"
   . otelapi.sh
   otel_init
+  observe_rate_limit &
+  observe_rate_limit_pid="$!"
   span_handle="$(otel_span_start CONSUMER "${OTEL_SHELL_GITHUB_JOB:-$GITHUB_JOB}")"
   otel_span_attribute_typed $span_handle string github.actions.type=job
   if [ -n "$GITHUB_JOB_ID" ]; then
