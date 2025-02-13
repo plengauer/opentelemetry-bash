@@ -16,7 +16,7 @@ jobs:
           OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT }}'
-      - run: echo hello world, im a compiler (deeply injected), i sometimes fail
+      - run: echo 'hello world, im a compiler (deeply injected), i sometimes fail'
       - run: |
           [ "$GITHUB_RUN_ATTEMPT" != 1 ]
 
@@ -27,11 +27,10 @@ jobs:
         name: ['foo', 'bar', 'baz']
     runs-on: ubuntu-latest
     steps:
-      - run: echo hello world, im a test (not injected)
+      - run: echo 'hello world, im a test (not injected)'
 
   publish:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - run: echo hello world, im a publisher (not injected)
-      
+      - run: echo 'hello world, im a publisher (not injected)'
