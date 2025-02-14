@@ -408,7 +408,7 @@ def handle(scope, version, command, arguments):
                 counters[counter_id] = meter.create_observable_gauge(name, [ callback ], unit=unit, description=description)
             else:
                 raise Exception('Unknown counter type: ' + type)
-        else
+        else:
             raise Exception('Unknown counter kind: ' + kind)
         next_counter_id = next_counter_id + 1
         with open(response_path, 'w') as response:
