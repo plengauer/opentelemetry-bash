@@ -298,32 +298,45 @@ otel_link_add() {
   _otel_sdk_communicate "LINK_ADD" "$link_handle" "$span_handle"
 }
 
-otel_metric_create() {
-  local metric_name="$1"
-  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.metric_handle.pipe"
+otel_counter_create() {
+  local kind="$1"
+  local type="$2"
+  local name="$3"
+  local unit="${4:-1}"
+  local description="${5:-}"
+  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.counter_handle.pipe"
   \mkfifo ${_otel_mkfifo_flags:-} "$response_pipe"
-  _otel_sdk_communicate "METRIC_CREATE" "$response_pipe" "$metric_name"
+  _otel_sdk_communicate "COUNTER_CREATE" "$response_pipe" "$kind" "$type" "$name" "$unit" "$description"
   \cat "$response_pipe"
   \rm "$response_pipe" 1> /dev/null 2> /dev/null
 }
 
-otel_metric_attribute() {
-  local metric_handle="$1"
-  local kvp="$2"
-  otel_metric_attribute_typed "$metric_handle" auto "$kvp"
+otel_counter_observe() {
+  local counter_handle="$1"
+  local observation_handle="$2"
+  _otel_sdk_communicate "COUNTER_OBSERVE" "$counter_handle" "$observation_handle"
 }
 
-otel_metric_attribute_typed() {
-  local metric_handle="$1"
+otel_observation_create() {
+  local value="$1"
+  local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.observation_handle.pipe"
+  \mkfifo ${_otel_mkfifo_flags:-} "$response_pipe"
+  _otel_sdk_communicate "OBSERVATION_CREATE" "$response_pipe" "$value"
+  \cat "$response_pipe"
+  \rm "$response_pipe" 1> /dev/null 2> /dev/null
+}
+
+otel_observation_attribute_typed() {
+  local observation_handle="$1"
   local type="$2"
   local kvp="$3"
-  _otel_sdk_communicate "METRIC_ATTRIBUTE" "$metric_handle" "$type" "$kvp"
+  _otel_sdk_communicate "OBSERVATION_ATTRIBUTE" "$observation_handle" "$type" "$kvp"
 }
 
-otel_metric_add() {
-  local metric_handle="$1"
-  local value="$2"
-  _otel_sdk_communicate "METRIC_ADD" "$metric_handle" "$value"
+otel_observation_attribute() {
+  local observation_handle="$1"
+  local kvp="$2"
+  otel_observation_attribute_typed "$observation_handle" "$kvp"
 }
 
 otel_observe() {
