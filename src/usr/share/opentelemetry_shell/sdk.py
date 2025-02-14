@@ -387,7 +387,7 @@ def handle(scope, version, command, arguments):
         unit = tokens[4]
         description = tokens[5]
         meter = opentelemetry.metrics.get_meter(scope, version)
-        counter_id = str(next_conter_id)
+        counter_id = str(next_counter_id)
         if kind == 'standard':
             if type == 'counter':
                 counters[counter_id] = meter.create_counter(name, unit=unit, description=description)
