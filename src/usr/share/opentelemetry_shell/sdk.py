@@ -377,7 +377,7 @@ def handle(scope, version, command, arguments):
         link = links[link_id]
         spans[span_id].add_link(link['context'], link['attributes'])
         del links[link_id]
-    elif command == 'COUNTER_CREATE'
+    elif command == 'COUNTER_CREATE':
         global next_counter_id
         tokens = arguments.split(' ', 5)
         response_path = tokens[0]
@@ -395,9 +395,9 @@ def handle(scope, version, command, arguments):
                 counters[counter_id] = meter.create_up_down_counter(name, unit=unit, description=description)
             elif type == 'gauge':
                 counters[counter_id] = meter.create_gauge(name, unit=unit, description=description)
-            else
+            else:
                 raise Exception('Unknown counter type : ' + type)
-        elif name == 'observable'
+        elif name == 'observable':
             callback = functools.partial(observable_counter_callback, counter_id)
             delayed_observations[counter_id] = {}
             if type == 'counter':
@@ -406,14 +406,14 @@ def handle(scope, version, command, arguments):
                 counters[counter_id] = meter.create_observable_up_down_counter(name, [ callback ], unit=unit, description=description)
             elif type == 'gauge':
                 counters[counter_id] = meter.create_observable_gauge(name, [ callback ], unit=unit, description=description)
-            else
+            else:
                 raise Exception('Unknown counter type: ' + type)
         else
             raise Exception('Unknown counter kind: ' + kind)
         next_counter_id = next_counter_id + 1
         with open(response_path, 'w') as response:
             response.write(counter_id)
-    elif command == 'COUNTER_OBSERVE'
+    elif command == 'COUNTER_OBSERVE':
         tokens = arguments.split(' ', 1)
         counter_id = tokens[0]
         observation_id = tokens[1]
