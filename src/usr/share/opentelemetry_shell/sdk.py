@@ -470,6 +470,7 @@ def handle(scope, version, command, arguments):
 def observable_counter_callback(counter_id, observer):
     for observation in delayed_observations[counter_id].values():
         observer.observe(observation.amount, observation.attributes)
+    delayed_observations[counter_id] = {}
 
 def parse_time(time_string):
     if time_string == 'auto':
