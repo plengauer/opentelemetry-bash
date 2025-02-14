@@ -67,10 +67,7 @@ export OTEL_SERVICE_NAME="${OTEL_SERVICE_NAME:-"$(echo "$GITHUB_REPOSITORY" | cu
 observe_rate_limit() {
   used_gauge_handle="$(otel_counter_create observable gauge github.api.rate_limit.used 1 "The amount of rate limited requests used")"
   remaining_gauge_handle="$(otel_counter_create observable gauge github.api.rate_limit.remaining 1 "The amount of rate limited requests remaining")"
-  while true; do
-    gh_rate_limit | jq -r '.resources | to_entries[] | [.key, .value.used, .value.remaining] | @tsv' | sed 's/\t/ /g'
-    sleep 5
-  done | while read -r resource used remaining; do
+  while true; do gh_rate_limit; sleep 5; done | jq --unbuffered -r '.resources | to_entries[] | [.key, .value.used, .value.remaining] | @tsv' | sed 's/\t/ /g' | while read -r resource used remaining; do
     observation_handle="$(otel_observation_create "$used")"
     otel_observation_attribute_typed "$observation_handle" string github.api.resource="$resource"
     otel_counter_observe "$used_gauge_handle" "$observation_handle"
