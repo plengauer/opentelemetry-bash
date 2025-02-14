@@ -65,8 +65,8 @@ rm "$jobs_json"
 export OTEL_SERVICE_NAME="${OTEL_SERVICE_NAME:-"$(echo "$GITHUB_REPOSITORY" | cut -d / -f 2-) CI"}"
 
 observe_rate_limit() {
-  used_gauge_handle="$(otel_observable_gauge_create github.api.rate_limit.used 1 "The amount of rate limited requests used")"
-  remaining_gauge_handle="$(otel_observable_gauge_create github.api.rate_limit.remaining 1 "The amount of rate limited requests remaining")"
+  used_gauge_handle="$(otel_counter_create observable gauge github.api.rate_limit.used 1 "The amount of rate limited requests used")"
+  remaining_gauge_handle="$(otel_counter_create observable gauge github.api.rate_limit.remaining 1 "The amount of rate limited requests remaining")"
   while true; do
     gh_rate_limit | jq -r '.resources | to_entries[] | [.key, .value.used, .value.remaining] | @tsv' | sed 's/\t/ /g' | while read -r resource used remaining; do
       observation_handle="$(otel_observation_create "$used")"
