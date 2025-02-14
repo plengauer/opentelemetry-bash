@@ -71,10 +71,10 @@ observe_rate_limit() {
     gh_rate_limit | jq -r '.resources | to_entries[] | [.key, .value.used, .value.remaining] | @tsv' | sed 's/\t/ /g' | while read -r resource used remaining; do
       observation_handle="$(otel_observation_create "$used")"
       otel_observation_attribute_typed "$observation_handle" string github.api.resource="$resource"
-      otel_observable_gauge_observe "$used_gauge_handle" "$observation_handle"
+      otel_counter_observe "$used_gauge_handle" "$observation_handle"
       observation_handle="$(otel_observation_create "$remaining")"
       otel_observation_attribute_typed "$observation_handle" string github.api.resource="$resource"
-      otel_observable_gauge_observe "$used_gauge_handle" "$observation_handle"
+      otel_counter_observe "$used_gauge_handle" "$observation_handle"
     done
     sleep 5
   done
