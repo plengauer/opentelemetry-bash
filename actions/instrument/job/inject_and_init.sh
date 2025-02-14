@@ -65,17 +65,16 @@ rm "$jobs_json"
 export OTEL_SERVICE_NAME="${OTEL_SERVICE_NAME:-"$(echo "$GITHUB_REPOSITORY" | cut -d / -f 2-) CI"}"
 
 observe_rate_limit() {
-  rate_limit="$(mktemp)"
+  used_gauge_handle="$(otel_observable_gauge_create github.api.rate_limit.used 1 "The amount of rate limited requests used")"
+  remaining_gauge_handle="$(otel_observable_gauge_create github.api.rate_limit.remaining 1 "The amount of rate limited requests remaining")"
   while true; do
-    gh_rate_limit > "$rate_limit"
-    cat "$rate_limit" | jq -r '.resources[] | keys[]' | while read -r resource; do
-      # TODO the following needs to be adapted to new api
-      metric_handle="$(otel_metric_create github.api.rate_limit.used)"
-      otel_metric_attribute_typed string "$metric_handle" github.api.resource="$resource"
-      otel_metric_observe "$metric_handle" "$(cat "$rate_limit" | jq -r ".resources.$resource.used")"
-      metric_handle="$(otel_metric_create github.api.rate_limit.remaining)"
-      otel_metric_attribute_typed string "$metric_handle" github.api.resource="$resource"
-      otel_metric_observe "$metric_handle" "$(cat "$rate_limit" | jq -r ".resources.$resource.remaining")"
+    gh_rate_limit | jq -r '.resources | to_entries[] | [.key, .value.used, .value.remaining] | @tsv' | sed 's/\t/ /g' | while read -r resource used remaining; do
+      observation_handle="$(otel_observation_create "$used")"
+      otel_observation_attribute_typed "$observation_handle" string github.api.resource="$resource"
+      otel_observable_gauge_observe "$used_gauge_handle" "$observation_handle"
+      observation_handle="$(otel_observation_create "$remaining")"
+      otel_observation_attribute_typed "$observation_handle" string github.api.resource="$resource"
+      otel_observable_gauge_observe "$used_gauge_handle" "$observation_handle"
     done
     sleep 5
   done
@@ -89,8 +88,8 @@ root4job_end() {
     otel_span_attribute_typed "$span_handle" string github.actions.job.conclusion=success
   fi
   otel_span_end "$span_handle"
-  kill -9 "$observe_rate_limit_pid"
   otel_shutdown
+  kill -9 "$observe_rate_limit_pid" || true
   exit 0
 }
 export -f root4job_end
