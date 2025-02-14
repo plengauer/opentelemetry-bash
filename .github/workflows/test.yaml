@@ -448,7 +448,7 @@ jobs:
         cache: ['false', 'true']
       fail-fast: false
     steps:
-      - run: printenv | grep '^GITHUB_'
+      - run: printenv
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
