@@ -385,29 +385,28 @@ def handle(scope, version, command, arguments):
         unit = tokens[4]
         description = tokens[5]
         meter = opentelemetry.metrics.get_meter(scope, version)
+        counter_id = str(next_conter_id)
         if kind == 'standard':
             if type == 'counter':
-                counter = meter.create_counter(name, unit=unit, description=description)
+                counters[counter_id] = meter.create_counter(name, unit=unit, description=description)
             elif type == 'up_down_counter':
-                counter = meter.create_up_down_counter(name, unit=unit, description=description)
+                counters[counter_id] = meter.create_up_down_counter(name, unit=unit, description=description)
             elif type == 'gauge':
-                counter = meter.create_gauge(name, unit=unit, description=description)
+                counters[counter_id] = meter.create_gauge(name, unit=unit, description=description)
             else
                 raise Exception('Unknown counter type : ' + type)
         elif name == 'observable'
-            callback = None # TODO
+            callback = observable_counter_callback
             if type == 'counter':
-                counter = meter.create_observable_counter(name, [ callback ], unit=unit, description=description)
+                counters[counter_id] = meter.create_observable_counter(name, [ callback ], unit=unit, description=description)
             elif type == 'up_down_counter':
-                counter = meter.create_observable_up_down_counter(name, [ callback ], unit=unit, description=description)
+                counters[counter_id] = meter.create_observable_up_down_counter(name, [ callback ], unit=unit, description=description)
             elif type == 'gauge':
-                counter = meter.create_observable_gauge(name, [ callback ], unit=unit, description=description)
+                counters[counter_id] = meter.create_observable_gauge(name, [ callback ], unit=unit, description=description)
             else
                 raise Exception('Unknown counter type : ' + type)
         else
             raise Exception('Unknown counter kind : ' + kind)
-        counter_id = str(next_conter_id)
-        counters[counter_id] = counter
         next_counter_id = next_counter_id + 1
         with open(response_path, 'w') as response:
             response.write(counter_id)
@@ -462,6 +461,9 @@ def handle(scope, version, command, arguments):
         logger.emit(record)
     else:
         return
+
+def observable_counter_callback(observer):
+    pass
 
 def parse_time(time_string):
     if time_string == 'auto':
