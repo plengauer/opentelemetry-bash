@@ -5,6 +5,7 @@ import traceback
 import json
 import requests
 from datetime import datetime, timezone
+import functools
 
 import opentelemetry
 
@@ -124,6 +125,7 @@ counters = {}
 next_counter_id = 0
 observations = {}
 next_observation_id = 0
+delayed_observations = {}
 
 auto_end = False
 
@@ -396,7 +398,8 @@ def handle(scope, version, command, arguments):
             else
                 raise Exception('Unknown counter type : ' + type)
         elif name == 'observable'
-            callback = observable_counter_callback
+            callback = functools.partial(observable_counter_callback, counter_id)
+            delayed_observations[counter_id] = {}
             if type == 'counter':
                 counters[counter_id] = meter.create_observable_counter(name, [ callback ], unit=unit, description=description)
             elif type == 'up_down_counter':
@@ -404,9 +407,9 @@ def handle(scope, version, command, arguments):
             elif type == 'gauge':
                 counters[counter_id] = meter.create_observable_gauge(name, [ callback ], unit=unit, description=description)
             else
-                raise Exception('Unknown counter type : ' + type)
+                raise Exception('Unknown counter type: ' + type)
         else
-            raise Exception('Unknown counter kind : ' + kind)
+            raise Exception('Unknown counter kind: ' + kind)
         next_counter_id = next_counter_id + 1
         with open(response_path, 'w') as response:
             response.write(counter_id)
@@ -414,9 +417,11 @@ def handle(scope, version, command, arguments):
         tokens = arguments.split(' ', 1)
         counter_id = tokens[0]
         observation_id = tokens[1]
-        counter = counters[counter_id]
         observation = observations[observation_id]
-        counter.add(observation.amount, observation.attributes) # TODO observable ones
+        if hasattr(counter_object, 'add'):
+            counters[counter_id].add(observation.amount, observation.attributes)
+        else:
+            delayed_observations[counter_id][hashlib.sha256(json.dumps(observation.attributes, sort_keys=True).encode('utf-8')).hexdigest()] = observation
         del events[str(observation_id)]
     elif command == 'OBSERVATION_CREATE':
         global next_observation_id
@@ -462,8 +467,9 @@ def handle(scope, version, command, arguments):
     else:
         return
 
-def observable_counter_callback(observer):
-    pass
+def observable_counter_callback(counter_id, observer):
+    for observation in delayed_observations[counter_id].values():
+        observer.observe(observation.amount, observation.attributes)
 
 def parse_time(time_string):
     if time_string == 'auto':
