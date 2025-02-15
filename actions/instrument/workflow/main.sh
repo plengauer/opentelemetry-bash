@@ -79,7 +79,7 @@ jq < "$jobs_json" -r '. | [.id, .conclusion, .started_at, .completed_at, .name] 
     otel_span_attribute_typed $step_span_handle string github.actions.step.name="$step_name"
     otel_span_attribute_typed $step_span_handle string github.actions.step.conclusion="$step_conclusion"
     otel_span_activate "$step_span_handle"
-    step_log_file="$(printf '%s' "$logs_dir"/"${job_name//\//}"/"$step_number"_"${step_name//\//}".txt | tr -d ':')"
+    step_log_file="$(printf '%s' "$logs_dir"/"${job_name//\//}"/"$step_number"_*.txt | tr -d ':')"
     [ -r "$step_log_file" ] && cat "$step_log_file" | while read -r line; do _otel_log_record "$TRACEPARENT" "${line%% *}" "${line#* }"; done || true
     otel_span_deactivate "$step_span_handle"
     if [ "$step_conclusion" = failure ]; then otel_span_error "$job_span_handle"; fi
