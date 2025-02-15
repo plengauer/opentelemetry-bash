@@ -34,7 +34,7 @@ GITHUB_JOB_ID="$(gh_jobs "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" | jq --unbuffere
 if [ "$(printf '%s' "$GITHUB_JOB_ID" | wc -l)" -le 1 ]; then export GITHUB_JOB_ID; fi
 echo "Guessing GitHub job id to be $GITHUB_JOB_ID" >&2
 
-if type docker && [ "${OTEL_LOGS_EXPORTER:-otlp}" = otlp ] && [ "${OTEL_METRICS_EXPORTER:-otlp}" = otlp ] && [ "${OTEL_TRACES_EXPORTER:-otlp}" = otlp ]; then
+if type docker && [ "${OTEL_LOGS_EXPORTER:-otlp}" = otlp ] && [ "${OTEL_METRICS_EXPORTER:-otlp}" = otlp ] && [ "${OTEL_TRACES_EXPORTER:-otlp}" = otlp ] && ([ -n "${OTEL_EXPORTER_OTLP_HEADERS:-}" ] || [ -n "${OTEL_EXPORTER_OTLP_LOGS_HEADERS:-}" ] || [ -n "${OTEL_EXPORTER_OTLP_METRICS_HEADERS:-}" ] || [ -n "${OTEL_EXPORTER_OTLP_TRACES_HEADERS:-}" ]); then
   cat > collector.yaml <<EOF
 receivers:
   otlp:
@@ -51,7 +51,7 @@ exporters:
   ${OTEL_METRICS_EXPORTER:-otlphttp}/metrics:
     endpoint: "${OTEL_EXPORTER_OTLP_METRICS_ENDPOINT:-$OTEL_EXPORTER_OTLP_ENDPOINT}"
     headers:
-      $(echo "$OTEL_EXPORTER_OTLP_HEADERS","$OTEL_EXPORTER_OTLP_TRACES_HEADERS" | tr ',' '\n' | grep -v '^$' | sed 's/=/: /g')
+      $(echo "$OTEL_EXPORTER_OTLP_HEADERS","$OTEL_EXPORTER_OTLP_METRICS_HEADERS" | tr ',' '\n' | grep -v '^$' | sed 's/=/: /g')
   
   ${OTEL_TRACES_EXPORTER:-otlphttp}/traces:
     endpoint: "${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT:-$OTEL_EXPORTER_OTLP_ENDPOINT}"
