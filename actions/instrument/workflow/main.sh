@@ -40,7 +40,20 @@ gh_artifact_download "$INPUT_WORKFLOW_RUN_ID" "$INPUT_WORKFLOW_RUN_ATTEMPT" open
 if [ -r opentelemetry_workflow_run/traceparent ]; then export OTEL_ID_GENERATOR_OVERRIDE_TRACEPARENT="$(cat opentelemetry_workflow_run/traceparent)"; fi
 rm -rf opentelemetry_workflow_run
 otel_init
+workflow_run_counter_handle="$(otel_counter_create standard counter githup.actions.workflows 1 'Number of workflow runs')"
+job_run_counter_handle="$(otel_counter_create standard counter githup.actions.jobs 1 'Number of job runs')"
 
+observation_handle="$(otel_observation_create 1)"
+otel_observation_attribute_typed "$observation_handle" string github.actions.workflow.id="$(jq < "$workflow_json" -r .workflow_id)"
+otel_observation_attribute_typed "$observation_handle" string github.actions.workflow.name="$(jq < "$workflow_json" -r .name)"
+otel_observation_attribute_typed "$observation_handle" int github.actions.workflow_run.attempt="$(jq < "$workflow_json" .run_attempt)"
+otel_observation_attribute_typed "$observation_handle" string github.workflow_run.conclusion="$(jq < "$workflow_json" -r .conclusion)"
+otel_observation_attribute_typed "$observation_handle" int github.actions.actor.id="$(jq < "$workflow_json" .actor.id)"
+otel_observation_attribute_typed "$observation_handle" string github.actions.actor.name="$(jq < "$workflow_json" -r .actor.login)"
+otel_observation_attribute_typed "$observation_handle" string github.actions.event.name="$(jq < "$workflow_json" -r .event)"
+otel_observation_attribute_typed "$observation_handle" string github.actions.event.ref="/refs/heads/$(jq < "$workflow_json" -r .head_branch)"
+otel_observation_attribute_typed "$observation_handle" string github.actions.event.ref.name="$(jq < "$workflow_json" -r .head_branch)"
+otel_counter_observe "$workflow_run_counter_handle" "$observation_handle"
 link="${GITHUB_SERVER_URL:-https://github.com}"/"$(jq < "$workflow_json" -r .repository.owner.login)"/"$(jq < "$workflow_json" -r .repository.name)"/actions/runs/"$(jq < "$workflow_json" -r .id)"
 workflow_started_at="$(jq < "$workflow_json" -r .run_started_at)"
 workflow_span_handle="$(otel_span_start @"$workflow_started_at" CONSUMER "$(jq < "$workflow_json" -r .name)")"
@@ -64,6 +77,19 @@ fi
 otel_span_activate "$workflow_span_handle"
 jq < "$jobs_json" -r '. | [.id, .conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | while read -r job_id job_conclusion job_started_at job_completed_at job_name; do
   if [[ "$job_started_at" < "$workflow_started_at" ]]; then continue; fi
+  observation_handle="$(otel_observation_create 1)"
+  otel_observation_attribute_typed "$observation_handle" string github.actions.workflow.id="$(jq < "$workflow_json" -r .workflow_id)"
+  otel_observation_attribute_typed "$observation_handle" string github.actions.workflow.name="$(jq < "$workflow_json" -r .name)"
+  otel_observation_attribute_typed "$observation_handle" int github.actions.workflow_run.attempt="$(jq < "$workflow_json" .run_attempt)"
+  otel_observation_attribute_typed "$observation_handle" string github.workflow_run.conclusion="$(jq < "$workflow_json" -r .conclusion)"
+  otel_observation_attribute_typed "$observation_handle" int github.actions.actor.id="$(jq < "$workflow_json" .actor.id)"
+  otel_observation_attribute_typed "$observation_handle" string github.actions.actor.name="$(jq < "$workflow_json" -r .actor.login)"
+  otel_observation_attribute_typed "$observation_handle" string github.actions.event.name="$(jq < "$workflow_json" -r .event)"
+  otel_observation_attribute_typed "$observation_handle" string github.actions.event.ref="/refs/heads/$(jq < "$workflow_json" -r .head_branch)"
+  otel_observation_attribute_typed "$observation_handle" string github.actions.event.ref.name="$(jq < "$workflow_json" -r .head_branch)"
+  otel_observation_attribute_typed "$observation_handle" string github.actions.job.name="$job_name"
+  otel_observation_attribute_typed "$observation_handle" string github.actions.job.conclusion="$job_conclusion"
+  otel_counter_observe "$job_run_counter_handle" "$observation_handle"
   if jq < "$artifacts_json" -r .name | grep -q '^opentelemetry_job_'"$job_id"'$'; then continue; fi
   job_span_handle="$(otel_span_start @"$job_started_at" CONSUMER "$job_name")"
   otel_span_attribute_typed $job_span_handle string github.actions.type=job
