@@ -141,12 +141,21 @@ done | sed 's/\t/ /g' | while read -r TRACEPARENT step_number step_conclusion st
     otel_span_attribute_typed "$step_span_handle" string github.actions.url="$link"/job/"$job_id"'#'step:"$step_number":1
     otel_span_attribute_typed "$step_span_handle" string github.actions.step.name="$step_name"
     case "$step_name" in
-      'Pre '*)  otel_span_attribute_typed "$step_span_handle" string github.actions.step.phase=pre;;
-      'Build '*)  otel_span_attribute_typed "$step_span_handle" string github.actions.step.phase=pre;;
-      'Run '*)  otel_span_attribute_typed "$step_span_handle" string github.actions.step.phase=main;;
-      'Post '*)  otel_span_attribute_typed "$step_span_handle" string github.actions.step.phase=post;;
-      'Set up job') otel_span_attribute_typed "$step_span_handle" string github.actions.step.phase=pre;;
-      'Complete job') otel_span_attribute_typed "$step_span_handle" string github.actions.step.phase=post;;
+      *' '*/*@*) 
+        otel_span_attribute_typed "$step_span_handle" string github.actions.action.name="$(printf '%s' "$step_name" | cut -d ' ' -f 2- | cut -d @ -f 1)"
+        otel_span_attribute_typed "$step_span_handle" string github.actions.action.ref="$(printf '%s' "$step_name" | cut -d ' ' -f 2- | cut -d @ -f 2)"
+        ;;
+      *' '*/*) otel_span_attribute_typed "$step_span_handle" string github.actions.action.name="$(printf '%s' "$step_name" | cut -d ' ' -f 2-)";;
+      *) ;;
+    esac
+    case "$step_name" in
+      'Pre '*)  otel_span_attribute_typed "$step_span_handle" string github.actions.action.phase=pre;;
+      'Build '*)  otel_span_attribute_typed "$step_span_handle" string github.actions.action.phase=pre;;
+      'Run '*)  otel_span_attribute_typed "$step_span_handle" string github.actions.action.phase=main;;
+      'Post '*)  otel_span_attribute_typed "$step_span_handle" string github.actions.action.phase=post;;
+      'Set up job') otel_span_attribute_typed "$step_span_handle" string github.actions.action.phase=pre;;
+      'Complete job') otel_span_attribute_typed "$step_span_handle" string github.actions.action.phase=post;;
+      *) ;;
     esac
     otel_span_attribute_typed "$step_span_handle" string github.actions.step.conclusion="$step_conclusion"
     otel_span_activate "$step_span_handle"
