@@ -12,8 +12,6 @@ if [ -n "${GITHUB_ACTION_PATH:-}" ] && [ -d "$GITHUB_ACTION_PATH" ]; then
 else
   otel_span_attribute_typed $span_handle string github.actions.action.type=shell
 fi
-otel_span_attribute_typed $span_handle string github.actions.action.name="$GITHUB_ACTION_REPOSITORY"
-otel_span_attribute_typed $span_handle string github.actions.action.ref="$GITHUB_ACTION_REF"
 otel_span_attribute_typed $span_handle string github.actions.action.phase=main
 otel_span_activate "$span_handle"
 otel_observe _otel_inject_shell_with_copy "$@"
