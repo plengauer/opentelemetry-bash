@@ -9,13 +9,15 @@ span_handle="$(otel_span_start INTERNAL "${GITHUB_STEP:-$GITHUB_ACTION}")"
 otel_span_attribute_typed $span_handle string github.actions.type=step
 otel_span_attribute_typed $span_handle string github.actions.step.name="${GITHUB_STEP:-$GITHUB_ACTION}"
 if [ -n "${GITHUB_ACTION_PATH:-}" ] && [ -d "$GITHUB_ACTION_PATH" ]; then
-  otel_span_attribute_typed $span_handle string github.actions.step.type=composite/docker
+  otel_span_attribute_typed $span_handle string github.actions.action.type=composite/docker
 else
-  otel_span_attribute_typed $span_handle string github.actions.step.type=docker
+  otel_span_attribute_typed $span_handle string github.actions.action.type=docker
 fi
+otel_span_attribute_typed $span_handle string github.actions.action.name="$GITHUB_ACTION_REPOSITORY"
+otel_span_attribute_typed $span_handle string github.actions.action.ref="$GITHUB_ACTION_REF"
 case "$2" in
-  build) otel_span_attribute_typed $span_handle string github.actions.step.phase=pre;;
-  run) otel_span_attribute_typed $span_handle string github.actions.step.phase=main;;
+  build) otel_span_attribute_typed $span_handle string github.actions.action.phase=pre;;
+  run) otel_span_attribute_typed $span_handle string github.actions.action.phase=main;;
   *) ;;
 esac
 otel_span_activate "$span_handle"
