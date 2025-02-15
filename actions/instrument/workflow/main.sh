@@ -138,6 +138,14 @@ done | sed 's/\t/ /g' | while read -r TRACEPARENT step_number step_conclusion st
     otel_span_attribute_typed "$step_span_handle" string github.actions.type=step
     otel_span_attribute_typed "$step_span_handle" string github.actions.url="$link"/job/"$job_id"'#'step:"$step_number":1
     otel_span_attribute_typed "$step_span_handle" string github.actions.step.name="$step_name"
+    case "$step_name" in
+      'Pre '*)  otel_span_attribute_typed "$step_span_handle" string github.actions.step.phase=pre;;
+      'Build '*)  otel_span_attribute_typed "$step_span_handle" string github.actions.step.phase=pre;;
+      'Run '*)  otel_span_attribute_typed "$step_span_handle" string github.actions.step.phase=main;;
+      'Post '*)  otel_span_attribute_typed "$step_span_handle" string github.actions.step.phase=post;;
+      'Set up job') otel_span_attribute_typed "$step_span_handle" string github.actions.step.phase=pre;;
+      'Complete job') otel_span_attribute_typed "$step_span_handle" string github.actions.step.phase=post;;
+    esac
     otel_span_attribute_typed "$step_span_handle" string github.actions.step.conclusion="$step_conclusion"
     otel_span_activate "$step_span_handle"
     step_log_file="$(printf '%s' "$logs_dir"/"${job_name//\//}"/"$step_number"_"${step_name//\//}".txt | tr -d ':')"
