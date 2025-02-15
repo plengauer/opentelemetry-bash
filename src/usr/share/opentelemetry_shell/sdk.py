@@ -430,7 +430,7 @@ def handle(scope, version, command, arguments):
         amount = tokens[1]
         observation_id = str(next_observation_id)
         next_observation_id = next_observation_id + 1
-        observation[observation_id] = { 'amount': convert_type('auto', amount), 'attributes': {} }
+        observations[observation_id] = { 'amount': convert_type('auto', amount), 'attributes': {} }
         with open(response_path, 'w') as response:
             response.write(observation_id)
     elif command == 'OBSERVATION_ATTRIBUTE':
