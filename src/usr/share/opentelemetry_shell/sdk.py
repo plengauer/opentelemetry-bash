@@ -418,8 +418,9 @@ def handle(scope, version, command, arguments):
         counter_id = tokens[0]
         observation_id = tokens[1]
         observation = observations[observation_id]
-        if hasattr(counter_object, 'add'):
-            counters[counter_id].add(observation.amount, observation.attributes)
+        counter = counters[counter_id]
+        if hasattr(counter, 'add'):
+            counter.add(observation.amount, observation.attributes)
         else:
             delayed_observations[counter_id][hashlib.sha256(json.dumps(observation.attributes, sort_keys=True).encode('utf-8')).hexdigest()] = observation
         del events[str(observation_id)]
