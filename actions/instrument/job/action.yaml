@@ -9,15 +9,18 @@ runs:
   main: 'nop.js'
   post: 'shutdown.js'
 inputs:
-  __job_status:
-    description: 'INTERNAL ONLY - DO NOT SET MANUALLY'
-    default: '${{ job.status }}'
-  __job_matrix:
-    description: 'INTERNAL ONLY - DO NOT SET MANUALLY'
-    default: '${{ toJSON(matrix) }}'
   github_token:
     description: 'A GitHub token for API access (read-only)'
     default: '${{ github.token }}'
   cache:
     description: 'Whether to use GitHub Actions Cache to cache dependencies'
     default: true
+  debug:
+    description: 'Enable debug logging'
+    default: ${{ runner.debug }}
+  __job_status:
+    description: 'INTERNAL ONLY - DO NOT SET MANUALLY'
+    default: '${{ job.status }}'
+  __job_matrix:
+    description: 'INTERNAL ONLY - DO NOT SET MANUALLY'
+    default: '${{ toJSON(matrix) }}'
