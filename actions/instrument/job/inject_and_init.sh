@@ -26,41 +26,25 @@ docker_path="$(which docker)"
 sudo mv "$docker_path" "$(pwd)"
 sudo gcc -o "$docker_path" forward.c -DEXECUTABLE=/bin/bash -DARG1="$(pwd)"/decorate_action_docker.sh -DARG2="$(pwd)"/docker
 
-jobs_json="$(mktemp)"
-if gh_jobs "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" | jq .jobs[] | tee "$jobs_json" | jq -r '. | select(.status != "completed") | .name' | grep -q '^observe$'; then
-  while ! gh_artifacts "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" | jq -r '.artifacts[].name' | grep -q '^opentelemetry$'; do sleep 3; done
-  env_dir="$(mktemp -d)"
-  gh_artifact_download "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" opentelemetry "$env_dir" || true
-  if [ -f "$env_dir"/.env ]; then
-    # mv "$env_dir"/.env "$env_dir"/.env.encrypted
-    # cat "$env_dir"/.env.encrypted | base64 --decode | openssl enc -d -aes-256-cbc -pbkdf2 -pass pass:"$INPUT_GITHUB_TOKEN" > "$env_dir"/.env
-    while read -r line; do
-      export "$line"
-    done < "$env_dir"/.env
-  fi
-  rm -r "$env_dir"
-else
-  OTEL_SHELL_GITHUB_JOB="$GITHUB_JOB"
-  job_arguments="$(printf '%s' "$INPUT___JOB_MATRIX" | jq -r '. | [.. | scalars] | @tsv' | sed 's/\t/, /g')"
-  if [ -n "$job_arguments" ]; then OTEL_SHELL_GITHUB_JOB="$OTEL_SHELL_GITHUB_JOB ($job_arguments)"; fi
-  export OTEL_SHELL_GITHUB_JOB
-  GITHUB_JOB_ID="$(cat "$jobs_json" | jq -r '. | [.id, .name] | @tsv' | sed 's/\t/ /g' | grep " $OTEL_SHELL_GITHUB_JOB"'$' | cut -d ' ' -f 1)"
-  if [ "$(printf '%s' "$GITHUB_JOB_ID" | wc -l)" -le 1 ]; then export GITHUB_JOB_ID; fi
-  echo "Guessing GitHub job id to be $GITHUB_JOB_ID" >&2
-  
-  opentelemetry_root_dir="$(mktemp -d)"
-  while ! gh_artifact_download "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" opentelemetry_workflow_run_"$GITHUB_RUN_ATTEMPT" "$opentelemetry_root_dir" || ! [ -r "$opentelemetry_root_dir"/traceparent ]; do
-    . otelapi.sh
-    otel_init
-    otel_span_traceparent "$(otel_span_start INTERNAL dummy)" > "$opentelemetry_root_dir"/traceparent
-    gh_artifact_upload "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" opentelemetry_workflow_run_"$GITHUB_RUN_ATTEMPT" "$opentelemetry_root_dir"/traceparent || true
-    rm "$opentelemetry_root_dir"/traceparent
-    otel_shutdown
-  done
-  export TRACEPARENT="$(cat "$opentelemetry_root_dir"/traceparent)"
-  rm -rf "$opentelemetry_root_dir"
-fi
-rm "$jobs_json"
+OTEL_SHELL_GITHUB_JOB="$GITHUB_JOB"
+job_arguments="$(printf '%s' "$INPUT___JOB_MATRIX" | jq -r '. | [.. | scalars] | @tsv' | sed 's/\t/, /g')"
+if [ -n "$job_arguments" ]; then OTEL_SHELL_GITHUB_JOB="$OTEL_SHELL_GITHUB_JOB ($job_arguments)"; fi
+export OTEL_SHELL_GITHUB_JOB
+GITHUB_JOB_ID="$(gh_jobs "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" | jq --unbuffered -r '. | .jobs[] | [.id, .name] | @tsv' | sed 's/\t/ /g' | grep " $OTEL_SHELL_GITHUB_JOB"'$' | cut -d ' ' -f 1)"
+if [ "$(printf '%s' "$GITHUB_JOB_ID" | wc -l)" -le 1 ]; then export GITHUB_JOB_ID; fi
+echo "Guessing GitHub job id to be $GITHUB_JOB_ID" >&2
+
+opentelemetry_root_dir="$(mktemp -d)"
+while ! gh_artifact_download "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" opentelemetry_workflow_run_"$GITHUB_RUN_ATTEMPT" "$opentelemetry_root_dir" || ! [ -r "$opentelemetry_root_dir"/traceparent ]; do
+  . otelapi.sh
+  otel_init
+  otel_span_traceparent "$(otel_span_start INTERNAL dummy)" > "$opentelemetry_root_dir"/traceparent
+  gh_artifact_upload "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" opentelemetry_workflow_run_"$GITHUB_RUN_ATTEMPT" "$opentelemetry_root_dir"/traceparent || true
+  rm "$opentelemetry_root_dir"/traceparent
+  otel_shutdown
+done
+export TRACEPARENT="$(cat "$opentelemetry_root_dir"/traceparent)"
+rm -rf "$opentelemetry_root_dir"
 
 export OTEL_SERVICE_NAME="${OTEL_SERVICE_NAME:-"$(echo "$GITHUB_REPOSITORY" | cut -d / -f 2-) CI"}"
 
@@ -78,6 +62,7 @@ root4job_end() {
 export -f root4job_end
 
 root4job() {
+  sudo docker start otel/opentelemetry-collector:latest
   rm /tmp/opentelemetry_shell.github.error 2> /dev/null
   ( while true; do cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"; done >> "$OTEL_SHELL_SDK_LOG_FILE" ) 1> /dev/null 2> /dev/null &
   traceparent_file="$1"
