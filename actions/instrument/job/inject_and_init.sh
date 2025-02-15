@@ -34,11 +34,57 @@ GITHUB_JOB_ID="$(gh_jobs "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" | jq --unbuffere
 if [ "$(printf '%s' "$GITHUB_JOB_ID" | wc -l)" -le 1 ]; then export GITHUB_JOB_ID; fi
 echo "Guessing GitHub job id to be $GITHUB_JOB_ID" >&2
 
-if type docker; then
-  collector_image="$(cat Dockerfile | grep '^FROM ' | cut -d ' ' -f 2-)"
+if type docker && [ "${OTEL_LOGS_EXPORTER:-otlp}" = otlp ] && [ "${OTEL_METRICS_EXPORTER:-otlp}" = otlp ] && [ "${OTEL_TRACES_EXPORTER:-otlp}" = otlp ]; then
+  cat > collector.yaml <<EOF
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: localhost:4318
+
+exporters:
+  ${OTEL_LOGS_EXPORTER:-otlphttp}/logs:
+    endpoint: "${OTEL_EXPORTER_OTLP_LOGS_ENDPOINT:-$OTEL_EXPORTER_OTLP_ENDPOINT}"
+    headers:
+      $(echo "$OTEL_EXPORTER_OTLP_HEADERS","$OTEL_EXPORTER_OTLP_LOGS_HEADERS" | tr ',' '\n' | grep -v '^$' | sed 's/=/: /g')
+  
+  ${OTEL_METRICS_EXPORTER:-otlphttp}/metrics:
+    endpoint: "${OTEL_EXPORTER_OTLP_METRICS_ENDPOINT:-$OTEL_EXPORTER_OTLP_ENDPOINT}"
+    headers:
+      $(echo "$OTEL_EXPORTER_OTLP_HEADERS","$OTEL_EXPORTER_OTLP_TRACES_HEADERS" | tr ',' '\n' | grep -v '^$' | sed 's/=/: /g')
+  
+  ${OTEL_TRACES_EXPORTER:-otlphttp}/traces:
+    endpoint: "${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT:-$OTEL_EXPORTER_OTLP_ENDPOINT}"
+    headers:
+      $(echo "$OTEL_EXPORTER_OTLP_HEADERS","$OTEL_EXPORTER_OTLP_TRACES_HEADERS" | tr ',' '\n' | grep -v '^$' | sed 's/=/: /g')
+
+processors:
+  batch:
+
+service:
+  pipelines:
+    logs:
+      receivers: [otlp]
+      exporters: [${OTEL_LOGS_EXPORTER:-otlphttp}/logs]
+      processors: [batch]
+
+    metrics:
+      receivers: [otlp]
+      exporters: [${OTEL_METRICS_EXPORTER:-otlphttp}/metrics]
+      processors: [batch]
+
+    traces:
+      receivers: [otlp]
+      exporters: [${OTEL_TRACES_EXPORTER:-otlphttp}/traces]
+      processors: [batch]
+EOF
+  export OTEL_TRACES_EXPORTER=otlp
+  export OTEL_EXPORTER_OTLP_ENDPOINT=https://localhost:4318
+  export OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+  unset OTEL_EXPORTER_OTLP_LOGS_ENDPOINT OTEL_EXPORTER_OTLP_METRICS_ENDPOINT OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+  unset OTEL_LOGS_EXPORTER OTEL_METRICS_EXPORTER OTEL_TRACES_EXPORTER
+  export OTEL_SHELL_COLLECTOR_IMAGE="$(cat Dockerfile | grep '^FROM ' | cut -d ' ' -f 2-)"
   sudo docker pull "$collector_image" &
-  # TODO create yaml
-  export OTEL_SHELL_COLLECTOR_CONTAINER_NAME="$(sudo docker start --restart unless-stopped --network=host --mount type=bind,source="$(pwd)"/collector.yaml,target=/etc/otelcol/config.yaml "$collector_image")"
 fi
 
 opentelemetry_root_dir="$(mktemp -d)"
@@ -64,13 +110,13 @@ root4job_end() {
   fi
   otel_span_end "$span_handle"
   otel_shutdown
-  [ -z "${OTEL_SHELL_COLLECTOR_CONTAINER_NAME:-}" ] || sudo docker stop "$OTEL_SHELL_COLLECTOR_CONTAINER_NAME"
+  [ -z "${OTEL_SHELL_COLLECTOR_CONTAINER:-}" ] || sudo docker stop "$OTEL_SHELL_COLLECTOR_CONTAINER"
   exit 0
 }
 export -f root4job_end
 
 root4job() {
-  sudo docker start otel/opentelemetry-collector:latest
+  [ -z "${OTEL_SHELL_COLLECTOR_CONTAINER:-}" ] || export OTEL_SHELL_COLLECTOR_CONTAINER="$(sudo docker start --restart unless-stopped --network=host --mount type=bind,source="$(pwd)"/collector.yaml,target=/etc/otelcol/config.yaml "$OTEL_SHELL_COLLECTOR_IMAGE")"
   rm /tmp/opentelemetry_shell.github.error 2> /dev/null
   ( while true; do cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"; done >> "$OTEL_SHELL_SDK_LOG_FILE" ) 1> /dev/null 2> /dev/null &
   traceparent_file="$1"
