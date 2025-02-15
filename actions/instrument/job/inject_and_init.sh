@@ -64,6 +64,19 @@ rm "$jobs_json"
 
 export OTEL_SERVICE_NAME="${OTEL_SERVICE_NAME:-"$(echo "$GITHUB_REPOSITORY" | cut -d / -f 2-) CI"}"
 
+observe_rate_limit() {
+  used_gauge_handle="$(otel_counter_create observable gauge github.api.rate_limit.used 1 "The amount of rate limited requests used")"
+  remaining_gauge_handle="$(otel_counter_create observable gauge github.api.rate_limit.remaining 1 "The amount of rate limited requests remaining")"
+  while true; do gh_rate_limit; sleep 5; done | jq --unbuffered -r '.resources | to_entries[] | [.key, .value.used, .value.remaining] | @tsv' | sed 's/\t/ /g' | while read -r resource used remaining; do
+    observation_handle="$(otel_observation_create "$used")"
+    otel_observation_attribute_typed "$observation_handle" string github.api.resource="$resource"
+    otel_counter_observe "$used_gauge_handle" "$observation_handle"
+    observation_handle="$(otel_observation_create "$remaining")"
+    otel_observation_attribute_typed "$observation_handle" string github.api.resource="$resource"
+    otel_counter_observe "$used_gauge_handle" "$observation_handle"
+  done
+}
+
 root4job_end() {
   if [ -f /tmp/opentelemetry_shell.github.error ]; then
     otel_span_attribute_typed "$span_handle" string github.actions.job.conclusion=failure
@@ -73,6 +86,7 @@ root4job_end() {
   fi
   otel_span_end "$span_handle"
   otel_shutdown
+  kill -9 "$observe_rate_limit_pid" || true
   exit 0
 }
 export -f root4job_end
@@ -83,6 +97,8 @@ root4job() {
   traceparent_file="$1"
   . otelapi.sh
   otel_init
+  observe_rate_limit &
+  observe_rate_limit_pid="$!"
   span_handle="$(otel_span_start CONSUMER "${OTEL_SHELL_GITHUB_JOB:-$GITHUB_JOB}")"
   otel_span_attribute_typed $span_handle string github.actions.type=job
   if [ -n "$GITHUB_JOB_ID" ]; then

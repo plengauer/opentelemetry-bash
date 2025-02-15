@@ -7,6 +7,12 @@ otel_init
 span_handle="$(otel_span_start INTERNAL "${GITHUB_STEP:-$GITHUB_ACTION}")"
 otel_span_attribute_typed $span_handle string github.actions.type=step
 otel_span_attribute_typed $span_handle string github.actions.step.name="${GITHUB_STEP:-$GITHUB_ACTION}"
+if [ -n "${GITHUB_ACTION_PATH:-}" ] && [ -d "$GITHUB_ACTION_PATH" ]; then
+  otel_span_attribute_typed $span_handle string github.actions.action.type=composite/shell
+else
+  otel_span_attribute_typed $span_handle string github.actions.action.type=shell
+fi
+otel_span_attribute_typed $span_handle string github.actions.action.phase=main
 otel_span_activate "$span_handle"
 otel_observe _otel_inject_shell_with_copy "$@"
 exit_code="$?"
