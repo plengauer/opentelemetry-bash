@@ -13,6 +13,7 @@ if [ -n "${GITHUB_ACTION_PATH:-}" ] && [ -d "$GITHUB_ACTION_PATH" ]; then
 else
   otel_span_attribute_typed $span_handle string github.actions.step.type=javascript
 fi
+# otel_span_attribute_typed $span_handle string github.actions.step.phase=main # TODO
 otel_span_activate "$span_handle"
 otel_observe _otel_inject_node "$@"
 exit_code="$?"
