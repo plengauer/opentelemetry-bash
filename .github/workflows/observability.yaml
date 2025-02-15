@@ -2,7 +2,7 @@ name: OpenTelemetry
 
 on:
   workflow_run:
-    workflows: ['Test', 'Publish', 'Refresh Demos', 'Renovate', 'Autoversion', 'Autoapprove', 'Autorerun' ]
+    workflows: ['Test', 'Publish', 'Refresh Demos', 'Renovate', 'Autoversion', 'Autoapprove', 'Autorerun', 'Workflow Example' ]
     types:
       - completed
 
