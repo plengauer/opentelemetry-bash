@@ -36,9 +36,9 @@ _otel_resource_attributes_process() {
   _otel_resource_attribute string github.actions.workflow.ref="$(jq < "$workflow_json" -r .repository.owner.login)"/"$(jq < "$workflow_json" -r .repository.name)"/"$(jq < "$workflow_json" -r .path)"@/refs/heads/"$(jq < "$workflow_json" -r .head_branch)"
   _otel_resource_attribute string github.actions.workflow.sha="$(jq < "$workflow_json" -r .head_sha)"
 }
-gh_artifact_download "$INPUT_WORKFLOW_RUN_ID" "$INPUT_WORKFLOW_RUN_ATTEMPT" opentelemetry_workflow_run_"$INPUT_WORKFLOW_RUN_ATTEMPT" opentelemetry_workflow_run || true
-if [ -r opentelemetry_workflow_run/traceparent ]; then export OTEL_ID_GENERATOR_OVERRIDE_TRACEPARENT="$(cat opentelemetry_workflow_run/traceparent)"; fi
-rm -rf opentelemetry_workflow_run
+workflow_run_dir="$(mktemp -d)"
+gh_artifact_download "$INPUT_WORKFLOW_RUN_ID" "$INPUT_WORKFLOW_RUN_ATTEMPT" opentelemetry_workflow_run_"$INPUT_WORKFLOW_RUN_ATTEMPT" "$workflow_run_dir" || true
+if [ -r "$workflow_run_dir"/traceparent ]; then export OTEL_ID_GENERATOR_OVERRIDE_TRACEPARENT="$(cat "$workflow_run_dir"/traceparent)"; fi
 
 otel_init
 workflow_run_counter_handle="$(otel_counter_create standard counter githup.actions.workflows 1 'Number of workflow runs')"
@@ -194,7 +194,7 @@ done | sed 's/\t/ /g' | while read -r TRACEPARENT step_number step_conclusion st
     otel_span_attribute_typed "$step_span_handle" string github.actions.step.conclusion="$step_conclusion"
     otel_span_activate "$step_span_handle"
     STEP_TRACEPARENT="$TRACEPARENT"
-    step_log_file="$(printf '%s' "$logs_dir"/"${job_name//\//}"/"$step_number"_"${step_name//\//}".txt | tr -d ':')"
+    step_log_file="$(printf '%s' "$logs_dir"/"${job_name//\//}"/"$step_number"_*.txt | tr -d ':')"
     [ -r "$step_log_file" ] && cat "$step_log_file" | while read -r line; do _otel_log_record "$TRACEPARENT" "${line%% *}" "${line#* }"; done || true
     otel_span_deactivate "$step_span_handle"
     if [ "$step_conclusion" = failure ]; then otel_span_error "$step_span_handle"; fi

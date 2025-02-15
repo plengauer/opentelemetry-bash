@@ -106,6 +106,10 @@ root4job() {
   fi
   otel_span_attribute_typed $span_handle int github.actions.job.id="${GITHUB_JOB_ID:-}"
   otel_span_attribute_typed $span_handle string github.actions.job.name="${OTEL_SHELL_GITHUB_JOB:-$GITHUB_JOB}"
+  otel_span_attribute_typed $span_handle string github.actions.runner.name="$RUNNER_NAME"
+  otel_span_attribute_typed $span_handle string github.actions.runner.os="$RUNNER_OS"
+  otel_span_attribute_typed $span_handle string github.actions.runner.arch="$RUNNER_ARCH"
+  otel_span_attribute_typed $span_handle string github.actions.runner.environment="$RUNNER_ENVIRONMENT"
   otel_span_activate "$span_handle"
   echo "$TRACEPARENT" > "$traceparent_file"
   if [ -n "${GITHUB_JOB_ID:-}" ]; then
