@@ -18,7 +18,7 @@ jobs:
           OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT }}'
       - run: echo 'hello world, im a compiler (deeply injected), i sometimes fail'
       - run: |
-          [ "$GITHUB_RUN_ATTEMPT" != 1 ]
+          [ "$GITHUB_RUN_ATTEMPT" != 1 ] || (echo "rate limit exceeded" && false)
 
   test:
     needs: build
