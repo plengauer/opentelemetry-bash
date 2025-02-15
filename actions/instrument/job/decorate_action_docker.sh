@@ -8,7 +8,11 @@ otel_init
 span_handle="$(otel_span_start INTERNAL "${GITHUB_STEP:-$GITHUB_ACTION}")"
 otel_span_attribute_typed $span_handle string github.actions.type=step
 otel_span_attribute_typed $span_handle string github.actions.step.name="${GITHUB_STEP:-$GITHUB_ACTION}"
-otel_span_attribute_typed $span_handle string github.actions.step.type=docker
+if [ -n "${GITHUB_ACTION_PATH:-}" ] && [ -d "$GITHUB_ACTION_PATH" ]; then
+  otel_span_attribute_typed $span_handle string github.actions.step.type=composite/docker
+else
+  otel_span_attribute_typed $span_handle string github.actions.step.type=docker
+fi
 case "$2" in
   build) otel_span_attribute_typed $span_handle string github.actions.step.phase=pre;;
   run) otel_span_attribute_typed $span_handle string github.actions.step.phase=main;;
