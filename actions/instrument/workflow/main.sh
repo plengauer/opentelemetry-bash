@@ -82,6 +82,7 @@ WORKFLOW_TRACEPARENT="$TRACEPARENT"
 otel_span_deactivate "$workflow_span_handle"
 if [ "$(jq < "$workflow_json" .conclusion -r)" = failure ]; then otel_span_error "$workflow_span_handle"; fi
 otel_span_end "$workflow_span_handle" @"$(jq < "$jobs_json" -r .completed_at | sort -r | head -n 1)"
+[ -z "${INPUT_DEBUG}" ] || echo "span workflow $WORKFLOW_TRACEPARENT $(jq < "$workflow_json" -r .name)" >&2
 
 jq < "$jobs_json" -r --unbuffered '. | ["'"${WORKFLOW_TRACEPARENT:-null}"'", .id, .conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | while read -r TRACEPARENT job_id job_conclusion job_started_at job_completed_at job_name; do
   if [[ "$job_started_at" < "$workflow_started_at" ]]; then continue; fi
@@ -112,6 +113,7 @@ jq < "$jobs_json" -r --unbuffered '. | ["'"${WORKFLOW_TRACEPARENT:-null}"'", .id
     otel_span_deactivate "$job_span_handle"
     if [ "$job_conclusion" = failure ]; then otel_span_error "$job_span_handle"; fi
     otel_span_end "$job_span_handle" @"$job_completed_at"
+    [ -z "${INPUT_DEBUG}" ] || echo "span job $JOB_TRACEPARENT $job_name" >&2
   fi
 
   jq < "$jobs_json" -r --unbuffered '. | select(.id == '"$job_id"') | .steps[] | ["'"${JOB_TRACEPARENT:-null}"'", .number, .conclusion, .started_at, .completed_at, .name] | @tsv'
@@ -148,11 +150,13 @@ done | sed 's/\t/ /g' | while read -r TRACEPARENT step_number step_conclusion st
     esac
     otel_span_attribute_typed "$step_span_handle" string github.actions.step.conclusion="$step_conclusion"
     otel_span_activate "$step_span_handle"
+    STEP_TRACEPARENT="$TRACEPARENT"
     step_log_file="$(printf '%s' "$logs_dir"/"${job_name//\//}"/"$step_number"_"${step_name//\//}".txt | tr -d ':')"
     [ -r "$step_log_file" ] && cat "$step_log_file" | while read -r line; do _otel_log_record "$TRACEPARENT" "${line%% *}" "${line#* }"; done || true
     otel_span_deactivate "$step_span_handle"
     if [ "$step_conclusion" = failure ]; then otel_span_error "$job_span_handle"; fi
     otel_span_end "$step_span_handle" @"$step_completed_at"
+    [ -z "${INPUT_DEBUG}" ] || echo "span step $STEP_TRACEPARENT $step_name" >&2
   fi
   
 done
