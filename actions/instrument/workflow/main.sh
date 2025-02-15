@@ -145,7 +145,10 @@ done | sed 's/\t/ /g' | while read -r TRACEPARENT step_number step_conclusion st
         otel_span_attribute_typed "$step_span_handle" string github.actions.action.name="$(printf '%s' "$step_name" | cut -d ' ' -f 2- | cut -d @ -f 1)"
         otel_span_attribute_typed "$step_span_handle" string github.actions.action.ref="$(printf '%s' "$step_name" | cut -d ' ' -f 2- | cut -d @ -f 2)"
         ;;
-      *' '*/*) otel_span_attribute_typed "$step_span_handle" string github.actions.action.name="$(printf '%s' "$step_name" | cut -d ' ' -f 2-)";;
+      *' '*/*)
+        otel_span_attribute_typed "$step_span_handle" string github.actions.action.name="$(printf '%s' "$step_name" | cut -d ' ' -f 2-)"
+        otel_span_attribute_typed "$step_span_handle" string github.actions.action.ref=main
+        ;;
       *) ;;
     esac
     case "$step_name" in
