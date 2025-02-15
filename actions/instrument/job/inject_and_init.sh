@@ -34,6 +34,13 @@ GITHUB_JOB_ID="$(gh_jobs "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" | jq --unbuffere
 if [ "$(printf '%s' "$GITHUB_JOB_ID" | wc -l)" -le 1 ]; then export GITHUB_JOB_ID; fi
 echo "Guessing GitHub job id to be $GITHUB_JOB_ID" >&2
 
+if type docker; then
+  collector_image="$(cat Dockerfile | grep '^FROM ' | cut -d ' ' -f 2-)"
+  sudo docker pull "$collector_image" &
+  # TODO create yaml
+  export OTEL_SHELL_COLLECTOR_CONTAINER_NAME="$(sudo docker start --restart unless-stopped --network=host --mount type=bind,source="$(pwd)"/collector.yaml,target=/etc/otelcol/config.yaml "$collector_image")"
+fi
+
 opentelemetry_root_dir="$(mktemp -d)"
 while ! gh_artifact_download "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" opentelemetry_workflow_run_"$GITHUB_RUN_ATTEMPT" "$opentelemetry_root_dir" || ! [ -r "$opentelemetry_root_dir"/traceparent ]; do
   . otelapi.sh
@@ -57,6 +64,7 @@ root4job_end() {
   fi
   otel_span_end "$span_handle"
   otel_shutdown
+  [ -z "${OTEL_SHELL_COLLECTOR_CONTAINER_NAME:-}" ] || sudo docker stop "$OTEL_SHELL_COLLECTOR_CONTAINER_NAME"
   exit 0
 }
 export -f root4job_end
