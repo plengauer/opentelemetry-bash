@@ -10,8 +10,8 @@ otel_span_attribute_typed $span_handle string github.actions.type=step
 otel_span_attribute_typed $span_handle string github.actions.step.name="${GITHUB_STEP:-$GITHUB_ACTION}"
 otel_span_attribute_typed $span_handle string github.actions.step.type=docker
 case "$2" in
-  build) otel_span_attribute_typed "$step_span_handle" string github.actions.step.phase=pre;;
-  run) otel_span_attribute_typed "$step_span_handle" string github.actions.step.phase=main;;
+  build) otel_span_attribute_typed $span_handle string github.actions.step.phase=pre;;
+  run) otel_span_attribute_typed $span_handle string github.actions.step.phase=main;;
   *) ;;
 esac
 otel_span_activate "$span_handle"
