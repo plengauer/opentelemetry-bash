@@ -166,7 +166,7 @@ done | sed 's/\t/ /g' | while read -r TRACEPARENT step_number step_conclusion st
     step_log_file="$(printf '%s' "$logs_dir"/"${job_name//\//}"/"$step_number"_"${step_name//\//}".txt | tr -d ':')"
     [ -r "$step_log_file" ] && cat "$step_log_file" | while read -r line; do _otel_log_record "$TRACEPARENT" "${line%% *}" "${line#* }"; done || true
     otel_span_deactivate "$step_span_handle"
-    if [ "$step_conclusion" = failure ]; then otel_span_error "$job_span_handle"; fi
+    if [ "$step_conclusion" = failure ]; then otel_span_error "$step_span_handle"; fi
     otel_span_end "$step_span_handle" @"$step_completed_at"
     [ -z "${INPUT_DEBUG}" ] || echo "span step $STEP_TRACEPARENT $step_name" >&2
   fi
