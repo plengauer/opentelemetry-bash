@@ -336,7 +336,7 @@ otel_observation_attribute_typed() {
 otel_observation_attribute() {
   local observation_handle="$1"
   local kvp="$2"
-  otel_observation_attribute_typed "$observation_handle" "$kvp"
+  otel_observation_attribute_typed "$observation_handle" auto "$kvp"
 }
 
 otel_observe() {
