@@ -397,7 +397,7 @@ def handle(scope, version, command, arguments):
                 counters[counter_id] = meter.create_gauge(name, unit=unit, description=description)
             else:
                 raise Exception('Unknown counter type : ' + type)
-        elif name == 'observable':
+        elif kind == 'observable':
             callback = functools.partial(observable_counter_callback, counter_id)
             delayed_observations[counter_id] = {}
             if type == 'counter':
