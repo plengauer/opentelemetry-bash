@@ -45,7 +45,7 @@ if [ "$INPUT_COLLECTOR" = true ] || ([ "$INPUT_COLLECTOR" = auto ] && ([ -n "${O
   section_exporter_logs="$(mktemp)"; section_exporter_metrics="$(mktemp)"; section_exporter_traces="$(mktemp)"
   section_pipeline_logs="$(mktemp)"; section_pipeline_metrics="$(mktemp)"; section_pipeline_traces="$(mktemp)"
   if [ "${OTEL_LOGS_EXPORTER:-otlp}" = otlp ]; then
-    if [ "${OTEL_EXPORTER_OTLP_PROTOCOL:-http/protobuf}" ]; then local collector_exporter=otlphttp; else local collector_exporter=otlp; fi
+    if [ "${OTEL_EXPORTER_OTLP_PROTOCOL:-http/protobuf}" ]; then collector_exporter=otlphttp; else collector_exporter=otlp; fi
     cat > "$section_exporter_logs" <<EOF
   $collector_exporter/logs:
     endpoint: "${OTEL_EXPORTER_OTLP_LOGS_ENDPOINT:-$OTEL_EXPORTER_OTLP_ENDPOINT}"
@@ -61,7 +61,7 @@ EOF
     unset OTEL_EXPORTER_OTLP_LOGS_HEADERS
   fi
   if [ "${OTEL_METRICS_EXPORTER:-otlp}" = otlp ]; then
-    if [ "${OTEL_EXPORTER_OTLP_PROTOCOL:-http/protobuf}" ]; then local collector_exporter=otlphttp; else local collector_exporter=otlp; fi
+    if [ "${OTEL_EXPORTER_OTLP_PROTOCOL:-http/protobuf}" ]; then collector_exporter=otlphttp; else collector_exporter=otlp; fi
     cat > "$section_exporter_metrics" <<EOF
   $collector_exporter/metrics:
     endpoint: "${OTEL_EXPORTER_OTLP_METRICS_ENDPOINT:-$OTEL_EXPORTER_OTLP_ENDPOINT}"
@@ -77,7 +77,7 @@ EOF
     unset OTEL_EXPORTER_OTLP_METRICS_HEADERS
   fi
   if [ "${OTEL_TRACES_EXPORTER:-otlp}" = otlp ]; then
-    if [ "${OTEL_EXPORTER_OTLP_PROTOCOL:-http/protobuf}" ]; then local collector_exporter=otlphttp; else local collector_exporter=otlp; fi
+    if [ "${OTEL_EXPORTER_OTLP_PROTOCOL:-http/protobuf}" ]; then collector_exporter=otlphttp; else collector_exporter=otlp; fi
     cat > "$section_exporter_traces" <<EOF
   $collector_exporter/logs:
     endpoint: "${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT:-$OTEL_EXPORTER_OTLP_ENDPOINT}"
