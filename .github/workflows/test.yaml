@@ -446,6 +446,7 @@ jobs:
     strategy:
       matrix:
         cache: ['false', 'true']
+        collector: ['false', 'true', 'auto']
       fail-fast: false
     steps:
       - run: printenv
