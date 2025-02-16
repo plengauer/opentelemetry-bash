@@ -188,7 +188,7 @@ export -f root4job
 # redirect output and create job span
 tmp_dir="$(mktemp -d)"
 chmod 777 "$tmp_dir"
-export otel_shell_sdk_output_redirect="${OTEL_SHELL_SDK_OUTPUT_REDIRECT:-/dev/null}" >> "$GITHUB_STATE"
+echo otel_shell_sdk_output_redirect="${OTEL_SHELL_SDK_OUTPUT_REDIRECT:-/dev/null}" >> "$GITHUB_STATE"
 export OTEL_SHELL_SDK_OUTPUT_REDIRECT="$(mktemp -u -p "$tmp_dir")"
 mkfifo "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"
 chmod 777 "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"
