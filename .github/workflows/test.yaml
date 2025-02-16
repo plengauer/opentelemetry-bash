@@ -455,7 +455,7 @@ jobs:
         with:
           name: packages
       - run: |
-          nohup node -e 'require('http').createServer(function (req, res) { res.writeHead(200); res.end();}).listen(8080);' &
+          nohup node -e "require('http').createServer(function (req, res) { res.writeHead(200); res.end(); }).listen(8080);" &
       - uses: ./actions/instrument/job
         with:
           cache: ${{ matrix.cache }}
