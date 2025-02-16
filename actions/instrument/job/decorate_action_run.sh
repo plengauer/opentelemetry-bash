@@ -14,7 +14,7 @@ if [ -n "${GITHUB_ACTION_PATH:-}" ] && [ -d "$GITHUB_ACTION_PATH" ]; then
 else
   otel_span_attribute_typed $span_handle string github.actions.action.type=shell
 fi
-otel_span_attribute_typed $span_handle string github.actions.action.name="$GITHUB_WORKFLOW/$GITHUB_JOB/$GITHUB_ACTION"
+otel_span_attribute_typed $span_handle string github.actions.action.name="$GITHUB_REPOSITORY/$GITHUB_WORKFLOW/$GITHUB_JOB/${GITHUB_STEP:-$GITHUB_ACTION}"
 otel_span_attribute_typed $span_handle string github.actions.action.ref="${GITHUB_WORKFLOW_REF#*@}"
 otel_span_attribute_typed $span_handle string github.actions.action.phase=main
 otel_span_activate "$span_handle"
