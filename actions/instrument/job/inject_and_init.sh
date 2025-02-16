@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+. ../shared/config_validation.sh
 . ../shared/github.sh
 bash -e ../shared/install.sh
 
@@ -149,6 +150,7 @@ export -f root4job
 
 tmp_dir="$(mktemp -d)"
 chmod 777 "$tmp_dir"
+export OTEL_SHELL_SDK_OUTPUT_REDIRECT_DEFERRED="${OTEL_SHELL_SDK_OUTPUT_REDIRECT:-/dev/null}"
 export OTEL_SHELL_SDK_OUTPUT_REDIRECT="$(mktemp -u -p "$tmp_dir")"
 mkfifo "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"
 chmod 777 "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"
