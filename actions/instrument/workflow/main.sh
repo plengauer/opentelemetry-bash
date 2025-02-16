@@ -1,5 +1,6 @@
 #/bin/bash
 set -e
+bash -e ../shared/config_validation.sh
 . ../shared/github.sh
 OTEL_SHELL_CONFIG_INSTALL_DEEP=FALSE bash -e ../shared/install.sh
 
