@@ -440,7 +440,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   github-job:
-    needs: build # smoke
+    needs: smoke
     runs-on: ubuntu-latest
     timeout-minutes: 60
     strategy:
