@@ -117,9 +117,9 @@ EOF
   unset OTEL_LOGS_EXPORTER OTEL_METRICS_EXPORTER OTEL_TRACES_EXPORTER
   export OTEL_SHELL_COLLECTOR_IMAGE="$(cat Dockerfile | grep '^FROM ' | cut -d ' ' -f 2-)"
   sudo docker pull "$OTEL_SHELL_COLLECTOR_IMAGE" &
-#  if [ -n "$INPUT_DEBUG" ]; then
+  if [ -n "$INPUT_DEBUG" ]; then
     cat collector.yaml
-#  fi
+  fi
 fi
 
 # resolve parent (does not exist yet - see workflow action) and make sure all jobs are of the same trace and have the same deferred parent 
