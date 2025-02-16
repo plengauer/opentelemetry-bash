@@ -459,6 +459,7 @@ jobs:
       - uses: ./actions/instrument/job
         with:
           cache: ${{ matrix.cache }}
+          collector: ${{ matrix.collector }}
         env:
           OTEL_EXPORTER_OTLP_ENDPOINT: http://localhost:8080
           OTEL_SHELL_CONFIG_GITHUB_INJECT_ON_MAIN: 'TRUE'
