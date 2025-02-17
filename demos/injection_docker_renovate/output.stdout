@@ -1,14 +1,14 @@
  WARN: cli config dryRun property has been changed to full
  INFO: Repository started (repository=plengauer/opentelemetry-bash)
-       "renovateVersion": "39.168.0"
+       "renovateVersion": "39.171.2"
  INFO: Dependency extraction complete (repository=plengauer/opentelemetry-bash, baseBranch=main)
        "stats": {
          "managers": {
-           "github-actions": {"fileCount": 8, "depCount": 100},
+           "github-actions": {"fileCount": 9, "depCount": 105},
            "npm": {"fileCount": 2, "depCount": 12},
            "pip_requirements": {"fileCount": 2, "depCount": 9}
          },
-         "total": {"fileCount": 12, "depCount": 121}
+         "total": {"fileCount": 13, "depCount": 126}
        }
  INFO: GitHub GraphQL datasource: skipping empty item (repository=plengauer/opentelemetry-bash)
        "packageName": "actions/attest-build-provenance",
@@ -19,5 +19,5 @@
  INFO: DRY-RUN: Would save repository cache. (repository=plengauer/opentelemetry-bash)
  INFO: Repository finished (repository=plengauer/opentelemetry-bash)
        "cloned": true,
-       "durationMs": 26723
+       "durationMs": 22455
  INFO: Renovate was run at log level "info". Set LOG_LEVEL=debug in environment variables to see extended debug logs.
