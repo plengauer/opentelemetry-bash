@@ -1,13 +1,15 @@
 #!/bin/sh -e
 export GITHUB_ACTION_REPOSITORY="${GITHUB_ACTION_REPOSITORY:-"$GITHUB_REPOSITORY"}"
 
-cp ../shared/package.json . && npm install && rm package.json
-
 ensure_installed() { type "$1" 2> /dev/null || sudo apt-get install "$1"; }
 ensure_installed curl
 ensure_installed wget
 ensure_installed jq
 ensure_installed sed
+ensure_installed unzip
+ensure_installed npm
+
+cp ../shared/package.json . && npm install && rm package.json
 
 if ! type otel.sh 2> /dev/null; then
   action_tag_name="$(echo "$GITHUB_ACTION_REF" | cut -sd @ -f 2-)"

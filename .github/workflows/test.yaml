@@ -16,7 +16,7 @@ jobs:
   verify-python-dependency:
     runs-on: ubuntu-latest
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.3.2
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.4.0
         env:
           OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
@@ -31,7 +31,7 @@ jobs:
   verify-debian-dependencies:
     runs-on: ubuntu-latest
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.3.2
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.4.0
         env:
           OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
@@ -60,7 +60,7 @@ jobs:
   verify-triggers:
     runs-on: ubuntu-latest
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.3.2
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.4.0
         env:
           OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
@@ -79,7 +79,7 @@ jobs:
       run:
         working-directory: ./src
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.3.2
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.4.0
         env:
           OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
@@ -145,7 +145,7 @@ jobs:
     outputs:
       matrix: ${{ steps.dynamic-matrix.outputs.matrix }}
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.3.2
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.4.0
         env:
           OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
@@ -213,7 +213,7 @@ jobs:
       IMAGE_OPENSUSE_LATEST: 'opensuse/tumbleweed:latest'
       IMAGE_OPENSUSE_DEV: '' # not public
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.3.2
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.4.0
         env:
           OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
@@ -247,7 +247,7 @@ jobs:
     outputs:
       shells: ${{ steps.dynamic.outputs.shells }}
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.3.2
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.4.0
         env:
           OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
@@ -301,7 +301,7 @@ jobs:
     outputs:
       dependencies: ${{ steps.dynamic.outputs.dependencies }}
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.3.2
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.4.0
         env:
           OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
@@ -507,6 +507,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 180
     steps:
+      - id: filename
+        run: echo "otlp=$(mktemp)" >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
@@ -514,7 +516,7 @@ jobs:
       - id: workflow_run
         run: |
           . ./actions/instrument/shared/github.sh
-          INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} gh_workflow_runs | jq -r '.workflow_runs[] | select(.status == "completed") | select(.conclusion != "cancelled") | select(.name == "Test") | select(.run_attempt == 1) | [ .id, .run_attempt ] | @tsv' | sed 's/\t/ /g' | head -n 1 | while read -r id run_attempt; do
+          INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} gh_workflow_runs | jq -r '.workflow_runs[] | select(.status == "completed") | select(.conclusion == "success") | select(.name == "Workflow Example") | [ .id, .run_attempt ] | @tsv' | sed 's/\t/ /g' | head -n 1 | while read -r id run_attempt; do
             echo "id=$id" >> "$GITHUB_OUTPUT"
             echo "run_attempt=$run_attempt" >> "$GITHUB_OUTPUT"
           done
@@ -523,21 +525,36 @@ jobs:
           [ -n "${{ steps.workflow_run.outputs.run_attempt }}" ]
       - uses: ./actions/instrument/workflow
         with:
+          debug: 1
           workflow_run_id: ${{ steps.workflow_run.outputs.id }}
           workflow_run_attempt: ${{ steps.workflow_run.outputs.run_attempt }}
           cache: false
         env:
-          # OTEL_METRICS_EXPORTER: console
-          # OTEL_LOGS_EXPORTER: console
-          # OTEL_TRACES_EXPORTER: console
-          OTEL_SHELL_SDK_OUTPUT_REDIRECT: /dev/null
+          OTEL_METRICS_EXPORTER: console
+          OTEL_LOGS_EXPORTER: console
+          OTEL_TRACES_EXPORTER: console
+          OTEL_SHELL_SDK_OUTPUT_REDIRECT: '${{ steps.filename.outputs.otlp }}'
+      - run: |
+          . ./actions/instrument/shared/github.sh
+          INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} gh_artifact_download '${{ steps.workflow_run.outputs.id }}' '${{ steps.workflow_run.outputs.run_attempt }}' 'opentelemetry_workflow_run_${{ steps.workflow_run.outputs.run_attempt }}' .
+      - env:
+          OTLP_JSON: '${{ steps.filename.outputs.otlp }}'
+        run: |
+          [ "$(cat "$OTLP_JSON" | jq -r .context.trace_id | grep -v '^null$' | sort -u | cut -d x -f 2 | tee /dev/stderr)" = "$(cat traceparent | cut -d - -f 2 | tee /dev/stderr)" ]
+          cat "$OTLP_JSON" | jq -r .name | grep -v '^null$' | sort -u | grep 'test (foo)'
+          cat "$OTLP_JSON" | jq -r .name | grep -v '^null$' | sort -u | grep 'test (bar)'
+          cat "$OTLP_JSON" | jq -r .name | grep -v '^null$' | sort -u | grep 'test (baz)'
+          cat "$OTLP_JSON" | jq -r .name | grep -v '^null$' | sort -u | grep 'publish'
+          cat "$OTLP_JSON" | jq -r .name | grep -v '^null$' | sort -u | grep 'Set up job'
+          cat "$OTLP_JSON" | jq -r .name | grep -v '^null$' | sort -u | grep 'Complete job'
+          cat "$OTLP_JSON" | jq -r .body | grep -v '^null$' | sort -u | grep 'Cleaning up orphan processes'
 
   prepare-performance:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.dynamic-matrix.outputs.matrix }}
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.3.2
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.4.0
         env:
           OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
@@ -585,7 +602,7 @@ jobs:
     needs: performance
     runs-on: ubuntu-latest
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.3.2
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.4.0
         env:
           OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'

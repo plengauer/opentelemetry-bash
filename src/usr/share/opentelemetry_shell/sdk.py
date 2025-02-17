@@ -5,6 +5,7 @@ import traceback
 import json
 import requests
 from datetime import datetime, timezone
+import functools
 
 import opentelemetry
 
@@ -120,8 +121,11 @@ events = {}
 next_event_id = 0
 links = {}
 next_link_id = 0
-metrics = {}
-next_metric_id = 0
+counters = {}
+next_counter_id = 0
+observations = {}
+next_observation_id = 0
+delayed_observations = {}
 
 auto_end = False
 
@@ -367,25 +371,72 @@ def handle(scope, version, command, arguments):
             return
         links[link_id]['attributes'][key] = convert_type(type, value)
     elif command == 'LINK_ADD':
-        tokens = arguments.split(' ', 2)
+        tokens = arguments.split(' ', 1)
         link_id = tokens[0]
         span_id = tokens[1]
         link = links[link_id]
         spans[span_id].add_link(link['context'], link['attributes'])
         del links[link_id]
-    elif command == 'METRIC_CREATE':
-        global next_metric_id
+    elif command == 'COUNTER_CREATE':
+        global next_counter_id
+        tokens = arguments.split(' ', 5)
+        response_path = tokens[0]
+        kind = tokens[1]
+        type = tokens[2]
+        name = tokens[3]
+        unit = tokens[4]
+        description = tokens[5]
+        meter = opentelemetry.metrics.get_meter(scope, version)
+        counter_id = str(next_counter_id)
+        if kind == 'standard':
+            if type == 'counter':
+                counters[counter_id] = meter.create_counter(name, unit=unit, description=description)
+            elif type == 'up_down_counter':
+                counters[counter_id] = meter.create_up_down_counter(name, unit=unit, description=description)
+            elif type == 'gauge':
+                counters[counter_id] = meter.create_gauge(name, unit=unit, description=description)
+            else:
+                raise Exception('Unknown counter type : ' + type)
+        elif kind == 'observable':
+            callback = functools.partial(observable_counter_callback, counter_id)
+            delayed_observations[counter_id] = {}
+            if type == 'counter':
+                counters[counter_id] = meter.create_observable_counter(name, [ callback ], unit=unit, description=description)
+            elif type == 'up_down_counter':
+                counters[counter_id] = meter.create_observable_up_down_counter(name, [ callback ], unit=unit, description=description)
+            elif type == 'gauge':
+                counters[counter_id] = meter.create_observable_gauge(name, [ callback ], unit=unit, description=description)
+            else:
+                raise Exception('Unknown counter type: ' + type)
+        else:
+            raise Exception('Unknown counter kind: ' + kind)
+        next_counter_id = next_counter_id + 1
+        with open(response_path, 'w') as response:
+            response.write(counter_id)
+    elif command == 'COUNTER_OBSERVE':
+        tokens = arguments.split(' ', 1)
+        counter_id = tokens[0]
+        observation_id = tokens[1]
+        observation = observations[observation_id]
+        counter = counters[counter_id]
+        if hasattr(counter, 'add'):
+            counter.add(observation.amount, observation.attributes)
+        else:
+            delayed_observations[counter_id][hashlib.sha256(json.dumps(observation.attributes, sort_keys=True).encode('utf-8')).hexdigest()] = observation
+        del events[str(observation_id)]
+    elif command == 'OBSERVATION_CREATE':
+        global next_observation_id
         tokens = arguments.split(' ', 1)
         response_path = tokens[0]
-        metric_name = tokens[1]
-        metric_id = str(next_metric_id)
-        next_metric_id = next_metric_id + 1
-        metrics[metric_id] = { 'name': metric_name, 'attributes': {} }
+        amount = tokens[1]
+        observation_id = str(next_observation_id)
+        next_observation_id = next_observation_id + 1
+        observations[observation_id] = { 'amount': convert_type('auto', amount), 'attributes': {} }
         with open(response_path, 'w') as response:
-            response.write(metric_id)
-    elif command == 'METRIC_ATTRIBUTE':
+            response.write(observation_id)
+    elif command == 'OBSERVATION_ATTRIBUTE':
         tokens = arguments.split(' ', 2)
-        metric_id = tokens[0]
+        observation_id = tokens[0]
         type = tokens[1]
         keyvaluepair = tokens[2]
         tokens = keyvaluepair.split('=', 1)
@@ -393,14 +444,7 @@ def handle(scope, version, command, arguments):
         value = tokens[1]
         if value == '':
             return
-        metrics[metric_id]['attributes'][key] = convert_type(type, value)
-    elif command == 'METRIC_ADD':
-        tokens = arguments.split(' ', 1)
-        metric_id = tokens[0]
-        value = float(tokens[1])
-        metric = metrics[metric_id]
-        opentelemetry.metrics.get_meter(scope, version).create_counter(metric['name']).add(value, metric['attributes'])
-        del metrics[metric_id]
+        observations[str(observation_id)]['attributes'][key] = convert_type(type, value)
     elif command == 'LOG_RECORD':
         tokens = arguments.split(' ', 2)
         traceparent = tokens[0]
@@ -423,6 +467,11 @@ def handle(scope, version, command, arguments):
         logger.emit(record)
     else:
         return
+
+def observable_counter_callback(counter_id, observer):
+    for observation in delayed_observations[counter_id].values():
+        observer.observe(observation.amount, observation.attributes)
+    delayed_observations[counter_id] = {}
 
 def parse_time(time_string):
     if time_string == 'auto':

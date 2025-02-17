@@ -19,3 +19,6 @@ inputs:
   workflow_run_attempt:
     description: 'The workflow run to observe (attempt)'
     default: ${{ github.event.workflow_run.run_attempt }}
+  debug:
+    description: 'Enable debug logging'
+    default: ${{ runner.debug }}
