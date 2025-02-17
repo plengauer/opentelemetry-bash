@@ -523,6 +523,7 @@ jobs:
           [ -n "${{ steps.workflow_run.outputs.run_attempt }}" ]
       - uses: ./actions/instrument/workflow
         with:
+          debug: 1
           workflow_run_id: ${{ steps.workflow_run.outputs.id }}
           workflow_run_attempt: ${{ steps.workflow_run.outputs.run_attempt }}
           cache: false

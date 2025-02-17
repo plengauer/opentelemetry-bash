@@ -8,6 +8,16 @@ otel_init
 span_handle="$(otel_span_start INTERNAL "${GITHUB_STEP:-$GITHUB_ACTION}")"
 otel_span_attribute_typed $span_handle string github.actions.type=step
 otel_span_attribute_typed $span_handle string github.actions.step.name="${GITHUB_STEP:-$GITHUB_ACTION}"
+printenv | grep '^INPUT_' | cut -d '=' -f 1 | while read -r key; do otel_span_attribute_typed $span_handle string github.actions.step.input."${key#INPUT_}"="$(eval 'printf '\''%s'\'' $'"$key")"; done
+printenv | grep '^STATE_' | cut -d '=' -f 1 | while read -r key; do otel_span_attribute_typed $span_handle string github.actions.step.state."${key#STATE_}"="$(eval 'printf '\''%s'\'' $'"$key")"; done
+if [ -n "${GITHUB_ACTION_PATH:-}" ] && [ -d "$GITHUB_ACTION_PATH" ]; then
+  otel_span_attribute_typed $span_handle string github.actions.action.type=composite/javascript
+else
+  otel_span_attribute_typed $span_handle string github.actions.action.type=javascript
+fi
+otel_span_attribute_typed $span_handle string github.actions.action.name="$GITHUB_ACTION_REPOSITORY"
+otel_span_attribute_typed $span_handle string github.actions.action.ref="$GITHUB_ACTION_REF"
+# otel_span_attribute_typed $span_handle string github.actions.action.phase=main # TODO
 otel_span_activate "$span_handle"
 otel_observe _otel_inject_node "$@"
 exit_code="$?"
