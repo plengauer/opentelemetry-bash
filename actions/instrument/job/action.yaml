@@ -16,7 +16,7 @@ inputs:
     description: 'Whether to use GitHub Actions Cache to cache dependencies'
     default: true
   collector:
-    description: 'Whether to use a collector hide potentially sensitive secrets from other actions'
+    description: 'Whether to use a collector to hide potentially sensitive secrets from other actions'
     default: auto
   debug:
     description: 'Enable debug logging'
