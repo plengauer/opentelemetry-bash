@@ -446,6 +446,7 @@ jobs:
     strategy:
       matrix:
         cache: ['false', 'true']
+        collector: ['false', 'true', 'auto']
       fail-fast: false
     steps:
       - run: printenv
@@ -453,13 +454,14 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: packages
+      - run: |
+          nohup node -e "require('http').createServer(function (req, res) { res.writeHead(200); res.end(); }).listen(8080);" &
       - uses: ./actions/instrument/job
         with:
           cache: ${{ matrix.cache }}
+          collector: ${{ matrix.collector }}
         env:
-          # OTEL_METRICS_EXPORTER: console
-          # OTEL_LOGS_EXPORTER: console
-          # OTEL_TRACES_EXPORTER: console
+          OTEL_EXPORTER_OTLP_ENDPOINT: http://localhost:8080
           OTEL_SHELL_CONFIG_GITHUB_INJECT_ON_MAIN: 'TRUE'
       - run: | # check if install succeeded
           type otel.sh && type strace
