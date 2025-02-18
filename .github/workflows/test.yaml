@@ -447,6 +447,9 @@ jobs:
       matrix:
         cache: ['false', 'true']
         collector: ['false', 'true', 'auto']
+        exporter_logs: ['otlp', 'console']
+        exporter_metrics: ['otlp', 'console']
+        exporter_traces: ['otlp', 'console']
       fail-fast: false
     steps:
       - run: printenv
@@ -461,6 +464,9 @@ jobs:
           cache: ${{ matrix.cache }}
           collector: ${{ matrix.collector }}
         env:
+          OTEL_LOGS_EXPORTER: ${{ matrix.exporter_logs }}
+          OTEL_METRICS_EXPORTER: ${{ matrix.exporter_metrics }}
+          OTEL_TRACES_EXPORTER: ${{ matrix.exporter_traces }}
           OTEL_EXPORTER_OTLP_ENDPOINT: http://localhost:8080
           OTEL_SHELL_CONFIG_GITHUB_INJECT_ON_MAIN: 'TRUE'
       - run: | # check if install succeeded
