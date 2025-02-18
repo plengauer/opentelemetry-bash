@@ -423,7 +423,7 @@ def handle(scope, version, command, arguments):
             counter.add(observation['amount'], observation['attributes'])
         else:
             delayed_observations[counter_id][hashlib.sha256(json.dumps(observation['attributes'], sort_keys=True).encode('utf-8')).hexdigest()] = observation
-        del events[str(observation_id)]
+        del observations[str(observation_id)]
     elif command == 'OBSERVATION_CREATE':
         global next_observation_id
         tokens = arguments.split(' ', 1)
