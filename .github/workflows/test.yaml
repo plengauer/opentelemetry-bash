@@ -440,7 +440,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   github-job:
-    needs: smoke
+#    needs: smoke
     runs-on: ubuntu-latest
     timeout-minutes: 60
     strategy:
@@ -454,9 +454,9 @@ jobs:
     steps:
       - run: printenv
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-          name: packages
+#      - uses: actions/download-artifact@v4
+#        with:
+#          name: packages
       - run: |
           nohup node -e "require('http').createServer(function (req, res) { res.writeHead(200); res.end(); }).listen(8080);" &
       - uses: ./actions/instrument/job
