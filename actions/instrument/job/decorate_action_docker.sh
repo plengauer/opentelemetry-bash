@@ -23,10 +23,9 @@ case "$2" in
   *) ;;
 esac
 otel_span_activate "$span_handle"
-set -x
+_otel_inject_docker "$@" >&2
 otel_observe _otel_inject_docker "$@"
 exit_code="$?"
-set +x
 if [ "$exit_code" != 0 ]; then
   otel_span_attribute_typed $span_handle string github.actions.step.conclusion=failure
   otel_span_error "$span_handle"; touch /tmp/opentelemetry_shell.github.error
