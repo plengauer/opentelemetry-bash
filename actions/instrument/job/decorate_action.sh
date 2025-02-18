@@ -1,6 +1,7 @@
 #!/bin/sh
 # need to use bash over sh, because it propagates invalid env vars correctly (env vars with dashes in keys)
 if [ -z "$GITHUB_RUN_ID" ] || [ "$(cat /proc/$PPID/cmdline | tr '\000-\037' ' ' | cut -d ' ' -f 1 | rev | cut -d / -f 1 | rev)" != "Runner.Worker" ]; then exec "$@"; fi
+# TODO override some functions to not create some resource attributes
 . otelapi.sh
 eval "$(cat "$_OTEL_GITHUB_STEP_AGENT_INSTRUMENTATION_FILE" | grep -v '_otel_alias_prepend ')"
 otel_init
@@ -15,6 +16,7 @@ otel_span_attribute_typed $span_handle string github.actions.action.name="$GITHU
 otel_span_attribute_typed $span_handle string github.actions.action.ref="$GITHUB_ACTION_REF"
 [ -z "${_OTEL_GITHUB_STEP_ACTION_PHASE:-}" ] || otel_span_attribute_typed $span_handle string github.actions.action.phase="$_OTEL_GITHUB_STEP_ACTION_PHASE"
 otel_span_activate "$span_handle"
+# TODO override commandline to hide injection
 otel_observe _otel_inject_node "$@"
 exit_code="$?"
 if [ "$exit_code" != 0 ]; then
