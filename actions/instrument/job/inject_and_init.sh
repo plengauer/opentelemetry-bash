@@ -131,7 +131,6 @@ done
 docker_path="$(which docker)"
 sudo mv "$docker_path" "$relocated_binary_dir"
 sudo gcc -o "$docker_path" forward.c -DEXECUTABLE=/bin/bash -DARG1="$GITHUB_ACTION_PATH"/decorate_action_docker.sh -DARG2="$relocated_binary_dir"/docker
-sudo ln --symbolic "$relocated_binary_dir"/docker "$docker_path" # path to docker is hardcoded in the runners
 
 # resolve parent (does not exist yet - see workflow action) and make sure all jobs are of the same trace and have the same deferred parent 
 opentelemetry_root_dir="$(mktemp -d)"
