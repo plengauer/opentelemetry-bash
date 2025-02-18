@@ -73,7 +73,7 @@ jobs:
           done
 
   build:
-    # needs: [verify-python-dependency, verify-debian-dependencies, verify-triggers]
+    needs: [verify-python-dependency, verify-debian-dependencies, verify-triggers]
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -440,7 +440,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   github-job:
-    needs: build
+    needs: smoke
     runs-on: ubuntu-latest
     timeout-minutes: 60
     strategy:
