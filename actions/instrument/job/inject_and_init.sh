@@ -110,7 +110,7 @@ EOF
 fi
 
 # setup injections
-export GITHUB_ACTION_PATH="/tmp/$GITHUB_ACTION_REPOSITORY"
+export GITHUB_ACTION_PATH="/tmp/${GITHUB_ACTION_REPOSITORY:-plengauer/opentelemetry-bash}"
 new_binary_dir="$GITHUB_ACTION_PATH/bin"
 relocated_binary_dir="$GITHUB_ACTION_PATH/relocated_bin"
 mkdir -p "$new_binary_dir" "$relocated_binary_dir"
