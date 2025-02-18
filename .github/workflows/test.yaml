@@ -503,7 +503,7 @@ jobs:
            shell=bash
 
   github-workflow:
-    needs: build # smoke
+    needs: smoke
     runs-on: ubuntu-latest
     timeout-minutes: 180
     steps:
