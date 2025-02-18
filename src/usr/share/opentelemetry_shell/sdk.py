@@ -420,9 +420,9 @@ def handle(scope, version, command, arguments):
         observation = observations[observation_id]
         counter = counters[counter_id]
         if hasattr(counter, 'add'):
-            counter.add(observation.amount, observation.attributes)
+            counter.add(observation['amount'], observation['attributes'])
         else:
-            delayed_observations[counter_id][hashlib.sha256(json.dumps(observation.attributes, sort_keys=True).encode('utf-8')).hexdigest()] = observation
+            delayed_observations[counter_id][hashlib.sha256(json.dumps(observation['attributes'], sort_keys=True).encode('utf-8')).hexdigest()] = observation
         del events[str(observation_id)]
     elif command == 'OBSERVATION_CREATE':
         global next_observation_id
@@ -470,7 +470,7 @@ def handle(scope, version, command, arguments):
 
 def observable_counter_callback(counter_id, observer):
     for observation in delayed_observations[counter_id].values():
-        observer.observe(observation.amount, observation.attributes)
+        observer.observe(observation['amount'], observation['attributes'])
     delayed_observations[counter_id] = {}
 
 def parse_time(time_string):
