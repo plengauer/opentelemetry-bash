@@ -129,7 +129,7 @@ for node_path in /home/runner/runners/*/externals/node*/bin/node; do
 done
 ## setup injections into docker actions
 docker_path="$(which docker)"
-sudo gcc -o "$docker_path" forward.c -DEXECUTABLE=/bin/bash -DARG1="$GITHUB_ACTION_PATH"/decorate_action_docker.sh -DARG2="$GITHUB_ACTION_PATH"/docker
+sudo gcc -o "$docker_path" forward.c -DEXECUTABLE=/bin/bash -DARG1="$GITHUB_ACTION_PATH"/decorate_action_docker.sh -DARG2="$relocated_binary_dir"/docker
 sudo mv "$docker_path" "$relocated_binary_dir"
 sudo ln --symbolic "$relocated_binary_dir"/docker "$docker_path" # path to docker is hardcoded in the runners
 
