@@ -23,7 +23,6 @@ case "$2" in
   *) ;;
 esac
 otel_span_activate "$span_handle"
-_otel_inject_docker_args "$@" >&2
 otel_observe _otel_inject_docker "$@"
 exit_code="$?"
 if [ "$exit_code" != 0 ]; then
