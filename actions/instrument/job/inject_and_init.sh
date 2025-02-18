@@ -1,42 +1,29 @@
 #!/bin/bash
 set -e
 
+# some default configurations
+export OTEL_SHELL_CONFIG_MUTE_BUILTINS="${OTEL_SHELL_CONFIG_MUTE_BUILTINS:-TRUE}"
+export OTEL_SHELL_CONFIG_INJECT_DEEP="${OTEL_SHELL_CONFIG_INJECT_DEEP:-TRUE}"
+export OTEL_SHELL_CONFIG_OBSERVE_SUBPROCESSES="${OTEL_SHELL_CONFIG_OBSERVE_SUBPROCESSES:-TRUE}"
+export OTEL_SHELL_CONFIG_OBSERVE_SIGNALS="${OTEL_SHELL_CONFIG_OBSERVE_SIGNALS:-TRUE}"
+export OTEL_SHELL_CONFIG_OBSERVE_PIPES="${OTEL_SHELL_CONFIG_OBSERVE_PIPES:-TRUE}"
+export OTEL_SERVICE_NAME="${OTEL_SERVICE_NAME:-"$(echo "$GITHUB_REPOSITORY" | cut -d / -f 2-) CI"}"
 . ../shared/config_validation.sh
+
+# redirect output to avoid race conditions and output being swallowed in case its a stream
+tmp_dir="$(mktemp -d)"
+chmod 777 "$tmp_dir"
+echo otel_shell_sdk_output_redirect="${OTEL_SHELL_SDK_OUTPUT_REDIRECT:-/dev/null}" >> "$GITHUB_STATE"
+export OTEL_SHELL_SDK_OUTPUT_REDIRECT="$(mktemp -u -p "$tmp_dir")"
+mkfifo "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"
+chmod 777 "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"
+log_file="$(mktemp -u -p "$tmp_dir")"
+echo "log_file=$log_file" >> "$GITHUB_STATE"
+( while true; do cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"; done >> "$log_file" ) 1> /dev/null 2> /dev/null &
+
+# install dependencies
 . ../shared/github.sh
 bash -e ../shared/install.sh
-
-echo "$GITHUB_ACTION" > /tmp/opentelemetry_shell_action_name
-
-# setup injections
-## setup injection for shell actions
-new_path_dir="/tmp/otel/bin"
-mkdir -p "$new_path_dir"
-gcc -o "$new_path_dir"/sh forward.c -DEXECUTABLE="$(which sh)" -DARG1="$(pwd)"/decorate_action_run.sh -DARG2="$(which sh)"
-gcc -o "$new_path_dir"/dash forward.c -DEXECUTABLE="$(which dash)" -DARG1="$(pwd)"/decorate_action_run.sh -DARG2="$(which dash)"
-gcc -o "$new_path_dir"/bash forward.c -DEXECUTABLE="$(which bash)" -DARG1="$(pwd)"/decorate_action_run.sh -DARG2="$(which bash)"
-echo "$new_path_dir" >> "$GITHUB_PATH"
-## setup injections into node actions
-for node_path in /home/runner/runners/*/externals/node*/bin/node; do
-  dir_path_new="$(echo "$node_path" | rev | cut -d / -f 2- | rev).original"
-  mkdir "$dir_path_new"
-  node_path_new="$dir_path_new"/node
-  mv "$node_path" "$node_path_new"
-  gcc -o "$node_path" forward.c -DEXECUTABLE=/bin/bash -DARG1="$(pwd)"/decorate_action_node.sh -DARG2="$node_path_new"
-done
-## setup injections into docker actions
-### cant use the same path trick as for the shells, because path is resolved at the very start, so paths must not change
-docker_path="$(which docker)"
-sudo mv "$docker_path" "$(pwd)"
-sudo gcc -o "$docker_path" forward.c -DEXECUTABLE=/bin/bash -DARG1="$(pwd)"/decorate_action_docker.sh -DARG2="$(pwd)"/docker
-
-# guess job id for proper linking
-OTEL_SHELL_GITHUB_JOB="$GITHUB_JOB"
-job_arguments="$(printf '%s' "$INPUT___JOB_MATRIX" | jq -r '. | [.. | scalars] | @tsv' | sed 's/\t/, /g')"
-if [ -n "$job_arguments" ]; then OTEL_SHELL_GITHUB_JOB="$OTEL_SHELL_GITHUB_JOB ($job_arguments)"; fi
-export OTEL_SHELL_GITHUB_JOB
-GITHUB_JOB_ID="$(gh_jobs "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" | jq --unbuffered -r '. | .jobs[] | [.id, .name] | @tsv' | sed 's/\t/ /g' | grep " $OTEL_SHELL_GITHUB_JOB"'$' | cut -d ' ' -f 1)"
-if [ "$(printf '%s' "$GITHUB_JOB_ID" | wc -l)" -le 1 ]; then export GITHUB_JOB_ID; fi
-echo "Guessing GitHub job id to be $GITHUB_JOB_ID" >&2
 
 # configure collector if required
 if [ "$INPUT_COLLECTOR" = true ] || ([ "$INPUT_COLLECTOR" = auto ] && ([ -n "${OTEL_EXPORTER_OTLP_HEADERS:-}" ] || [ -n "${OTEL_EXPORTER_OTLP_LOGS_HEADERS:-}" ] || [ -n "${OTEL_EXPORTER_OTLP_METRICS_HEADERS:-}" ] || [ -n "${OTEL_EXPORTER_OTLP_TRACES_HEADERS:-}" ])); then
@@ -122,6 +109,29 @@ EOF
   fi
 fi
 
+# setup injections
+new_binary_dir="$GITHUB_ACTION_PATH/bin"
+relocated_binary_dir="$GITHUB_ACTION_PATH/relocated_bin"
+mkdir -p "$new_binary_dir" "$relocated_binary_dir"
+echo "$new_binary_dir" >> "$GITHUB_PATH"
+## setup injection for shell actions
+gcc -o "$new_binary_dir"/sh forward.c -DEXECUTABLE="$(which sh)" -DARG1="$GITHUB_ACTION_PATH"/decorate_action_run.sh -DARG2="$(which sh)"
+gcc -o "$new_binary_dir"/dash forward.c -DEXECUTABLE="$(which dash)" -DARG1="$GITHUB_ACTION_PATH"/decorate_action_run.sh -DARG2="$(which dash)"
+gcc -o "$new_binary_dir"/bash forward.c -DEXECUTABLE="$(which bash)" -DARG1="$GITHUB_ACTION_PATH"/decorate_action_run.sh -DARG2="$(which bash)"
+## setup injections into node actions
+for node_path in /home/runner/runners/*/externals/node*/bin/node; do
+  dir_path_new="$relocated_binary_dir"/"$(echo "$node_path" | rev | cut -d / -f 3 | rev)"
+  mkdir "$dir_path_new"
+  node_path_new="$dir_path_new"/node
+  mv "$node_path" "$node_path_new"
+  gcc -o "$node_path" forward.c -DEXECUTABLE=/bin/bash -DARG1="$GITHUB_ACTION_PATH"/decorate_action_node.sh -DARG2="$node_path_new" # path is hardcoded in the runners
+done
+## setup injections into docker actions
+docker_path="$(which docker)"
+sudo gcc -o "$docker_path" forward.c -DEXECUTABLE=/bin/bash -DARG1="$GITHUB_ACTION_PATH"/decorate_action_docker.sh -DARG2="$GITHUB_ACTION_PATH"/docker
+sudo mv "$docker_path" "$relocated_binary_dir"
+sudo ln --symbolic "$relocated_binary_dir"/docker "$docker_path" # path to docker is hardcoded in the runners
+
 # resolve parent (does not exist yet - see workflow action) and make sure all jobs are of the same trace and have the same deferred parent 
 opentelemetry_root_dir="$(mktemp -d)"
 while ! gh_artifact_download "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" opentelemetry_workflow_run_"$GITHUB_RUN_ATTEMPT" "$opentelemetry_root_dir" || ! [ -r "$opentelemetry_root_dir"/traceparent ]; do
@@ -135,8 +145,16 @@ done
 export TRACEPARENT="$(cat "$opentelemetry_root_dir"/traceparent)"
 rm -rf "$opentelemetry_root_dir"
 
-export OTEL_SERVICE_NAME="${OTEL_SERVICE_NAME:-"$(echo "$GITHUB_REPOSITORY" | cut -d / -f 2-) CI"}"
+# guess job id for proper linking
+OTEL_SHELL_GITHUB_JOB="$GITHUB_JOB"
+job_arguments="$(printf '%s' "$INPUT___JOB_MATRIX" | jq -r '. | [.. | scalars] | @tsv' | sed 's/\t/, /g')"
+if [ -n "$job_arguments" ]; then OTEL_SHELL_GITHUB_JOB="$OTEL_SHELL_GITHUB_JOB ($job_arguments)"; fi
+export OTEL_SHELL_GITHUB_JOB
+GITHUB_JOB_ID="$(gh_jobs "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" | jq --unbuffered -r '. | .jobs[] | [.id, .name] | @tsv' | sed 's/\t/ /g' | grep " $OTEL_SHELL_GITHUB_JOB"'$' | cut -d ' ' -f 1)"
+if [ "$(printf '%s' "$GITHUB_JOB_ID" | wc -l)" -le 1 ]; then export GITHUB_JOB_ID; fi
+echo "Guessing GitHub job id to be $GITHUB_JOB_ID" >&2
 
+# observe
 observe_rate_limit() {
   used_gauge_handle="$(otel_counter_create observable gauge github.api.rate_limit.used 1 "The amount of rate limited requests used")"
   remaining_gauge_handle="$(otel_counter_create observable gauge github.api.rate_limit.remaining 1 "The amount of rate limited requests remaining")"
@@ -149,8 +167,6 @@ observe_rate_limit() {
     otel_counter_observe "$used_gauge_handle" "$observation_handle"
   done
 }
-
-# end job span
 root4job_end() {
   if [ -f /tmp/opentelemetry_shell.github.error ]; then
     otel_span_attribute_typed "$span_handle" string github.actions.job.conclusion=failure
@@ -165,12 +181,9 @@ root4job_end() {
   exit 0
 }
 export -f root4job_end
-
-# start job span
 root4job() {
   [ -z "${OTEL_SHELL_COLLECTOR_CONTAINER:-}" ] || export OTEL_SHELL_COLLECTOR_CONTAINER="$(sudo docker start --restart unless-stopped --network=host --mount type=bind,soource="$(pwd)"/collector.yaml,target=/etc/otelcol/config.yaml "$OTEL_SHELL_COLLECTOR_IMAGE")"
   rm /tmp/opentelemetry_shell.github.error 2> /dev/null
-  ( while true; do cat "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"; done >> "$OTEL_SHELL_SDK_LOG_FILE" ) 1> /dev/null 2> /dev/null &
   traceparent_file="$1"
   . otelapi.sh
   otel_init
@@ -200,31 +213,12 @@ root4job() {
   while true; do sleep 1; done
 }
 export -f root4job
-
-# redirect output and create job span
-tmp_dir="$(mktemp -d)"
-chmod 777 "$tmp_dir"
-echo otel_shell_sdk_output_redirect="${OTEL_SHELL_SDK_OUTPUT_REDIRECT:-/dev/null}" >> "$GITHUB_STATE"
-export OTEL_SHELL_SDK_OUTPUT_REDIRECT="$(mktemp -u -p "$tmp_dir")"
-mkfifo "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"
-chmod 777 "$OTEL_SHELL_SDK_OUTPUT_REDIRECT"
-export OTEL_SHELL_SDK_LOG_FILE="$(mktemp -u -p "$tmp_dir")"
-echo "log_file=$OTEL_SHELL_SDK_LOG_FILE" >> "$GITHUB_STATE"
 traceparent_file="$(mktemp -u)"
+mkfifo "$traceparent_file"
 nohup bash -c 'root4job "$@"' bash "$traceparent_file" &> /dev/null &
 echo "pid=$!" >> "$GITHUB_STATE"
 
-# wait for traceparent to be available
-while ! [ -f "$traceparent_file" ]; do sleep 1; done
+# propagate context to the steps
 export TRACEPARENT="$(cat "$traceparent_file")"
 rm "$traceparent_file"
-
-# some default configurations
-export OTEL_SHELL_CONFIG_MUTE_BUILTINS="${OTEL_SHELL_CONFIG_MUTE_BUILTINS:-TRUE}"
-export OTEL_SHELL_CONFIG_INJECT_DEEP="${OTEL_SHELL_CONFIG_INJECT_DEEP:-TRUE}"
-export OTEL_SHELL_CONFIG_OBSERVE_SUBPROCESSES="${OTEL_SHELL_CONFIG_OBSERVE_SUBPROCESSES:-TRUE}"
-export OTEL_SHELL_CONFIG_OBSERVE_SIGNALS="${OTEL_SHELL_CONFIG_OBSERVE_SIGNALS:-TRUE}"
-export OTEL_SHELL_CONFIG_OBSERVE_PIPES="${OTEL_SHELL_CONFIG_OBSERVE_PIPES:-TRUE}"
-
-# propagate all config to all other actions
 printenv | grep -E '^OTEL_|^TRACEPARENT=|^TRACESTATE=' >> "$GITHUB_ENV"
