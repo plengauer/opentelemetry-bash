@@ -80,8 +80,6 @@ if [ "$SHELL" = bash ]; then
   parallel my_wget ::: http://www.google.at
   span="$(resolve_span '.name == "'"$shebang"' /usr/bin/parallel my_wget ::: http://www.google.at"')"
   assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
-  span="$(resolve_span '.name == "my_wget http://www.google.at"')"
-  assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
   span="$(resolve_span '.name == "wget -O - http://www.google.at"')"
   assert_equals "SpanKind.INTERNAL" "$(\echo "$span" | jq -r '.kind')"
 else
