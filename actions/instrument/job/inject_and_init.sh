@@ -110,6 +110,7 @@ EOF
 fi
 
 # setup injections
+echo "$GITHUB_ACTION" > /tmp/opentelemetry_shell_action_name # to avoid recursions
 export GITHUB_ACTION_PATH="$(pwd)"
 new_binary_dir="$GITHUB_ACTION_PATH/bin"
 relocated_binary_dir="$GITHUB_ACTION_PATH/relocated_bin"
