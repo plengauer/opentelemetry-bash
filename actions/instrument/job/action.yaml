@@ -21,6 +21,9 @@ inputs:
   debug:
     description: 'Enable debug logging'
     default: ${{ runner.debug }}
+  __secrets_to_redact:
+    description: 'INTERNAL ONLY - DO NOT SET MANUALLY'
+    default: '${{ toJSON(secrets} }}'
   __job_status:
     description: 'INTERNAL ONLY - DO NOT SET MANUALLY'
     default: '${{ job.status }}'
