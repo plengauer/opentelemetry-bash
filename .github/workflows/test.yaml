@@ -18,6 +18,9 @@ jobs:
     steps:
       - run: |
           echo '${{ toJSON(secrets) }}'
+          echo "$ALL_SECRETS"
+        env:
+          ALL_SECRETS: '${{ toJSON(secrets) }}'
 
   verify-python-dependency:
     runs-on: ubuntu-latest
