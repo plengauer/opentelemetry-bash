@@ -1,5 +1,4 @@
 #!/bin/sh
-# need to use bash over sh, because it propagates invalid env vars correctly (env vars with dashes in keys)
 if [ -z "$GITHUB_RUN_ID" ] || [ "$(cat /proc/$PPID/cmdline | tr '\000-\037' ' ' | cut -d ' ' -f 1 | rev | cut -d / -f 1 | rev)" != "Runner.Worker" ]; then exec "$@"; fi
 . otelapi.sh
 _otel_resource_attributes_process() {
