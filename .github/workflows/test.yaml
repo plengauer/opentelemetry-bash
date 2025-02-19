@@ -472,6 +472,7 @@ jobs:
         with:
           cache: ${{ matrix.cache }}
           collector: ${{ matrix.collector }}
+          secrets_to_redact: '${{ toJSON(secrets) }}'
         env:
           OTEL_LOGS_EXPORTER: ${{ matrix.exporter_logs }}
           OTEL_METRICS_EXPORTER: ${{ matrix.exporter_metrics }}
