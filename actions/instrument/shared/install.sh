@@ -31,12 +31,12 @@ if ! type otel.sh 2> /dev/null; then
     fi
     OTEL_SHELL_CONFIG_INSTALL_ASSUME=TRUE sudo -E -H apt-get -o Binary::apt::APT::Keep-Downloaded-Packages=true install -y "$debian_file"
     if ! [ "${OTEL_SHELL_CONFIG_INSTALL_DEEP:-FALSE}" = TRUE ] && type docker 1> /dev/null 2> /dev/null; then
+      export OTEL_SHELL_COLLECTOR_IMAGE="$(cat Dockerfile | grep '^FROM ' | cut -d ' ' -f 2-)"
       if [ -r /opt/opentelemetry_shell/collector.image ]; then
         sudo docker load < /opt/opentelemetry_shell/collector.image
       else
-        otel_collector_docker_image="$(cat Dockerfile | grep '^FROM ' | cut -d ' ' -f 2-)"
-        sudo docker pull "$otel_collector_docker_image"
-        sudo docker save "$otel_collector_docker_image" > /opt/opentelemetry_shell/collector.image
+        sudo docker pull "$OTEL_SHELL_COLLECTOR_IMAGE"
+        sudo docker save "$OTEL_SHELL_COLLECTOR_IMAGE" > /opt/opentelemetry_shell/collector.image
         write_back_cache=TRUE
       fi
     fi
