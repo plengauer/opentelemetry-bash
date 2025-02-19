@@ -60,8 +60,8 @@ otel_counter_observe "$workflow_run_counter_handle" "$observation_handle"
 link="${GITHUB_SERVER_URL:-https://github.com}"/"$(jq < "$workflow_json" -r .repository.owner.login)"/"$(jq < "$workflow_json" -r .repository.name)"/actions/runs/"$(jq < "$workflow_json" -r .id)"
 workflow_started_at="$(jq < "$workflow_json" -r .run_started_at)"
 workflow_ended_at="$(jq < "$jobs_json" -r .completed_at | sort -r | head -n 1)"
-if [ "$(ls "$logs_dir"/*.txt | grep -v -- '^'"$logs_dir"/- | wc -l)" -gt 0 ]; then
-  last_log_timestamp="$(cat "$logs_dir"/*.txt | cut -d ' ' -f 1 | sort -r | head -n 1)"
+if [ "$(ls "$logs_dir"/*/*.txt | wc -l)" -gt 0 ]; then
+  last_log_timestamp="$(cat "$logs_dir"/*/*.txt | cut -d ' ' -f 1 | sort -r | head -n 1)"
   if [ "$last_log_timestamp" > "$workflow_ended_at" ]; then workflow_ended_at="$last_log_timestamp"; fi
 fi
 workflow_span_handle="$(otel_span_start @"$workflow_started_at" CONSUMER "$(jq < "$workflow_json" -r .name)")"
@@ -109,9 +109,7 @@ jq < "$jobs_json" -r --unbuffered '. | ["'"${WORKFLOW_TRACEPARENT:-null}"'", .id
   if [ "$TRACEPARENT" != null ] && ! jq < "$artifacts_json" -r .name | grep -q '^opentelemetry_job_'"$job_id"'$'; then
     job_log_file="$(printf '%s' "$logs_dir"/*_"${job_name//\//}".txt | tr -d ':')"
     if [ -r "$job_log_file" ]; then
-      first_log_timestamp="$(head < "$job_log_file" -n 1 | cut -d ' ' -f 1)"
       last_log_timestamp="$(tail < "$job_log_file" -n 1 | cut -d ' ' -f 1)"
-      if [ -n "$first_log_timestamp" ] && [ "$first_log_timestamp" < "$job_started_at" ]; then job_started_at="$first_log_timestamp"; fi
       if [ -n "$last_log_timestamp" ] && [ "$last_log_timestamp" > "$job_completed_at" ]; then job_completed_at="$last_log_timestamp"; fi
     fi
     job_span_handle="$(otel_span_start @"$job_started_at" CONSUMER "$job_name")"
@@ -180,9 +178,7 @@ done | sed 's/\t/ /g' | while read -r TRACEPARENT step_number step_conclusion st
   if [ "$TRACEPARENT" != null ]; then
     step_log_file="$(printf '%s' "$logs_dir"/"${job_name//\//}"/"$step_number"_*.txt | tr -d ':')"
     if [ -r "$step_log_file" ]; then
-      first_log_timestamp="$(head < "$step_log_file" -n 1 | cut -d ' ' -f 1)"
       last_log_timestamp="$(tail < "$step_log_file" -n 1 | cut -d ' ' -f 1)"
-      if [ -n "$first_log_timestamp" ] && [ "$first_log_timestamp" < "$step_started_at" ]; then step_started_at="$first_log_timestamp"; fi
       if [ -n "$last_log_timestamp" ] && [ "$last_log_timestamp" > "$step_completed_at" ]; then step_completed_at="$last_log_timestamp"; fi
     fi
     step_span_handle="$(otel_span_start @"$step_started_at" INTERNAL "$step_name")"
