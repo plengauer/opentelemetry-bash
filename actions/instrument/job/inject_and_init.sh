@@ -26,7 +26,7 @@ echo "log_file=$log_file" >> "$GITHUB_STATE"
 bash -e ../shared/install.sh
 
 # configure collector if required
-if [ "$INPUT_COLLECTOR" = true ] || ([ "$INPUT_COLLECTOR" = auto ] && ([ -n "${OTEL_EXPORTER_OTLP_HEADERS:-}" ] || [ -n "${OTEL_EXPORTER_OTLP_LOGS_HEADERS:-}" ] || [ -n "${OTEL_EXPORTER_OTLP_METRICS_HEADERS:-}" ] || [ -n "${OTEL_EXPORTER_OTLP_TRACES_HEADERS:-}" ])); then
+if [ "$INPUT_COLLECTOR" = true ] || ([ "$INPUT_COLLECTOR" = auto ] && ([ -n "${OTEL_EXPORTER_OTLP_HEADERS:-}" ] || [ -n "${OTEL_EXPORTER_OTLP_LOGS_HEADERS:-}" ] || [ -n "${OTEL_EXPORTER_OTLP_METRICS_HEADERS:-}" ] || [ -n "${OTEL_EXPORTER_OTLP_TRACES_HEADERS:-}" ] || [ "$INPUT___SECRETS_TO_REDACT" != '{}')); then
   if ! type docker; then echo "::error ::Cannot use collector because docker is unavailable." && false; fi
   section_exporter_logs="$(mktemp)"; section_exporter_metrics="$(mktemp)"; section_exporter_traces="$(mktemp)"
   section_pipeline_logs="$(mktemp)"; section_pipeline_metrics="$(mktemp)"; section_pipeline_traces="$(mktemp)"
@@ -45,6 +45,9 @@ EOF
       processors: [batch]
 EOF
     unset OTEL_EXPORTER_OTLP_LOGS_HEADERS
+    export OTEL_LOGS_EXPORTER=otlp
+    export OTEL_LOGS_EXPORTER_OTLP_ENDPOINT=https://localhost:4318/v1/logs
+    export OTEL_LOGS_EXPORTER_OTLP_PROTOCOL=http/protobuf
   fi
   if [ "${OTEL_METRICS_EXPORTER:-otlp}" = otlp ]; then
     if [ "${OTEL_EXPORTER_OTLP_PROTOCOL:-http/protobuf}" ]; then collector_exporter=otlphttp; else collector_exporter=otlp; fi
@@ -61,6 +64,9 @@ EOF
       processors: [batch]
 EOF
     unset OTEL_EXPORTER_OTLP_METRICS_HEADERS
+    export OTEL_METRICS_EXPORTER=otlp
+    export OTEL_METRICS_EXPORTER_OTLP_ENDPOINT=https://localhost:4318/v1/metrics
+    export OTEL_METRICS_EXPORTER_OTLP_PROTOCOL=http/protobuf
   fi
   if [ "${OTEL_TRACES_EXPORTER:-otlp}" = otlp ]; then
     if [ "${OTEL_EXPORTER_OTLP_PROTOCOL:-http/protobuf}" ]; then collector_exporter=otlphttp; else collector_exporter=otlp; fi
@@ -77,6 +83,9 @@ EOF
       processors: [batch]
 EOF
     unset OTEL_EXPORTER_OTLP_TRACES_HEADERS
+    export OTEL_TRACES_EXPORTER=otlp
+    export OTEL_TRACES_EXPORTER_OTLP_ENDPOINT=https://localhost:4318/v1/traces
+    export OTEL_TRACES_EXPORTER_OTLP_PROTOCOL=http/protobuf
   fi
   unset OTEL_EXPORTER_OTLP_HEADERS
   cat > collector.yaml <<EOF
@@ -97,11 +106,6 @@ $(cat $section_pipeline_logs)
 $(cat $section_pipeline_metrics)
 $(cat $section_pipeline_traces)
 EOF
-  export OTEL_TRACES_EXPORTER=otlp
-  export OTEL_EXPORTER_OTLP_ENDPOINT=https://localhost:4318
-  export OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
-  unset OTEL_EXPORTER_OTLP_LOGS_ENDPOINT OTEL_EXPORTER_OTLP_METRICS_ENDPOINT OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-  unset OTEL_LOGS_EXPORTER OTEL_METRICS_EXPORTER OTEL_TRACES_EXPORTER
   export OTEL_SHELL_COLLECTOR_IMAGE="$(cat Dockerfile | grep '^FROM ' | cut -d ' ' -f 2-)"
   sudo docker pull "$OTEL_SHELL_COLLECTOR_IMAGE" &
   if [ -n "$INPUT_DEBUG" ]; then
