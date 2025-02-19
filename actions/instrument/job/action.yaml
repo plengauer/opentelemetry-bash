@@ -23,7 +23,7 @@ inputs:
     default: ${{ runner.debug }}
   secrets_to_redact:
     description: 'A JSON object containing all secrets to redact from any attribute.'
-    default: '{ "github_token": "${{ secrets.GITHUB_TOKEN }}" }'
+    default: '{ "github_token": "${{ github.token }}" }'
   __job_status:
     description: 'INTERNAL ONLY - DO NOT SET MANUALLY'
     default: '${{ job.status }}'
