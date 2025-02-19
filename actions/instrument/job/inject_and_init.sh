@@ -42,7 +42,7 @@ EOF
     logs:
       receivers: [otlp]
       exporters: [$collector_exporter/logs]
-      processors: [batch]
+      processors: [redaction, batch]
 EOF
     unset OTEL_EXPORTER_OTLP_LOGS_HEADERS
     export OTEL_LOGS_EXPORTER=otlp
@@ -61,7 +61,7 @@ EOF
     logs:
       receivers: [otlp]
       exporters: [$collector_exporter/metrics]
-      processors: [batch]
+      processors: [redaction, batch]
 EOF
     unset OTEL_EXPORTER_OTLP_METRICS_HEADERS
     export OTEL_METRICS_EXPORTER=otlp
@@ -80,7 +80,7 @@ EOF
     logs:
       receivers: [otlp]
       exporters: [$collector_exporter/logs]
-      processors: [batch]
+      processors: [redaction, batch]
 EOF
     unset OTEL_EXPORTER_OTLP_TRACES_HEADERS
     export OTEL_TRACES_EXPORTER=otlp
@@ -100,6 +100,10 @@ $(cat $section_exporter_metrics)
 $(cat $section_exporter_traces)
 processors:
   batch:
+  redaction:
+    allow_all_keys: true
+    blocked_values:
+$(echo "$INPUT___SECRETS_TO_REDACT" | jq '. | to_entries[].value' | sed 's/[.[\(*^$+?{|]/\\&/g' | sed 's/^/      /g')
 service:
   pipelines:
 $(cat $section_pipeline_logs)
