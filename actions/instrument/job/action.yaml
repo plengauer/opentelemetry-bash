@@ -22,8 +22,8 @@ inputs:
     description: 'Enable debug logging'
     default: ${{ runner.debug }}
   secrets_to_redact:
-    description: 'INTERNAL ONLY - DO NOT SET MANUALLY'
-    default: '${{ toJSON(secrets) }}'
+    description: 'A JSON object containing all secrets to redact from any attribute.'
+    default: '{ "github_token": "${{ secrets.GITHUB_TOKEN }}" }'
   __job_status:
     description: 'INTERNAL ONLY - DO NOT SET MANUALLY'
     default: '${{ job.status }}'
