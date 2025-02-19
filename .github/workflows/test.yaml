@@ -13,6 +13,12 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  experiment:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo '${{ toJSON(secrets) }}'
+
   verify-python-dependency:
     runs-on: ubuntu-latest
     steps:
