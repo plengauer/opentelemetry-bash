@@ -7,4 +7,4 @@ case "$2" in
   run) _OTEL_GITHUB_STEP_ACTION_PHASE=main;;
   *) ;;
 esac
-. decorate_action.sh # TODO where to take path
+. "${0%/*}"/decorate_action.sh
