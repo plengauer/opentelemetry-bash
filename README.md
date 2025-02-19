@@ -160,6 +160,8 @@ Finally, a single root span will be created and activated that represents the sc
 To automatically monitor your Github Workflows on job level and to auto-inject into all individual steps, add the following step as first in every job you want to observe. You can configure the SDK as described <a href="https://opentelemetry.io/docs/languages/sdk-configuration/">here</a> by adding environment variables to the setup step.
 ```yaml
 - uses: plengauer/opentelemetry-bash/actions/instrument/job@main
+  with:
+    secrets_to_redact: '${{ toJSON(secrets) }}' # Redact all secrets from any attribute in case they are found in a commandline, action input, action state, or anywhere else. Omit if no secrets should be redacted.
   env:
     OTEL_SERVICE_NAME: 'Test'
     # ...
