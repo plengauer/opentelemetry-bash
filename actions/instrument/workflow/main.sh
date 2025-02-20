@@ -63,7 +63,7 @@ link="${GITHUB_SERVER_URL:-https://github.com}"/"$(jq < "$workflow_json" -r .rep
 workflow_started_at="$(jq < "$workflow_json" -r .run_started_at)"
 workflow_ended_at="$(jq < "$jobs_json" -r .completed_at | sort -r | head -n 1)"
 if [ "$(ls "$logs_dir"/*/*.txt | wc -l)" -gt 0 ]; then
-  last_log_timestamp="$(cat "$logs_dir"/*/*.txt | cut -d ' ' -f 1 | sort -r | head -n 1)"
+  last_log_timestamp="$(tail -n 1 "$logs_dir"/*/*.txt | cut -d ' ' -f 1 | sort | tail -n 1)"
   if [ "$last_log_timestamp" > "$workflow_ended_at" ]; then workflow_ended_at="$last_log_timestamp"; fi
 fi
 workflow_span_handle="$(otel_span_start @"$workflow_started_at" CONSUMER "$(jq < "$workflow_json" -r .name)")"
