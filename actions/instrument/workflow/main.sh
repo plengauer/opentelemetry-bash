@@ -1,3 +1,4 @@
+export OTEL_SHELL_SDK_OUTPUT_REDIRECT=/dev/stderr
 #/bin/bash
 set -e
 . ../shared/config_validation.sh
