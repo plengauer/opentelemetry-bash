@@ -458,7 +458,7 @@ jobs:
         with:
           name: packages
       - run: |
-          nohup node -e "require('http').createServer(function (req, res) { console.log(req.method, req.url); res.writeHead(200); res.end(); }).listen(8080);" &
+          nohup node -e "require('http').createServer(function (req, res) { console.log(req.method, req.url); res.writeHead(200); res.end(); }).listen(8080);" > /tmp/http.log &
       - uses: ./actions/instrument/job
         with:
           cache: ${{ matrix.cache }}
@@ -509,6 +509,7 @@ jobs:
            image=ubuntu:latest
            update=TRUE
            shell=bash
+      - run: cat /tmp/http.log
 
   github-workflow:
     needs: smoke
