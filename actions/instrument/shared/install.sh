@@ -36,7 +36,7 @@ if ! type otel.sh 2> /dev/null; then
         sudo docker load < /opt/opentelemetry_shell/collector.image
       else
         sudo docker pull "$OTEL_SHELL_COLLECTOR_IMAGE"
-        sudo docker save "$OTEL_SHELL_COLLECTOR_IMAGE" > /opt/opentelemetry_shell/collector.image
+        sudo docker save "$OTEL_SHELL_COLLECTOR_IMAGE" | sudo tee /opt/opentelemetry_shell/collector.image > /dev/null
         write_back_cache=TRUE
       fi
     fi
