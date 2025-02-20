@@ -110,8 +110,6 @@ $(cat $section_pipeline_logs)
 $(cat $section_pipeline_metrics)
 $(cat $section_pipeline_traces)
 EOF
-  export OTEL_SHELL_COLLECTOR_IMAGE="$(cat Dockerfile | grep '^FROM ' | cut -d ' ' -f 2-)"
-  sudo docker pull "$OTEL_SHELL_COLLECTOR_IMAGE" &
   if [ -n "$INPUT_DEBUG" ]; then
     cat collector.yaml
   fi
