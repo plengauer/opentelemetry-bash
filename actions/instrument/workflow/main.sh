@@ -93,6 +93,11 @@ otel_span_end "$workflow_span_handle" @"$workflow_ended_at"
 
 jq < "$jobs_json" -r --unbuffered '. | ["'"${WORKFLOW_TRACEPARENT:-null}"'", .id, .conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | while read -r TRACEPARENT job_id job_conclusion job_started_at job_completed_at job_name; do
   if [[ "$job_started_at" < "$workflow_started_at" ]]; then continue; fi
+  job_log_file="$(printf '%s' "$logs_dir"/*_"${job_name//\//}".txt | tr -d ':')"
+  if [ -r "$job_log_file" ]; then
+    last_log_timestamp="$(tail < "$job_log_file" -n 1 | cut -d ' ' -f 1)"
+    if [ -n "$last_log_timestamp" ] && [ "$last_log_timestamp" > "$job_completed_at" ]; then job_completed_at="$last_log_timestamp"; fi
+  fi
   
   observation_handle="$(otel_observation_create 1)"
   otel_observation_attribute_typed "$observation_handle" string github.actions.workflow.id="$(jq < "$workflow_json" -r .workflow_id)"
@@ -109,11 +114,6 @@ jq < "$jobs_json" -r --unbuffered '. | ["'"${WORKFLOW_TRACEPARENT:-null}"'", .id
   otel_counter_observe "$job_run_counter_handle" "$observation_handle"
   
   if [ "$TRACEPARENT" != null ] && ! jq < "$artifacts_json" -r .name | grep -q '^opentelemetry_job_'"$job_id"'$'; then
-    job_log_file="$(printf '%s' "$logs_dir"/*_"${job_name//\//}".txt | tr -d ':')"
-    if [ -r "$job_log_file" ]; then
-      last_log_timestamp="$(tail < "$job_log_file" -n 1 | cut -d ' ' -f 1)"
-      if [ -n "$last_log_timestamp" ] && [ "$last_log_timestamp" > "$job_completed_at" ]; then job_completed_at="$last_log_timestamp"; fi
-    fi
     job_span_handle="$(otel_span_start @"$job_started_at" CONSUMER "$job_name")"
     otel_span_attribute_typed "$job_span_handle" string github.actions.type=job
     otel_span_attribute_typed "$job_span_handle" string github.actions.url="$link"/job/"$job_id"
@@ -130,6 +130,16 @@ jq < "$jobs_json" -r --unbuffered '. | ["'"${WORKFLOW_TRACEPARENT:-null}"'", .id
 
   jq < "$jobs_json" -r --unbuffered '. | select(.id == '"$job_id"') | .steps[] | ["'"${JOB_TRACEPARENT:-null}"'", .number, .conclusion, .started_at, .completed_at, .name] | @tsv'
 done | sed 's/\t/ /g' | while read -r TRACEPARENT step_number step_conclusion step_started_at step_completed_at step_name; do
+  step_log_file="$(printf '%s' "$logs_dir"/"${job_name//\//}"/"$step_number"_*.txt | tr -d ':')"
+  if [ -r "$step_log_file" ]; then
+    last_log_timestamp="$(tail < "$step_log_file" -n 1 | cut -d ' ' -f 1)"
+    if [ -n "$last_log_timestamp" ] && [ "$last_log_timestamp" > "$step_completed_at" ]; then step_completed_at="$last_log_timestamp"; fi
+  fi
+  if [ -r "$times_dir"/"$TRACEPARENT" ]; then
+    previus_step_completed_at="$(cat "$times_dir"/"$TRACEPARENT")"
+    if [ "$previus_step_completed_at" > "$step_started_at" ]; then "$step_started_at" = "$previous_step_completed_at"; fi
+    if [ "$step_started_at" > "$step_completed_at" ]; then step_completed_at="$step_started_at"; fi
+  fi
   
   observation_handle="$(otel_observation_create 1)"
   otel_observation_attribute_typed "$observation_handle" string github.actions.workflow.id="$(jq < "$workflow_json" -r .workflow_id)"
@@ -178,16 +188,6 @@ done | sed 's/\t/ /g' | while read -r TRACEPARENT step_number step_conclusion st
   esac
 
   if [ "$TRACEPARENT" != null ]; then
-    step_log_file="$(printf '%s' "$logs_dir"/"${job_name//\//}"/"$step_number"_*.txt | tr -d ':')"
-    if [ -r "$step_log_file" ]; then
-      last_log_timestamp="$(tail < "$step_log_file" -n 1 | cut -d ' ' -f 1)"
-      if [ -n "$last_log_timestamp" ] && [ "$last_log_timestamp" > "$step_completed_at" ]; then step_completed_at="$last_log_timestamp"; fi
-    fi
-    if [ -r "$times_dir"/"$TRACEPARENT" ]; then
-      previus_step_completed_at="$(cat "$times_dir"/"$TRACEPARENT")"
-      if [ "$previus_step_completed_at" > "$step_started_at" ]; then "$step_started_at" = "$previous_step_completed_at"; fi
-      if [ "$step_started_at" > "$step_completed_at" ]; then step_completed_at="$step_started_at"; fi
-    fi
     step_span_handle="$(otel_span_start @"$step_started_at" INTERNAL "$step_name")"
     otel_span_attribute_typed "$step_span_handle" string github.actions.type=step
     otel_span_attribute_typed "$step_span_handle" string github.actions.url="$link"/job/"$job_id"'#'step:"$step_number":1
