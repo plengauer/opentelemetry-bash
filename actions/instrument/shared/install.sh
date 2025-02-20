@@ -1,13 +1,15 @@
 #!/bin/sh -e
 export GITHUB_ACTION_REPOSITORY="${GITHUB_ACTION_REPOSITORY:-"$GITHUB_REPOSITORY"}"
 
-ensure_installed() { type "$1" 2> /dev/null || sudo apt-get install "$1"; }
+ensure_installed() { type "$1" 2> /dev/null || sudo apt-get install "${2:-$1}"; }
 ensure_installed curl
 ensure_installed wget
 ensure_installed jq
 ensure_installed sed
 ensure_installed unzip
+ensure_installed node nodejs
 ensure_installed npm
+ensure_installed docker docker.io
 
 cp ../shared/package.json . && npm install && rm package.json
 
