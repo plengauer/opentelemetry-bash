@@ -137,7 +137,7 @@ done | sed 's/\t/ /g' | while read -r TRACEPARENT step_number step_conclusion st
   fi
   if [ -r "$times_dir"/"$TRACEPARENT" ]; then
     previus_step_completed_at="$(cat "$times_dir"/"$TRACEPARENT")"
-    if [ "$previus_step_completed_at" > "$step_started_at" ]; then "$step_started_at"="$previous_step_completed_at"; fi
+    if [ "$previus_step_completed_at" > "$step_started_at" ]; then step_started_at="$previous_step_completed_at"; fi
     if [ "$step_started_at" > "$step_completed_at" ]; then step_completed_at="$step_started_at"; fi
   fi
   
