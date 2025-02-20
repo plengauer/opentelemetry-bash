@@ -21,6 +21,8 @@ logs_dir="$(mktemp -d)"
 logs_zip="$(mktemp)"
 gh_workflow_run_logs "$INPUT_WORKFLOW_RUN_ID" "$INPUT_WORKFLOW_RUN_ATTEMPT" "$logs_zip" && unzip "$logs_zip" -d "$logs_dir" && rm "$logs_zip" || true
 
+times_dir="$(mktemp -d)"
+
 echo "::notice ::Observing $(jq < "$workflow_json" -r .html_url)"
 
 . otelapi.sh
@@ -181,6 +183,11 @@ done | sed 's/\t/ /g' | while read -r TRACEPARENT step_number step_conclusion st
       last_log_timestamp="$(tail < "$step_log_file" -n 1 | cut -d ' ' -f 1)"
       if [ -n "$last_log_timestamp" ] && [ "$last_log_timestamp" > "$step_completed_at" ]; then step_completed_at="$last_log_timestamp"; fi
     fi
+    if [ -r "$times_dir"/"$TRACEPARENT" ]; then
+      previus_step_completed_at="$(cat "$times_dir"/"$TRACEPARENT")"
+      if [ "$previus_step_completed_at" > "$step_started_at" ]; then "$step_started_at" = "$previous_step_completed_at"; fi
+      if [ "$step_started_at" > "$step_completed_at" ]; then step_completed_at="$step_started_at"; fi
+    fi
     step_span_handle="$(otel_span_start @"$step_started_at" INTERNAL "$step_name")"
     otel_span_attribute_typed "$step_span_handle" string github.actions.type=step
     otel_span_attribute_typed "$step_span_handle" string github.actions.url="$link"/job/"$job_id"'#'step:"$step_number":1
@@ -212,6 +219,7 @@ done | sed 's/\t/ /g' | while read -r TRACEPARENT step_number step_conclusion st
     otel_span_deactivate "$step_span_handle"
     if [ "$step_conclusion" = failure ]; then otel_span_error "$step_span_handle"; fi
     otel_span_end "$step_span_handle" @"$step_completed_at"
+    echo "$step_completed_at" > "$times_dir"/"$TRACEPARENT"
     [ -z "${INPUT_DEBUG}" ] || echo "span step $STEP_TRACEPARENT $step_name" >&2
   fi
   
