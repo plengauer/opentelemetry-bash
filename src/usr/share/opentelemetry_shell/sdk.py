@@ -218,7 +218,7 @@ def handle(scope, version, command, arguments):
             for metrics_exporter in metrics_exporters.split(','):
                 if metrics_exporter == '':
                     pass
-                elif metrics_exporter = 'none':
+                elif metrics_exporter == 'none':
                     pass
                 elif metrics_exporter == 'console':
                     metric_readers.append(PeriodicExportingMetricReader(ConsoleMetricExporter()))
