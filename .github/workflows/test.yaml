@@ -498,7 +498,12 @@ jobs:
            image=ubuntu:latest
            update=TRUE
            shell=bash
-      - run: cat /tmp/http.log
+      - run: cat /tmp/http.log | grep -F 'POST /v1/logs'
+        if: ${{ matrix.exporter_logs == 'otlp' }}
+      - run: cat /tmp/http.log | grep -F 'POST /v1/metrics'
+        if: ${{ matrix.exporter_metrics == 'otlp' }}
+      - run: cat /tmp/http.log | grep -F 'POST /v1/traces'
+        if: ${{ matrix.exporter_traces == 'otlp' }}
 
   github-workflow:
     needs: smoke
