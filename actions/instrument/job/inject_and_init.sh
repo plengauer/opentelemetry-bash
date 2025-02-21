@@ -71,7 +71,7 @@ EOF
   if [ "${OTEL_TRACES_EXPORTER:-otlp}" = otlp ]; then
     if [ "${OTEL_EXPORTER_OTLP_PROTOCOL:-http/protobuf}" ]; then collector_exporter=otlphttp; else collector_exporter=otlp; fi
     cat > "$section_exporter_traces" <<EOF
-  $collector_exporter/logs:
+  $collector_exporter/traces:
     endpoint: "${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT:-$OTEL_EXPORTER_OTLP_ENDPOINT}"
     headers:
 $(echo "$OTEL_EXPORTER_OTLP_HEADERS","$OTEL_EXPORTER_OTLP_TRACES_HEADERS" | tr ',' '\n' | grep -v '^$' | sed 's/=/: /g' | sed 's/^/      /g')
@@ -79,7 +79,7 @@ EOF
     cat > "$section_pipeline_traces" <<EOF
     logs:
       receivers: [otlp]
-      exporters: [$collector_exporter/logs]
+      exporters: [$collector_exporter/traces]
       processors: [redaction, batch]
 EOF
     unset OTEL_EXPORTER_OTLP_TRACES_HEADERS
