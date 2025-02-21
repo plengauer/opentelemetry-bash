@@ -465,6 +465,10 @@ jobs:
           OTEL_SHELL_SDK_OUTPUT_REDIRECT: /dev/null
       - run: | # check if install succeeded
           type otel.sh && type strace
+      - run: |
+          counter_handle="$(otel_counter_create observable standard test 1 "The amount of rate limited requests used")"
+          observation_handle="$(otel_observation_create 1)"
+          otel_counter_observe "$counter_handle" "$observation_handle"
       - run: | # check if instrumentation happened
           [ "$(alias | grep '_otel_observe' | wc -l)" -gt 0 ]
       - run: | # check if traceparent is injected
