@@ -12,7 +12,6 @@ jobs:
     steps:
       - uses: plengauer/opentelemetry-bash/actions/instrument/workflow@v5.4.0
         env:
-          OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
-          OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
-          OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT }}'
+          OTEL_EXPORTER_OTLP_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_ENDPOINT }}'
+          OTEL_EXPORTER_OTLP_HEADERS: '${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}'
           OTEL_SHELL_SDK_OUTPUT_REDIRECT: '/dev/stderr'

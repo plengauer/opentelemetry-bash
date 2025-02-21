@@ -16,9 +16,8 @@ jobs:
     steps:
       - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.4.0
         env:
-          OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT }}'
-          OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT }}'
-          OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT }}'
+          OTEL_EXPORTER_OTLP_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_ENDPOINT }}'
+          OTEL_EXPORTER_OTLP_HEADERS: '${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}'
       - uses: plengauer/autorerun@v0.19.0
         with:
           github_token: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
