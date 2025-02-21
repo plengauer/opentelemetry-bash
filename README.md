@@ -160,12 +160,15 @@ Finally, a single root span will be created and activated that represents the sc
 To automatically monitor your Github Workflows on job level and to auto-inject into all individual steps, add the following step as first in every job you want to observe. You can configure the SDK as described <a href="https://opentelemetry.io/docs/languages/sdk-configuration/">here</a> by adding environment variables to the setup step.
 ```yaml
 - uses: plengauer/opentelemetry-bash/actions/instrument/job@main
-  with:
-    secrets_to_redact: '${{ toJSON(secrets) }}' # Redact all secrets from any attribute in case they are found in a commandline, action input, action state, or anywhere else. Omit if no secrets should be redacted.
   env:
     OTEL_SERVICE_NAME: 'Test'
     # ...
 - run: ...
+```
+Depending on the actions in use, GitHub `secrets` or other sensitive information could appear in commandlines or action inputs/states which may captured as attributes on spans, metrics, or logs. To redact these secrets, use the following parameter to redact their values from any attribute. The value of the parameter must be a `json` object, whereas every value of every field is considered a secret to be redacted. By default, if left unset, the implicit GitHub token is redacted.
+```yaml
+with:
+    secrets_to_redact: '${{ toJSON(secrets) }}' # Redact all secrets from any attribute.
 ```
 
 Optionally, setup a dedicted workflow that is used to collect all jobs under a single root span representing the entire workflow. The workflow has to be a separate workflow and not just a job in the observed workflow itself. It must be triggered by a workflow_run (see below) by the workflow that the root span should be created for. This workflow will also fill gaps by creating spans for jobs that have not been injected into.
