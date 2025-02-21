@@ -466,7 +466,7 @@ jobs:
       - run: | # check if install succeeded
           type otel.sh && type strace
       - run: |
-          counter_handle="$(otel_counter_create standard test 1 "The amount of rate limited requests used")"
+          counter_handle="$(otel_counter_create standard counter test 1 "The amount of rate limited requests used")"
           observation_handle="$(otel_observation_create 1)"
           otel_counter_observe "$counter_handle" "$observation_handle"
       - run: | # check if instrumentation happened
