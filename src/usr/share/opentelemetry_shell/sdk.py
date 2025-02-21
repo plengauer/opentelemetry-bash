@@ -203,6 +203,8 @@ def handle(scope, version, command, arguments):
             for traces_exporter in traces_exporters.split(','):
                 if traces_exporter == '':
                     pass
+                elif traces_exporter == 'none':
+                    pass
                 elif traces_exporter == 'console':
                     tracer_provider.add_span_processor(SimpleSpanProcessor(ConsoleSpanExporter()))
                 elif traces_exporter == 'otlp':
@@ -216,6 +218,8 @@ def handle(scope, version, command, arguments):
             for metrics_exporter in metrics_exporters.split(','):
                 if metrics_exporter == '':
                     pass
+                elif metrics_exporter = 'none':
+                    pass
                 elif metrics_exporter == 'console':
                     metric_readers.append(PeriodicExportingMetricReader(ConsoleMetricExporter()))
                 elif metrics_exporter == 'otlp':
@@ -228,6 +232,8 @@ def handle(scope, version, command, arguments):
             logger_provider = LoggerProvider(resource=final_resources)
             for logger_exporter in logs_exporters.split(','):
                 if logger_exporter == '':
+                    pass
+                elif logger_exporter == 'none':
                     pass
                 elif logger_exporter == 'console':
                     logger_provider.add_log_record_processor(BatchLogRecordProcessor(ConsoleLogExporter()))
