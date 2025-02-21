@@ -8,15 +8,6 @@ fi
 if [ "${OTEL_TRACES_EXPORTER:-otlp}" != otlp ] && [ "${OTEL_TRACES_EXPORTER:-otlp}" != console ] && [ "${OTEL_TRACES_EXPORTER:-otlp}" != none ]; then
   echo "::error ::OpenTelemetry for GitHub actions only supports otlp exporters ($OTEL_TRACES_EXPORTER). For other exporters, pipe the data through a collector outside of GitHub to translate the data to a different protocol." && false
 fi
-if [ "${OTEL_LOGS_EXPORTER:-otlp}" = otlp ] && [ -z "${OTEL_EXPORTER_OTLP_LOGS_ENDPOINT:-${OTEL_EXPORTER_OTLP_ENDPOINT:-}}" ]; then
-  echo "::warning ::OpenTelemetry for GitHub actions is configured to export logs, but no endpoint is configured. Explicitly configure none as exporter if no logs should be recorded."
-fi
-if [ "${OTEL_METRICS_EXPORTER:-otlp}" = otlp ] && [ -z "${OTEL_EXPORTER_OTLP_METRICS_ENDPOINT:-${OTEL_EXPORTER_OTLP_ENDPOINT:-}}" ]; then
-  echo "::warning ::OpenTelemetry for GitHub actions is configured to export metrics, but no endpoint is configured. Explicitly configure none as exporter if no metrics should be recorded."
-fi
-if [ "${OTEL_TRACES_EXPORTER:-otlp}" = otlp ] && [ -z "${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT:-${OTEL_EXPORTER_OTLP_ENDPOINT:-}}" ]; then
-  echo "::warning ::OpenTelemetry for GitHub actions is configured to export traces, but no endpoint is configured. Explicitly configure none as exporter if no traces should be recorded."
-fi
 if [ -z "${OTEL_EXPORTER_OTLP_LOGS_ENDPOINT:-${OTEL_EXPORTER_OTLP_ENDPOINT:-}}" ] && [ -z "${OTEL_LOGS_EXPORTER:-}" ]; then
   export OTEL_LOGS_EXPORTER=console
   export OTEL_SHELL_SDK_OUTPUT_REDIRECT="${OTEL_SHELL_SDK_OUTPUT_REDIRECT:-/dev/null}"
