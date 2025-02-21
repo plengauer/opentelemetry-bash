@@ -64,7 +64,7 @@ link="${GITHUB_SERVER_URL:-https://github.com}"/"$(jq < "$workflow_json" -r .rep
 workflow_started_at="$(jq < "$workflow_json" -r .run_started_at)"
 workflow_ended_at="$(jq < "$jobs_json" -r .completed_at | sort -r | head -n 1)"
 if [ "$(ls "$logs_dir"/*/*.txt | wc -l)" -gt 0 ]; then
-  last_log_timestamp="$(tail -n 1 "$logs_dir"/*/*.txt | cut -d ' ' -f 1 | sort | tail -n 1)"
+  last_log_timestamp="$(tail -q -n 1 "$logs_dir"/*/*.txt | cut -d ' ' -f 1 | sort | tail -n 1)"
   if [ "$last_log_timestamp" > "$workflow_ended_at" ]; then workflow_ended_at="$last_log_timestamp"; fi
 fi
 workflow_span_handle="$(otel_span_start @"$workflow_started_at" CONSUMER "$(jq < "$workflow_json" -r .name)")"
@@ -137,8 +137,8 @@ done | sed 's/\t/ /g' | while read -r TRACEPARENT step_number step_conclusion st
     if [ -n "$last_log_timestamp" ] && [ "$last_log_timestamp" > "$step_completed_at" ]; then step_completed_at="$last_log_timestamp"; fi
   fi
   if [ -r "$times_dir"/"$TRACEPARENT" ]; then
-    previus_step_completed_at="$(cat "$times_dir"/"$TRACEPARENT")"
-    if [ "$previus_step_completed_at" > "$step_started_at" ]; then step_started_at="$previous_step_completed_at"; fi
+    previous_step_completed_at="$(cat "$times_dir"/"$TRACEPARENT")"
+    if [ "$previous_step_completed_at" > "$step_started_at" ]; then step_started_at="$previous_step_completed_at"; fi
     if [ "$step_started_at" > "$step_completed_at" ]; then step_completed_at="$step_started_at"; fi
   fi
   
