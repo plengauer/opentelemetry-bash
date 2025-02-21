@@ -1,4 +1,3 @@
-export OTEL_SHELL_SDK_OUTPUT_REDIRECT=/dev/stderr
 #/bin/bash
 set -e
 . ../shared/config_validation.sh
@@ -131,15 +130,15 @@ jq < "$jobs_json" -r --unbuffered '. | ["'"${WORKFLOW_TRACEPARENT:-null}"'", .id
 
   jq < "$jobs_json" -r --unbuffered '. | select(.id == '"$job_id"') | .steps[] | ["'"${JOB_TRACEPARENT:-null}"'", .number, .conclusion, .started_at, .completed_at, .name] | @tsv'
 done | sed 's/\t/ /g' | while read -r TRACEPARENT step_number step_conclusion step_started_at step_completed_at step_name; do
-  step_log_file="$(printf '%s' "$logs_dir"/"${job_name//\//}"/"$step_number"_*.txt | tr -d ':')"
-  if [ -r "$step_log_file" ]; then
-    last_log_timestamp="$(tail < "$step_log_file" -n 1 | cut -d ' ' -f 1)"
-    if [ -n "$last_log_timestamp" ] && [ "$last_log_timestamp" > "$step_completed_at" ]; then step_completed_at="$last_log_timestamp"; fi
-  fi
   if [ -r "$times_dir"/"$TRACEPARENT" ]; then
     previous_step_completed_at="$(cat "$times_dir"/"$TRACEPARENT")"
     if [ "$previous_step_completed_at" > "$step_started_at" ]; then step_started_at="$previous_step_completed_at"; fi
     if [ "$step_started_at" > "$step_completed_at" ]; then step_completed_at="$step_started_at"; fi
+  fi
+  step_log_file="$(printf '%s' "$logs_dir"/"${job_name//\//}"/"$step_number"_*.txt | tr -d ':')"
+  if [ -r "$step_log_file" ]; then
+    last_log_timestamp="$(tail < "$step_log_file" -n 1 | cut -d ' ' -f 1)"
+    if [ -n "$last_log_timestamp" ] && [ "$last_log_timestamp" > "$step_completed_at" ]; then step_completed_at="$last_log_timestamp"; fi
   fi
   
   observation_handle="$(otel_observation_create 1)"
