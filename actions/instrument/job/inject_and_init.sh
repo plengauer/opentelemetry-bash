@@ -25,6 +25,10 @@ echo "log_file=$log_file" >> "$GITHUB_STATE"
 . ../shared/github.sh
 bash -e ../shared/install.sh
 
+  gh_rate_limit
+  gh_rate_limit | jq --unbuffered -r '.resources | to_entries[] | [.key, .value.used, .value.remaining] | @tsv'
+  gh_rate_limit | jq --unbuffered -r '.resources | to_entries[] | [.key, .value.used, .value.remaining] | @tsv' | sed 's/\t/ /g'
+
 # configure collector if required
 if [ "$INPUT_COLLECTOR" = true ] || ([ "$INPUT_COLLECTOR" = auto ] && ([ -n "${OTEL_EXPORTER_OTLP_HEADERS:-}" ] || [ -n "${OTEL_EXPORTER_OTLP_LOGS_HEADERS:-}" ] || [ -n "${OTEL_EXPORTER_OTLP_METRICS_HEADERS:-}" ] || [ -n "${OTEL_EXPORTER_OTLP_TRACES_HEADERS:-}" ] || [ "$INPUT_SECRETS_TO_REDACT" != '{}' ])); then
   if ! type docker; then echo "::error ::Cannot use collector because docker is unavailable." && false; fi
@@ -196,9 +200,6 @@ root4job() {
   traceparent_file="$1"
   . otelapi.sh
   otel_init
-  gh_rate_limit
-  gh_rate_limit | jq --unbuffered -r '.resources | to_entries[] | [.key, .value.used, .value.remaining] | @tsv'
-  gh_rate_limit | jq --unbuffered -r '.resources | to_entries[] | [.key, .value.used, .value.remaining] | @tsv' | sed 's/\t/ /g'
   observe_rate_limit &
   observe_rate_limit_pid="$!"
   span_handle="$(otel_span_start CONSUMER "${OTEL_SHELL_GITHUB_JOB:-$GITHUB_JOB}")"
