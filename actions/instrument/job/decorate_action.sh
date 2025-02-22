@@ -28,7 +28,6 @@ otel_span_attribute_typed $span_handle string github.actions.action.ref="$GITHUB
 otel_span_activate "$span_handle"
 otel_observe "$_OTEL_GITHUB_STEP_AGENT_INJECTION_FUNCTION" "$@"
 exit_code="$?"
-printenv | grep '^STATE_' | cut -d '=' -f 1 | while read -r key; do otel_span_attribute_typed $span_handle string github.actions.step.state.out."$(variable_name_to_attribute_key "${key#STATE_}")"="$(variable_2_attribute_value "$key")"; done
 cat "$GITHUB_STATE" | while read -r kvp; do otel_span_attribute_typed $span_handle string github.actions.step.state.after."$(variable_name_to_attribute_key "${kvp%%=*}")"="${kvp#*=}"; done
 cat "$GITHUB_OUTPUT" | while read -r kvp; do otel_span_attribute_typed $span_handle string github.actions.step.output."$(variable_name_to_attribute_key "${kvp%%=*}")"="${kvp#*=}"; done
 if [ "$exit_code" != 0 ]; then
