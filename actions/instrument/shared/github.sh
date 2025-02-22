@@ -18,6 +18,7 @@ export -f gh_curl_paginated
 gh_rate_limit() {
   curl --no-progress-meter --fail --retry 16 -H "Authorization: Bearer $INPUT_GITHUB_TOKEN" "${GITHUB_API_URL:-https://api.github.com}"/rate_limit
 }
+export -f gh_rate_limit
 
 gh_releases() {
   GITHUB_REPOSITORY="$GITHUB_ACTION_REPOSITORY" gh_curl_paginated /releases'?per_page=100'
