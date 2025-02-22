@@ -177,6 +177,10 @@ observe_rate_limit() {
   done
 }
 export -f observe_rate_limit
+. otelapi.sh
+otel_init
+set -x
+observe_rate_limit
 root4job_end() {
   if [ -f /tmp/opentelemetry_shell.github.error ]; then
     otel_span_attribute_typed "$span_handle" string github.actions.job.conclusion=failure
