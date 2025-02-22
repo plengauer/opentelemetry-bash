@@ -25,10 +25,6 @@ echo "log_file=$log_file" >> "$GITHUB_STATE"
 . ../shared/github.sh
 bash -e ../shared/install.sh
 
-  gh_rate_limit
-  gh_rate_limit | jq --unbuffered -r '.resources | to_entries[] | [.key, .value.used, .value.remaining] | @tsv'
-  gh_rate_limit | jq --unbuffered -r '.resources | to_entries[] | [.key, .value.used, .value.remaining] | @tsv' | sed 's/\t/ /g'
-
 # configure collector if required
 if [ "$INPUT_COLLECTOR" = true ] || ([ "$INPUT_COLLECTOR" = auto ] && ([ -n "${OTEL_EXPORTER_OTLP_HEADERS:-}" ] || [ -n "${OTEL_EXPORTER_OTLP_LOGS_HEADERS:-}" ] || [ -n "${OTEL_EXPORTER_OTLP_METRICS_HEADERS:-}" ] || [ -n "${OTEL_EXPORTER_OTLP_TRACES_HEADERS:-}" ] || [ "$INPUT_SECRETS_TO_REDACT" != '{}' ])); then
   if ! type docker; then echo "::error ::Cannot use collector because docker is unavailable." && false; fi
@@ -180,6 +176,7 @@ observe_rate_limit() {
     otel_counter_observe "$used_gauge_handle" "$observation_handle"
   done
 }
+export -f observe_rate_limit
 root4job_end() {
   if [ -f /tmp/opentelemetry_shell.github.error ]; then
     otel_span_attribute_typed "$span_handle" string github.actions.job.conclusion=failure
