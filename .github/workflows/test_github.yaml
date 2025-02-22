@@ -60,6 +60,9 @@ jobs:
       - uses: actions/hello-world-docker-action@main # check if docker action works
       - uses: docker/setup-qemu-action@v3 # some docker actions have otel built-in
       - uses: docker/setup-buildx-action@v3 # some docker actions have otel built-in
+      - uses: actions/download-artifact@v4
+        with:
+          name: packages
       - run: cp package.deb tests/package.deb
       - uses: docker/build-push-action@v6 # some docker actions have otel built-in
         with:
