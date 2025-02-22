@@ -19,6 +19,7 @@ from opentelemetry.sdk.trace.export import SimpleSpanProcessor, BatchSpanProcess
 from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 
+from opentelemetry.metrics import Observation
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader, ConsoleMetricExporter
 from opentelemetry.exporter.otlp.proto.http.metric_exporter import OTLPMetricExporter
@@ -468,9 +469,9 @@ def handle(scope, version, command, arguments):
     else:
         return
 
-def observable_counter_callback(counter_id, observer):
+def observable_counter_callback(counter_id, _):
     for observation in delayed_observations[counter_id].values():
-        observer.observe(observation['amount'], observation['attributes'])
+        yield Observation(observation['amount'], observation['attributes'])
 
 def parse_time(time_string):
     if time_string == 'auto':
