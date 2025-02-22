@@ -196,6 +196,9 @@ root4job() {
   traceparent_file="$1"
   . otelapi.sh
   otel_init
+  counter_handle="$(otel_counter_create standard counter test 1 "Test")"
+  observation_handle="$(otel_observation_create 1)"
+  otel_counter_observe "$counter_handle" "$observation_handle"
   observe_rate_limit &
   observe_rate_limit_pid="$!"
   span_handle="$(otel_span_start CONSUMER "${OTEL_SHELL_GITHUB_JOB:-$GITHUB_JOB}")"
