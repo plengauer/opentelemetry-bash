@@ -24,6 +24,7 @@ echo "log_file=$log_file" >> "$GITHUB_STATE"
 # install dependencies
 . ../shared/github.sh
 bash -e ../shared/install.sh
+gh_rate_limit
 
 # configure collector if required
 if [ "$INPUT_COLLECTOR" = true ] || ([ "$INPUT_COLLECTOR" = auto ] && ([ -n "${OTEL_EXPORTER_OTLP_HEADERS:-}" ] || [ -n "${OTEL_EXPORTER_OTLP_LOGS_HEADERS:-}" ] || [ -n "${OTEL_EXPORTER_OTLP_METRICS_HEADERS:-}" ] || [ -n "${OTEL_EXPORTER_OTLP_TRACES_HEADERS:-}" ] || [ "$INPUT_SECRETS_TO_REDACT" != '{}' ])); then
