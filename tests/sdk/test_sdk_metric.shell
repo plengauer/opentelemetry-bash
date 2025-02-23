@@ -13,5 +13,6 @@ observation_handle=$(otel_observation_create 72)
 otel_observation_attribute $observation_handle foo=bar
 otel_counter_observe $counter_handle $observation_handle
 
-
 otel_shutdown
+
+exit 1
