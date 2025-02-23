@@ -209,6 +209,8 @@ jobs:
       IMAGE_OPENSUSE_DEV: '' # not public
     steps:
       - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.4.0
+        with:
+          secrets_to_redact: '${{ toJSON(secrets) }}'
         env:
           OTEL_EXPORTER_OTLP_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_HEADERS: '${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}'
