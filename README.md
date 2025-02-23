@@ -284,9 +284,9 @@ otel_observe cat file.txt
 Please note, that this command will not perform injection or context propagation. This can only be done via the fully automatic approach described above.
 
 ## Metrics
-To record metric data points, first create a new counter with a kind, type, name, unit, and description. Valid kinds are `standard` and `observable`, valid types are `counter`, `up_down_counter`, and `gauge`. The returned counter handle is used to observe data points and their attributes. Then create an observation with the amount and arbitrary attributes. Valid observation attribute types are `string`, `int`, `float`, and `auto`. The `auto` type will try to guess the type based on the value.
+To record metric data points, first create a new counter with a type, name, unit, and description. Valid types are `counter`, `up_down_counter`, and `gauge` as well as `observable_counter`, `observable_up_down_counter`, and `observable_gauge`. Then create an observation with the amount and arbitrary attributes. The observable counters will continuously report every observation until its replaced with another observation with the same attribute values. The returned counter handle is used to observe data points and their attributes. Valid observation attribute types are `string`, `int`, `float`, and `auto`. The `auto` type will try to guess the type based on the value.
 ```bash
-counter_handle="$(otel_counter_create standard up_down_counter my.metric MB 'this is an example metric')"
+counter_handle="$(otel_counter_create up_down_counter my.metric MB 'this is an example metric')"
 observation_handle="$(otel_observation_create 5)"
 otel_observation_attribute "$observation_handle" key=value
 otel_observation_attribute_typed "$observation_handle" string foo=bar

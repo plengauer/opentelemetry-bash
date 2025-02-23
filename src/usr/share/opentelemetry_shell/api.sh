@@ -299,14 +299,13 @@ otel_link_add() {
 }
 
 otel_counter_create() {
-  local kind="$1"
-  local type="$2"
-  local name="$3"
-  local unit="${4:-1}"
-  local description="${5:-}"
+  local type="$1"
+  local name="$2"
+  local unit="${3:-1}"
+  local description="${4:-}"
   local response_pipe="$(\mktemp -u -p "$_otel_shell_pipe_dir")_opentelemetry_shell_$$.counter_handle.pipe"
   \mkfifo ${_otel_mkfifo_flags:-} "$response_pipe"
-  _otel_sdk_communicate "COUNTER_CREATE" "$response_pipe" "$kind" "$type" "$name" "$unit" "$description"
+  _otel_sdk_communicate "COUNTER_CREATE" "$response_pipe" "$type" "$name" "$unit" "$description"
   \cat "$response_pipe"
   \rm "$response_pipe" 1> /dev/null 2> /dev/null
 }
