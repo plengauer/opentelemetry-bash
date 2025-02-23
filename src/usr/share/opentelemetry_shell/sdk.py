@@ -6,6 +6,7 @@ import json
 import requests
 from datetime import datetime, timezone
 import functools
+import hashlib
 
 import opentelemetry
 
