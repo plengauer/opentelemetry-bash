@@ -6,6 +6,7 @@ import json
 import requests
 from datetime import datetime, timezone
 import functools
+import hashlib
 
 import opentelemetry
 
@@ -19,6 +20,7 @@ from opentelemetry.sdk.trace.export import SimpleSpanProcessor, BatchSpanProcess
 from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 
+from opentelemetry.metrics import Observation
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader, ConsoleMetricExporter
 from opentelemetry.exporter.otlp.proto.http.metric_exporter import OTLPMetricExporter
@@ -421,6 +423,8 @@ def handle(scope, version, command, arguments):
         counter = counters[counter_id]
         if hasattr(counter, 'add'):
             counter.add(observation['amount'], observation['attributes'])
+        elif hasattr(counter, 'set'):
+            counter.set(observation['amount'], observation['attributes'])
         else:
             delayed_observations[counter_id][hashlib.sha256(json.dumps(observation['attributes'], sort_keys=True).encode('utf-8')).hexdigest()] = observation
         del observations[str(observation_id)]
@@ -468,10 +472,9 @@ def handle(scope, version, command, arguments):
     else:
         return
 
-def observable_counter_callback(counter_id, observer):
+def observable_counter_callback(counter_id, _):
     for observation in delayed_observations[counter_id].values():
-        observer.observe(observation['amount'], observation['attributes'])
-    delayed_observations[counter_id] = {}
+        yield Observation(observation['amount'], observation['attributes'])
 
 def parse_time(time_string):
     if time_string == 'auto':
