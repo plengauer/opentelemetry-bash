@@ -165,8 +165,8 @@ echo "Guessing GitHub job id to be $GITHUB_JOB_ID" >&2
 
 # observe
 observe_rate_limit() {
-  used_gauge_handle="$(otel_counter_create observable gauge github.api.rate_limit.used 1 "The amount of rate limited requests used")"
-  remaining_gauge_handle="$(otel_counter_create observable gauge github.api.rate_limit.remaining 1 "The amount of rate limited requests remaining")"
+  used_gauge_handle="$(otel_counter_create standard gauge github.api.rate_limit.used 1 "The amount of rate limited requests used")"
+  remaining_gauge_handle="$(otel_counter_create standard gauge github.api.rate_limit.remaining 1 "The amount of rate limited requests remaining")"
   while true; do
     gh_rate_limit | jq --unbuffered -r '.resources | to_entries[] | [.key, .value.used, .value.remaining] | @tsv' | sed 's/\t/ /g' | while read -r resource used remaining; do
       observation_handle="$(otel_observation_create "$used")"
