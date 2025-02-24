@@ -42,7 +42,7 @@ EOF
     logs:
       receivers: [otlp]
       exporters: [$collector_exporter/logs]
-      processors: [redaction, batch]
+      processors: [transform, batch]
 EOF
     unset OTEL_EXPORTER_OTLP_LOGS_HEADERS
     export OTEL_LOGS_EXPORTER=otlp
@@ -61,7 +61,7 @@ EOF
     logs:
       receivers: [otlp]
       exporters: [$collector_exporter/metrics]
-      processors: [redaction, batch]
+      processors: [transform, batch]
 EOF
     unset OTEL_EXPORTER_OTLP_METRICS_HEADERS
     export OTEL_METRICS_EXPORTER=otlp
@@ -80,7 +80,7 @@ EOF
     logs:
       receivers: [otlp]
       exporters: [$collector_exporter/traces]
-      processors: [redaction, batch]
+      processors: [transform, batch]
 EOF
     unset OTEL_EXPORTER_OTLP_TRACES_HEADERS
     export OTEL_TRACES_EXPORTER=otlp
@@ -100,6 +100,16 @@ $(cat $section_exporter_metrics)
 $(cat $section_exporter_traces)
 processors:
   batch:
+  transform:
+    error_mode: ignore
+    log_statements:
+$(echo "$INPUT_SECRETS_TO_REDACT" | jq '. | to_entries[].value' | sed 's/[.[\(*^$+?{|]/\\&/g' | xargs -I '{}' echo 'replace_all_patterns(log.attributes, "value", "{}", "***")' | sed 's/^/      - /g')
+$(echo "$INPUT_SECRETS_TO_REDACT" | jq '. | to_entries[].value' | sed 's/[.[\(*^$+?{|]/\\&/g' | xargs -I '{}' echo 'replace_all_pattern(log.body, "{}", "***")' | sed 's/^/      - /g')
+    metric_statements:
+$(echo "$INPUT_SECRETS_TO_REDACT" | jq '. | to_entries[].value' | sed 's/[.[\(*^$+?{|]/\\&/g' | xargs -I '{}' echo 'replace_all_patterns(metric.attributes, "value", "{}", "***")' | sed 's/^/      - /g')
+    trace_statements:
+$(echo "$INPUT_SECRETS_TO_REDACT" | jq '. | to_entries[].value' | sed 's/[.[\(*^$+?{|]/\\&/g' | xargs -I '{}' echo 'replace_all_patterns(span.attributes, "value", "{}", "***")' | sed 's/^/      - /g')
+$(echo "$INPUT_SECRETS_TO_REDACT" | jq '. | to_entries[].value' | sed 's/[.[\(*^$+?{|]/\\&/g' | xargs -I '{}' echo 'replace_all_pattern(span.name, "{}", "***")' | sed 's/^/      - /g')
   redaction:
     allow_all_keys: true
     blocked_values:
