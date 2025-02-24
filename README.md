@@ -205,7 +205,7 @@ otel_shutdown
 ```
 
 ## Configuration
-You can configure the underlying SDK with the same variables as any other OpenTelemetry SDK as described <a href="https://opentelemetry.io/docs/languages/sdk-configuration/">here</a>. Currently only the `otlp` and `console` exporters are supported. In addition to that, use the following environment variables to further configure behavior of this project:
+You can configure the underlying SDK with the same variables as any other OpenTelemetry SDK as described <a href="https://opentelemetry.io/docs/languages/sdk-configuration/">here</a>. Currently only the `otlp`, `console`, and `none` exporters are supported. In addition to that, use the following environment variables to further configure behavior of this project:
 | Variable                                    | Values          | Default                                      | Description                                                                                 | State        |
 | ------------------------------------------- | --------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------ |
 | OTEL_SHELL_CONFIG_OBSERVE_PIPES             | `TRUE`, `FALSE` | `TRUE` for GitHub Actions, `FALSE` otherwise | Count bytes and lines on stdout, and stderr and add counts as attributes on spans.          | stable       |
