@@ -182,7 +182,7 @@ observe_rate_limit() {
       otel_counter_observe "$used_gauge_handle" "$observation_handle"
       observation_handle="$(otel_observation_create "$remaining")"
       otel_observation_attribute_typed "$observation_handle" string github.api.resource="$resource"
-      otel_counter_observe "$used_gauge_handle" "$observation_handle"
+      otel_counter_observe "$remaining_gauge_handle" "$observation_handle"
     done
     sleep 5
   done
