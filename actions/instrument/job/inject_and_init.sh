@@ -58,7 +58,7 @@ EOF
 $(echo "$OTEL_EXPORTER_OTLP_HEADERS","$OTEL_EXPORTER_OTLP_METRICS_HEADERS" | tr ',' '\n' | grep -v '^$' | sed 's/=/: /g' | sed 's/^/      /g')
 EOF
     cat > "$section_pipeline_metrics" <<EOF
-    logs:
+    metrics:
       receivers: [otlp]
       exporters: [$collector_exporter/metrics]
       processors: [transform, batch]
@@ -77,7 +77,7 @@ EOF
 $(echo "$OTEL_EXPORTER_OTLP_HEADERS","$OTEL_EXPORTER_OTLP_TRACES_HEADERS" | tr ',' '\n' | grep -v '^$' | sed 's/=/: /g' | sed 's/^/      /g')
 EOF
     cat > "$section_pipeline_traces" <<EOF
-    logs:
+    traces:
       receivers: [otlp]
       exporters: [$collector_exporter/traces]
       processors: [transform, batch]
