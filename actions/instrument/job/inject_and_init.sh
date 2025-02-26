@@ -87,7 +87,7 @@ EOF
     export OTEL_TRACES_EXPORTER_OTLP_ENDPOINT=https://localhost:4318/v1/traces
     export OTEL_TRACES_EXPORTER_OTLP_PROTOCOL=http/protobuf
   fi
-  unset OTEL_EXPORTER_OTLP_HEADERS
+  unset OTEL_EXPORTER_OTLP_HEADERS OTEL_EXPORTER_OTLP_ENDPOINT
   cat > collector.yaml <<EOF
 receivers:
   otlp:
@@ -197,7 +197,12 @@ root4job_end() {
   fi
   otel_span_end "$span_handle"
   otel_shutdown
-  [ -z "${OTEL_SHELL_COLLECTOR_CONTAINER:-}" ] || sudo docker stop "$OTEL_SHELL_COLLECTOR_CONTAINER"
+  if [ -n "${OTEL_SHELL_COLLECTOR_CONTAINER:-}" ]; then 
+    sudo docker stop "$OTEL_SHELL_COLLECTOR_CONTAINER"
+    if [ -n "$INPUT_DEBUG" ]; then
+      sudo docker logs "$OTEL_SHELL_COLLECTOR_CONTAINER"
+    fi
+  fi
   kill -9 "$observe_rate_limit_pid" || true
   exit 0
 }
