@@ -110,10 +110,6 @@ $(echo "$INPUT_SECRETS_TO_REDACT" | jq '. | to_entries[].value' | sed 's/[.[\(*^
     trace_statements:
 $(echo "$INPUT_SECRETS_TO_REDACT" | jq '. | to_entries[].value' | sed 's/[.[\(*^$+?{|]/\\&/g' | xargs -I '{}' echo 'replace_all_patterns(span.attributes, "value", "{}", "***")' | sed 's/^/      - /g')
 $(echo "$INPUT_SECRETS_TO_REDACT" | jq '. | to_entries[].value' | sed 's/[.[\(*^$+?{|]/\\&/g' | xargs -I '{}' echo 'replace_all(span.name, "{}", "***")' | sed 's/^/      - /g')
-  redaction:
-    allow_all_keys: true
-    blocked_values:
-$(echo "$INPUT_SECRETS_TO_REDACT" | jq '. | to_entries[].value' | sed 's/[.[\(*^$+?{|]/\\&/g' | sed 's/^/      - /g')
 service:
   telemetry:
     metrics:
