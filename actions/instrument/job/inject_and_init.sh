@@ -106,7 +106,7 @@ processors:
 $(echo "$INPUT_SECRETS_TO_REDACT" | jq '. | to_entries[].value' | sed 's/[.[\(*^$+?{|]/\\&/g' | xargs -I '{}' echo 'replace_all_patterns(log.attributes, "value", "{}", "***")' | sed 's/^/      - /g')
 $(echo "$INPUT_SECRETS_TO_REDACT" | jq '. | to_entries[].value' | sed 's/[.[\(*^$+?{|]/\\&/g' | xargs -I '{}' echo 'replace_pattern(log.body, "{}", "***")' | sed 's/^/      - /g')
     metric_statements:
-$(echo "$INPUT_SECRETS_TO_REDACT" | jq '. | to_entries[].value' | sed 's/[.[\(*^$+?{|]/\\&/g' | xargs -I '{}' echo 'replace_all_patterns(metric.attributes, "value", "{}", "***")' | sed 's/^/      - /g')
+$(echo "$INPUT_SECRETS_TO_REDACT" | jq '. | to_entries[].value' | sed 's/[.[\(*^$+?{|]/\\&/g' | xargs -I '{}' echo 'replace_all_patterns(datapoint.attributes, "value", "{}", "***")' | sed 's/^/      - /g')
     trace_statements:
 $(echo "$INPUT_SECRETS_TO_REDACT" | jq '. | to_entries[].value' | sed 's/[.[\(*^$+?{|]/\\&/g' | xargs -I '{}' echo 'replace_all_patterns(span.attributes, "value", "{}", "***")' | sed 's/^/      - /g')
 $(echo "$INPUT_SECRETS_TO_REDACT" | jq '. | to_entries[].value' | sed 's/[.[\(*^$+?{|]/\\&/g' | xargs -I '{}' echo 'replace_pattern(span.name, "{}", "***")' | sed 's/^/      - /g')
