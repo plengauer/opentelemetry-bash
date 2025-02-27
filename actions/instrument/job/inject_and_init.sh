@@ -104,17 +104,20 @@ processors:
     error_mode: ignore
     log_statements:
 $(echo "$INPUT_SECRETS_TO_REDACT" | jq '. | to_entries[].value' | sed 's/[.[\(*^$+?{|]/\\&/g' | xargs -I '{}' echo 'replace_all_patterns(log.attributes, "value", "{}", "***")' | sed 's/^/      - /g')
-$(echo "$INPUT_SECRETS_TO_REDACT" | jq '. | to_entries[].value' | sed 's/[.[\(*^$+?{|]/\\&/g' | xargs -I '{}' echo 'replace_all_pattern(log.body, "{}", "***")' | sed 's/^/      - /g')
+$(echo "$INPUT_SECRETS_TO_REDACT" | jq '. | to_entries[].value' | sed 's/[.[\(*^$+?{|]/\\&/g' | xargs -I '{}' echo 'replace_all(log.body, "{}", "***")' | sed 's/^/      - /g')
     metric_statements:
 $(echo "$INPUT_SECRETS_TO_REDACT" | jq '. | to_entries[].value' | sed 's/[.[\(*^$+?{|]/\\&/g' | xargs -I '{}' echo 'replace_all_patterns(metric.attributes, "value", "{}", "***")' | sed 's/^/      - /g')
     trace_statements:
 $(echo "$INPUT_SECRETS_TO_REDACT" | jq '. | to_entries[].value' | sed 's/[.[\(*^$+?{|]/\\&/g' | xargs -I '{}' echo 'replace_all_patterns(span.attributes, "value", "{}", "***")' | sed 's/^/      - /g')
-$(echo "$INPUT_SECRETS_TO_REDACT" | jq '. | to_entries[].value' | sed 's/[.[\(*^$+?{|]/\\&/g' | xargs -I '{}' echo 'replace_all_pattern(span.name, "{}", "***")' | sed 's/^/      - /g')
+$(echo "$INPUT_SECRETS_TO_REDACT" | jq '. | to_entries[].value' | sed 's/[.[\(*^$+?{|]/\\&/g' | xargs -I '{}' echo 'replace_all(span.name, "{}", "***")' | sed 's/^/      - /g')
   redaction:
     allow_all_keys: true
     blocked_values:
 $(echo "$INPUT_SECRETS_TO_REDACT" | jq '. | to_entries[].value' | sed 's/[.[\(*^$+?{|]/\\&/g' | sed 's/^/      - /g')
 service:
+  telemetry:
+    metrics:
+      level: none
   pipelines:
 $(cat $section_pipeline_logs)
 $(cat $section_pipeline_metrics)
@@ -208,7 +211,7 @@ root4job_end() {
 }
 export -f root4job_end
 root4job() {
-  [ -z "${OTEL_SHELL_COLLECTOR_IMAGE:-}" ] || export OTEL_SHELL_COLLECTOR_CONTAINER="$(sudo docker start --restart unless-stopped --network=host --mount type=bind,source="$(pwd)"/collector.yaml,target=/etc/otelcol/config.yaml "$OTEL_SHELL_COLLECTOR_IMAGE")"
+  [ -z "${OTEL_SHELL_COLLECTOR_IMAGE:-}" ] || export OTEL_SHELL_COLLECTOR_CONTAINER="$(sudo docker start --restart unless-stopped --network=host --mount type=bind,source="$(pwd)"/collector.yaml,target=/etc/otelcol-contrib/config.yaml "$OTEL_SHELL_COLLECTOR_IMAGE")"
   rm /tmp/opentelemetry_shell.github.error 2> /dev/null
   traceparent_file="$1"
   . otelapi.sh
