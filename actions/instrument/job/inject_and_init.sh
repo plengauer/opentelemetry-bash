@@ -170,6 +170,8 @@ GITHUB_JOB_ID="$(gh_jobs "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" | jq --unbuffere
 if [ "$(printf '%s' "$GITHUB_JOB_ID" | wc -l)" -le 1 ]; then export GITHUB_JOB_ID; fi
 echo "Guessing GitHub job id to be $GITHUB_JOB_ID" >&2
 
+timout 30s sudo docker run --rm --restart unless-stopped --network=host --mount type=bind,source="$(pwd)"/collector.yaml,target=/etc/otelcol-contrib/config.yaml "$OTEL_SHELL_COLLECTOR_IMAGE" || true
+
 # observe
 observe_rate_limit() {
   used_gauge_handle="$(otel_counter_create observable_gauge github.api.rate_limit.used 1 "The amount of rate limited requests used")"
@@ -208,7 +210,7 @@ root4job_end() {
 export -f root4job_end
 root4job() {
   [ -z "${OTEL_SHELL_COLLECTOR_IMAGE:-}" ] || export
-  timout 30s sudo docker run --rm --restart unless-stopped --network=host --mount type=bind,source="$(pwd)"/collector.yaml,target=/etc/otelcol-contrib/config.yaml "$OTEL_SHELL_COLLECTOR_IMAGE" || true OTEL_SHELL_COLLECTOR_CONTAINER="$(sudo docker start --restart unless-stopped --network=host --mount type=bind,source="$(pwd)"/collector.yaml,target=/etc/otelcol-contrib/config.yaml "$OTEL_SHELL_COLLECTOR_IMAGE")"
+  OTEL_SHELL_COLLECTOR_CONTAINER="$(sudo docker start --restart unless-stopped --network=host --mount type=bind,source="$(pwd)"/collector.yaml,target=/etc/otelcol-contrib/config.yaml "$OTEL_SHELL_COLLECTOR_IMAGE")"
   rm /tmp/opentelemetry_shell.github.error 2> /dev/null
   traceparent_file="$1"
   . otelapi.sh
