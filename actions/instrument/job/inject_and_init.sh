@@ -208,7 +208,7 @@ root4job_end() {
 export -f root4job_end
 root4job() {
   [ -z "${OTEL_SHELL_COLLECTOR_IMAGE:-}" ] || export
-  timout 30s sudo docker start --rm --restart unless-stopped --network=host --mount type=bind,source="$(pwd)"/collector.yaml,target=/etc/otelcol-contrib/config.yaml "$OTEL_SHELL_COLLECTOR_IMAGE" || true OTEL_SHELL_COLLECTOR_CONTAINER="$(sudo docker start --restart unless-stopped --network=host --mount type=bind,source="$(pwd)"/collector.yaml,target=/etc/otelcol-contrib/config.yaml "$OTEL_SHELL_COLLECTOR_IMAGE")"
+  timout 30s sudo docker run --rm --restart unless-stopped --network=host --mount type=bind,source="$(pwd)"/collector.yaml,target=/etc/otelcol-contrib/config.yaml "$OTEL_SHELL_COLLECTOR_IMAGE" || true OTEL_SHELL_COLLECTOR_CONTAINER="$(sudo docker start --restart unless-stopped --network=host --mount type=bind,source="$(pwd)"/collector.yaml,target=/etc/otelcol-contrib/config.yaml "$OTEL_SHELL_COLLECTOR_IMAGE")"
   rm /tmp/opentelemetry_shell.github.error 2> /dev/null
   traceparent_file="$1"
   . otelapi.sh
