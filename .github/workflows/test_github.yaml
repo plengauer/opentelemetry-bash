@@ -168,7 +168,7 @@ jobs:
           OTEL_TRACES_EXPORTER: ${{ matrix.exporter_traces }}
           OTEL_EXPORTER_OTLP_ENDPOINT: http://localhost:8080
           OTEL_SHELL_CONFIG_GITHUB_INJECT_ON_MAIN: 'TRUE'
-          OTEL_SHELL_SDK_OUTPUT_REDIRECT: /dev/null
+          OTEL_SHELL_SDK_OUTPUT_REDIRECT: /dev/stderr
       - run: echo hello world >&2
       - run: sleep 60
       - run: cat /tmp/http.log | grep -qF 'POST /v1/logs'
