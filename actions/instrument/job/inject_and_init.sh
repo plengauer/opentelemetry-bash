@@ -46,8 +46,8 @@ EOF
 EOF
     unset OTEL_EXPORTER_OTLP_LOGS_HEADERS
     export OTEL_LOGS_EXPORTER=otlp
-    export OTEL_LOGS_EXPORTER_OTLP_ENDPOINT=https://localhost:4318/v1/logs
-    export OTEL_LOGS_EXPORTER_OTLP_PROTOCOL=http/protobuf
+    export OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=https://localhost:4318/v1/logs
+    export OTEL_EXPORTER_OTLP_LOGS_PROTOCOL=http/protobuf
   fi
   if [ "${OTEL_METRICS_EXPORTER:-otlp}" = otlp ]; then
     if [ "${OTEL_EXPORTER_OTLP_PROTOCOL:-http/protobuf}" ]; then collector_exporter=otlphttp; else collector_exporter=otlp; fi
@@ -65,8 +65,8 @@ EOF
 EOF
     unset OTEL_EXPORTER_OTLP_METRICS_HEADERS
     export OTEL_METRICS_EXPORTER=otlp
-    export OTEL_METRICS_EXPORTER_OTLP_ENDPOINT=https://localhost:4318/v1/metrics
-    export OTEL_METRICS_EXPORTER_OTLP_PROTOCOL=http/protobuf
+    export OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=https://localhost:4318/v1/metrics
+    export OTEL_EXPORTER_OTLP_METRICS_PROTOCOL=http/protobuf
   fi
   if [ "${OTEL_TRACES_EXPORTER:-otlp}" = otlp ]; then
     if [ "${OTEL_EXPORTER_OTLP_PROTOCOL:-http/protobuf}" ]; then collector_exporter=otlphttp; else collector_exporter=otlp; fi
@@ -84,8 +84,8 @@ EOF
 EOF
     unset OTEL_EXPORTER_OTLP_TRACES_HEADERS
     export OTEL_TRACES_EXPORTER=otlp
-    export OTEL_TRACES_EXPORTER_OTLP_ENDPOINT=https://localhost:4318/v1/traces
-    export OTEL_TRACES_EXPORTER_OTLP_PROTOCOL=http/protobuf
+    export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=https://localhost:4318/v1/traces
+    export OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=http/protobuf
   fi
   unset OTEL_EXPORTER_OTLP_HEADERS OTEL_EXPORTER_OTLP_ENDPOINT
   cat > collector.yaml <<EOF
