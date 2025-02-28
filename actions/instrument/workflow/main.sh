@@ -42,10 +42,10 @@ gh_artifact_download "$INPUT_WORKFLOW_RUN_ID" "$INPUT_WORKFLOW_RUN_ATTEMPT" open
 if [ -r "$workflow_run_dir"/traceparent ]; then export OTEL_ID_GENERATOR_OVERRIDE_TRACEPARENT="$(cat "$workflow_run_dir"/traceparent)"; fi
 
 otel_init
-workflow_run_counter_handle="$(otel_counter_create counter githup.actions.workflows 1 'Number of workflow runs')"
-job_run_counter_handle="$(otel_counter_create counter githup.actions.jobs 1 'Number of job runs')"
-step_run_counter_handle="$(otel_counter_create counter githup.actions.steps 1 'Number of step runs')"
-action_run_counter_handle="$(otel_counter_create counter githup.actions.actions 1 'Number of action runs')"
+workflow_run_counter_handle="$(otel_counter_create counter github.actions.workflows 1 'Number of workflow runs')"
+job_run_counter_handle="$(otel_counter_create counter github.actions.jobs 1 'Number of job runs')"
+step_run_counter_handle="$(otel_counter_create counter github.actions.steps 1 'Number of step runs')"
+action_run_counter_handle="$(otel_counter_create counter github.actions.actions 1 'Number of action runs')"
 
 observation_handle="$(otel_observation_create 1)"
 otel_observation_attribute_typed "$observation_handle" string github.actions.workflow.id="$(jq < "$workflow_json" -r .workflow_id)"
