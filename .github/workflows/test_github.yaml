@@ -170,12 +170,12 @@ jobs:
           OTEL_SHELL_CONFIG_GITHUB_INJECT_ON_MAIN: 'TRUE'
           OTEL_SHELL_SDK_OUTPUT_REDIRECT: /dev/null
       - run: echo hello world >&2
-      - run: sleep 60
-      - run: cat /tmp/http.log | grep -qF 'POST /v1/logs'
+      - run: sleep 15
+      - run: cat /tmp/http.log | grep -q '^POST /v1/logs$'
         if: ${{ matrix.exporter_logs == 'otlp' }}
-      - run: cat /tmp/http.log | grep -qF 'POST /v1/metrics'
+      - run: cat /tmp/http.log | grep -q '^POST /v1/metrics$'
         if: ${{ matrix.exporter_metrics == 'otlp' }}
-      - run: cat /tmp/http.log | grep -qF 'POST /v1/traces'
+      - run: cat /tmp/http.log | grep -q '^POST /v1/traces$'
         if: ${{ matrix.exporter_traces == 'otlp' }}
 
   workflow:
