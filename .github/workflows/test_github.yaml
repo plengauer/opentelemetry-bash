@@ -171,6 +171,7 @@ jobs:
           OTEL_SHELL_SDK_OUTPUT_REDIRECT: /dev/null
       - run: echo hello world >&2
       - run: sleep 15
+      - run: cat /tmp/http.log | sort -u
       - run: cat /tmp/http.log | grep -q '^POST /v1/logs$'
         if: ${{ matrix.exporter_logs == 'otlp' }}
       - run: cat /tmp/http.log | grep -q '^POST /v1/metrics$'
