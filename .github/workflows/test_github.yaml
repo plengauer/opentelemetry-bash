@@ -223,3 +223,6 @@ jobs:
           cat "$OTLP_JSON" | jq -r .name | grep -v '^null$' | sort -u | grep 'Set up job'
           cat "$OTLP_JSON" | jq -r .name | grep -v '^null$' | sort -u | grep 'Complete job'
           cat "$OTLP_JSON" | jq -r .body | grep -v '^null$' | sort -u | grep 'Cleaning up orphan processes'
+      - env:
+          OTLP_JSON: '${{ steps.filename.outputs.otlp }}'
+        run: cat "$OTLP_JSON"
