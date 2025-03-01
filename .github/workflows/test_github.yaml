@@ -182,7 +182,7 @@ jobs:
           OTEL_EXPORTER_OTLP_ENDPOINT: ${{ matrix.exporter_endpoint }}
           OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: ${{ matrix.exporter_logs_endpoint }}
           OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: ${{ matrix.exporter_metrics_endpoint }}
-          OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: ${{ matrix.exporter_TRACES_endpoint }}
+          OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: ${{ matrix.exporter_traces_endpoint }}
           OTEL_SHELL_CONFIG_GITHUB_INJECT_ON_MAIN: 'TRUE'
           OTEL_SHELL_SDK_OUTPUT_REDIRECT: /dev/null
       - run: echo hello world >&2
