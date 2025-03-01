@@ -175,6 +175,7 @@ jobs:
           cache: 'false'
           collector: ${{ matrix.collector }}
           secrets_to_redact: '${{ toJSON(secrets) }}'
+          debug: 1
         env:
           OTEL_LOGS_EXPORTER: ${{ matrix.exporter_logs }}
           OTEL_METRICS_EXPORTER: ${{ matrix.exporter_metrics }}
@@ -184,10 +185,12 @@ jobs:
           OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: ${{ matrix.exporter_metrics_endpoint }}
           OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: ${{ matrix.exporter_traces_endpoint }}
           OTEL_SHELL_CONFIG_GITHUB_INJECT_ON_MAIN: 'TRUE'
-          OTEL_SHELL_SDK_OUTPUT_REDIRECT: /dev/null
+          OTEL_SHELL_SDK_OUTPUT_REDIRECT: /dev/stderr
       - run: echo hello world >&2
       - run: sleep 60
       - run: cat /tmp/http.log | sort -u
+      - run: |
+          timeout 30s sudo docker logs "$(sudo docker container ls -q)" || true
       - run: cat /tmp/http.log | grep -q '^POST /v1/logs$'
         if: ${{ matrix.exporter_logs == 'otlp' }}
       - run: cat /tmp/http.log | grep -q '^POST /v1/metrics$'
