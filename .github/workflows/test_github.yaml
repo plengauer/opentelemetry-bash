@@ -149,6 +149,19 @@ jobs:
         exporter_logs: ['otlp', 'console']
         exporter_metrics: ['otlp', 'console']
         exporter_traces: ['otlp', 'console']
+        exporter_endpoint: [ 'http://localhost:8080' ]
+        exporter_logs_endpoint: [ '' ]
+        exporter_metrics_endpoint: [ '' ]
+        exporter_traces_endpoint: [ '' ]
+        include:
+          - collector: 'true'
+            exporter_logs: otlp
+            exporter_metrics: otlp
+            exporter_traces: otlp
+            exporter_endpoint: ''
+            exporter_logs_endpoint: 'http://localhost:8080/v1/logs'
+            exporter_metrics_endpoint: 'http://localhost:8080/v1/metrics'
+            exporter_traces_endpoint: 'http://localhost:8080/v1/traces'
       fail-fast: false
     steps:
       - uses: actions/checkout@v4
@@ -166,7 +179,10 @@ jobs:
           OTEL_LOGS_EXPORTER: ${{ matrix.exporter_logs }}
           OTEL_METRICS_EXPORTER: ${{ matrix.exporter_metrics }}
           OTEL_TRACES_EXPORTER: ${{ matrix.exporter_traces }}
-          OTEL_EXPORTER_OTLP_ENDPOINT: http://localhost:8080
+          OTEL_EXPORTER_OTLP_ENDPOINT: ${{ matrix.exporter_endpoint }}
+          OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: ${{ matrix.exporter_logs_endpoint }}
+          OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: ${{ matrix.exporter_metrics_endpoint }}
+          OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: ${{ matrix.exporter_TRACES_endpoint }}
           OTEL_SHELL_CONFIG_GITHUB_INJECT_ON_MAIN: 'TRUE'
           OTEL_SHELL_SDK_OUTPUT_REDIRECT: /dev/null
       - run: echo hello world >&2
