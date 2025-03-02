@@ -436,7 +436,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   github:
-    needs: build # smoke
+    needs: smoke
     uses: ./.github/workflows/test_github.yaml
 
   prepare-performance:
