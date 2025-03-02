@@ -46,6 +46,18 @@ workflow_run_counter_handle="$(otel_counter_create counter github.actions.workfl
 job_run_counter_handle="$(otel_counter_create counter github.actions.jobs 1 'Number of job runs')"
 step_run_counter_handle="$(otel_counter_create counter github.actions.steps 1 'Number of step runs')"
 action_run_counter_handle="$(otel_counter_create counter github.actions.actions 1 'Number of action runs')"
+workflow_duration_counter_handle="$(otel_counter_create counter github.actions.workflows.duration ns 'Duration of workflow runs')"
+job_duration_counter_handle="$(otel_counter_create counter github.actions.jobs.duration ns 'Duration of job runs')"
+step_duration_counter_handle="$(otel_counter_create counter github.actions.steps.duration ns 'Duration of step runs')"
+action_duration_counter_handle="$(otel_counter_create counter github.actions.actions.duration ns 'Duration of action runs')"
+
+link="${GITHUB_SERVER_URL:-https://github.com}"/"$(jq < "$workflow_json" -r .repository.owner.login)"/"$(jq < "$workflow_json" -r .repository.name)"/actions/runs/"$(jq < "$workflow_json" -r .id)"
+workflow_started_at="$(jq < "$workflow_json" -r .run_started_at)"
+workflow_ended_at="$(jq < "$jobs_json" -r .completed_at | sort -r | head -n 1)"
+if [ "$(ls "$logs_dir"/*/*.txt | wc -l)" -gt 0 ]; then
+  last_log_timestamp="$(tail -q -n 1 "$logs_dir"/*/*.txt | cut -d ' ' -f 1 | sort | tail -n 1)"
+  if [ "$last_log_timestamp" > "$workflow_ended_at" ]; then workflow_ended_at="$last_log_timestamp"; fi
+fi
 
 observation_handle="$(otel_observation_create 1)"
 otel_observation_attribute_typed "$observation_handle" string github.actions.workflow.id="$(jq < "$workflow_json" -r .workflow_id)"
@@ -59,13 +71,6 @@ otel_observation_attribute_typed "$observation_handle" string github.actions.eve
 otel_observation_attribute_typed "$observation_handle" string github.actions.event.ref.name="$(jq < "$workflow_json" -r .head_branch)"
 otel_counter_observe "$workflow_run_counter_handle" "$observation_handle"
 
-link="${GITHUB_SERVER_URL:-https://github.com}"/"$(jq < "$workflow_json" -r .repository.owner.login)"/"$(jq < "$workflow_json" -r .repository.name)"/actions/runs/"$(jq < "$workflow_json" -r .id)"
-workflow_started_at="$(jq < "$workflow_json" -r .run_started_at)"
-workflow_ended_at="$(jq < "$jobs_json" -r .completed_at | sort -r | head -n 1)"
-if [ "$(ls "$logs_dir"/*/*.txt | wc -l)" -gt 0 ]; then
-  last_log_timestamp="$(tail -q -n 1 "$logs_dir"/*/*.txt | cut -d ' ' -f 1 | sort | tail -n 1)"
-  if [ "$last_log_timestamp" > "$workflow_ended_at" ]; then workflow_ended_at="$last_log_timestamp"; fi
-fi
 workflow_span_handle="$(otel_span_start @"$workflow_started_at" CONSUMER "$(jq < "$workflow_json" -r .name)")"
 otel_span_attribute_typed "$workflow_span_handle" string github.actions.type=workflow
 otel_span_attribute_typed "$workflow_span_handle" string github.actions.url="$link"/attempts/"$(jq < "$workflow_json" -r .run_attempt)"
