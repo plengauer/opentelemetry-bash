@@ -140,7 +140,41 @@ jobs:
           OTEL_SHELL_SDK_OUTPUT_REDIRECT: /dev/null
       - run: echo hello world
 
-  job-exporter:
+  job-exporter-local:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: packages
+      - run: |
+          nohup node -e "require('http').createServer(function (req, res) { console.log(req.method, req.url); res.writeHead(200); res.end(); }).listen(8080);" > /tmp/http.log &
+      - uses: ./actions/instrument/job
+        with:
+          cache: 'false'
+          collector: auto
+          secrets_to_redact: '${{ toJSON(secrets) }}'
+          debug: 1
+        env:
+          OTEL_LOGS_EXPORTER: otlp
+          OTEL_METRICS_EXPORTER: otlp
+          OTEL_TRACES_EXPORTER: otlp
+          OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: http://localhost:8080/v1/logs
+          OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: http://localhost:8080/v1/metrics
+          OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://localhost:8080/v1/traces
+          OTEL_SHELL_CONFIG_GITHUB_INJECT_ON_MAIN: 'TRUE'
+          OTEL_SHELL_SDK_OUTPUT_REDIRECT: /dev/stderr
+      - run: echo hello world >&2
+      - run: sleep 60
+      - run: cat /tmp/http.log | sort -u
+      - run: |
+          timeout 30s sudo docker logs "$(sudo docker container ls -q)" || true
+      - run: cat /tmp/http.log | grep -q '^POST /v1/logs$'
+      - run: cat /tmp/http.log | grep -q '^POST /v1/metrics$'
+      - run: cat /tmp/http.log | grep -q '^POST /v1/traces$'
+
+  job-exporter-global:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     strategy:
@@ -149,19 +183,6 @@ jobs:
         exporter_logs: ['otlp', 'console']
         exporter_metrics: ['otlp', 'console']
         exporter_traces: ['otlp', 'console']
-        exporter_endpoint: [ 'http://localhost:8080' ]
-        exporter_logs_endpoint: [ '' ]
-        exporter_metrics_endpoint: [ '' ]
-        exporter_traces_endpoint: [ '' ]
-        include:
-          - collector: 'true'
-            exporter_logs: otlp
-            exporter_metrics: otlp
-            exporter_traces: otlp
-            exporter_endpoint: ''
-            exporter_logs_endpoint: 'http://localhost:8080/v1/logs'
-            exporter_metrics_endpoint: 'http://localhost:8080/v1/metrics'
-            exporter_traces_endpoint: 'http://localhost:8080/v1/traces'
       fail-fast: false
     steps:
       - uses: actions/checkout@v4
@@ -180,10 +201,7 @@ jobs:
           OTEL_LOGS_EXPORTER: ${{ matrix.exporter_logs }}
           OTEL_METRICS_EXPORTER: ${{ matrix.exporter_metrics }}
           OTEL_TRACES_EXPORTER: ${{ matrix.exporter_traces }}
-          OTEL_EXPORTER_OTLP_ENDPOINT: ${{ matrix.exporter_endpoint }}
-          OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: ${{ matrix.exporter_logs_endpoint }}
-          OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: ${{ matrix.exporter_metrics_endpoint }}
-          OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: ${{ matrix.exporter_traces_endpoint }}
+          OTEL_EXPORTER_OTLP_ENDPOINT: http://localhost:8080
           OTEL_SHELL_CONFIG_GITHUB_INJECT_ON_MAIN: 'TRUE'
           OTEL_SHELL_SDK_OUTPUT_REDIRECT: /dev/stderr
       - run: echo hello world >&2
