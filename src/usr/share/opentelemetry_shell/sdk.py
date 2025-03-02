@@ -37,7 +37,7 @@ class GithubActionResourceDetector(ResourceDetector):
                 return Resource.create({});
             return Resource.create({
                 'github.repository.id': os.environ.get('GITHUB_REPOSITORY_ID', ''),
-                'github.repository.name': os.environ.get('GITHUB_REPOSITORY', ''),
+                'github.repository.name': os.environ.get('GITHUB_REPOSITORY', '/').split('/', 1)[1],
                 'github.repository.owner.id': os.environ.get('GITHUB_REPOSITORY_OWNER_ID', ''),
                 'github.repository.owner.name': os.environ.get('GITHUB_REPOSITORY_OWNER', ''),
                 'github.actions.workflow.ref': os.environ.get('GITHUB_WORKFLOW_REF', ''),
