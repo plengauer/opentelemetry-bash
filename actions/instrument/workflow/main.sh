@@ -71,7 +71,7 @@ otel_observation_attribute_typed "$observation_handle" string github.actions.eve
 otel_observation_attribute_typed "$observation_handle" string github.actions.event.ref.name="$(jq < "$workflow_json" -r .head_branch)"
 otel_counter_observe "$workflow_run_counter_handle" "$observation_handle"
 
-observation_handle="$(otel_observation_create "$(python3 -c "print(str($(date -d "$workflow_ended_at" '+%s.%N') - $(date -d "$workflow_started_at" '+%s.%N')))")")"
+observation_handle="$(otel_observation_create "$(python3 -c "print(str(max(0, $(date -d "$workflow_ended_at" '+%s.%N') - $(date -d "$workflow_started_at" '+%s.%N'))))")")"
 otel_observation_attribute_typed "$observation_handle" string github.actions.workflow.id="$(jq < "$workflow_json" -r .workflow_id)"
 otel_observation_attribute_typed "$observation_handle" string github.actions.workflow.name="$(jq < "$workflow_json" -r .name)"
 otel_observation_attribute_typed "$observation_handle" int github.actions.workflow_run.attempt="$(jq < "$workflow_json" .run_attempt)"
@@ -127,7 +127,7 @@ jq < "$jobs_json" -r --unbuffered '. | ["'"$TRACEPARENT"'", .id, .conclusion, .s
   otel_observation_attribute_typed "$observation_handle" string github.actions.job.conclusion="$job_conclusion"
   otel_counter_observe "$job_run_counter_handle" "$observation_handle"
   
-  observation_handle="$(otel_observation_create "$(python3 -c "print(str($(date -d "$job_completed_at" '+%s.%N') - $(date -d "$job_started_at" '+%s.%N')))")")"
+  observation_handle="$(otel_observation_create "$(python3 -c "print(str(max(0, $(date -d "$job_completed_at" '+%s.%N') - $(date -d "$job_started_at" '+%s.%N'))))")")"
   otel_observation_attribute_typed "$observation_handle" string github.actions.workflow.name="$(jq < "$workflow_json" -r .name)"
   otel_observation_attribute_typed "$observation_handle" int github.actions.workflow_run.attempt="$(jq < "$workflow_json" .run_attempt)"
   otel_observation_attribute_typed "$observation_handle" string github.actions.workflow_run.conclusion="$(jq < "$workflow_json" -r .conclusion)"
@@ -200,7 +200,7 @@ done | sed 's/\t/ /g' | while read -r TRACEPARENT step_number step_conclusion st
   otel_observation_attribute_typed "$observation_handle" string github.actions.step.conclusion="$step_conclusion"
   otel_counter_observe "$step_run_counter_handle" "$observation_handle"
   
-  observation_handle="$(otel_observation_create "$(python3 -c "print(str($(date -d "$step_completed_at" '+%s.%N') - $(date -d "$step_started_at" '+%s.%N')))")")"
+  observation_handle="$(otel_observation_create "$(python3 -c "print(str(max(0, $(date -d "$step_completed_at" '+%s.%N') - $(date -d "$step_started_at" '+%s.%N'))))")")"
   otel_observation_attribute_typed "$observation_handle" string github.actions.workflow.name="$(jq < "$workflow_json" -r .name)"
   otel_observation_attribute_typed "$observation_handle" int github.actions.workflow_run.attempt="$(jq < "$workflow_json" .run_attempt)"
   otel_observation_attribute_typed "$observation_handle" int github.actions.actor.id="$(jq < "$workflow_json" .actor.id)"
@@ -229,7 +229,7 @@ done | sed 's/\t/ /g' | while read -r TRACEPARENT step_number step_conclusion st
     otel_observation_attribute_typed "$observation_handle" string github.actions.action.conclusion="$step_conclusion"
     otel_counter_observe "$action_run_counter_handle" "$observation_handle"
     
-    observation_handle="$(otel_observation_create "$(python3 -c "print(str($(date -d "$step_completed_at" '+%s.%N') - $(date -d "$step_started_at" '+%s.%N')))")")"
+    observation_handle="$(otel_observation_create "$(python3 -c "print(str(max(0, $(date -d "$step_completed_at" '+%s.%N') - $(date -d "$step_started_at" '+%s.%N'))))")")"
     otel_observation_attribute_typed "$observation_handle" string github.actions.workflow.name="$(jq < "$workflow_json" -r .name)"
     otel_observation_attribute_typed "$observation_handle" int github.actions.workflow_run.attempt="$(jq < "$workflow_json" .run_attempt)"
     otel_observation_attribute_typed "$observation_handle" int github.actions.actor.id="$(jq < "$workflow_json" .actor.id)"
