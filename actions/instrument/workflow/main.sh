@@ -90,9 +90,9 @@ if [ "$INPUT_WORKFLOW_RUN_ATTEMPT" -gt 1 ] && gh_artifact_download "$INPUT_WORKF
   otel_link_add "$(otel_link_create "$(cat opentelemetry_workflow_run_prev/traceparent)" "")" "$workflow_span_handle"
 fi
 otel_span_activate "$workflow_span_handle"
+[ -z "${INPUT_DEBUG}" ] || echo "span workflow $TRACEPARENT $(jq < "$workflow_json" -r .name)" >&2
 if [ "$(jq < "$workflow_json" .conclusion -r)" = failure ]; then otel_span_error "$workflow_span_handle"; fi
 otel_span_end "$workflow_span_handle" @"$workflow_ended_at"
-[ -z "${INPUT_DEBUG}" ] || echo "span workflow $WORKFLOW_TRACEPARENT $(jq < "$workflow_json" -r .name)" >&2
 
 jq < "$jobs_json" -r --unbuffered '. | ["'"$TRACEPARENT"'", .id, .conclusion, .started_at, .completed_at, .name] | @tsv' | sed 's/\t/ /g' | while read -r TRACEPARENT job_id job_conclusion job_started_at job_completed_at job_name; do
   if [[ "$job_started_at" < "$workflow_started_at" ]] || jq < "$artifacts_json" -r .name | grep -q '^opentelemetry_job_'"$job_id"'$'; then continue; fi
@@ -122,11 +122,11 @@ jq < "$jobs_json" -r --unbuffered '. | ["'"$TRACEPARENT"'", .id, .conclusion, .s
   otel_span_attribute_typed "$job_span_handle" string github.actions.job.name="$job_name"
   otel_span_attribute_typed "$job_span_handle" string github.actions.job.conclusion="$job_conclusion"
   otel_span_activate "$job_span_handle"
+  [ -z "${INPUT_DEBUG}" ] || echo "span job $TRACEPARENT $job_name" >&2
   jq < "$jobs_json" -r --unbuffered '. | select(.id == '"$job_id"') | .steps[] | ["'"$TRACEPARENT"'", .number, .conclusion, .started_at, .completed_at, .name] | @tsv'
   otel_span_deactivate "$job_span_handle"
   if [ "$job_conclusion" = failure ]; then otel_span_error "$job_span_handle"; fi
   otel_span_end "$job_span_handle" @"$job_completed_at"
-  [ -z "${INPUT_DEBUG}" ] || echo "span job $JOB_TRACEPARENT $job_name" >&2
 
 done | sed 's/\t/ /g' | while read -r TRACEPARENT step_number step_conclusion step_started_at step_completed_at step_name; do
   if [ -r "$times_dir"/"$TRACEPARENT" ]; then
@@ -201,13 +201,12 @@ done | sed 's/\t/ /g' | while read -r TRACEPARENT step_number step_conclusion st
   otel_span_attribute_typed "$step_span_handle" string github.actions.action.phase="${action_phase:-}"
   otel_span_attribute_typed "$step_span_handle" string github.actions.step.conclusion="$step_conclusion"
   otel_span_activate "$step_span_handle"
-  STEP_TRACEPARENT="$TRACEPARENT"
   [ -r "$step_log_file" ] && cat "$step_log_file" | while read -r line; do _otel_log_record "$TRACEPARENT" "${line%% *}" "${line#* }"; done || true
+  [ -z "${INPUT_DEBUG}" ] || echo "span step $TRACEPARENT $step_name" >&2
   otel_span_deactivate "$step_span_handle"
   if [ "$step_conclusion" = failure ]; then otel_span_error "$step_span_handle"; fi
   otel_span_end "$step_span_handle" @"$step_completed_at"
   echo "$step_completed_at" > "$times_dir"/"$TRACEPARENT"
-  [ -z "${INPUT_DEBUG}" ] || echo "span step $STEP_TRACEPARENT $step_name" >&2
   
 done
 
