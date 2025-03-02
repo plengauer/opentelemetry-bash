@@ -192,7 +192,7 @@ root4job_end() {
   otel_span_attribute_typed $span_handle int github.actions.job.conclusion="$conclusion"
   if [ "$conclusion" = failure ]; then otel_span_error "$span_handle"; fi
   otel_span_end "$span_handle"
-  time_end="$(date '%s.%N')"
+  time_end="$(date +'%s.%N')"
   local counter_handle="$(otel_counter_create counter github.actions.jobs 1 'Number of job runs')"
   local observation_handle="$(otel_observation_create 1)"
   otel_observation_attribute_typed "$observation_handle" string github.actions.workflow.name="$GITHUB_WORKFLOW"
