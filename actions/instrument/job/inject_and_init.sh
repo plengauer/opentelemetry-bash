@@ -188,13 +188,35 @@ observe_rate_limit() {
 }
 export -f observe_rate_limit
 root4job_end() {
-  if [ -f /tmp/opentelemetry_shell.github.error ]; then
-    otel_span_attribute_typed "$span_handle" string github.actions.job.conclusion=failure
-    otel_span_error "$span_handle"
-  else
-    otel_span_attribute_typed "$span_handle" string github.actions.job.conclusion=success
-  fi
+  if [ -f /tmp/opentelemetry_shell.github.error ]; then local conclusion=failure; else local conclusion=success; fi
+  otel_span_attribute_typed $span_handle int github.actions.job.conclusion="$conclusion"
+  if [ "$conclusion" = failure ]; then otel_span_error "$span_handle"; fi
   otel_span_end "$span_handle"
+  time_end="$(date +%s.%N)"
+  local counter_handle="$(otel_counter_create counter github.actions.jobs 1 'Number of job runs')"
+  local observation_handle="$(otel_observation_create 1)"
+  otel_observation_attribute_typed "$observation_handle" string github.actions.workflow.name="$GITHUB_WORKFLOW"
+  otel_observation_attribute_typed "$observation_handle" int github.actions.workflow_run.attempt="$GITHUB_RUN_ATTEMPT"
+  otel_observation_attribute_typed "$observation_handle" int github.actions.actor.id="$GITHUB_ACTOR_ID"
+  otel_observation_attribute_typed "$observation_handle" string github.actions.actor.name="$GITHUB_ACTOR"
+  otel_observation_attribute_typed "$observation_handle" string github.actions.event.name="$GITHUB_EVENT_NAME"
+  otel_observation_attribute_typed "$observation_handle" string github.actions.event.ref="/refs/heads/$GITHUB_REF_NAME"
+  otel_observation_attribute_typed "$observation_handle" string github.actions.event.ref.name="$GITHUB_REF_NAME"
+  otel_observation_attribute_typed "$observation_handle" string github.actions.job.name="${OTEL_SHELL_GITHUB_JOB:-$GITHUB_JOB}"
+  otel_observation_attribute_typed "$observation_handle" string github.actions.job.conclusion="$conclusion"
+  otel_counter_observe "$counter_handle" "$observation_handle"
+  local counter_handle="$(otel_counter_create counter github.actions.jobs.duration sec 'Duration of job runs')"
+  local observation_handle="$(otel_observation_create "$(python3 -c "print(str($time_end - $time_start))")")"
+  otel_observation_attribute_typed "$observation_handle" string github.actions.workflow.name="$GITHUB_WORKFLOW"
+  otel_observation_attribute_typed "$observation_handle" int github.actions.workflow_run.attempt="$GITHUB_RUN_ATTEMPT"
+  otel_observation_attribute_typed "$observation_handle" int github.actions.actor.id="$GITHUB_ACTOR_ID"
+  otel_observation_attribute_typed "$observation_handle" string github.actions.actor.name="$GITHUB_ACTOR"
+  otel_observation_attribute_typed "$observation_handle" string github.actions.event.name="$GITHUB_EVENT_NAME"
+  otel_observation_attribute_typed "$observation_handle" string github.actions.event.ref="/refs/heads/$GITHUB_REF_NAME"
+  otel_observation_attribute_typed "$observation_handle" string github.actions.event.ref.name="$GITHUB_REF_NAME"
+  otel_observation_attribute_typed "$observation_handle" string github.actions.job.name="${OTEL_SHELL_GITHUB_JOB:-$GITHUB_JOB}"
+  otel_observation_attribute_typed "$observation_handle" string github.actions.job.conclusion="$conclusion"
+  otel_counter_observe "$counter_handle" "$observation_handle"
   otel_shutdown
   if [ -n "${OTEL_SHELL_COLLECTOR_CONTAINER:-}" ]; then 
     sudo docker stop "$OTEL_SHELL_COLLECTOR_CONTAINER"
@@ -214,6 +236,7 @@ root4job() {
   otel_init
   observe_rate_limit &
   observe_rate_limit_pid="$!"
+  time_start="$(date +%s.%N)"
   span_handle="$(otel_span_start CONSUMER "${OTEL_SHELL_GITHUB_JOB:-$GITHUB_JOB}")"
   otel_span_attribute_typed $span_handle string github.actions.type=job
   if [ -n "$GITHUB_JOB_ID" ]; then
