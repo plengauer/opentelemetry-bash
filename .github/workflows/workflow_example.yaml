@@ -17,7 +17,7 @@ jobs:
           OTEL_EXPORTER_OTLP_HEADERS: '${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}'
       - run: echo 'hello world, im a compiler (deeply injected), i sometimes fail'
       - run: |
-          [ "$GITHUB_RUN_ATTEMPT" != 1 ] || (echo "::error ::rate limit exceeded" && false)
+          [ "$GITHUB_RUN_ATTEMPT" != 1 ] || (echo "::error ::rate limit exceeded" >&2 && false)
 
   test:
     needs: build
