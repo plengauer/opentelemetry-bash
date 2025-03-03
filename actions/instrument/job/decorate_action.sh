@@ -29,7 +29,7 @@ otel_span_attribute_typed $span_handle string github.actions.action.ref="$GITHUB
 [ -z "${_OTEL_GITHUB_STEP_ACTION_PHASE:-}" ] || otel_span_attribute_typed $span_handle string github.actions.action.phase="$_OTEL_GITHUB_STEP_ACTION_PHASE"
 otel_span_activate "$span_handle"
 exit_code_file="$(mktemp)"
-{ otel_observe "$_OTEL_GITHUB_STEP_AGENT_INJECTION_FUNCTION" "$@"; echo "$?" > "$exit_code_file" } | while read -r line; do
+{ otel_observe "$_OTEL_GITHUB_STEP_AGENT_INJECTION_FUNCTION" "$@"; echo "$?" > "$exit_code_file"; } | while read -r line; do
   if _otel_string_starts_with "$line" ':: '; then
     _otel_log_record "$TRACEPARENT" auto "$line"
   fi
