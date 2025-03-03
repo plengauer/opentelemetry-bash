@@ -17,7 +17,7 @@ jobs:
       id-token: write
       attestations: write
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.6.4
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.7.0
         with:
           secrets_to_redact: '${{ toJSON(secrets) }}'
         env:
