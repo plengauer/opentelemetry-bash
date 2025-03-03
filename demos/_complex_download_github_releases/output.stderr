@@ -1,49 +1,49 @@
 Ncat: Idle timeout expired (3000 ms).
 grep: write error: Broken pipe
---2025-02-28 00:29:37--  https://github.com/plengauer/opentelemetry-bash/releases/download/v1.13.7/opentelemetry-shell_1.13.7.deb
-Resolving github.com (github.com)... 140.82.116.4
-Connecting to github.com (github.com)|140.82.116.4|:443... connected.
+--2025-03-03 13:37:22--  https://github.com/plengauer/opentelemetry-bash/releases/download/v1.10.2/opentelemetry-shell_1.10.2.deb
+Resolving github.com (github.com)... 140.82.114.3
+Connecting to github.com (github.com)|140.82.114.3|:443... connected.
 HTTP request sent, awaiting response... 302 Found
-Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/5544a935-3cf9-4f9b-b6ed-d668fd012e99?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250228%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250228T002937Z&X-Amz-Expires=300&X-Amz-Signature=849ad5e8c7a1a0030b04cb1d34cf132174587ccfd0c424979be5c94beaa498a5&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.7.deb&response-content-type=application%2Foctet-stream [following]
---2025-02-28 00:29:37--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/5544a935-3cf9-4f9b-b6ed-d668fd012e99?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250228%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250228T002937Z&X-Amz-Expires=300&X-Amz-Signature=849ad5e8c7a1a0030b04cb1d34cf132174587ccfd0c424979be5c94beaa498a5&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.7.deb&response-content-type=application%2Foctet-stream
-Resolving objects.githubusercontent.com (objects.githubusercontent.com)... 185.199.111.133, 185.199.110.133, 185.199.109.133, ...
-Connecting to objects.githubusercontent.com (objects.githubusercontent.com)|185.199.111.133|:443... connected.
+Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/776833e7-57fc-4c7f-bb7c-0de36548a71e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250303%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250303T133722Z&X-Amz-Expires=300&X-Amz-Signature=d526bbf570b07799265719e37b9061547151d615069bbd5969cd67d40f04e026&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.10.2.deb&response-content-type=application%2Foctet-stream [following]
+--2025-03-03 13:37:22--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/776833e7-57fc-4c7f-bb7c-0de36548a71e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250303%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250303T133722Z&X-Amz-Expires=300&X-Amz-Signature=d526bbf570b07799265719e37b9061547151d615069bbd5969cd67d40f04e026&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.10.2.deb&response-content-type=application%2Foctet-stream
+Resolving objects.githubusercontent.com (objects.githubusercontent.com)... 185.199.108.133, 185.199.110.133, 185.199.111.133, ...
+Connecting to objects.githubusercontent.com (objects.githubusercontent.com)|185.199.108.133|:443... connected.
 HTTP request sent, awaiting response... 200 OK
-Length: 7202 (7.0K) [application/octet-stream]
-Saving to: ‘opentelemetry-shell_1.13.7.deb’
+Length: 6210 (6.1K) [application/octet-stream]
+Saving to: ‘opentelemetry-shell_1.10.2.deb’
 
-0K .......                                               100% 66.4M=0s
+0K ......                                                100% 86.3M=0s
 
-2025-02-28 00:29:38 (66.4 MB/s) - ‘opentelemetry-shell_1.13.7.deb’ saved [7202/7202]
+2025-03-03 13:37:22 (86.3 MB/s) - ‘opentelemetry-shell_1.10.2.deb’ saved [6210/6210]
 
---2025-02-28 00:29:38--  https://github.com/plengauer/opentelemetry-bash/releases/download/v1.13.6/opentelemetry-shell_1.13.6.deb
-Connecting to github.com (github.com)|140.82.116.4|:443... connected.
+--2025-03-03 13:37:22--  https://github.com/plengauer/opentelemetry-bash/releases/download/v1.10.1/opentelemetry-shell_1.10.1.deb
+Connecting to github.com (github.com)|140.82.114.3|:443... connected.
 HTTP request sent, awaiting response... 302 Found
-Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/e8091cbc-915a-4ba7-bca7-308817fe26c4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250228%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250228T002939Z&X-Amz-Expires=300&X-Amz-Signature=a95d094eaf804bb57b7ad04bca408554aaeb826c5d1153eb84c301b4dae624ac&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.6.deb&response-content-type=application%2Foctet-stream [following]
---2025-02-28 00:29:39--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/e8091cbc-915a-4ba7-bca7-308817fe26c4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250228%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250228T002939Z&X-Amz-Expires=300&X-Amz-Signature=a95d094eaf804bb57b7ad04bca408554aaeb826c5d1153eb84c301b4dae624ac&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.6.deb&response-content-type=application%2Foctet-stream
-Connecting to objects.githubusercontent.com (objects.githubusercontent.com)|185.199.111.133|:443... connected.
+Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/d327a834-339e-4f0c-8e38-32dc3e5bdcc6?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250303%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250303T133722Z&X-Amz-Expires=300&X-Amz-Signature=8e137418c420945ff715561a654511353b7d89e249a1951b46b0f053b6ff9ee8&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.10.1.deb&response-content-type=application%2Foctet-stream [following]
+--2025-03-03 13:37:22--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/d327a834-339e-4f0c-8e38-32dc3e5bdcc6?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250303%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250303T133722Z&X-Amz-Expires=300&X-Amz-Signature=8e137418c420945ff715561a654511353b7d89e249a1951b46b0f053b6ff9ee8&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.10.1.deb&response-content-type=application%2Foctet-stream
+Connecting to objects.githubusercontent.com (objects.githubusercontent.com)|185.199.108.133|:443... connected.
 HTTP request sent, awaiting response... 200 OK
-Length: 7184 (7.0K) [application/octet-stream]
-Saving to: ‘opentelemetry-shell_1.13.6.deb’
+Length: 6200 (6.1K) [application/octet-stream]
+Saving to: ‘opentelemetry-shell_1.10.1.deb’
 
-0K .......                                               100% 60.2M=0s
+0K ......                                                100% 98.0M=0s
 
-2025-02-28 00:29:40 (60.2 MB/s) - ‘opentelemetry-shell_1.13.6.deb’ saved [7184/7184]
+2025-03-03 13:37:22 (98.0 MB/s) - ‘opentelemetry-shell_1.10.1.deb’ saved [6200/6200]
 
---2025-02-28 00:29:40--  https://github.com/plengauer/opentelemetry-bash/releases/download/v1.13.5/opentelemetry-shell_1.13.5.deb
-Connecting to github.com (github.com)|140.82.116.4|:443... connected.
+--2025-03-03 13:37:22--  https://github.com/plengauer/opentelemetry-bash/releases/download/v1.10.0/opentelemetry-shell_1.10.0.deb
+Connecting to github.com (github.com)|140.82.114.3|:443... connected.
 HTTP request sent, awaiting response... 302 Found
-Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/25d95ab9-56aa-4a77-8e84-d4947ecef0fc?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250228%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250228T002940Z&X-Amz-Expires=300&X-Amz-Signature=a3c4612891533016e51c40af27eea61de54e2345bf733bb05e390aca0d467d71&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.5.deb&response-content-type=application%2Foctet-stream [following]
---2025-02-28 00:29:40--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/25d95ab9-56aa-4a77-8e84-d4947ecef0fc?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250228%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250228T002940Z&X-Amz-Expires=300&X-Amz-Signature=a3c4612891533016e51c40af27eea61de54e2345bf733bb05e390aca0d467d71&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.13.5.deb&response-content-type=application%2Foctet-stream
-Connecting to objects.githubusercontent.com (objects.githubusercontent.com)|185.199.111.133|:443... connected.
+Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/e1deee50-adb7-4b46-9e26-741b46d86412?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250303%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250303T133722Z&X-Amz-Expires=300&X-Amz-Signature=9eb980b62627a73fb1a9ad99514ee09e1b5384d01588f3d82919dd3c4165dbad&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.10.0.deb&response-content-type=application%2Foctet-stream [following]
+--2025-03-03 13:37:22--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/e1deee50-adb7-4b46-9e26-741b46d86412?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250303%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250303T133722Z&X-Amz-Expires=300&X-Amz-Signature=9eb980b62627a73fb1a9ad99514ee09e1b5384d01588f3d82919dd3c4165dbad&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.10.0.deb&response-content-type=application%2Foctet-stream
+Connecting to objects.githubusercontent.com (objects.githubusercontent.com)|185.199.108.133|:443... connected.
 HTTP request sent, awaiting response... 200 OK
-Length: 7176 (7.0K) [application/octet-stream]
-Saving to: ‘opentelemetry-shell_1.13.5.deb’
+Length: 6196 (6.1K) [application/octet-stream]
+Saving to: ‘opentelemetry-shell_1.10.0.deb’
 
-0K .......                                               100% 56.5M=0s
+0K ......                                                100% 77.7M=0s
 
-2025-02-28 00:29:41 (56.5 MB/s) - ‘opentelemetry-shell_1.13.5.deb’ saved [7176/7176]
+2025-03-03 13:37:23 (77.7 MB/s) - ‘opentelemetry-shell_1.10.0.deb’ saved [6196/6196]
 
-FINISHED --2025-02-28 00:29:41--
-Total wall clock time: 4.2s
-Downloaded: 3 files, 21K in 0s (60.8 MB/s)
+FINISHED --2025-03-03 13:37:23--
+Total wall clock time: 0.4s
+Downloaded: 3 files, 18K in 0s (86.6 MB/s)
