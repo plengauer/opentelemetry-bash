@@ -58,7 +58,7 @@ otel_observation_attribute_typed "$observation_handle" string github.actions.ste
 otel_observation_attribute_typed "$observation_handle" string github.actions.step.conclusion="$conclusion"
 otel_counter_observe "$counter_handle" "$observation_handle"
 
-counter_handle="$(otel_counter_create counter github.actions.steps.duration sec 'Duration of step runs')"
+counter_handle="$(otel_counter_create counter github.actions.steps.duration s 'Duration of step runs')"
 observation_handle="$(otel_observation_create "$(python3 -c "print(str($time_end - $time_start))")")"
 otel_observation_attribute_typed "$observation_handle" string github.actions.workflow.name="$GITHUB_WORKFLOW"
 otel_observation_attribute_typed "$observation_handle" int github.actions.workflow_run.attempt="$GITHUB_RUN_ATTEMPT"
@@ -89,7 +89,7 @@ if [ -n "${GITHUB_ACTION_REPOSITORY:-}" ]; then
   otel_observation_attribute_typed "$observation_handle" string github.actions.action.conclusion="$conclusion"
   otel_counter_observe "$counter_handle" "$observation_handle"
   
-  counter_handle="$(otel_counter_create counter github.actions.actions.duration sec 'Duration of action runs')"
+  counter_handle="$(otel_counter_create counter github.actions.actions.duration s 'Duration of action runs')"
   observation_handle="$(otel_observation_create "$(python3 -c "print(str($time_end - $time_start))")")"
   otel_observation_attribute_typed "$observation_handle" string github.actions.workflow.name="$GITHUB_WORKFLOW"
   otel_observation_attribute_typed "$observation_handle" int github.actions.workflow_run.attempt="$GITHUB_RUN_ATTEMPT"
