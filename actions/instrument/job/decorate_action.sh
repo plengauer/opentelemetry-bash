@@ -30,18 +30,28 @@ otel_span_attribute_typed $span_handle string github.actions.action.ref="$GITHUB
 otel_span_activate "$span_handle"
 exit_code_file="$(mktemp)"
 { otel_observe "$_OTEL_GITHUB_STEP_AGENT_INJECTION_FUNCTION" "$@"; echo "$?" > "$exit_code_file"; } | while read -r line; do
-  if _otel_string_starts_with "$line" '::'; then
-    line="${line#::}"
-    severity="${line%%::*}"
-    case "${severity%% *}" in
-      debug) severity=5;;
-      notice) severity=9;;
-      warning) severity=13;;
-      error) severity=17;;
-      *) severity=0;;
-    esac
-    _otel_log_record "$TRACEPARENT" auto "$severity" "${line#*::}"
-  fi
+  case "$line" in
+    '::'*'::'*)
+      line="${line#::}"
+      severity="${line%%::*}"
+      severity= "${severity%% *}"
+      line="${line#::}"
+      ;;
+    '##['*']'*)
+      severity="${line#*[}"
+      severity="${severity%%]*}"
+      line="${line#*]}"
+    *) severity=unspecified;;
+  esac
+  case "$severity" in
+    debug) severity=5;;
+    notice) severity=9;;
+    info) severity=9;;
+    warning) severity=13;;
+    error) severity=17;;
+    *) severity=0;;
+  esac
+  [ "$severity" = 0 ] || _otel_log_record "$TRACEPARENT" "$timestamp" "$severity" "$line"
   echo "$line"
 done
 exit_code="$(cat "$exit_code_file")"
