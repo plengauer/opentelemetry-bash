@@ -28,10 +28,29 @@ otel_span_attribute_typed $span_handle string github.actions.action.name="$GITHU
 otel_span_attribute_typed $span_handle string github.actions.action.ref="$GITHUB_ACTION_REF"
 [ -z "${_OTEL_GITHUB_STEP_ACTION_PHASE:-}" ] || otel_span_attribute_typed $span_handle string github.actions.action.phase="$_OTEL_GITHUB_STEP_ACTION_PHASE"
 otel_span_activate "$span_handle"
-otel_observe "$_OTEL_GITHUB_STEP_AGENT_INJECTION_FUNCTION" "$@"
-exit_code="$?"
+exit_code_file="$(mktemp)"
+{ otel_observe "$_OTEL_GITHUB_STEP_AGENT_INJECTION_FUNCTION" "$@"; echo "$?" > "$exit_code_file"; } | while read -r line; do
+  if _otel_string_starts_with "$line" '::'; then
+    line="${line#::}"
+    severity="${line%%::*}"
+    case "${severity%% *}" in
+      debug) severity=5;;
+      notice) severity=9;;
+      warning) severity=13;;
+      error) severity=17;;
+      *) severity=0;;
+    esac
+    _otel_log_record "$TRACEPARENT" auto "$severity" "${line#*::}"
+  fi
+  echo "$line"
+done
+exit_code="$(cat "$exit_code_file")"
+otel_span_deactivate "$span_handle"
+printenv -0 | tr '\n' ' ' | tr '\0' '\n' | cut -d '=' -f 1 | grep '^STATE_' | while read -r key; do otel_span_attribute_typed $span_handle string github.actions.step.state.after."$(variable_name_2_attribute_key "${key#STATE_}")"="$(variable_name_2_attribute_value "$key")"; done
+cat "$GITHUB_STATE" | while read -r kvp; do otel_span_attribute_typed $span_handle string github.actions.step.state.after."$(variable_name_2_attribute_key "${kvp%%=*}")"="${kvp#*=}"; done
+cat "$GITHUB_OUTPUT" | while read -r kvp; do otel_span_attribute_typed $span_handle string github.actions.step.output."$(variable_name_2_attribute_key "${kvp%%=*}")"="${kvp#*=}"; done
 if [ "$exit_code" != 0 ]; then
-  _otel_log_record "$TRACEPARENT" auto "::error ::Process completed with exit code $exit_code."
+  _otel_log_record "$TRACEPARENT" auto 17 "Process completed with exit code $exit_code."
   conclusion=failure
 else
   conclusion=success
