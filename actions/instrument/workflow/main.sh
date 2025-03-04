@@ -262,7 +262,7 @@ done | sed 's/\t/ /g' | while read -r TRACEPARENT step_number step_conclusion st
         line="${line#::}"
         severity="${line%%::*}"
         severity= "${severity%% *}"
-        line="${line#::}"
+        line="${line#*::}"
         ;;
       '##['*']'*)
         severity="${line#*[}"
