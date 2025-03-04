@@ -268,6 +268,7 @@ done | sed 's/\t/ /g' | while read -r TRACEPARENT step_number step_conclusion st
         severity="${line#*[}"
         severity="${severity%%]*}"
         line="${line#*]}"
+        ;;
       *) severity=unspecified;;
     esac
     case "$severity" in
