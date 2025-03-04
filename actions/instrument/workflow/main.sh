@@ -148,12 +148,13 @@ jq < "$jobs_json" -r --unbuffered '. | ["'"$TRACEPARENT"'", .id, .conclusion, .s
   otel_span_attribute_typed "$job_span_handle" string github.actions.job.conclusion="$job_conclusion"
   otel_span_activate "$job_span_handle"
   [ -z "${INPUT_DEBUG}" ] || echo "span job $TRACEPARENT $job_name" >&2
-  jq < "$jobs_json" -r --unbuffered '. | select(.id == '"$job_id"') | .steps[] | ["'"$TRACEPARENT"'", .number, .conclusion, .started_at, .completed_at, .name] | @tsv'
+  jq < "$jobs_json" -r --unbuffered '. | select(.id == '"$job_id"') | .steps[] | ["'"$TRACEPARENT"'", "'"$job_id"'", .number, .conclusion, .started_at, .completed_at, .name] | @tsv'
   otel_span_deactivate "$job_span_handle"
   if [ "$job_conclusion" = failure ]; then otel_span_error "$job_span_handle"; fi
   otel_span_end "$job_span_handle" @"$job_completed_at"
 
-done | sed 's/\t/ /g' | while read -r TRACEPARENT step_number step_conclusion step_started_at step_completed_at step_name; do
+done | sed 's/\t/ /g' | while read -r TRACEPARENT job_id step_number step_conclusion step_started_at step_completed_at step_name; do
+  job_name="$(jq < "$jobs_json" -r '. | select(.id == '"$job_id"') | .name')"
   if [ -r "$times_dir"/"$TRACEPARENT" ]; then
     previous_step_completed_at="$(cat "$times_dir"/"$TRACEPARENT")"
     if [ "$previous_step_completed_at" > "$step_started_at" ]; then step_started_at="$previous_step_completed_at"; fi
