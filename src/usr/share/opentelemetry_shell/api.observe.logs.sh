@@ -24,6 +24,7 @@ _otel_call_and_record_logs() {
 _otel_log_record() {
   local traceparent="$1"; shift
   local time="$1"; shift
+  local severity="$1"; shift
   local line="$(_otel_dollar_star "$@")"
-  _otel_sdk_communicate "LOG_RECORD" "$traceparent" "$time" "$line"
+  _otel_sdk_communicate "LOG_RECORD" "$traceparent" "$time" "$severity" "$line"
 }
