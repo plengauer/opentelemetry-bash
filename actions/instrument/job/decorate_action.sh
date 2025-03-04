@@ -51,7 +51,7 @@ exit_code_file="$(mktemp)"
     error) severity=17;;
     *) severity=0;;
   esac
-  [ "$severity" = 0 ] || _otel_log_record "$TRACEPARENT" "$timestamp" "$severity" "$line"
+  [ "$severity" = 0 ] || _otel_log_record "$TRACEPARENT" auto "$severity" "$line"
   echo "$line"
 done
 exit_code="$(cat "$exit_code_file")"
