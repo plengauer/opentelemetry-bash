@@ -205,7 +205,7 @@ root4job_end() {
   otel_observation_attribute_typed "$observation_handle" string github.actions.job.name="${OTEL_SHELL_GITHUB_JOB:-$GITHUB_JOB}"
   otel_observation_attribute_typed "$observation_handle" string github.actions.job.conclusion="$conclusion"
   otel_counter_observe "$counter_handle" "$observation_handle"
-  local counter_handle="$(otel_counter_create counter github.actions.jobs.duration sec 'Duration of job runs')"
+  local counter_handle="$(otel_counter_create counter github.actions.jobs.duration s 'Duration of job runs')"
   local observation_handle="$(otel_observation_create "$(python3 -c "print(str($time_end - $time_start))")")"
   otel_observation_attribute_typed "$observation_handle" string github.actions.workflow.name="$GITHUB_WORKFLOW"
   otel_observation_attribute_typed "$observation_handle" int github.actions.workflow_run.attempt="$GITHUB_RUN_ATTEMPT"
