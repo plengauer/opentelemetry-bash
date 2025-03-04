@@ -257,20 +257,27 @@ done | sed 's/\t/ /g' | while read -r TRACEPARENT step_number step_conclusion st
   [ -r "$step_log_file" ] && cat "$step_log_file" | while read -r line; do
     timestamp="${line%% *}"
     line="${line#* }"
-    if _otel_string_starts_with "$line" ::; then
-      line="${line#::}"
-      severity="${line%%::*}"
-      case "${severity%% *}" in
-        debug) severity=5;;
-        notice) severity=9;;
-        warning) severity=13;;
-        error) severity=17;;
-        *) severity=0;;
-      esac
-      line="${line#*::}"
-    else
-      severity=0
-    fi
+    case "$line" in
+      '::'*'::'*)
+        line="${line#::}"
+        severity="${line%%::*}"
+        severity= "${severity%% *}"
+        line="${line#::}"
+        ;;
+      '##['*']'*)
+        severity="${line#*[}"
+        severity="${severity%%]*}"
+        line="${line#*]}"
+      *) severity=unspecified;;
+    esac
+    case "$severity" in
+      debug) severity=5;;
+      notice) severity=9;;
+      info) severity=9;;
+      warning) severity=13;;
+      error) severity=17;;
+      *) severity=0;;
+    esac
     _otel_log_record "$TRACEPARENT" "$timestamp" "$severity" "$line"
   done || true
   [ -z "${INPUT_DEBUG}" ] || echo "span step $TRACEPARENT $step_name" >&2
