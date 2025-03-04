@@ -156,8 +156,8 @@ If the command represents communication to a third party service (like a HTTP re
 
 Finally, a single root span will be created and activated that represents the script. This span will automatically be deactivated and ended when the script ends.
 
-## Automatic Instrumentation of Github Actions
-To automatically monitor your Github Workflows on job level and to auto-inject into all individual steps, add the following step as first in every job you want to observe. You can configure the SDK as described <a href="https://opentelemetry.io/docs/languages/sdk-configuration/">here</a> by adding environment variables to the setup step.
+## Automatic Instrumentation of GitHub Actions
+To automatically monitor your GitHub Actions on job level and to auto-inject into all individual steps, add the following step as first in every job you want to observe. You can configure the SDK as described <a href="https://opentelemetry.io/docs/languages/sdk-configuration/">here</a> by adding environment variables to the setup step. Job-level deep instrumentation can be combined arbitrarily with workflow-level monitoring below. Compared to workflow-level monitoring, job-level monitoring provides deep injection into individual steps, as well as more precise timings and log collection.
 ```yaml
 - uses: plengauer/opentelemetry-bash/actions/instrument/job@main
   env:
@@ -171,7 +171,7 @@ with:
     secrets_to_redact: '${{ toJSON(secrets) }}' # Redact all secrets from any attribute.
 ```
 
-Optionally, setup a dedicted workflow that is used to collect all jobs under a single root span representing the entire workflow. The workflow has to be a separate workflow and not just a job in the observed workflow itself. It must be triggered by a workflow_run (see below) by the workflow that the root span should be created for. This workflow will also fill gaps by creating spans for jobs that have not been injected into.
+To automatically monitor your GitHub Actions on workflow-level, use the code snippet below as a dedicated workflow to run after any other explicitly configured workflow. It will use the GitHub API to generate logs, metrics, and traces. It can be arbitrarily combined with job-level monitoring described above. Workflow-level monitoring will autoamtically fill-in the gaps where job-level monitoring is not deployed. It will also collecto all job-level spans under one workflow-level root span. 
 ```yaml
 name: OpenTelemetry
 on:
