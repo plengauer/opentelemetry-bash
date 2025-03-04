@@ -450,10 +450,11 @@ def handle(scope, version, command, arguments):
             return
         observations[str(observation_id)]['attributes'][key] = convert_type(type, value)
     elif command == 'LOG_RECORD':
-        tokens = arguments.split(' ', 2)
+        tokens = arguments.split(' ', 3)
         traceparent = tokens[0]
         log_time = tokens[1]
-        line = tokens[2] if len(tokens) > 2 else ""
+        log_severity = tokens[2]
+        line = tokens[3] if len(tokens) > 3 else ""
         if len(line) == 0:
             return
         context = opentelemetry.trace.get_current_span(TraceContextTextMapPropagator().extract({'traceparent': traceparent})).get_span_context()
@@ -464,7 +465,7 @@ def handle(scope, version, command, arguments):
             span_id=context.span_id,
             trace_flags=context.trace_flags,
             severity_text='unspecified',
-            severity_number=SeverityNumber.UNSPECIFIED,
+            severity_number=SeverityNumber(int(log_severity)),
             body=line,
             resource=logger.resource if hasattr(logger, "resource") else Resource.create({}),
         )
