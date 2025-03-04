@@ -189,7 +189,7 @@ observe_rate_limit() {
 export -f observe_rate_limit
 root4job_end() {
   if [ -f /tmp/opentelemetry_shell.github.error ]; then local conclusion=failure; else local conclusion=success; fi
-  otel_span_attribute_typed $span_handle int github.actions.job.conclusion="$conclusion"
+  otel_span_attribute_typed $span_handle string github.actions.job.conclusion="$conclusion"
   if [ "$conclusion" = failure ]; then otel_span_error "$span_handle"; fi
   otel_span_end "$span_handle"
   time_end="$(date +%s.%N)"
