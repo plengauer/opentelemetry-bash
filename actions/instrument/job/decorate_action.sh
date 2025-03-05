@@ -5,8 +5,6 @@ variable_name_2_attribute_key() {
 }
 variable_name_2_attribute_value() {
   case "$1" in
-#    *-*) python3 -c "import os
-#print(os.environ['$1'])";;
     *-*) node -e "console.log(require('process').env['$1']);";;
     *) printf '%s' "${!1}";;
   esac
@@ -24,7 +22,6 @@ otel_span_attribute_typed $span_handle string github.actions.type=step
 otel_span_attribute_typed $span_handle string github.actions.step.name="${GITHUB_STEP:-$GITHUB_ACTION}"
 printenv -0 | tr '\n' ' ' | tr '\0' '\n' | cut -d '=' -f 1 | grep '^INPUT_' | while read -r key; do otel_span_attribute_typed $span_handle string github.actions.step.input."$(variable_name_2_attribute_key "${key#INPUT_}")"="$(variable_name_2_attribute_value "$key")"; done
 printenv -0 | tr '\n' ' ' | tr '\0' '\n' | cut -d '=' -f 1 | grep '^STATE_' | while read -r key; do otel_span_attribute_typed $span_handle string github.actions.step.state.before."$(variable_name_2_attribute_key "${key#STATE_}")"="$(variable_name_2_attribute_value "$key")"; done
-set -x
 [ -z "${GITHUB_ACTION_PATH:-}" ] || ! [ -d "$GITHUB_ACTION_PATH" ] || _OTEL_GITHUB_STEP_ACTION_TYPE=composite/"$_OTEL_GITHUB_STEP_ACTION_TYPE"
 otel_span_attribute_typed $span_handle string github.actions.action.type="$_OTEL_GITHUB_STEP_ACTION_TYPE"
 otel_span_attribute_typed $span_handle string github.actions.action.name="$GITHUB_ACTION_REPOSITORY"
@@ -33,6 +30,7 @@ otel_span_attribute_typed $span_handle string github.actions.action.ref="$GITHUB
 otel_span_activate "$span_handle"
 exit_code_file="$(mktemp)"
 { otel_observe "$_OTEL_GITHUB_STEP_AGENT_INJECTION_FUNCTION" "$@"; echo "$?" > "$exit_code_file"; } | while read -r line; do
+  echo "$line"
   case "$line" in
     '::'*'::'*)
       line="${line#::}"
@@ -56,7 +54,6 @@ exit_code_file="$(mktemp)"
     *) severity=0;;
   esac
   [ "$severity" = 0 ] || _otel_log_record "$TRACEPARENT" auto "$severity" "$line"
-  echo "$line"
 done
 exit_code="$(cat "$exit_code_file")"
 otel_span_deactivate "$span_handle"
