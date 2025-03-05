@@ -13,21 +13,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  reproduce:
-    runs-on: ubuntu-latest
-    steps:
-     - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.7.2
-     - uses: actions/checkout@v4
-     
-  experiment:
-    runs-on: ubuntu-latest
-    steps:
-     - uses: actions/checkout@v4
-     - uses: ./actions/instrument/job
-       env:
-         OTEL_SHELL_CONFIG_GITHUB_INJECT_ON_MAIN: 'TRUE'
-     - uses: actions/checkout@v4
-
   verify-python-dependency:
     runs-on: ubuntu-latest
     steps:
