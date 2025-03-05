@@ -13,8 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  windows-shell:
-    needs: [ prepare-shells, smoke ]
+  experiment:
     runs-on: windows-latest
     steps:
       - uses: Vampire/setup-wsl@v5.0.0
