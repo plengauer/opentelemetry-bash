@@ -17,15 +17,15 @@ _otel_resource_attributes_process() {
 }
 eval "$(cat "$_OTEL_GITHUB_STEP_AGENT_INSTRUMENTATION_FILE" | grep -v '_otel_alias_prepend ')"
 
-printenv -0 | tr '\n' ' ' | tr '\0' '\n' | cut -d '=' -f 1 
-
 otel_init
 time_start="$(date +%s.%N)"
 span_handle="$(otel_span_start INTERNAL "${GITHUB_STEP:-$GITHUB_ACTION}")"
 otel_span_attribute_typed $span_handle string github.actions.type=step
 otel_span_attribute_typed $span_handle string github.actions.step.name="${GITHUB_STEP:-$GITHUB_ACTION}"
+set -x
 printenv -0 | tr '\n' ' ' | tr '\0' '\n' | cut -d '=' -f 1 | grep '^INPUT_' | while read -r key; do otel_span_attribute_typed $span_handle string github.actions.step.input."$(variable_name_2_attribute_key "${key#INPUT_}")"="$(variable_name_2_attribute_value "$key")"; done
 printenv -0 | tr '\n' ' ' | tr '\0' '\n' | cut -d '=' -f 1 | grep '^STATE_' | while read -r key; do otel_span_attribute_typed $span_handle string github.actions.step.state.before."$(variable_name_2_attribute_key "${key#STATE_}")"="$(variable_name_2_attribute_value "$key")"; done
+set +x
 [ -z "${GITHUB_ACTION_PATH:-}" ] || ! [ -d "$GITHUB_ACTION_PATH" ] || _OTEL_GITHUB_STEP_ACTION_TYPE=composite/"$_OTEL_GITHUB_STEP_ACTION_TYPE"
 otel_span_attribute_typed $span_handle string github.actions.action.type="$_OTEL_GITHUB_STEP_ACTION_TYPE"
 otel_span_attribute_typed $span_handle string github.actions.action.name="$GITHUB_ACTION_REPOSITORY"
