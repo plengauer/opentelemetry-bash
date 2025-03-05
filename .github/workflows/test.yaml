@@ -24,6 +24,8 @@ jobs:
     steps:
      - uses: actions/checkout@v4
      - uses: ./actions/instrument/job
+        env:
+          OTEL_SHELL_CONFIG_GITHUB_INJECT_ON_MAIN: 'TRUE'
      - uses: actions/checkout@v4
 
   verify-python-dependency:
