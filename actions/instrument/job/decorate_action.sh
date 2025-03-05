@@ -34,7 +34,7 @@ exit_code_file="$(mktemp)"
     '::'*'::'*)
       line="${line#::}"
       severity="${line%%::*}"
-      severity= "${severity%% *}"
+      severity="${severity%% *}"
       line="${line#*::}"
       ;;
     '##['*']'*)
