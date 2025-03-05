@@ -17,6 +17,8 @@ _otel_resource_attributes_process() {
 }
 eval "$(cat "$_OTEL_GITHUB_STEP_AGENT_INSTRUMENTATION_FILE" | grep -v '_otel_alias_prepend ')"
 
+printenv -0 | tr '\n' ' ' | tr '\0' '\n' | cut -d '=' -f 1 
+
 otel_init
 time_start="$(date +%s.%N)"
 span_handle="$(otel_span_start INTERNAL "${GITHUB_STEP:-$GITHUB_ACTION}")"
