@@ -25,7 +25,7 @@ jobs:
         run: |
           echo "$PATH" | tr ':' '\n' | while read -r path; do
             find "$path"
-          done
+          done | rev | cut -d / -f 1 | rev | grep -E '*\.*' | cut -d . -f 2 | sort | uniq --count
     
   verify-python-dependency:
     runs-on: ubuntu-latest
