@@ -5,9 +5,9 @@ variable_name_2_attribute_key() {
 }
 variable_name_2_attribute_value() {
   case "$1" in
-    *-*) python3 -c "import os
-print(os.environ['$1'])";;
-    # node -e "console.log(require('process').env['$1']);";;
+#    *-*) python3 -c "import os
+#print(os.environ['$1'])";;
+    *-*) node -e "console.log(require('process').env['$1']);";;
     *) printf '%s' "${!1}";;
   esac
 }
