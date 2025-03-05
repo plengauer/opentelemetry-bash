@@ -13,6 +13,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  windows-shell:
+    needs: [ prepare-shells, smoke ]
+    runs-on: windows-latest
+    steps:
+      - uses: Vampire/setup-wsl@v5.0.0
+        with:
+          wsl-version: 2
+      - shell: wsl-bash {0}
+        run: printenv | grep WSL
+    
   verify-python-dependency:
     runs-on: ubuntu-latest
     steps:
