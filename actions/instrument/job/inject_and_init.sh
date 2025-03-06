@@ -218,7 +218,8 @@ root4job_end() {
   otel_observation_attribute_typed "$observation_handle" string github.actions.job.conclusion="$conclusion"
   otel_counter_observe "$counter_handle" "$observation_handle"
   otel_shutdown
-  if [ -n "${OTEL_SHELL_COLLECTOR_CONTAINER:-}" ]; then 
+  if [ -n "${OTEL_SHELL_COLLECTOR_CONTAINER:-}" ]; then
+    sleep 15
     sudo docker stop "$OTEL_SHELL_COLLECTOR_CONTAINER"
     if [ -n "$INPUT_DEBUG" ]; then
       sudo docker logs "$OTEL_SHELL_COLLECTOR_CONTAINER"
