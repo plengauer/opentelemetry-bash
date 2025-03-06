@@ -11,6 +11,7 @@ jobs:
       - uses: ./actions/instrument/job
         with:
           secrets_to_redact: '${{ toJSON(secrets) }}'
+          debug: 1
         env:
           OTEL_SHELL_CONFIG_GITHUB_INJECT_ON_MAIN: 'TRUE'
           OTEL_EXPORTER_OTLP_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_ENDPOINT }}'
