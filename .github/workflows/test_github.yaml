@@ -94,7 +94,7 @@ jobs:
           cache: 'false'
         env:
           OTEL_SHELL_CONFIG_GITHUB_INJECT_ON_MAIN: 'TRUE'
-          OTEL_SHELL_SDK_OUTPUT_REDIRECT: /dev/stderr
+          OTEL_SHELL_SDK_OUTPUT_REDIRECT: /dev/null
       - uses: plengauer/autorerun@v0.19.0
         with:
           github_token: ${{ github.token }}
@@ -163,7 +163,7 @@ jobs:
           OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: http://localhost:8080/v1/metrics
           OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://localhost:8080/v1/traces
           OTEL_SHELL_CONFIG_GITHUB_INJECT_ON_MAIN: 'TRUE'
-          OTEL_SHELL_SDK_OUTPUT_REDIRECT: /dev/stderr
+          OTEL_SHELL_SDK_OUTPUT_REDIRECT: /dev/null
       - run: echo hello world >&2
       - run: sleep 60
       - run: cat /tmp/http.log | sort -u
@@ -200,7 +200,7 @@ jobs:
           OTEL_TRACES_EXPORTER: ${{ matrix.exporter_traces }}
           OTEL_EXPORTER_OTLP_ENDPOINT: http://localhost:8080
           OTEL_SHELL_CONFIG_GITHUB_INJECT_ON_MAIN: 'TRUE'
-          OTEL_SHELL_SDK_OUTPUT_REDIRECT: /dev/stderr
+          OTEL_SHELL_SDK_OUTPUT_REDIRECT: /dev/null
       - run: echo hello world >&2
       - run: sleep 60
       - run: cat /tmp/http.log | sort -u
