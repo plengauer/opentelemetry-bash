@@ -94,7 +94,7 @@ jobs:
           cache: 'false'
         env:
           OTEL_SHELL_CONFIG_GITHUB_INJECT_ON_MAIN: 'TRUE'
-          OTEL_SHELL_SDK_OUTPUT_REDIRECT: /dev/null
+          OTEL_SHELL_SDK_OUTPUT_REDIRECT: /dev/stderr
       - uses: plengauer/autorerun@v0.19.0
         with:
           github_token: ${{ github.token }}
