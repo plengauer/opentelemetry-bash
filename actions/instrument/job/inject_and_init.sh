@@ -170,9 +170,7 @@ GITHUB_JOB_ID="$(gh_jobs "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" | jq --unbuffere
 if [ "$(printf '%s' "$GITHUB_JOB_ID" | wc -l)" -le 1 ]; then export GITHUB_JOB_ID; fi
 echo "Guessing GitHub job id to be $GITHUB_JOB_ID" >&2
 
-sudo docker run --detach --network=host --mount type=bind,source="$(pwd)"/collector.yaml,target=/etc/otelcol-contrib/config.yaml "$OTEL_SHELL_COLLECTOR_IMAGE"
-sleep 10
-sudo docker logs "$(sudo docker container ls -q)"
+timeout 30s sudo docker run --network=host --mount type=bind,source="$(pwd)"/collector.yaml,target=/etc/otelcol-contrib/config.yaml "$OTEL_SHELL_COLLECTOR_IMAGE"
 
 # observe
 observe_rate_limit() {
