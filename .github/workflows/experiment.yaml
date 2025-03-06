@@ -15,6 +15,7 @@ jobs:
           OTEL_SHELL_CONFIG_GITHUB_INJECT_ON_MAIN: 'TRUE'
           OTEL_EXPORTER_OTLP_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_HEADERS: '${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}'
+          OTEL_SHELL_SDK_OUTPUT_REDIRECT: /dev/stderr
       - uses: renovatebot/github-action@v41.0.14
         env:
           RENOVATE_REPOSITORIES: ${{ github.repository }}
