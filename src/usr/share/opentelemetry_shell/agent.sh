@@ -160,7 +160,7 @@ _otel_filter_commands_by_hint() {
     # in WSL, path may include a directory of windows executables
     # there, a bunch of files have the executable bit set, but are not really executable binaries (like .dll, ....)
     # usually, they are excluded by the hint, but if there is no hint, lets exclude the usual suspects to increase startup performance
-    \grep -vE '.dll$|.DLL$|.mof$|.config$|.log$|.scr$|.ax$|.NLS$|.json$|.xml$|.xsl$|.xsd$|.ps1xml$|.txt$|.png$|.ico$'
+    \grep -vE '.dll$|.DLL$|.mof$|.config$|.log$|.scr$|.ax$|.NLS$|.json$|.xml$|.xsl$|.xsd$|.ps1xml$|.txt$|.png$|.ico$|.patch$|.cmake$|.diff$|.usage$'
   else
     \cat
   fi
