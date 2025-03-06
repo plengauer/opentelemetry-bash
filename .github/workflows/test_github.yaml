@@ -163,13 +163,14 @@ jobs:
           OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: http://localhost:8080/v1/metrics
           OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://localhost:8080/v1/traces
           OTEL_SHELL_CONFIG_GITHUB_INJECT_ON_MAIN: 'TRUE'
-          OTEL_SHELL_SDK_OUTPUT_REDIRECT: /dev/null
+          OTEL_SHELL_SDK_OUTPUT_REDIRECT: /dev/stderr
       - run: echo hello world >&2
       - run: sleep 60
       - run: cat /tmp/http.log | sort -u
       - run: cat /tmp/http.log | grep -q '^POST /v1/logs$'
       - run: cat /tmp/http.log | grep -q '^POST /v1/metrics$'
       - run: cat /tmp/http.log | grep -q '^POST /v1/traces$'
+      - run: sudo docker logs "$(sudo docker container ls -q)"
 
   job-exporter-global:
     runs-on: ubuntu-latest
@@ -199,7 +200,7 @@ jobs:
           OTEL_TRACES_EXPORTER: ${{ matrix.exporter_traces }}
           OTEL_EXPORTER_OTLP_ENDPOINT: http://localhost:8080
           OTEL_SHELL_CONFIG_GITHUB_INJECT_ON_MAIN: 'TRUE'
-          OTEL_SHELL_SDK_OUTPUT_REDIRECT: /dev/null
+          OTEL_SHELL_SDK_OUTPUT_REDIRECT: /dev/stderr
       - run: echo hello world >&2
       - run: sleep 60
       - run: cat /tmp/http.log | sort -u
@@ -209,6 +210,7 @@ jobs:
         if: ${{ matrix.exporter_metrics == 'otlp' }}
       - run: cat /tmp/http.log | grep -q '^POST /v1/traces$'
         if: ${{ matrix.exporter_traces == 'otlp' }}
+      - run: sudo docker logs "$(sudo docker container ls -q)"
 
   workflow:
     runs-on: ubuntu-latest
