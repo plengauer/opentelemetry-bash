@@ -271,3 +271,5 @@ echo "pid=$!" >> "$GITHUB_STATE"
 export TRACEPARENT="$(cat "$traceparent_file")"
 rm "$traceparent_file"
 printenv | grep -E '^OTEL_|^TRACEPARENT=|^TRACESTATE=' >> "$GITHUB_ENV"
+
+sudo docker run --detach --network=host --mount type=bind,source="$(pwd)"/collector.yaml,target=/etc/otelcol-contrib/config.yaml "$OTEL_SHELL_COLLECTOR_IMAGE"
