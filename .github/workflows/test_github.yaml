@@ -154,7 +154,7 @@ jobs:
         with:
           cache: 'false'
           collector: auto
-          secrets_to_redact: '${{ toJSON(secrets) }}'
+          secrets_to_redact: '{"github.token": "${{ github.token }}", "url": "https://example.com/foo/bar", "regex": "[a-zA-Z]*"}'
         env:
           OTEL_LOGS_EXPORTER: otlp
           OTEL_METRICS_EXPORTER: otlp
@@ -192,7 +192,7 @@ jobs:
         with:
           cache: 'false'
           collector: ${{ matrix.collector }}
-          secrets_to_redact: '${{ toJSON(secrets) }}'
+          secrets_to_redact: '{"github.token": "${{ github.token }}", "url": "https://example.com/foo/bar", "regex": "[a-zA-Z]*"}'
         env:
           OTEL_LOGS_EXPORTER: ${{ matrix.exporter_logs }}
           OTEL_METRICS_EXPORTER: ${{ matrix.exporter_metrics }}
