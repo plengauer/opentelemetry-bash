@@ -265,6 +265,10 @@ done | sed 's/\t/ /g' | while read -r TRACEPARENT job_id step_number step_conclu
         severity="${severity%% *}"
         line="${line#*::}"
         ;;
+      '[command]'*)
+        severity=trace
+        line="${line#[command]}"
+        ;;
       '##['*']'*)
         severity="${line#*[}"
         severity="${severity%%]*}"
@@ -273,6 +277,7 @@ done | sed 's/\t/ /g' | while read -r TRACEPARENT job_id step_number step_conclu
       *) severity=unspecified;;
     esac
     case "$severity" in
+      trace) severity=1;;
       debug) severity=5;;
       notice) severity=9;;
       info) severity=9;;
