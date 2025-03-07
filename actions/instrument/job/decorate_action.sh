@@ -30,6 +30,7 @@ otel_span_attribute_typed $span_handle string github.actions.action.ref="$GITHUB
 otel_span_activate "$span_handle"
 exit_code_file="$(mktemp)"
 { otel_observe "$_OTEL_GITHUB_STEP_AGENT_INJECTION_FUNCTION" "$@"; echo "$?" > "$exit_code_file"; } | while read -r line; do
+  printf '%s' "$line"
   case "$line" in
     '::'*'::'*)
       line="${line#::}"
@@ -53,7 +54,6 @@ exit_code_file="$(mktemp)"
     *) severity=0;;
   esac
   [ "$severity" = 0 ] || _otel_log_record "$TRACEPARENT" auto "$severity" "$line"
-  echo "$line"
 done
 exit_code="$(cat "$exit_code_file")"
 otel_span_deactivate "$span_handle"
