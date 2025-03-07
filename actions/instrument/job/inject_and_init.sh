@@ -100,10 +100,10 @@ $(cat $section_exporter_metrics)
 $(cat $section_exporter_traces)
 processors:
   batch:
-  transform:
+  transform: # | sed 's/[.[\(*^$+?{|]/\\&/g' | sed 's~/~\\/~g'
     error_mode: ignore
     log_statements:
-$(echo "$INPUT_SECRETS_TO_REDACT" | jq '. | to_entries[].value' | xargs -I '{}' printf '%s\n' 'replace_all_patterns(log.attributes, "value", "{}", "***")' | sed 's/^/      - /g') #  | sed 's/[.[\(*^$+?{|]/\\&/g' | sed 's~/~\\/~g'
+$(echo "$INPUT_SECRETS_TO_REDACT" | jq '. | to_entries[].value' | xargs -I '{}' printf '%s\n' 'replace_all_patterns(log.attributes, "value", "{}", "***")' | sed 's/^/      - /g')
 $(echo "$INPUT_SECRETS_TO_REDACT" | jq '. | to_entries[].value' | xargs -I '{}' printf '%s\n' 'replace_pattern(log.body, "{}", "***")' | sed 's/^/      - /g')
     metric_statements:
 $(echo "$INPUT_SECRETS_TO_REDACT" | jq '. | to_entries[].value' | xargs -I '{}' printf '%s\n' 'replace_all_patterns(datapoint.attributes, "value", "{}", "***")' | sed 's/^/      - /g')
@@ -221,7 +221,6 @@ root4job_end() {
   otel_counter_observe "$counter_handle" "$observation_handle"
   otel_shutdown
   if [ -n "${OTEL_SHELL_COLLECTOR_CONTAINER:-}" ]; then
-    sleep 15
     sudo docker stop "$OTEL_SHELL_COLLECTOR_CONTAINER"
     if [ -n "$INPUT_DEBUG" ]; then
       sudo docker logs "$OTEL_SHELL_COLLECTOR_CONTAINER"
