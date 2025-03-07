@@ -288,7 +288,6 @@ done | sed 's/\t/ /g' | while read -r TRACEPARENT job_id step_number step_conclu
       trace) severity=1;;
       debug) severity=5;;
       notice) severity=9;;
-      info) severity=9;;
       warning) severity=13;;
       error) severity=17;;
       *) severity=0;;
