@@ -269,6 +269,14 @@ done | sed 's/\t/ /g' | while read -r TRACEPARENT job_id step_number step_conclu
         severity=trace
         line="${line#[command]}"
         ;;
+      '##[group]'*)
+        severity=unspecified;;
+        line="${line#*]}"
+        ;;
+      '##[endgroup]')
+        severity=unspecified;;
+        line=""
+        ;;
       '##['*']'*)
         severity="${line#*[}"
         severity="${severity%%]*}"
