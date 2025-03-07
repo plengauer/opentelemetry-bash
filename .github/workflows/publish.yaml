@@ -17,12 +17,12 @@ jobs:
       id-token: write
       attestations: write
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v4.48.0
-        with:
-          secrets_to_redact: '${{ toJSON(secrets) }}'
-        env:
-          OTEL_EXPORTER_OTLP_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_ENDPOINT }}'
-          OTEL_EXPORTER_OTLP_HEADERS: '${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}'
+      #- uses: plengauer/opentelemetry-bash/actions/instrument/job@v4.48.0
+      #  with:
+      #    secrets_to_redact: '${{ toJSON(secrets) }}'
+      #  env:
+      #    OTEL_EXPORTER_OTLP_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_ENDPOINT }}'
+      #    OTEL_EXPORTER_OTLP_HEADERS: '${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}'
       - uses: actions/checkout@v4
       - run: echo "version=$(cat VERSION)" >> "$GITHUB_OUTPUT"
         id: version
