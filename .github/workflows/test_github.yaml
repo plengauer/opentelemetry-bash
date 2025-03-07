@@ -119,6 +119,17 @@ jobs:
           RENOVATE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RENOVATE_REPOSITORIES: ${{ github.repository }}
           LOG_LEVEL: debug
+      - uses: actions/create-release@v1
+        id: create_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
+        with:
+          tag_name: v.dummy
+          release_name: Release v.dummy
+          draft: true
+          prerelease: false
+      - run: |
+          [ -n '${{ steps.create_release.outputs.upload_url }}' ]
 
   job-io-1:
     runs-on: ubuntu-latest
