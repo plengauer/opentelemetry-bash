@@ -171,7 +171,7 @@ with:
     secrets_to_redact: '${{ toJSON(secrets) }}' # Redact all secrets from any attribute.
 ```
 
-To automatically monitor your GitHub Actions on workflow-level, use the code snippet below as a dedicated workflow to run after any other explicitly configured workflow. It will use the GitHub API to generate logs, metrics, and traces. It can be arbitrarily combined with job-level monitoring described above. Workflow-level monitoring will autoamtically fill-in the gaps where job-level monitoring is not deployed. It will also collecto all job-level spans under one workflow-level root span. 
+To automatically monitor your GitHub Actions on workflow-level, use the code snippet below as a dedicated workflow to run after any other explicitly configured workflow. It will use the GitHub API to generate logs, metrics, and traces. It can be arbitrarily combined with job-level monitoring described above. Workflow-level monitoring will autoamtically fill-in the gaps where job-level monitoring is not deployed. It will also collect all job-level spans under one workflow-level root span. 
 ```yaml
 name: OpenTelemetry
 on:
@@ -188,7 +188,6 @@ jobs:
           OTEL_SERVICE_NAME: ${{ secrets.SERVICE_NAME }}
           # ...
 ```
-If you define that job to create a single root span for all other jobs, only the step in this root job has to be configured. The configuration will be propagated securely to the other jobs.
 
 ## Manual Instrumentation
 Import the API by referencing the `otelapi.sh` file. This is only necessary if you do not choose a fully automatic approach described above. In case you use automatic instrumentation, the API will be imported automatically for you.
