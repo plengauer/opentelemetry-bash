@@ -1,7 +1,8 @@
 name: Experiment
 
 on:
-  push:
+  workflow_dispatch
+  # push:
 
 jobs:
   experiment:
