@@ -170,7 +170,6 @@ jobs:
       - run: cat /tmp/http.log | grep -q '^POST /v1/logs$'
       - run: cat /tmp/http.log | grep -q '^POST /v1/metrics$'
       - run: cat /tmp/http.log | grep -q '^POST /v1/traces$'
-      - run: sudo docker logs "$(sudo docker container ls -q)"
 
   job-exporter-global:
     runs-on: ubuntu-latest
@@ -210,7 +209,6 @@ jobs:
         if: ${{ matrix.exporter_metrics == 'otlp' }}
       - run: cat /tmp/http.log | grep -q '^POST /v1/traces$'
         if: ${{ matrix.exporter_traces == 'otlp' }}
-      - run: sudo docker logs "$(sudo docker container ls -q)"
 
   workflow:
     runs-on: ubuntu-latest
