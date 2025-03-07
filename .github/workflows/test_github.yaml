@@ -122,7 +122,7 @@ jobs:
       - uses: actions/create-release@v1
         id: create_release
         env:
-          GITHUB_TOKEN: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: v.dummy
           release_name: Release v.dummy
