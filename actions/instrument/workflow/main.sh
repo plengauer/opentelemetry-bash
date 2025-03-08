@@ -270,11 +270,11 @@ done | sed 's/\t/ /g' | while read -r TRACEPARENT job_id step_number step_conclu
         line="${line#[command]}"
         ;;
       '##[group]'*)
-        severity=unspecified;;
+        severity=unspecified
         line="${line#*]}"
         ;;
       '##[endgroup]')
-        severity=unspecified;;
+        severity=unspecified
         line=""
         ;;
       '##['*']'*)
