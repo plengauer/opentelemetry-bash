@@ -1,5 +1,6 @@
 #!/bin/sh
 if [ -z "$GITHUB_RUN_ID" ] || [ "$(cat /proc/$PPID/cmdline | tr '\000-\037' ' ' | cut -d ' ' -f 1 | rev | cut -d / -f 1 | rev)" != "Runner.Worker" ]; then exec "$@"; fi
+
 variable_name_2_attribute_key() {
   printf '%s' "$1" | tr '[:upper:]' '[:lower:]'
 }
@@ -9,6 +10,31 @@ variable_name_2_attribute_value() {
     *) printf '%s' "${!1}";;
   esac
 }
+github_properties_to_kvps() {
+  current_delimiter_file="$(mktemp -u)"
+  first="$(mktemp -u)"
+  while read -r line; do
+    if [ -r "$current_delimiter_file" ]; then
+      if [ "$line" = "$(cat "$current_delimiter_file")" ]; then
+        printf '\n'
+        rm "$current_delimiter_file" "$first" 2> /dev/null
+      else
+        if [ -f "$first" ]; then printf ' '; else touch "$first"; fi
+        printf '%s' "$line"
+      fi
+    else
+      case "$line" in
+        *=*) printf '%s\n' "$line";;
+        *'<<'*)
+          printf '%s' "${line##*<<}" > "$current_delimiter_file"
+          printf '%s' "${line%<<*}="
+          ;;
+        *) printf '%s\n' "$line";;
+      esac
+    fi
+  done
+}
+
 . otelapi.sh
 _otel_resource_attributes_process() {
   :
@@ -22,6 +48,7 @@ otel_span_attribute_typed $span_handle string github.actions.type=step
 otel_span_attribute_typed $span_handle string github.actions.step.name="${GITHUB_STEP:-$GITHUB_ACTION}"
 printenv -0 | tr '\n' ' ' | tr '\0' '\n' | cut -d '=' -f 1 | grep '^INPUT_' | while read -r key; do otel_span_attribute_typed $span_handle string github.actions.step.input."$(variable_name_2_attribute_key "${key#INPUT_}")"="$(variable_name_2_attribute_value "$key")"; done
 printenv -0 | tr '\n' ' ' | tr '\0' '\n' | cut -d '=' -f 1 | grep '^STATE_' | while read -r key; do otel_span_attribute_typed $span_handle string github.actions.step.state.before."$(variable_name_2_attribute_key "${key#STATE_}")"="$(variable_name_2_attribute_value "$key")"; done
+printenv -0 | tr '\n' ' ' | tr '\0' '\n' | cut -d '=' -f 1 | grep '^STATE_' | while read -r key; do otel_span_attribute_typed $span_handle string github.actions.step.state.after."$(variable_name_2_attribute_key "${key#STATE_}")"="$(variable_name_2_attribute_value "$key")"; done
 [ -z "${GITHUB_ACTION_PATH:-}" ] || ! [ -d "$GITHUB_ACTION_PATH" ] || _OTEL_GITHUB_STEP_ACTION_TYPE=composite/"$_OTEL_GITHUB_STEP_ACTION_TYPE"
 otel_span_attribute_typed $span_handle string github.actions.action.type="$_OTEL_GITHUB_STEP_ACTION_TYPE"
 otel_span_attribute_typed $span_handle string github.actions.action.name="$GITHUB_ACTION_REPOSITORY"
@@ -69,9 +96,8 @@ exit_code_file="$(mktemp)"
 done
 exit_code="$(cat "$exit_code_file")"
 otel_span_deactivate "$span_handle"
-printenv -0 | tr '\n' ' ' | tr '\0' '\n' | cut -d '=' -f 1 | grep '^STATE_' | while read -r key; do otel_span_attribute_typed $span_handle string github.actions.step.state.after."$(variable_name_2_attribute_key "${key#STATE_}")"="$(variable_name_2_attribute_value "$key")"; done
-! [ -r "$GITHUB_STATE" ] || cat "$GITHUB_STATE" | while read -r kvp; do otel_span_attribute_typed $span_handle string github.actions.step.state.after."$(variable_name_2_attribute_key "${kvp%%=*}")"="${kvp#*=}"; done
-! [ -r "$GITHUB_OUTPUT" ] || cat "$GITHUB_OUTPUT" | while read -r kvp; do otel_span_attribute_typed $span_handle string github.actions.step.output."$(variable_name_2_attribute_key "${kvp%%=*}")"="${kvp#*=}"; done
+! [ -r "$GITHUB_STATE" ] || cat "$GITHUB_STATE" | github_properties_to_kvps | while read -r kvp; do otel_span_attribute_typed $span_handle string github.actions.step.state.after."$(variable_name_2_attribute_key "${kvp%%=*}")"="${kvp#*=}"; done
+! [ -r "$GITHUB_OUTPUT" ] || cat "$GITHUB_OUTPUT" | github_properties_to_kvps | while read -r kvp; do otel_span_attribute_typed $span_handle string github.actions.step.output."$(variable_name_2_attribute_key "${kvp%%=*}")"="${kvp#*=}"; done
 if [ "$exit_code" != 0 ]; then
   _otel_log_record "$TRACEPARENT" auto 17 "Process completed with exit code $exit_code."
   conclusion=failure
