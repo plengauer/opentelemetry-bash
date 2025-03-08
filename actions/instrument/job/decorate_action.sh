@@ -53,7 +53,7 @@ exit_code_file="$(mktemp)"
       line=""
       severity=unspecified
       ;;
-    ::add-mask::) # TODO adjust collector config?
+    ::add-mask::) # TODO adjust collector config and restart?
       line=""
       severity=unspecified
       ;;
