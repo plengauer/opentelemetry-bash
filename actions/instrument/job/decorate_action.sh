@@ -24,7 +24,8 @@ github_properties_to_kvps() {
       fi
     else
       case "$line" in
-        *'<<ghadelimiter_'*)
+        *=*) printf '%s\n' "$line";;
+        *'<<'*)
           printf '%s' "${line##*<<}" > "$current_delimiter_file"
           printf '%s' "${line%<<*}="
           ;;
