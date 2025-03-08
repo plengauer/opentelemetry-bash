@@ -43,11 +43,11 @@ exit_code_file="$(mktemp)"
       line="${line#[command]}"
       ;;
     '##[group]'*)
-      severity=unspecified;;
+      severity=unspecified
       line="${line#*]}"
       ;;
     '##[endgroup]')
-      severity=unspecified;;
+      severity=unspecified
       line=""
       ;;
     '##['*']'*)
