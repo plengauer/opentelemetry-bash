@@ -71,6 +71,9 @@ if [ "$conclusion" = failure ]; then otel_span_error "$span_handle"; touch /tmp/
 otel_span_end "$span_handle"
 time_end="$(date +%s.%N)"
 
+! [ -r "$GITHUB_STATE" ] || cat "$GITHUB_STATE"
+! [ -r "$GITHUB_OUTPUT" ] || cat "$GITHUB_OUTPUT"
+
 counter_handle="$(otel_counter_create counter github.actions.steps 1 'Number of step runs')"
 observation_handle="$(otel_observation_create 1)"
 otel_observation_attribute_typed "$observation_handle" string github.actions.workflow.name="$GITHUB_WORKFLOW"
