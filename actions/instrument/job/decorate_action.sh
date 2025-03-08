@@ -13,6 +13,9 @@ variable_name_2_attribute_value() {
 _otel_resource_attributes_process() {
   :
 }
+_otel_resource_attributes_custom() {
+  _otel_resource_attribute string telemetry.sdk.language=github
+}
 eval "$(cat "$_OTEL_GITHUB_STEP_AGENT_INSTRUMENTATION_FILE" | grep -v '_otel_alias_prepend ')"
 
 otel_init

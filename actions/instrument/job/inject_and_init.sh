@@ -232,6 +232,12 @@ root4job() {
   rm /tmp/opentelemetry_shell.github.error 2> /dev/null
   traceparent_file="$1"
   . otelapi.sh
+  _otel_resource_attributes_process() {
+    :
+  }
+  _otel_resource_attributes_custom() {
+    _otel_resource_attribute string telemetry.sdk.language=github
+  }
   otel_init
   observe_rate_limit &
   observe_rate_limit_pid="$!"
