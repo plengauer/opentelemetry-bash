@@ -32,15 +32,15 @@ commands_mute_token="$(mktemp -u)"
 exit_code_file="$(mktemp)"
 { otel_observe "$_OTEL_GITHUB_STEP_AGENT_INJECTION_FUNCTION" "$@"; echo "$?" > "$exit_code_file"; } | while read -r line; do
   printf '%s\n' "$line"
-  if [ -r "$commands_mute_token" ]; then
-    if [ "$line" = ::"$(cat "$commands_mute_token")":: ]; then
-      rm "$commands_mute_token"
+  if [ -r "$commands_mute_token_file" ]; then
+    if [ "$line" = ::"$(cat "$commands_mute_token_file")":: ]; then
+      rm "$commands_mute_token_file"
     fi
     continue
   fi
   case "$line" in
     ::stop-commands::*)
-      echo "${line#::stop-commands::}" > "$commands_mute_token"
+      echo "${line#::stop-commands::}" > "$commands_mute_token_file"
       line=""
       severity=unspecified
       ;;
