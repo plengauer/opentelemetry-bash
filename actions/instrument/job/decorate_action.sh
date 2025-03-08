@@ -17,7 +17,7 @@ github_properties_to_kvps() {
     if [ -r "$current_delimiter_file" ]; then
       if [ "$line" = "$(cat "$current_delimiter_file")" ]; then
         printf '\n'
-        rm  "$current_delimiter_file" "$first"
+        rm "$current_delimiter_file" "$first" 2> /dev/null
       else
         if [ -f "$first" ]; then printf ' '; else touch "$first"; fi
         printf '%s' "$line"
