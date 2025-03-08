@@ -41,47 +41,35 @@ exit_code_file="$(mktemp)"
   case "$line" in
     ::stop-commands::*)
       echo "${line#::stop-commands::}" > "$commands_mute_token_file"
-      line=""
-      severity=unspecified
+      continue
       ;;
-    ::endgroup::)
-      line=""
-      severity=unspecified
-      ;;
-    '::'group)
-      line="${line#::}"
-      line="${line#*::}"
-      severity=unspecified
-      ;;
+    ::endgroup::) continue;;
+    ::group) continue;;
     ::save-state' 'name=*::)
       line="${line#::save-state name=}"
       otel_span_attribute_typed $span_handle string github.actions.step.state.after."$(variable_name_2_attribute_key "${line%%::*}")"="${line#*::}"
-      line=""
-      severity=unspecified
+      continue
       ;;
     ::set-output' 'name=*::)
       line="${line#::set-output name=}"
       otel_span_attribute_typed $span_handle string github.actions.step.output."$(variable_name_2_attribute_key "${line%%::*}")"="${line#*::}"
-      line=""
-      severity=unspecified
+      continue
       ;;
     ::add-mask::)
       # in theory we should adjust the collector config and restart
       # in reality, the first commands using the unsmasked value (including the echo writing it) are already out ...
-      line=""
-      severity=unspecified
-      ;;
-    '::'*'::'*)
+      continue;;
+    ::*::*)
       line="${line#::}"
       severity="${line%%::*}"
       severity="${severity%% *}"
       line="${line#*::}"
       ;;
-    '[command]'*)
+    [command]*)
       severity=trace
       line="${line#[command]}"
       ;;
-    *) severity=unspecified;;
+    *) continue;;
   esac
   case "$severity" in
     trace) severity=1;;
@@ -89,9 +77,9 @@ exit_code_file="$(mktemp)"
     notice) severity=9;;
     warning) severity=13;;
     error) severity=17;;
-    *) severity=0;;
+    *) continue;;
   esac
-  [ "$severity" = 0 ] || _otel_log_record "$TRACEPARENT" auto "$severity" "$line"
+  _otel_log_record "$TRACEPARENT" auto "$severity" "$line"
 done
 exit_code="$(cat "$exit_code_file")"
 otel_span_deactivate "$span_handle"
