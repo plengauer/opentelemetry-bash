@@ -291,3 +291,4 @@ done | sed 's/\t/ /g' | while read -r TRACEPARENT job_id step_number step_conclu
 done
 
 otel_shutdown
+
