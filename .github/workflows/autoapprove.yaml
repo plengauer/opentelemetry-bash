@@ -12,7 +12,7 @@ jobs:
     permissions:
       pull-requests: write
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.7.2
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.7.5
         with:
           secrets_to_redact: '${{ toJSON(secrets) }}'
         env:
