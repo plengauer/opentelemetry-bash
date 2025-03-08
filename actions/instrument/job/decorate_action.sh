@@ -32,6 +32,31 @@ exit_code_file="$(mktemp)"
 { otel_observe "$_OTEL_GITHUB_STEP_AGENT_INJECTION_FUNCTION" "$@"; echo "$?" > "$exit_code_file"; } | while read -r line; do
   printf '%s\n' "$line"
   case "$line" in
+    ::endgroup::)
+      line=""
+      severity=unspecified
+      ;;
+    '::'group)
+      line="${line#::}"
+      line="${line#*::}"
+      severity=unspecified
+      ;;
+    ::save-state' 'name=*::)
+      line="${line#::save-state name=}"
+      otel_span_attribute_typed $span_handle string github.actions.step.state.after."$(variable_name_2_attribute_key "${line%%::*}")"="${line#*::}"
+      line=""
+      severity=unspecified
+      ;;
+    ::set-output' 'name=*::)
+      line="${line#::set-output name=}"
+      otel_span_attribute_typed $span_handle string github.actions.step.output."$(variable_name_2_attribute_key "${line%%::*}")"="${line#*::}"
+      line=""
+      severity=unspecified
+      ;;
+    ::add-mask::) # TODO adjust collector config?
+      line=""
+      severity=unspecified
+      ;;
     '::'*'::'*)
       line="${line#::}"
       severity="${line%%::*}"
@@ -41,19 +66,6 @@ exit_code_file="$(mktemp)"
     '[command]'*)
       severity=trace
       line="${line#[command]}"
-      ;;
-    '##[group]'*)
-      severity=unspecified
-      line="${line#*]}"
-      ;;
-    '##[endgroup]')
-      severity=unspecified
-      line=""
-      ;;
-    '##['*']'*)
-      severity="${line#*[}"
-      severity="${severity%%]*}"
-      line="${line#*]}"
       ;;
     *) severity=unspecified;;
   esac
