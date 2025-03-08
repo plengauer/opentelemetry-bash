@@ -65,7 +65,9 @@ exit_code_file="$(mktemp)"
       line=""
       severity=unspecified
       ;;
-    ::add-mask::) # TODO adjust collector config and restart?
+    ::add-mask::)
+      # in theory we should adjust the collector config and restart
+      # in reality, the first commands using the unsmasked value (including the echo writing it) are already out ...
       line=""
       severity=unspecified
       ;;
