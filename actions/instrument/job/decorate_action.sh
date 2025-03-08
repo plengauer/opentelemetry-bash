@@ -28,10 +28,22 @@ otel_span_attribute_typed $span_handle string github.actions.action.name="$GITHU
 otel_span_attribute_typed $span_handle string github.actions.action.ref="$GITHUB_ACTION_REF"
 [ -z "${_OTEL_GITHUB_STEP_ACTION_PHASE:-}" ] || otel_span_attribute_typed $span_handle string github.actions.action.phase="$_OTEL_GITHUB_STEP_ACTION_PHASE"
 otel_span_activate "$span_handle"
+commands_mute_token="$(mktemp -u)"
 exit_code_file="$(mktemp)"
 { otel_observe "$_OTEL_GITHUB_STEP_AGENT_INJECTION_FUNCTION" "$@"; echo "$?" > "$exit_code_file"; } | while read -r line; do
   printf '%s\n' "$line"
+  if [ -r "$commands_mute_token" ]; then
+    if [ "$line" = ::"$(cat "$commands_mute_token")":: ]; then
+      rm "$commands_mute_token"
+    fi
+    continue
+  fi
   case "$line" in
+    ::stop-commands::*)
+      echo "${line#::stop-commands::}" > "$commands_mute_token"
+      line=""
+      severity=unspecified
+      ;;
     ::endgroup::)
       line=""
       severity=unspecified
