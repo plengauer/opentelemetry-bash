@@ -9,11 +9,6 @@ const options = {
   }
 };
 https.request(options, response => {
-  var result = ''
-  response.on('data', function (chunk) {
-    result += chunk;
-  });
-  response.on('end', function () {
-    console.log(result);
-  });  
+  response.on('data', function (chunk) {});
+  response.on('end', function () {});  
 }).end();
