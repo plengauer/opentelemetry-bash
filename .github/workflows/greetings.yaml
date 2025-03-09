@@ -1,0 +1,22 @@
+name: Greetings
+
+on: [pull_request_target, issues]
+
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.7.5
+        with:
+          secrets_to_redact: '${{ toJSON(secrets) }}'
+        env:
+          OTEL_EXPORTER_OTLP_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_ENDPOINT }}'
+          OTEL_EXPORTER_OTLP_HEADERS: '${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}'
+      - uses: actions/first-interaction@v1
+        with:
+          repo-token: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
+          issue-message: "Hello, thanks for adding an issue for the first time!"
+          pr-message: "Hello, thanks for contributing for the first time!"
