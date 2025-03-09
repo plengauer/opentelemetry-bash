@@ -5,5 +5,7 @@ const options = {
   path: '/',
   method: 'GET'
 };
-const req = https.request(options, (res) => {});
-req.end();
+https.request(options, response => {
+  response.on('data', function (chunk) {});
+  response.on('end', function () {});  
+}).end();
