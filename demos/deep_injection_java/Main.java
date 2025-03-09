@@ -7,12 +7,11 @@ import java.net.URL;
 public class Main {
     public static void main(String[] args) {
         try {
-            URL url = new URL("http://example.com");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            HttpURLConnection connection = (HttpURLConnection) new URL("http://example.com").openConnection();
             connection.setRequestMethod("GET");
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            for (String line = in.readLine(); line != null; line = in.readLine());
-            in.close();
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+                for (String line = in.readLine(); line != null; line = in.readLine());
+            }
             connection.disconnect();
         } catch (IOException e) {
             e.printStackTrace();
