@@ -9,8 +9,6 @@ const options = {
   }
 };
 https.request(options, response => {
-  console.log(response.statusCode)
-  console.log(response.headers)
   var result = ''
   response.on('data', function (chunk) {
     result += chunk;
