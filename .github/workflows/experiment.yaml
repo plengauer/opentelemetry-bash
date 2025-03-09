@@ -12,7 +12,7 @@ jobs:
       - run: |
           wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh
           cd demos/injection_deep_node
-          bash -e demo.sh
+          bash -xe demo.sh
       # - uses: ./actions/instrument/job
       #   with:
       #     # secrets_to_redact: '{"foo":"*"}'        
