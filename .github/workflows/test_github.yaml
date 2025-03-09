@@ -22,11 +22,6 @@ jobs:
       - uses: actions/download-artifact@v4 # check if node action works
         with:
           name: packages
-      - uses: actions/first-interaction@v1 # node action with - in env vars
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          issue-message: "Hello, thanks for adding an issue for the first time!"
-          pr-message: "Hello, thanks for contributing for the first time!"
 
   job-docker:
     runs-on: ubuntu-latest
@@ -43,6 +38,11 @@ jobs:
           OTEL_SHELL_CONFIG_GITHUB_INJECT_ON_MAIN: 'TRUE'
           OTEL_SHELL_SDK_OUTPUT_REDIRECT: /dev/null
       - uses: actions/hello-world-docker-action@main # check if docker action works
+      - uses: actions/first-interaction@v1 # docker action with - in env vars
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-message: "Hello, thanks for adding an issue for the first time!"
+          pr-message: "Hello, thanks for contributing for the first time!"
       - uses: docker/setup-qemu-action@v3 # some docker actions have otel built-in
       - uses: docker/setup-buildx-action@v3 # some docker actions have otel built-in
       - uses: actions/download-artifact@v4
