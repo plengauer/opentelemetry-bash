@@ -9,11 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: curl -v https://example.com/
       - run: |
           wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh
           cd demos/injection_deep_node
-          bash -xe demo.sh
+          bash -e demo.sh
       # - uses: ./actions/instrument/job
       #   with:
       #     # secrets_to_redact: '{"foo":"*"}'        
