@@ -3,10 +3,7 @@ const options = {
   hostname: 'example.com',
   port: 443,
   path: '/',
-  method: 'GET'//,
-//  headers: {
-//    Host: 'example.com'
-//  }
+  method: 'GET',
 };
 https.request(options, response => {
   response.on('data', function (chunk) {});
