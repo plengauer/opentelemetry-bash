@@ -8,5 +8,14 @@ const options = {
     Host: 'example.com'
   }
 };
-const req = https.request(options, (res) => {});
-req.end();
+https.request(options, response => {
+  console.log(response.statusCode)
+  console.log(response.headers)
+  var result = ''
+  response.on('data', function (chunk) {
+    result += chunk;
+  });
+  response.on('end', function () {
+    console.log(result);
+  });  
+}).end();
