@@ -37,7 +37,10 @@ print(*map(lambda element: element["instrumentation"], libraries), sep="\n") # S
       (cd /usr/share/opentelemetry_shell/ && ln --symbolic ../../../opt/opentelemetry_shell/node_modules node_modules 2> /dev/null || true)
     fi
     if type java 2> /dev/null; then # SKIP_DEPENDENCY_CHECK
-      true # nothing to do
+      groupId="$(cat pom.xml | grep groupId | cut -d '>' -f 2- | cut -d '<' -f 1)" 
+      artifactId="$(cat pom.xml | grep artifactId | cut -d '>' -f 2- | cut -d '<' -f 1)"
+      version="$(cat pom.xml | grep version | cut -d '>' -f 2- | cut -d '<' -f 1)"
+      wget https://repo1.maven.org/maven2/"$(echo "$groupId" | tr '.' '/')"/"$artifactId"/"$version"/"$artifactId"-"$version".jar -O /opt/opentelemetry_shell/opentelemetry-javaagent.jar
     fi
   fi
   true
