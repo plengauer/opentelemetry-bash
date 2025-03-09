@@ -36,6 +36,9 @@ print(*map(lambda element: element["instrumentation"], libraries), sep="\n") # S
     if [ -d /opt/opentelemetry_shell/node_modules ]; then
       (cd /usr/share/opentelemetry_shell/ && ln --symbolic ../../../opt/opentelemetry_shell/node_modules node_modules 2> /dev/null || true)
     fi
+    if type java 2> /dev/null; then # SKIP_DEPENDENCY_CHECK
+      true # nothing to do
+    fi
   fi
   true
 else
