@@ -36,12 +36,12 @@ print(*map(lambda element: element["instrumentation"], libraries), sep="\n") # S
     if [ -d /opt/opentelemetry_shell/node_modules ]; then
       (cd /usr/share/opentelemetry_shell/ && ln --symbolic ../../../opt/opentelemetry_shell/node_modules node_modules 2> /dev/null || true)
     fi
-    if type java 2> /dev/null; then # SKIP_DEPENDENCY_CHECK
+    if type java 2> /dev/null && type javac 2> /dev/null && type jar 2> /dev/null; then # SKIP_DEPENDENCY_CHECK
       groupId="$(cat pom.xml | grep groupId | cut -d '>' -f 2- | cut -d '<' -f 1)" 
       artifactId="$(cat pom.xml | grep artifactId | cut -d '>' -f 2- | cut -d '<' -f 1)"
       version="$(cat pom.xml | grep version | cut -d '>' -f 2- | cut -d '<' -f 1)"
-      wget https://repo1.maven.org/maven2/"$(echo "$groupId" | tr '.' '/')"/"$artifactId"/"$version"/"$artifactId"-"$version".jar -O /opt/opentelemetry_shell/opentelemetry-javaagent.jar
-      (cd /usr/share/opentelemetry_shell/agent.instrumentation.java && javac Agent.java && jar cmf manifest.txt ../agent.jar Agent.class) # SKIP_DEPENDENCY_CHECK
+      wget https://repo1.maven.org/maven2/"$(echo "$groupId" | tr '.' '/')"/"$artifactId"/"$version"/"$artifactId"-"$version".jar -O /opt/opentelemetry_shell/opentelemetry-javaagent.jar # SKIP_DEPENDENCY_CHECK
+      (cd /usr/share/opentelemetry_shell/agent.instrumentation.java && javac RootContextAgent.java && jar cmf manifest.txt ../agent.jar RootContextAgent.class) # SKIP_DEPENDENCY_CHECK
     fi
   fi
   true
