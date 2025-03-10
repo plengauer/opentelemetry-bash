@@ -73,22 +73,22 @@ _otel_call_and_record_pipes() {
   \wait "$stdin_bytes_pid" "$stdin_lines_pid" "$stdout_bytes_pid" "$stdout_lines_pid" "$stderr_bytes_pid" "$stderr_lines_pid" "$stdout_pid" "$stderr_pid"
   \rm "$stdout" "$stderr" "$stdin_bytes" "$stdin_lines" "$stdout_bytes" "$stdout_lines" "$stderr_bytes" "$stderr_lines" 2> /dev/null
   if \[ "$observe_stdin" = TRUE ]; then
-    _otel_record_pipes stdin "$span_handle" 0 "$stdin_bytes_result" "$stdin_lines_result"
+    _otel_record_pipes "$span_handle" stdin 0 "$stdin_bytes_result" "$stdin_lines_result"
   fi
-  _otel_record_pipes stdout "$span_handle" 1 "$stdout_bytes_result" "$stdout_lines_result"
-  _otel_record_pipes stderr "$span_handle" 2 "$stderr_bytes_result" "$stderr_lines_result"
+  _otel_record_pipes "$span_handle" stdout 1 "$stdout_bytes_result" "$stdout_lines_result"
+  _otel_record_pipes "$span_handle" stderr 2 "$stderr_bytes_result" "$stderr_lines_result"
   \rm "$stdin_bytes_result" "$stdin_lines_result" "$stdout_bytes_result" "$stdout_lines_result" "$stderr_bytes_result" "$stderr_lines_result" 2> /dev/null
   if \[ "$job_control" = 1 ]; then \set -m; fi
   return "$exit_code"
 }
 
 _otel_record_pipes() {
-     ( \[ -t "$3" ]      && otel_span_attribute_typed "$2" string pipe."$1".type=tty    ) \
-  || ( \[ -p /dev/"$1" ] && otel_span_attribute_typed "$2" string pipe."$1".type=pipe   ) \
-  || ( \[ -f /dev/"$1" ] && otel_span_attribute_typed "$2" string pipe."$1".type=file   ) \
-  || ( \[ -c /dev/"$1" ] && otel_span_attribute_typed "$2" string pipe."$1".type=device ) \
-  || ( \[ -b /dev/"$1" ] && otel_span_attribute_typed "$2" string pipe."$1".type=block  ) \
-  || otel_span_attribute_typed "$2" string pipe."$1".type=unknown
-  otel_span_attribute_typed "$2" int pipe."$1".bytes="$(\cat "$4")"
-  otel_span_attribute_typed "$2" int pipe."$1".lines="$(\cat "$5")"
+     ( \[ -t "$3" ]      && otel_span_attribute_typed "$1" string pipe."$2".type=tty    ) \
+  || ( \[ -p /dev/"$2" ] && otel_span_attribute_typed "$1" string pipe."$2".type=pipe   ) \
+  || ( \[ -f /dev/"$2" ] && otel_span_attribute_typed "$1" string pipe."$2".type=file   ) \
+  || ( \[ -c /dev/"$2" ] && otel_span_attribute_typed "$1" string pipe."$2".type=device ) \
+  || ( \[ -b /dev/"$2" ] && otel_span_attribute_typed "$1" string pipe."$2".type=block  ) \
+  || otel_span_attribute_typed "$1" string pipe."$2".type=unknown
+  otel_span_attribute_typed "$1" int pipe."$2".bytes="$(\cat "$4")"
+  otel_span_attribute_typed "$1" int pipe."$2".lines="$(\cat "$5")"
 }
