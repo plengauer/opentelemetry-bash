@@ -5,7 +5,7 @@ import io.opentelemetry.api.trace.TraceFlags;
 import io.opentelemetry.api.trace.TraceState;
 import io.opentelemetry.context.Context;
 
-public class Agent {
+public class RootContextAgent {
     public static void premain(String args, Instrumentation instrumentation) {
         String traceparent = System.getenv("TRACEPARENT");
         if (traceparent == null) return;
