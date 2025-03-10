@@ -44,13 +44,13 @@ exit_code_file="$(mktemp)"
       continue
       ;;
     ::endgroup::) continue;;
-    ::group) continue;;
-    ::save-state' 'name=*::)
+    ::group*) continue;;
+    ::save-state' 'name=*::*)
       line="${line#::save-state name=}"
       otel_span_attribute_typed $span_handle string github.actions.step.state.after."$(variable_name_2_attribute_key "${line%%::*}")"="${line#*::}"
       continue
       ;;
-    ::set-output' 'name=*::)
+    ::set-output' 'name=*::*)
       line="${line#::set-output name=}"
       otel_span_attribute_typed $span_handle string github.actions.step.output."$(variable_name_2_attribute_key "${line%%::*}")"="${line#*::}"
       continue
