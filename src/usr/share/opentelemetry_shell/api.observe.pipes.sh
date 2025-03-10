@@ -87,7 +87,7 @@ _otel_record_pipes() {
   || ( \[ -p /dev/"$1" ] && otel_span_attribute_typed "$2" string pipe."$1".type=pipe   ) \
   || ( \[ -f /dev/"$1" ] && otel_span_attribute_typed "$2" string pipe."$1".type=file   ) \
   || ( \[ -c /dev/"$1" ] && otel_span_attribute_typed "$2" string pipe."$1".type=device ) \
-  || ( \[ -b /dev/"$1" ] && otel_span_attribute_typed "$2" string pipe."$1".type=block  )
+  || ( \[ -b /dev/"$1" ] && otel_span_attribute_typed "$2" string pipe."$1".type=block  ) \
   || otel_span_attribute_typed "$2" string pipe."$1".type=unknown
   otel_span_attribute_typed "$2" int pipe."$1".bytes="$(\cat "$3")"
   otel_span_attribute_typed "$2" int pipe."$1".lines="$(\cat "$4")"
