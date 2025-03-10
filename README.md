@@ -1,6 +1,6 @@
 This project delivers [OpenTelemetry](https://opentelemetry.io/) traces, metrics and logs from shell scripts (sh, ash, dash, bash, busybox, and many other POSIX compliant shells) as well as from GitHub workflows (including node and docker actions). Compared to similar projects, it delivers not just a command-line SDK to create spans manually, but also provides automatic context propagation via HTTP (wget, wget2, curl, and netcat), auto-instrumentation of all available commands, auto-injection into child scripts, into executables using shebangs, and into GitHub actions, as well as automatic log collection from stderr. Its installable via a debian or rpm package from the releases in this repository, from the apt-repository below, and via distributable GitHub actions for workflow-level and job-level instrumentation. This project is not officially affiliated with the CNCF project [OpenTelemetry](https://opentelemetry.io/).
 
-[![Tests](https://github.com/plengauer/opentelemetry-bash/actions/workflows/test.yaml/badge.svg?branch=main)](https://github.com/plengauer/opentelemetry-bash/actions/workflows/test_branch.yaml)
+[![Tests](https://github.com/plengauer/opentelemetry-bash/actions/workflows/test.yaml/badge.svg?branch=main)](https://github.com/plengauer/opentelemetry-bash/actions/workflows/test.yaml)
 
 # Overview
 Check out our detailed [Demos](https://github.com/plengauer/opentelemetry-bash/tree/main/demos).
