@@ -9,3 +9,7 @@ interest-noawait /usr/local/bin/npm
 interest-noawait /bin/gcc
 interest-noawait /usr/bin/gcc
 interest-noawait /usr/local/bin/gcc
+
+interest-noawait /bin/javac
+interest-noawait /usr/bin/javac
+interest-noawait /usr/local/bin/javac
