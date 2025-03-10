@@ -262,12 +262,6 @@ done | sed 's/\t/ /g' | while read -r TRACEPARENT job_id step_number step_conclu
     timestamp="${line%% *}"
     line="${line#* }"
     case "$line" in
-      '::'*'::'*)
-        line="${line#::}"
-        severity="${line%%::*}"
-        severity="${severity%% *}"
-        line="${line#*::}"
-        ;;
       '[command]'*)
         severity=trace
         line="${line#[command]}"

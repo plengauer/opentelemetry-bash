@@ -58,34 +58,48 @@ otel_span_attribute_typed $span_handle string github.actions.action.name="$GITHU
 otel_span_attribute_typed $span_handle string github.actions.action.ref="$GITHUB_ACTION_REF"
 [ -z "${_OTEL_GITHUB_STEP_ACTION_PHASE:-}" ] || otel_span_attribute_typed $span_handle string github.actions.action.phase="$_OTEL_GITHUB_STEP_ACTION_PHASE"
 otel_span_activate "$span_handle"
+commands_mute_token="$(mktemp -u)"
 exit_code_file="$(mktemp)"
 { otel_observe "$_OTEL_GITHUB_STEP_AGENT_INJECTION_FUNCTION" "$@"; echo "$?" > "$exit_code_file"; } | while read -r line; do
   printf '%s\n' "$line"
+  if [ -r "$commands_mute_token_file" ]; then
+    if [ "$line" = ::"$(cat "$commands_mute_token_file")":: ]; then
+      rm "$commands_mute_token_file"
+    fi
+    continue
+  fi
   case "$line" in
-    '::'*'::'*)
+    ::stop-commands::*)
+      echo "${line#::stop-commands::}" > "$commands_mute_token_file"
+      continue
+      ;;
+    ::endgroup::) continue;;
+    ::group*) continue;;
+    ::save-state' 'name=*::*)
+      line="${line#::save-state name=}"
+      otel_span_attribute_typed $span_handle string github.actions.step.state.after."$(variable_name_2_attribute_key "${line%%::*}")"="${line#*::}"
+      continue
+      ;;
+    ::set-output' 'name=*::*)
+      line="${line#::set-output name=}"
+      otel_span_attribute_typed $span_handle string github.actions.step.output."$(variable_name_2_attribute_key "${line%%::*}")"="${line#*::}"
+      continue
+      ;;
+    ::add-mask::)
+      # in theory we should adjust the collector config and restart
+      # in reality, the first commands using the unsmasked value (including the echo writing it) are already out ...
+      continue;;
+    ::*::*)
       line="${line#::}"
       severity="${line%%::*}"
       severity="${severity%% *}"
       line="${line#*::}"
       ;;
-    '[command]'*)
+    [command]*)
       severity=trace
       line="${line#[command]}"
       ;;
-    '##[group]'*)
-      severity=unspecified
-      line="${line#*]}"
-      ;;
-    '##[endgroup]')
-      severity=unspecified
-      line=""
-      ;;
-    '##['*']'*)
-      severity="${line#*[}"
-      severity="${severity%%]*}"
-      line="${line#*]}"
-      ;;
-    *) severity=unspecified;;
+    *) continue;;
   esac
   case "$severity" in
     trace) severity=1;;
@@ -93,9 +107,9 @@ exit_code_file="$(mktemp)"
     notice) severity=9;;
     warning) severity=13;;
     error) severity=17;;
-    *) severity=0;;
+    *) continue;;
   esac
-  [ "$severity" = 0 ] || _otel_log_record "$TRACEPARENT" auto "$severity" "$line"
+  _otel_log_record "$TRACEPARENT" auto "$severity" "$line"
 done
 exit_code="$(cat "$exit_code_file")"
 otel_span_deactivate "$span_handle"
