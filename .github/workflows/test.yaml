@@ -67,7 +67,7 @@ jobs:
           set -o pipefail
           cat src/DEBIAN/postinst | grep 'if type ' | awk '{for(i=1;i<NF;i++){if($i=="type"){print $(i+1)}}}' | while read -r command; do
             printf '%s' "$command ... "
-            cat src/DEBIAN/triggers | grep -qE /"$command" && echo OK
+            cat src/DEBIAN/triggers | grep -qE /"$command" && echo OK || (echo UNAVAILABLE && false)
           done
 
   build:
