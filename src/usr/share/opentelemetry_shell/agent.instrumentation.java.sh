@@ -2,8 +2,11 @@
 
 _otel_inject_java() {
   # TODO injection into subprocesses
-  # TODO activate context from env vars
-  JAVA_TOOL_OPTIONS=-javagent:/opt/opentelemetry_shell/opentelemetry-javaagent.jar _otel_call "$@"
+  if [ -r /opt/opentelemetry_shell/rootcontextagent.jar ] && [ -r /opt/opentelemetry_shell/opentelemetry-javaagent.jar ]; then
+    JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS:-} -javagent:/opt/opentelemetry_shell/opentelemetry-javaagent.jar -javagent:/opt/opentelemetry_shell/rootcontextagent.jar" _otel_call "$@"
+  else
+    _otel_call "$@"
+  fi
 }
 
 _otel_alias_prepend java _otel_inject_java
