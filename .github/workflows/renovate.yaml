@@ -12,7 +12,7 @@ jobs:
   renovate:
     runs-on: ubuntu-latest
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.7.5
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.8.0
         with:
           secrets_to_redact: '${{ toJSON(secrets) }}'
         env:
