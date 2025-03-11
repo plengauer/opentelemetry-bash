@@ -49,7 +49,7 @@ bash -e demo.sh
   grep .deb$
   grep _1.
   xargs wget
-    wget https://github.com/plengauer/opentelemetry-bash/releases/download/v1.11.1/opentelemetry-shell_1.11.1.deb https://github.com/plengauer/opentelemetry-bash/releases/download/v1.11.0/opentelemetry-shell_1.11.0.deb https://github.com/plengauer/opentelemetry-bash/releases/download/v1.10.3/opentelemetry-shell_1.10.3.deb
+    wget https://github.com/plengauer/opentelemetry-bash/releases/download/v1.12.0/opentelemetry-shell_1.12.0.deb https://github.com/plengauer/opentelemetry-bash/releases/download/v1.11.1/opentelemetry-shell_1.11.1.deb https://github.com/plengauer/opentelemetry-bash/releases/download/v1.11.0/opentelemetry-shell_1.11.0.deb
       GET
       GET
       GET
@@ -60,14 +60,14 @@ bash -e demo.sh
 ## Full Trace
 ```
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "57cb1e840659d60e",
-  "parent_span_id": "be16b730bb1856ac",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "109a391c30024514",
+  "parent_span_id": "abc45abd72a60ef0",
   "name": "/usr/bin/perl /usr/bin/parallel -q curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page={} ::: 1 2 3",
   "kind": "INTERNAL",
   "status": "UNSET",
-  "time_start": 1741397407570351616,
-  "time_end": 1741397409747051520,
+  "time_start": 1741688379750638848,
+  "time_end": 1741688381999593984,
   "attributes": {
     "shell.command_line": "/usr/bin/perl /usr/bin/parallel -q curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page={} ::: 1 2 3",
     "shell.command": "/usr/bin/perl",
@@ -81,19 +81,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 5792,
-    "process.parent_pid": 4394,
+    "process.pid": 5744,
+    "process.parent_pid": 4348,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "xargs parallel -q curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page={} :::",
@@ -111,14 +111,155 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "7e7d29cdd5cd879a",
-  "parent_span_id": "61bf6f0b602cc4a7",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "6609290d652e7508",
+  "parent_span_id": "39de2ebedbdad828",
   "name": "GET",
   "kind": "CLIENT",
   "status": "UNSET",
-  "time_start": 1741397408882765568,
-  "time_end": 1741397409599322368,
+  "time_start": 1741688381088471296,
+  "time_end": 1741688381838543360,
+  "attributes": {
+    "network.transport": "tcp",
+    "network.protocol.name": "https",
+    "network.protocol.version": "2",
+    "network.peer.address": "140.82.113.6",
+    "network.peer.port": 443,
+    "server.address": "api.github.com",
+    "server.port": 443,
+    "url.full": "https://api.github.com:443/repos/plengauer/opentelemetry-bash/releases?per_page=100&page=1",
+    "url.path": "/repos/plengauer/opentelemetry-bash/releases",
+    "url.query": "per_page=100&page=1",
+    "url.scheme": "https",
+    "http.request.method": "GET",
+    "http.request.header.host": [
+      "api.github.com"
+    ],
+    "user_agent.original": "curl/8.5.0",
+    "http.request.header.user-agent": [
+      "curl/8.5.0"
+    ],
+    "http.request.header.accept": [
+      "*/*"
+    ],
+    "http.request.header.traceparent": [
+      "00-8b92058612f86f092a0901d25311a9b1-39de2ebedbdad828-01"
+    ],
+    "http.response.status_code": 200,
+    "http.response.header.date": [
+      "Tue, 11 Mar 2025 10:19:41 GMT"
+    ],
+    "http.response.header.content-type": [
+      "application/json; charset=utf-8"
+    ],
+    "http.response.header.cache-control": [
+      "public, max-age=60, s-maxage=60"
+    ],
+    "http.response.header.vary": [
+      "Accept,Accept-Encoding, Accept, X-Requested-With"
+    ],
+    "http.response.header.etag": [
+      "W/\"bbbcf236eb030b96c8eea2b09c4afb3a6f30887fce1bb0672a31c740e314c5de\""
+    ],
+    "http.response.header.x-github-media-type": [
+      "github.v3; format=json"
+    ],
+    "http.response.header.link": [
+      "<https://api.github.com/repositories/692042935/releases?per_page=100&page=2>; rel=\"next\", <https://api.github.com/repositories/692042935/releases?per_page=100&page=3>; rel=\"last\""
+    ],
+    "http.response.header.x-github-api-version-selected": [
+      "2022-11-28"
+    ],
+    "http.response.header.access-control-expose-headers": [
+      "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset"
+    ],
+    "http.response.header.access-control-allow-origin": [
+      "*"
+    ],
+    "http.response.header.strict-transport-security": [
+      "max-age=31536000; includeSubdomains; preload"
+    ],
+    "http.response.header.x-frame-options": [
+      "deny"
+    ],
+    "http.response.header.x-content-type-options": [
+      "nosniff"
+    ],
+    "http.response.header.x-xss-protection": [
+      "0"
+    ],
+    "http.response.header.referrer-policy": [
+      "origin-when-cross-origin, strict-origin-when-cross-origin"
+    ],
+    "http.response.header.content-security-policy": [
+      "default-src 'none'"
+    ],
+    "http.response.header.server": [
+      "github.com"
+    ],
+    "http.response.header.accept-ranges": [
+      "bytes"
+    ],
+    "http.response.header.x-ratelimit-limit": [
+      "60"
+    ],
+    "http.response.header.x-ratelimit-remaining": [
+      "54"
+    ],
+    "http.response.header.x-ratelimit-reset": [
+      "1741691007"
+    ],
+    "http.response.header.x-ratelimit-resource": [
+      "core"
+    ],
+    "http.response.header.x-ratelimit-used": [
+      "6"
+    ],
+    "http.response.header.x-github-request-id": [
+      "E840:A6818:2E7D6:5DC40:67D00E3D"
+    ]
+  },
+  "resource_attributes": {
+    "telemetry.sdk.language": "shell",
+    "telemetry.sdk.name": "opentelemetry",
+    "telemetry.sdk.version": "5.8.0",
+    "service.name": "unknown_service",
+    "github.repository.id": "692042935",
+    "github.repository.name": "opentelemetry-bash",
+    "github.repository.owner.id": "100447901",
+    "github.repository.owner.name": "plengauer",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
+    "github.actions.workflow.name": "Refresh Demos",
+    "os.type": "linux",
+    "os.version": "6.8.0-1021-azure",
+    "process.pid": 6553,
+    "process.parent_pid": 6512,
+    "process.executable.name": "bash",
+    "process.executable.path": "/usr/bin/bash",
+    "process.command_line": "/usr/bin/perl /usr/bin/parallel -q curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page={} ::: 1 2 3",
+    "process.command": "/usr/bin/perl",
+    "process.owner": "runner",
+    "process.runtime.name": "bash",
+    "process.runtime.description": "Bourne Again Shell",
+    "process.runtime.version": "5.2.21-2ubuntu4",
+    "process.runtime.options": "hBc",
+    "service.version": "",
+    "service.namespace": "",
+    "service.instance.id": ""
+  },
+  "links": [],
+  "events": []
+}
+{
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "262243313154b7bf",
+  "parent_span_id": "d07081bb9c4a0c02",
+  "name": "GET",
+  "kind": "CLIENT",
+  "status": "UNSET",
+  "time_start": 1741688381175564544,
+  "time_end": 1741688381765844736,
   "attributes": {
     "network.transport": "tcp",
     "network.protocol.name": "https",
@@ -143,11 +284,11 @@ bash -e demo.sh
       "*/*"
     ],
     "http.request.header.traceparent": [
-      "00-0e0c11c3dc88e8b97924ff237f03abd3-61bf6f0b602cc4a7-01"
+      "00-8b92058612f86f092a0901d25311a9b1-d07081bb9c4a0c02-01"
     ],
     "http.response.status_code": 200,
     "http.response.header.date": [
-      "Sat, 08 Mar 2025 01:30:09 GMT"
+      "Tue, 11 Mar 2025 10:19:41 GMT"
     ],
     "http.response.header.content-type": [
       "application/json; charset=utf-8"
@@ -159,7 +300,7 @@ bash -e demo.sh
       "Accept,Accept-Encoding, Accept, X-Requested-With"
     ],
     "http.response.header.etag": [
-      "W/\"4b998cf979795256d8ca002ed54f15646f0128142e0a9b259bd1b8f140a2e6d2\""
+      "W/\"af32071ea86418b2f4c1e2dc10a02dfbe12e7e9c6b2cd021836a914033f03c79\""
     ],
     "http.response.header.x-github-media-type": [
       "github.v3; format=json"
@@ -204,37 +345,37 @@ bash -e demo.sh
       "60"
     ],
     "http.response.header.x-ratelimit-remaining": [
-      "58"
+      "53"
     ],
     "http.response.header.x-ratelimit-reset": [
-      "1741401002"
+      "1741691007"
     ],
     "http.response.header.x-ratelimit-resource": [
       "core"
     ],
     "http.response.header.x-ratelimit-used": [
-      "2"
+      "7"
     ],
     "http.response.header.x-github-request-id": [
-      "9EC1:14478:16418FC:2CA0458:67CB9DA0"
+      "E842:6F7A0:40AD1:82066:67D00E3D"
     ]
   },
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 6603,
-    "process.parent_pid": 6559,
+    "process.pid": 6556,
+    "process.parent_pid": 6512,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "/usr/bin/perl /usr/bin/parallel -q curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page={} ::: 1 2 3",
@@ -252,155 +393,14 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "585144ee9f1a50c9",
-  "parent_span_id": "8b35c83a6f99c2b1",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "12034bba92c92b02",
+  "parent_span_id": "d42c35990c974e14",
   "name": "GET",
   "kind": "CLIENT",
   "status": "UNSET",
-  "time_start": 1741397408994421760,
-  "time_end": 1741397409667411968,
-  "attributes": {
-    "network.transport": "tcp",
-    "network.protocol.name": "https",
-    "network.protocol.version": "2",
-    "network.peer.address": "140.82.113.6",
-    "network.peer.port": 443,
-    "server.address": "api.github.com",
-    "server.port": 443,
-    "url.full": "https://api.github.com:443/repos/plengauer/opentelemetry-bash/releases?per_page=100&page=1",
-    "url.path": "/repos/plengauer/opentelemetry-bash/releases",
-    "url.query": "per_page=100&page=1",
-    "url.scheme": "https",
-    "http.request.method": "GET",
-    "http.request.header.host": [
-      "api.github.com"
-    ],
-    "user_agent.original": "curl/8.5.0",
-    "http.request.header.user-agent": [
-      "curl/8.5.0"
-    ],
-    "http.request.header.accept": [
-      "*/*"
-    ],
-    "http.request.header.traceparent": [
-      "00-0e0c11c3dc88e8b97924ff237f03abd3-8b35c83a6f99c2b1-01"
-    ],
-    "http.response.status_code": 200,
-    "http.response.header.date": [
-      "Sat, 08 Mar 2025 01:30:09 GMT"
-    ],
-    "http.response.header.content-type": [
-      "application/json; charset=utf-8"
-    ],
-    "http.response.header.cache-control": [
-      "public, max-age=60, s-maxage=60"
-    ],
-    "http.response.header.vary": [
-      "Accept,Accept-Encoding, Accept, X-Requested-With"
-    ],
-    "http.response.header.etag": [
-      "W/\"cf4d3fec43ea410adeabaa156a0d2190a8af1068fdd026a16930ae3a3eb82cf2\""
-    ],
-    "http.response.header.x-github-media-type": [
-      "github.v3; format=json"
-    ],
-    "http.response.header.link": [
-      "<https://api.github.com/repositories/692042935/releases?per_page=100&page=2>; rel=\"next\", <https://api.github.com/repositories/692042935/releases?per_page=100&page=3>; rel=\"last\""
-    ],
-    "http.response.header.x-github-api-version-selected": [
-      "2022-11-28"
-    ],
-    "http.response.header.access-control-expose-headers": [
-      "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset"
-    ],
-    "http.response.header.access-control-allow-origin": [
-      "*"
-    ],
-    "http.response.header.strict-transport-security": [
-      "max-age=31536000; includeSubdomains; preload"
-    ],
-    "http.response.header.x-frame-options": [
-      "deny"
-    ],
-    "http.response.header.x-content-type-options": [
-      "nosniff"
-    ],
-    "http.response.header.x-xss-protection": [
-      "0"
-    ],
-    "http.response.header.referrer-policy": [
-      "origin-when-cross-origin, strict-origin-when-cross-origin"
-    ],
-    "http.response.header.content-security-policy": [
-      "default-src 'none'"
-    ],
-    "http.response.header.server": [
-      "github.com"
-    ],
-    "http.response.header.accept-ranges": [
-      "bytes"
-    ],
-    "http.response.header.x-ratelimit-limit": [
-      "60"
-    ],
-    "http.response.header.x-ratelimit-remaining": [
-      "57"
-    ],
-    "http.response.header.x-ratelimit-reset": [
-      "1741401002"
-    ],
-    "http.response.header.x-ratelimit-resource": [
-      "core"
-    ],
-    "http.response.header.x-ratelimit-used": [
-      "3"
-    ],
-    "http.response.header.x-github-request-id": [
-      "9EC2:7CA46:158583D:2B39190:67CB9DA0"
-    ]
-  },
-  "resource_attributes": {
-    "telemetry.sdk.language": "shell",
-    "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
-    "service.name": "unknown_service",
-    "github.repository.id": "692042935",
-    "github.repository.name": "opentelemetry-bash",
-    "github.repository.owner.id": "100447901",
-    "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
-    "github.actions.workflow.name": "Refresh Demos",
-    "os.type": "linux",
-    "os.version": "6.8.0-1021-azure",
-    "process.pid": 6600,
-    "process.parent_pid": 6559,
-    "process.executable.name": "bash",
-    "process.executable.path": "/usr/bin/bash",
-    "process.command_line": "/usr/bin/perl /usr/bin/parallel -q curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page={} ::: 1 2 3",
-    "process.command": "/usr/bin/perl",
-    "process.owner": "runner",
-    "process.runtime.name": "bash",
-    "process.runtime.description": "Bourne Again Shell",
-    "process.runtime.version": "5.2.21-2ubuntu4",
-    "process.runtime.options": "hBc",
-    "service.version": "",
-    "service.namespace": "",
-    "service.instance.id": ""
-  },
-  "links": [],
-  "events": []
-}
-{
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "5d4e923093b0eb49",
-  "parent_span_id": "cd196aed8146788a",
-  "name": "GET",
-  "kind": "CLIENT",
-  "status": "UNSET",
-  "time_start": 1741397409019462912,
-  "time_end": 1741397409730315008,
+  "time_start": 1741688381177032192,
+  "time_end": 1741688381982598656,
   "attributes": {
     "network.transport": "tcp",
     "network.protocol.name": "https",
@@ -425,11 +425,11 @@ bash -e demo.sh
       "*/*"
     ],
     "http.request.header.traceparent": [
-      "00-0e0c11c3dc88e8b97924ff237f03abd3-cd196aed8146788a-01"
+      "00-8b92058612f86f092a0901d25311a9b1-d42c35990c974e14-01"
     ],
     "http.response.status_code": 200,
     "http.response.header.date": [
-      "Sat, 08 Mar 2025 01:30:09 GMT"
+      "Tue, 11 Mar 2025 10:19:41 GMT"
     ],
     "http.response.header.content-type": [
       "application/json; charset=utf-8"
@@ -441,7 +441,7 @@ bash -e demo.sh
       "Accept,Accept-Encoding, Accept, X-Requested-With"
     ],
     "http.response.header.etag": [
-      "W/\"2429320c2049bf9d92d25db48036019c95f7ae2c8a78cf53ba98f056ad8f5842\""
+      "W/\"79508baeeb10e3ae0746911336042819c46c7cb18d8d94b656d49425383cbb0c\""
     ],
     "http.response.header.x-github-media-type": [
       "github.v3; format=json"
@@ -486,37 +486,37 @@ bash -e demo.sh
       "60"
     ],
     "http.response.header.x-ratelimit-remaining": [
-      "56"
+      "52"
     ],
     "http.response.header.x-ratelimit-reset": [
-      "1741401002"
+      "1741691007"
     ],
     "http.response.header.x-ratelimit-resource": [
       "core"
     ],
     "http.response.header.x-ratelimit-used": [
-      "4"
+      "8"
     ],
     "http.response.header.x-github-request-id": [
-      "9EC3:293152:17DA004:2FDD987:67CB9DA0"
+      "E841:16599:66C82:CE496:67D00E3D"
     ]
   },
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 6601,
-    "process.parent_pid": 6559,
+    "process.pid": 6554,
+    "process.parent_pid": 6512,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "/usr/bin/perl /usr/bin/parallel -q curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page={} ::: 1 2 3",
@@ -534,23 +534,23 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "3b31b0527317336f",
-  "parent_span_id": "7c2ff60bd52bbf66",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "be9bfe8a11ba34b2",
+  "parent_span_id": "20e5f69da8b34b7b",
   "name": "GET",
   "kind": "CLIENT",
   "status": "UNSET",
-  "time_start": 1741397410482770432,
-  "time_end": 1741397411511649536,
+  "time_start": 1741688382738743808,
+  "time_end": 1741688382834700032,
   "attributes": {
     "network.protocol.name": "https",
     "network.transport": "tcp",
-    "network.peer.address": "140.82.113.3",
+    "network.peer.address": "140.82.112.3",
     "network.peer.port": 443,
     "server.address": "github.com",
     "server.port": 443,
-    "url.full": "https://github.com/plengauer/opentelemetry-bash/releases/download/v1.11.1/opentelemetry-shell_1.11.1.deb",
-    "url.path": "/plengauer/opentelemetry-bash/releases/download/v1.11.1/opentelemetry-shell_1.11.1.deb",
+    "url.full": "https://github.com/plengauer/opentelemetry-bash/releases/download/v1.12.0/opentelemetry-shell_1.12.0.deb",
+    "url.path": "/plengauer/opentelemetry-bash/releases/download/v1.12.0/opentelemetry-shell_1.12.0.deb",
     "url.scheme": "https",
     "user_agent.original": "wget",
     "http.request.method": "GET",
@@ -559,19 +559,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 11185,
-    "process.parent_pid": 4325,
+    "process.pid": 11138,
+    "process.parent_pid": 4284,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "xargs wget",
@@ -589,14 +589,14 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "fbc393ff9fb37af1",
-  "parent_span_id": "7c2ff60bd52bbf66",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "8a219501f826d2e3",
+  "parent_span_id": "20e5f69da8b34b7b",
   "name": "GET",
   "kind": "CLIENT",
   "status": "UNSET",
-  "time_start": 1741397410575449088,
-  "time_end": 1741397411553681920,
+  "time_start": 1741688382830601728,
+  "time_end": 1741688382894284032,
   "attributes": {
     "network.protocol.name": "https",
     "network.transport": "tcp",
@@ -604,9 +604,126 @@ bash -e demo.sh
     "network.peer.port": 443,
     "server.address": "objects.githubusercontent.com",
     "server.port": 443,
-    "url.full": "https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/6efe7aa7-86c3-49d8-a628-277ce0249c95?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250308%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250308T013010Z&X-Amz-Expires=300&X-Amz-Signature=c811ee9bcdc760fdb9e6599f2c4b47fdbfb3a361c639069f998990c62550ba87&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.11.1.deb&response-content-type=application%2Foctet-stream",
+    "url.full": "https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/768354dd-6491-4a51-b93f-0f6ca1cce6f2?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250311%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250311T101942Z&X-Amz-Expires=300&X-Amz-Signature=47064fdf3fe2f8bb5da16e50b00bf66dd5774c5e4bffbc6c7fb7744cf5073820&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.12.0.deb&response-content-type=application%2Foctet-stream",
+    "url.path": "/github-production-release-asset-2e65be/692042935/768354dd-6491-4a51-b93f-0f6ca1cce6f2",
+    "url.query": "X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250311%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250311T101942Z&X-Amz-Expires=300&X-Amz-Signature=47064fdf3fe2f8bb5da16e50b00bf66dd5774c5e4bffbc6c7fb7744cf5073820&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.12.0.deb&response-content-type=application%2Foctet-stream",
+    "url.scheme": "https",
+    "user_agent.original": "wget",
+    "http.request.method": "GET",
+    "http.response.status_code": 200,
+    "http.response.header.content-type": [
+      "application/octet-stream"
+    ],
+    "http.response.header.content-length": [
+      "6708"
+    ]
+  },
+  "resource_attributes": {
+    "telemetry.sdk.language": "shell",
+    "telemetry.sdk.name": "opentelemetry",
+    "telemetry.sdk.version": "5.8.0",
+    "service.name": "unknown_service",
+    "github.repository.id": "692042935",
+    "github.repository.name": "opentelemetry-bash",
+    "github.repository.owner.id": "100447901",
+    "github.repository.owner.name": "plengauer",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
+    "github.actions.workflow.name": "Refresh Demos",
+    "os.type": "linux",
+    "os.version": "6.8.0-1021-azure",
+    "process.pid": 11138,
+    "process.parent_pid": 4284,
+    "process.executable.name": "bash",
+    "process.executable.path": "/usr/bin/bash",
+    "process.command_line": "xargs wget",
+    "process.command": "xargs",
+    "process.owner": "runner",
+    "process.runtime.name": "bash",
+    "process.runtime.description": "Bourne Again Shell",
+    "process.runtime.version": "5.2.21-2ubuntu4",
+    "process.runtime.options": "hBc",
+    "service.version": "",
+    "service.namespace": "",
+    "service.instance.id": ""
+  },
+  "links": [],
+  "events": []
+}
+{
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "2e48c1e6ef82a28f",
+  "parent_span_id": "20e5f69da8b34b7b",
+  "name": "GET",
+  "kind": "CLIENT",
+  "status": "UNSET",
+  "time_start": 1741688382880503808,
+  "time_end": 1741688382975291904,
+  "attributes": {
+    "network.protocol.name": "https",
+    "network.transport": "tcp",
+    "network.peer.address": "140.82.112.3",
+    "network.peer.port": 443,
+    "server.address": "github.com",
+    "server.port": 443,
+    "url.full": "https://github.com/plengauer/opentelemetry-bash/releases/download/v1.11.1/opentelemetry-shell_1.11.1.deb",
+    "url.path": "/plengauer/opentelemetry-bash/releases/download/v1.11.1/opentelemetry-shell_1.11.1.deb",
+    "url.scheme": "https",
+    "user_agent.original": "wget",
+    "http.request.method": "GET",
+    "http.response.status_code": 302
+  },
+  "resource_attributes": {
+    "telemetry.sdk.language": "shell",
+    "telemetry.sdk.name": "opentelemetry",
+    "telemetry.sdk.version": "5.8.0",
+    "service.name": "unknown_service",
+    "github.repository.id": "692042935",
+    "github.repository.name": "opentelemetry-bash",
+    "github.repository.owner.id": "100447901",
+    "github.repository.owner.name": "plengauer",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
+    "github.actions.workflow.name": "Refresh Demos",
+    "os.type": "linux",
+    "os.version": "6.8.0-1021-azure",
+    "process.pid": 11138,
+    "process.parent_pid": 4284,
+    "process.executable.name": "bash",
+    "process.executable.path": "/usr/bin/bash",
+    "process.command_line": "xargs wget",
+    "process.command": "xargs",
+    "process.owner": "runner",
+    "process.runtime.name": "bash",
+    "process.runtime.description": "Bourne Again Shell",
+    "process.runtime.version": "5.2.21-2ubuntu4",
+    "process.runtime.options": "hBc",
+    "service.version": "",
+    "service.namespace": "",
+    "service.instance.id": ""
+  },
+  "links": [],
+  "events": []
+}
+{
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "8b08070b2d61a673",
+  "parent_span_id": "20e5f69da8b34b7b",
+  "name": "GET",
+  "kind": "CLIENT",
+  "status": "UNSET",
+  "time_start": 1741688382970467328,
+  "time_end": 1741688383038700288,
+  "attributes": {
+    "network.protocol.name": "https",
+    "network.transport": "tcp",
+    "network.peer.address": "185.199.110.133",
+    "network.peer.port": 443,
+    "server.address": "objects.githubusercontent.com",
+    "server.port": 443,
+    "url.full": "https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/6efe7aa7-86c3-49d8-a628-277ce0249c95?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250311%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250311T101942Z&X-Amz-Expires=300&X-Amz-Signature=a3803cf0e0f5b6b29107e82b6ed0bee899461523a5cc2c17b00322515b98511e&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.11.1.deb&response-content-type=application%2Foctet-stream",
     "url.path": "/github-production-release-asset-2e65be/692042935/6efe7aa7-86c3-49d8-a628-277ce0249c95",
-    "url.query": "X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250308%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250308T013010Z&X-Amz-Expires=300&X-Amz-Signature=c811ee9bcdc760fdb9e6599f2c4b47fdbfb3a361c639069f998990c62550ba87&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.11.1.deb&response-content-type=application%2Foctet-stream",
+    "url.query": "X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250311%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250311T101942Z&X-Amz-Expires=300&X-Amz-Signature=a3803cf0e0f5b6b29107e82b6ed0bee899461523a5cc2c17b00322515b98511e&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.11.1.deb&response-content-type=application%2Foctet-stream",
     "url.scheme": "https",
     "user_agent.original": "wget",
     "http.request.method": "GET",
@@ -621,19 +738,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 11185,
-    "process.parent_pid": 4325,
+    "process.pid": 11138,
+    "process.parent_pid": 4284,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "xargs wget",
@@ -651,18 +768,18 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "453389b687e7431c",
-  "parent_span_id": "7c2ff60bd52bbf66",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "c40341ffdfab5db5",
+  "parent_span_id": "20e5f69da8b34b7b",
   "name": "GET",
   "kind": "CLIENT",
   "status": "UNSET",
-  "time_start": 1741397411540702720,
-  "time_end": 1741397411660179200,
+  "time_start": 1741688383025092352,
+  "time_end": 1741688383132556032,
   "attributes": {
     "network.protocol.name": "https",
     "network.transport": "tcp",
-    "network.peer.address": "140.82.113.3",
+    "network.peer.address": "140.82.112.3",
     "network.peer.port": 443,
     "server.address": "github.com",
     "server.port": 443,
@@ -676,19 +793,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 11185,
-    "process.parent_pid": 4325,
+    "process.pid": 11138,
+    "process.parent_pid": 4284,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "xargs wget",
@@ -706,14 +823,14 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "f2c41cc031b7d22e",
-  "parent_span_id": "7c2ff60bd52bbf66",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "4d572eaf52964cfd",
+  "parent_span_id": "20e5f69da8b34b7b",
   "name": "GET",
   "kind": "CLIENT",
   "status": "UNSET",
-  "time_start": 1741397411659439872,
-  "time_end": 1741397411715666176,
+  "time_start": 1741688383125752832,
+  "time_end": 1741688383189712384,
   "attributes": {
     "network.protocol.name": "https",
     "network.transport": "tcp",
@@ -721,9 +838,9 @@ bash -e demo.sh
     "network.peer.port": 443,
     "server.address": "objects.githubusercontent.com",
     "server.port": 443,
-    "url.full": "https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/13fc7e6a-aa5f-40e3-a8d6-7bfd84f21e8d?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250308%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250308T013011Z&X-Amz-Expires=300&X-Amz-Signature=d46834d64128b29f8cc5e5241bab11f1fd414e423d9defb5c49f29abb7a8de29&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.11.0.deb&response-content-type=application%2Foctet-stream",
+    "url.full": "https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/13fc7e6a-aa5f-40e3-a8d6-7bfd84f21e8d?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250311%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250311T101943Z&X-Amz-Expires=300&X-Amz-Signature=f40d3da9e5a33ba444e92e7922c0b911d930ef8e48717a5f7af45c4a272570e2&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.11.0.deb&response-content-type=application%2Foctet-stream",
     "url.path": "/github-production-release-asset-2e65be/692042935/13fc7e6a-aa5f-40e3-a8d6-7bfd84f21e8d",
-    "url.query": "X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250308%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250308T013011Z&X-Amz-Expires=300&X-Amz-Signature=d46834d64128b29f8cc5e5241bab11f1fd414e423d9defb5c49f29abb7a8de29&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.11.0.deb&response-content-type=application%2Foctet-stream",
+    "url.query": "X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250311%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250311T101943Z&X-Amz-Expires=300&X-Amz-Signature=f40d3da9e5a33ba444e92e7922c0b911d930ef8e48717a5f7af45c4a272570e2&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.11.0.deb&response-content-type=application%2Foctet-stream",
     "url.scheme": "https",
     "user_agent.original": "wget",
     "http.request.method": "GET",
@@ -738,19 +855,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 11185,
-    "process.parent_pid": 4325,
+    "process.pid": 11138,
+    "process.parent_pid": 4284,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "xargs wget",
@@ -768,131 +885,14 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "1440acb41eb581ea",
-  "parent_span_id": "7c2ff60bd52bbf66",
-  "name": "GET",
-  "kind": "CLIENT",
-  "status": "UNSET",
-  "time_start": 1741397411702011648,
-  "time_end": 1741397411788435712,
-  "attributes": {
-    "network.protocol.name": "https",
-    "network.transport": "tcp",
-    "network.peer.address": "140.82.113.3",
-    "network.peer.port": 443,
-    "server.address": "github.com",
-    "server.port": 443,
-    "url.full": "https://github.com/plengauer/opentelemetry-bash/releases/download/v1.10.3/opentelemetry-shell_1.10.3.deb",
-    "url.path": "/plengauer/opentelemetry-bash/releases/download/v1.10.3/opentelemetry-shell_1.10.3.deb",
-    "url.scheme": "https",
-    "user_agent.original": "wget",
-    "http.request.method": "GET",
-    "http.response.status_code": 302
-  },
-  "resource_attributes": {
-    "telemetry.sdk.language": "shell",
-    "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
-    "service.name": "unknown_service",
-    "github.repository.id": "692042935",
-    "github.repository.name": "opentelemetry-bash",
-    "github.repository.owner.id": "100447901",
-    "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
-    "github.actions.workflow.name": "Refresh Demos",
-    "os.type": "linux",
-    "os.version": "6.8.0-1021-azure",
-    "process.pid": 11185,
-    "process.parent_pid": 4325,
-    "process.executable.name": "bash",
-    "process.executable.path": "/usr/bin/bash",
-    "process.command_line": "xargs wget",
-    "process.command": "xargs",
-    "process.owner": "runner",
-    "process.runtime.name": "bash",
-    "process.runtime.description": "Bourne Again Shell",
-    "process.runtime.version": "5.2.21-2ubuntu4",
-    "process.runtime.options": "hBc",
-    "service.version": "",
-    "service.namespace": "",
-    "service.instance.id": ""
-  },
-  "links": [],
-  "events": []
-}
-{
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "bccebd05fc277623",
-  "parent_span_id": "7c2ff60bd52bbf66",
-  "name": "GET",
-  "kind": "CLIENT",
-  "status": "UNSET",
-  "time_start": 1741397411782809088,
-  "time_end": 1741397411822794240,
-  "attributes": {
-    "network.protocol.name": "https",
-    "network.transport": "tcp",
-    "network.peer.address": "185.199.110.133",
-    "network.peer.port": 443,
-    "server.address": "objects.githubusercontent.com",
-    "server.port": 443,
-    "url.full": "https://objects.githubusercontent.com/github-production-release-asset-2e65be/692042935/3831e6be-ab1d-4cd4-b097-3dc7bb24e220?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250308%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250308T013011Z&X-Amz-Expires=300&X-Amz-Signature=2d35d8b464ece32dd72608ccc195a2975de11db2317e07b7c226262158a9d16d&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.10.3.deb&response-content-type=application%2Foctet-stream",
-    "url.path": "/github-production-release-asset-2e65be/692042935/3831e6be-ab1d-4cd4-b097-3dc7bb24e220",
-    "url.query": "X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250308%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250308T013011Z&X-Amz-Expires=300&X-Amz-Signature=2d35d8b464ece32dd72608ccc195a2975de11db2317e07b7c226262158a9d16d&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dopentelemetry-shell_1.10.3.deb&response-content-type=application%2Foctet-stream",
-    "url.scheme": "https",
-    "user_agent.original": "wget",
-    "http.request.method": "GET",
-    "http.response.status_code": 200,
-    "http.response.header.content-type": [
-      "application/octet-stream"
-    ],
-    "http.response.header.content-length": [
-      "6322"
-    ]
-  },
-  "resource_attributes": {
-    "telemetry.sdk.language": "shell",
-    "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
-    "service.name": "unknown_service",
-    "github.repository.id": "692042935",
-    "github.repository.name": "opentelemetry-bash",
-    "github.repository.owner.id": "100447901",
-    "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
-    "github.actions.workflow.name": "Refresh Demos",
-    "os.type": "linux",
-    "os.version": "6.8.0-1021-azure",
-    "process.pid": 11185,
-    "process.parent_pid": 4325,
-    "process.executable.name": "bash",
-    "process.executable.path": "/usr/bin/bash",
-    "process.command_line": "xargs wget",
-    "process.command": "xargs",
-    "process.owner": "runner",
-    "process.runtime.name": "bash",
-    "process.runtime.description": "Bourne Again Shell",
-    "process.runtime.version": "5.2.21-2ubuntu4",
-    "process.runtime.options": "hBc",
-    "service.version": "",
-    "service.namespace": "",
-    "service.instance.id": ""
-  },
-  "links": [],
-  "events": []
-}
-{
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "945037a89c6701d8",
-  "parent_span_id": "d5522f64fa2e2389",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "476ec6e585ddc777",
+  "parent_span_id": "2f916cbd61848ffb",
   "name": "HEAD",
   "kind": "CLIENT",
   "status": "UNSET",
-  "time_start": 1741397402835284992,
-  "time_end": 1741397406225540096,
+  "time_start": 1741688374958622208,
+  "time_end": 1741688378406124032,
   "attributes": {
     "network.transport": "tcp",
     "network.peer.port": 443,
@@ -918,7 +918,7 @@ bash -e demo.sh
     ],
     "http.response.status_code": 200,
     "http.response.header.date": [
-      "Sat, 08 Mar 2025 01:30:03 GMT"
+      "Tue, 11 Mar 2025 10:19:35 GMT"
     ],
     "http.response.header.content-type": [
       "application/json; charset=utf-8"
@@ -930,7 +930,7 @@ bash -e demo.sh
       "Accept,Accept-Encoding, Accept, X-Requested-With"
     ],
     "http.response.header.etag": [
-      "W/\"e5ea539eb0f3964fb9d3396ee538ff2a89d7908e72a317a6b97f83c3c333eda1\""
+      "W/\"7b16520fdfb470bf10234e816b66778435045e17ccc0fd3d5d15008c5f8c89bb\""
     ],
     "http.response.header.x-github-media-type": [
       "github.v3; format=json"
@@ -975,19 +975,19 @@ bash -e demo.sh
       "60"
     ],
     "http.response.header.x-ratelimit-remaining": [
-      "59"
+      "53"
     ],
     "http.response.header.x-ratelimit-reset": [
-      "1741401002"
+      "1741691144"
     ],
     "http.response.header.x-ratelimit-resource": [
       "core"
     ],
     "http.response.header.x-ratelimit-used": [
-      "1"
+      "7"
     ],
     "http.response.header.x-github-request-id": [
-      "9EC0:188144:16ECF31:2DF50E7:67CB9D9A"
+      "E840:8D736:F38740:1EACA9B:67D00E36"
     ],
     "http.response.header.connection": [
       "close"
@@ -997,19 +997,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 2891,
-    "process.parent_pid": 2156,
+    "process.pid": 2849,
+    "process.parent_pid": 2106,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "bash -e demo.sh",
@@ -1027,31 +1027,31 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "e0c978ddba2d4262",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "91a47332445b6531",
   "parent_span_id": "",
   "name": "bash -e demo.sh",
   "kind": "SERVER",
   "status": "UNSET",
-  "time_start": 1741397402424523520,
-  "time_end": 1741397411863995648,
+  "time_start": 1741688374549952000,
+  "time_end": 1741688383234271744,
   "attributes": {},
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 2891,
-    "process.parent_pid": 2156,
+    "process.pid": 2849,
+    "process.parent_pid": 2106,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "bash -e demo.sh",
@@ -1069,14 +1069,14 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "8b35c83a6f99c2b1",
-  "parent_span_id": "57cb1e840659d60e",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "39de2ebedbdad828",
+  "parent_span_id": "109a391c30024514",
   "name": "curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page=1",
   "kind": "INTERNAL",
   "status": "UNSET",
-  "time_start": 1741397408897036288,
-  "time_end": 1741397409672070400,
+  "time_start": 1741688380977107456,
+  "time_end": 1741688381842723840,
   "attributes": {
     "shell.command_line": "curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page=1",
     "shell.command": "curl",
@@ -1090,19 +1090,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 6600,
-    "process.parent_pid": 6559,
+    "process.pid": 6553,
+    "process.parent_pid": 6512,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "/usr/bin/perl /usr/bin/parallel -q curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page={} ::: 1 2 3",
@@ -1120,14 +1120,14 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "cd196aed8146788a",
-  "parent_span_id": "57cb1e840659d60e",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "d42c35990c974e14",
+  "parent_span_id": "109a391c30024514",
   "name": "curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page=2",
   "kind": "INTERNAL",
   "status": "UNSET",
-  "time_start": 1741397408918244608,
-  "time_end": 1741397409733976576,
+  "time_start": 1741688381073819136,
+  "time_end": 1741688381986359808,
   "attributes": {
     "shell.command_line": "curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page=2",
     "shell.command": "curl",
@@ -1141,19 +1141,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 6601,
-    "process.parent_pid": 6559,
+    "process.pid": 6554,
+    "process.parent_pid": 6512,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "/usr/bin/perl /usr/bin/parallel -q curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page={} ::: 1 2 3",
@@ -1171,14 +1171,14 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "61bf6f0b602cc4a7",
-  "parent_span_id": "57cb1e840659d60e",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "d07081bb9c4a0c02",
+  "parent_span_id": "109a391c30024514",
   "name": "curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page=3",
   "kind": "INTERNAL",
   "status": "UNSET",
-  "time_start": 1741397408802311936,
-  "time_end": 1741397409604075264,
+  "time_start": 1741688381075164160,
+  "time_end": 1741688381770644992,
   "attributes": {
     "shell.command_line": "curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page=3",
     "shell.command": "curl",
@@ -1192,19 +1192,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 6603,
-    "process.parent_pid": 6559,
+    "process.pid": 6556,
+    "process.parent_pid": 6512,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "/usr/bin/perl /usr/bin/parallel -q curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page={} ::: 1 2 3",
@@ -1222,14 +1222,14 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "e4bf5cb4f50dc36f",
-  "parent_span_id": "e0c978ddba2d4262",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "88e31b73fc5902df",
+  "parent_span_id": "91a47332445b6531",
   "name": "cut -d   -f 2-",
   "kind": "INTERNAL",
   "status": "UNSET",
-  "time_start": 1741397402460542720,
-  "time_end": 1741397406237832448,
+  "time_start": 1741688374592788992,
+  "time_end": 1741688378418367232,
   "attributes": {
     "shell.command_line": "cut -d   -f 2-",
     "shell.command": "cut",
@@ -1244,19 +1244,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 2891,
-    "process.parent_pid": 2156,
+    "process.pid": 2849,
+    "process.parent_pid": 2106,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "bash -e demo.sh",
@@ -1274,14 +1274,14 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "74d71ccc7d370ebc",
-  "parent_span_id": "e0c978ddba2d4262",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "91e39158232a3b92",
+  "parent_span_id": "91a47332445b6531",
   "name": "cut -d ; -f1",
   "kind": "INTERNAL",
   "status": "UNSET",
-  "time_start": 1741397402472787968,
-  "time_end": 1741397406247573248,
+  "time_start": 1741688374592362752,
+  "time_end": 1741688378428075264,
   "attributes": {
     "shell.command_line": "cut -d ; -f1",
     "shell.command": "cut",
@@ -1296,19 +1296,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 2891,
-    "process.parent_pid": 2156,
+    "process.pid": 2849,
+    "process.parent_pid": 2106,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "bash -e demo.sh",
@@ -1326,14 +1326,14 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "5d1c9be986150454",
-  "parent_span_id": "e0c978ddba2d4262",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "453cf8ce3efc01d5",
+  "parent_span_id": "91a47332445b6531",
   "name": "cut -d = -f 2",
   "kind": "INTERNAL",
   "status": "UNSET",
-  "time_start": 1741397402472136704,
-  "time_end": 1741397406257391104,
+  "time_start": 1741688374597115648,
+  "time_end": 1741688378437701120,
   "attributes": {
     "shell.command_line": "cut -d = -f 2",
     "shell.command": "cut",
@@ -1348,19 +1348,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 2891,
-    "process.parent_pid": 2156,
+    "process.pid": 2849,
+    "process.parent_pid": 2106,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "bash -e demo.sh",
@@ -1378,14 +1378,14 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "93e8c44895858620",
-  "parent_span_id": "e0c978ddba2d4262",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "b190190b60461ddc",
+  "parent_span_id": "91a47332445b6531",
   "name": "cut -d ? -f 2-",
   "kind": "INTERNAL",
   "status": "UNSET",
-  "time_start": 1741397402472921856,
-  "time_end": 1741397406250055424,
+  "time_start": 1741688374597574144,
+  "time_end": 1741688378430528256,
   "attributes": {
     "shell.command_line": "cut -d ? -f 2-",
     "shell.command": "cut",
@@ -1400,19 +1400,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 2891,
-    "process.parent_pid": 2156,
+    "process.pid": 2849,
+    "process.parent_pid": 2106,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "bash -e demo.sh",
@@ -1430,14 +1430,14 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "4e112679ccfd8d0b",
-  "parent_span_id": "e0c978ddba2d4262",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "84e8d0c879a7a919",
+  "parent_span_id": "91a47332445b6531",
   "name": "grep .deb$",
   "kind": "INTERNAL",
   "status": "UNSET",
-  "time_start": 1741397402477646080,
-  "time_end": 1741397409787645952,
+  "time_start": 1741688374596720384,
+  "time_end": 1741688382044538112,
   "attributes": {
     "shell.command_line": "grep .deb$",
     "shell.command": "grep",
@@ -1452,19 +1452,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 2891,
-    "process.parent_pid": 2156,
+    "process.pid": 2849,
+    "process.parent_pid": 2106,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "bash -e demo.sh",
@@ -1482,14 +1482,14 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "6dd7e1e68f66ca95",
-  "parent_span_id": "e0c978ddba2d4262",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "623a5c60dfa1c8d4",
+  "parent_span_id": "91a47332445b6531",
   "name": "grep ^link:",
   "kind": "INTERNAL",
   "status": "UNSET",
-  "time_start": 1741397402477813504,
-  "time_end": 1741397406235347968,
+  "time_start": 1741688374586295296,
+  "time_end": 1741688378415866368,
   "attributes": {
     "shell.command_line": "grep ^link:",
     "shell.command": "grep",
@@ -1504,19 +1504,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 2891,
-    "process.parent_pid": 2156,
+    "process.pid": 2849,
+    "process.parent_pid": 2106,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "bash -e demo.sh",
@@ -1534,14 +1534,14 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "05d3defa926b2efc",
-  "parent_span_id": "e0c978ddba2d4262",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "3f45e07ea96e03af",
+  "parent_span_id": "91a47332445b6531",
   "name": "grep ^page=",
   "kind": "INTERNAL",
   "status": "UNSET",
-  "time_start": 1741397402460402944,
-  "time_end": 1741397406254963456,
+  "time_start": 1741688374584580096,
+  "time_end": 1741688378435369216,
   "attributes": {
     "shell.command_line": "grep ^page=",
     "shell.command": "grep",
@@ -1556,19 +1556,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 2891,
-    "process.parent_pid": 2156,
+    "process.pid": 2849,
+    "process.parent_pid": 2106,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "bash -e demo.sh",
@@ -1586,14 +1586,14 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "94b8302ccc05ebfc",
-  "parent_span_id": "e0c978ddba2d4262",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "fc87dcc3b1a60658",
+  "parent_span_id": "91a47332445b6531",
   "name": "grep _1.",
   "kind": "INTERNAL",
   "status": "ERROR",
-  "time_start": 1741397402467192832,
-  "time_end": 1741397409791296768,
+  "time_start": 1741688374596979712,
+  "time_end": 1741688382048064000,
   "attributes": {
     "shell.command_line": "grep _1.",
     "shell.command": "grep",
@@ -1608,19 +1608,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 2891,
-    "process.parent_pid": 2156,
+    "process.pid": 2849,
+    "process.parent_pid": 2106,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "bash -e demo.sh",
@@ -1638,14 +1638,14 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "7abc6f917563e81d",
-  "parent_span_id": "e0c978ddba2d4262",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "e1c2a7988652b013",
+  "parent_span_id": "91a47332445b6531",
   "name": "grep rel=\"last\"",
   "kind": "INTERNAL",
   "status": "UNSET",
-  "time_start": 1741397402471992576,
-  "time_end": 1741397406245112576,
+  "time_start": 1741688374592962048,
+  "time_end": 1741688378425622272,
   "attributes": {
     "shell.command_line": "grep rel=\"last\"",
     "shell.command": "grep",
@@ -1660,19 +1660,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 2891,
-    "process.parent_pid": 2156,
+    "process.pid": 2849,
+    "process.parent_pid": 2106,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "bash -e demo.sh",
@@ -1690,14 +1690,14 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "586ebf2ea9857ea2",
-  "parent_span_id": "e0c978ddba2d4262",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "8fc7068082725aba",
+  "parent_span_id": "91a47332445b6531",
   "name": "head --lines=3",
   "kind": "INTERNAL",
   "status": "UNSET",
-  "time_start": 1741397402460788480,
-  "time_end": 1741397409787507200,
+  "time_start": 1741688374597383168,
+  "time_end": 1741688382044441600,
   "attributes": {
     "shell.command_line": "head --lines=3",
     "shell.command": "head",
@@ -1712,19 +1712,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 2891,
-    "process.parent_pid": 2156,
+    "process.pid": 2849,
+    "process.parent_pid": 2106,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "bash -e demo.sh",
@@ -1742,14 +1742,14 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "5f42e45759b75cd4",
-  "parent_span_id": "e0c978ddba2d4262",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "89df4a4073292785",
+  "parent_span_id": "91a47332445b6531",
   "name": "jq .[].assets[].browser_download_url -r",
   "kind": "INTERNAL",
   "status": "UNSET",
-  "time_start": 1741397402472475392,
-  "time_end": 1741397409784541440,
+  "time_start": 1741688374593206272,
+  "time_end": 1741688382041844992,
   "attributes": {
     "shell.command_line": "jq .[].assets[].browser_download_url -r",
     "shell.command": "jq",
@@ -1764,19 +1764,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 2891,
-    "process.parent_pid": 2156,
+    "process.pid": 2849,
+    "process.parent_pid": 2106,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "bash -e demo.sh",
@@ -1794,14 +1794,14 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "7d99e799a742a4d7",
-  "parent_span_id": "e0c978ddba2d4262",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "22caee2c69e46d12",
+  "parent_span_id": "91a47332445b6531",
   "name": "ncat --ssl -i 3 --no-shutdown api.github.com 443",
   "kind": "INTERNAL",
   "status": "ERROR",
-  "time_start": 1741397402458836992,
-  "time_end": 1741397406230488576,
+  "time_start": 1741688374592504320,
+  "time_end": 1741688378411059200,
   "attributes": {
     "shell.command_line": "ncat --ssl -i 3 --no-shutdown api.github.com 443",
     "shell.command": "ncat",
@@ -1816,19 +1816,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 2891,
-    "process.parent_pid": 2156,
+    "process.pid": 2849,
+    "process.parent_pid": 2106,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "bash -e demo.sh",
@@ -1846,14 +1846,14 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "49300434f6b5fd31",
-  "parent_span_id": "e0c978ddba2d4262",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "d6522aaece2961c9",
+  "parent_span_id": "91a47332445b6531",
   "name": "printf HEAD /repos/plengauer/opentelemetry-bash/releases?per_page=100 HTTP/1.1\\r\\nConnection: close\\r\\nUser-Agent: ncat\\r\\nHost: api.github.com\\r\\n\\r\\n",
   "kind": "INTERNAL",
   "status": "UNSET",
-  "time_start": 1741397402466919936,
-  "time_end": 1741397402558787328,
+  "time_start": 1741688374582728448,
+  "time_end": 1741688374679929088,
   "attributes": {
     "shell.command_line": "printf HEAD /repos/plengauer/opentelemetry-bash/releases?per_page=100 HTTP/1.1\\r\\nConnection: close\\r\\nUser-Agent: ncat\\r\\nHost: api.github.com\\r\\n\\r\\n",
     "shell.command": "printf",
@@ -1866,19 +1866,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 2891,
-    "process.parent_pid": 2156,
+    "process.pid": 2849,
+    "process.parent_pid": 2106,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "bash -e demo.sh",
@@ -1896,14 +1896,14 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "d5522f64fa2e2389",
-  "parent_span_id": "7d99e799a742a4d7",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "2f916cbd61848ffb",
+  "parent_span_id": "22caee2c69e46d12",
   "name": "send/receive",
   "kind": "PRODUCER",
   "status": "UNSET",
-  "time_start": 1741397402583050752,
-  "time_end": 1741397406226059264,
+  "time_start": 1741688374701495296,
+  "time_end": 1741688378406622720,
   "attributes": {
     "network.transport": "tcp",
     "network.peer.port": 443,
@@ -1913,19 +1913,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 2891,
-    "process.parent_pid": 2156,
+    "process.pid": 2849,
+    "process.parent_pid": 2106,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "bash -e demo.sh",
@@ -1943,14 +1943,14 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "f5a00b3acc490155",
-  "parent_span_id": "3202a66a8edf65a1",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "dfd97809d9aca4bf",
+  "parent_span_id": "267c32fe8c52aa11",
   "name": "seq 1 3",
   "kind": "INTERNAL",
   "status": "UNSET",
-  "time_start": 1741397406874745344,
-  "time_end": 1741397406892492032,
+  "time_start": 1741688379050460416,
+  "time_end": 1741688379068575232,
   "attributes": {
     "shell.command_line": "seq 1 3",
     "shell.command": "seq",
@@ -1964,19 +1964,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 5160,
-    "process.parent_pid": 4324,
+    "process.pid": 5111,
+    "process.parent_pid": 4313,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "xargs seq 1",
@@ -1994,14 +1994,14 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "697dfeef0daef502",
-  "parent_span_id": "e0c978ddba2d4262",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "f8e95abc7405366d",
+  "parent_span_id": "91a47332445b6531",
   "name": "tr & \\n",
   "kind": "INTERNAL",
   "status": "UNSET",
-  "time_start": 1741397402472294400,
-  "time_end": 1741397406252496128,
+  "time_start": 1741688374608602368,
+  "time_end": 1741688378432995328,
   "attributes": {
     "shell.command_line": "tr & \\n",
     "shell.command": "tr",
@@ -2016,19 +2016,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 2891,
-    "process.parent_pid": 2156,
+    "process.pid": 2849,
+    "process.parent_pid": 2106,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "bash -e demo.sh",
@@ -2046,14 +2046,14 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "1b10acfb31034583",
-  "parent_span_id": "e0c978ddba2d4262",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "279cad1eb59bc845",
+  "parent_span_id": "91a47332445b6531",
   "name": "tr , \\n",
   "kind": "INTERNAL",
   "status": "UNSET",
-  "time_start": 1741397402467331072,
-  "time_end": 1741397406242719488,
+  "time_start": 1741688374584443648,
+  "time_end": 1741688378423139584,
   "attributes": {
     "shell.command_line": "tr , \\n",
     "shell.command": "tr",
@@ -2068,19 +2068,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 2891,
-    "process.parent_pid": 2156,
+    "process.pid": 2849,
+    "process.parent_pid": 2106,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "bash -e demo.sh",
@@ -2098,14 +2098,14 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "daedaf69d04983da",
-  "parent_span_id": "e0c978ddba2d4262",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "fee9e7f90604847c",
+  "parent_span_id": "91a47332445b6531",
   "name": "tr -d  <>",
   "kind": "INTERNAL",
   "status": "UNSET",
-  "time_start": 1741397402458986496,
-  "time_end": 1741397406240318208,
+  "time_start": 1741688374593085184,
+  "time_end": 1741688378420735232,
   "attributes": {
     "shell.command_line": "tr -d  <>",
     "shell.command": "tr",
@@ -2120,19 +2120,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 2891,
-    "process.parent_pid": 2156,
+    "process.pid": 2849,
+    "process.parent_pid": 2106,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "bash -e demo.sh",
@@ -2150,14 +2150,14 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "7973a6b17cd90da6",
-  "parent_span_id": "e0c978ddba2d4262",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "6c75bb6783fefa18",
+  "parent_span_id": "91a47332445b6531",
   "name": "tr [:upper:] [:lower:]",
   "kind": "INTERNAL",
   "status": "UNSET",
-  "time_start": 1741397402461083904,
-  "time_end": 1741397406232869632,
+  "time_start": 1741688374575095296,
+  "time_end": 1741688378413425920,
   "attributes": {
     "shell.command_line": "tr [:upper:] [:lower:]",
     "shell.command": "tr",
@@ -2172,19 +2172,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 2891,
-    "process.parent_pid": 2156,
+    "process.pid": 2849,
+    "process.parent_pid": 2106,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "bash -e demo.sh",
@@ -2202,16 +2202,16 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "7c2ff60bd52bbf66",
-  "parent_span_id": "f4e733d80986dcd0",
-  "name": "wget https://github.com/plengauer/opentelemetry-bash/releases/download/v1.11.1/opentelemetry-shell_1.11.1.deb https://github.com/plengauer/opentelemetry-bash/releases/download/v1.11.0/opentelemetry-shell_1.11.0.deb https://github.com/plengauer/opentelemetry-bash/releases/download/v1.10.3/opentelemetry-shell_1.10.3.deb",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "20e5f69da8b34b7b",
+  "parent_span_id": "ee36b421d7cdf3ad",
+  "name": "wget https://github.com/plengauer/opentelemetry-bash/releases/download/v1.12.0/opentelemetry-shell_1.12.0.deb https://github.com/plengauer/opentelemetry-bash/releases/download/v1.11.1/opentelemetry-shell_1.11.1.deb https://github.com/plengauer/opentelemetry-bash/releases/download/v1.11.0/opentelemetry-shell_1.11.0.deb",
   "kind": "INTERNAL",
   "status": "UNSET",
-  "time_start": 1741397410413173248,
-  "time_end": 1741397411827780096,
+  "time_start": 1741688382670640128,
+  "time_end": 1741688383194942208,
   "attributes": {
-    "shell.command_line": "wget https://github.com/plengauer/opentelemetry-bash/releases/download/v1.11.1/opentelemetry-shell_1.11.1.deb https://github.com/plengauer/opentelemetry-bash/releases/download/v1.11.0/opentelemetry-shell_1.11.0.deb https://github.com/plengauer/opentelemetry-bash/releases/download/v1.10.3/opentelemetry-shell_1.10.3.deb",
+    "shell.command_line": "wget https://github.com/plengauer/opentelemetry-bash/releases/download/v1.12.0/opentelemetry-shell_1.12.0.deb https://github.com/plengauer/opentelemetry-bash/releases/download/v1.11.1/opentelemetry-shell_1.11.1.deb https://github.com/plengauer/opentelemetry-bash/releases/download/v1.11.0/opentelemetry-shell_1.11.0.deb",
     "shell.command": "wget",
     "shell.command.type": "file",
     "shell.command.name": "wget",
@@ -2223,19 +2223,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 11185,
-    "process.parent_pid": 4325,
+    "process.pid": 11138,
+    "process.parent_pid": 4284,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "xargs wget",
@@ -2253,14 +2253,14 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "be16b730bb1856ac",
-  "parent_span_id": "e0c978ddba2d4262",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "abc45abd72a60ef0",
+  "parent_span_id": "91a47332445b6531",
   "name": "xargs parallel -q curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page={} :::",
   "kind": "INTERNAL",
   "status": "UNSET",
-  "time_start": 1741397402473044224,
-  "time_end": 1741397409781872896,
+  "time_start": 1741688374596584192,
+  "time_end": 1741688382039254016,
   "attributes": {
     "shell.command_line": "xargs parallel -q curl --no-progress-meter --fail --retry 16 --retry-all-errors https://api.github.com/repos/plengauer/opentelemetry-bash/releases?per_page=100&page={} :::",
     "shell.command": "xargs",
@@ -2275,19 +2275,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 2891,
-    "process.parent_pid": 2156,
+    "process.pid": 2849,
+    "process.parent_pid": 2106,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "bash -e demo.sh",
@@ -2305,14 +2305,14 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "3202a66a8edf65a1",
-  "parent_span_id": "e0c978ddba2d4262",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "267c32fe8c52aa11",
+  "parent_span_id": "91a47332445b6531",
   "name": "xargs seq 1",
   "kind": "INTERNAL",
   "status": "UNSET",
-  "time_start": 1741397402467060224,
-  "time_end": 1741397406924228608,
+  "time_start": 1741688374596840960,
+  "time_end": 1741688379101776896,
   "attributes": {
     "shell.command_line": "xargs seq 1",
     "shell.command": "xargs",
@@ -2327,19 +2327,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 2891,
-    "process.parent_pid": 2156,
+    "process.pid": 2849,
+    "process.parent_pid": 2106,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "bash -e demo.sh",
@@ -2357,14 +2357,14 @@ bash -e demo.sh
   "events": []
 }
 {
-  "trace_id": "0e0c11c3dc88e8b97924ff237f03abd3",
-  "span_id": "f4e733d80986dcd0",
-  "parent_span_id": "e0c978ddba2d4262",
+  "trace_id": "8b92058612f86f092a0901d25311a9b1",
+  "span_id": "ee36b421d7cdf3ad",
+  "parent_span_id": "91a47332445b6531",
   "name": "xargs wget",
   "kind": "INTERNAL",
   "status": "UNSET",
-  "time_start": 1741397402450594816,
-  "time_end": 1741397411863325184,
+  "time_start": 1741688374597255424,
+  "time_end": 1741688383233600000,
   "attributes": {
     "shell.command_line": "xargs wget",
     "shell.command": "xargs",
@@ -2379,19 +2379,19 @@ bash -e demo.sh
   "resource_attributes": {
     "telemetry.sdk.language": "shell",
     "telemetry.sdk.name": "opentelemetry",
-    "telemetry.sdk.version": "5.7.5",
+    "telemetry.sdk.version": "5.8.0",
     "service.name": "unknown_service",
     "github.repository.id": "692042935",
     "github.repository.name": "opentelemetry-bash",
     "github.repository.owner.id": "100447901",
     "github.repository.owner.name": "plengauer",
-    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.7.5",
-    "github.actions.workflow.sha": "0177ed05145fa212aa0da6adcb5c7d019cd81936",
+    "github.actions.workflow.ref": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.0",
+    "github.actions.workflow.sha": "3f12c31fbc8a9fd7530ecfe7df24465c14ac7e3c",
     "github.actions.workflow.name": "Refresh Demos",
     "os.type": "linux",
     "os.version": "6.8.0-1021-azure",
-    "process.pid": 2891,
-    "process.parent_pid": 2156,
+    "process.pid": 2849,
+    "process.parent_pid": 2106,
     "process.executable.name": "bash",
     "process.executable.path": "/usr/bin/bash",
     "process.command_line": "bash -e demo.sh",
