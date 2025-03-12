@@ -25,7 +25,7 @@ jobs:
           - language: python
             build-mode: none
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.8.0
+      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.8.1
         with:
           secrets_to_redact: '${{ toJSON(secrets) }}'
         env:
