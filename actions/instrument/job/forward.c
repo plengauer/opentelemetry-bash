@@ -19,6 +19,8 @@ int main(int argc, char **argv) {
 #ifdef ARG2
     new_argc++;
 #endif
+
+    // OTEL_SHELL_COMMAND_OVERRIDE=TODO
     
     char **new_argv = (char**) calloc((size_t) new_argc + 1, sizeof(char*));
     int i = 0;
