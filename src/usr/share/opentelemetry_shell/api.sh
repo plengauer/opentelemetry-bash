@@ -347,8 +347,11 @@ otel_observe() {
   local kind="${OTEL_SHELL_SPAN_KIND_OVERRIDE:-INTERNAL}"
   local attributes="${OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE:-}"
   local command_type="${OTEL_SHELL_COMMAND_TYPE_OVERRIDE:-}"
+  local command="${OTEL_SHELL_COMMAND_OVERRIDE:-$command}"
+  unset OTEL_SHELL_COMMAND_OVERRIDE
   unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
   unset OTEL_SHELL_COMMAND_TYPE_OVERRIDE
+  unset OTEL_SHELL_COMMAND_OVERRIDE
   
   # create span, set initial attributes
   local span_handle="$(otel_span_start "$kind" "$command")"
