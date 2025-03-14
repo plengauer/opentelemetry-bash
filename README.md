@@ -173,7 +173,7 @@ jobs:
   export:
     runs-on: ubuntu-latest
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/workflow@main
+      - uses: plengauer/opentelemetry-github/actions/instrument/workflow@main
         env:
           OTEL_SERVICE_NAME: ${{ secrets.SERVICE_NAME }}
           # ...
@@ -189,7 +189,7 @@ To deploy job-level instrumetnation, add the following step as first in every jo
 ```
 Depending on the actions in use, GitHub `secrets` or other sensitive information could appear in commandlines or action inputs/states which may captured as attributes on spans, metrics, or logs recorded by job-level instrumentation. To redact these secrets, use the following parameter to redact their values from any attribute. The value of the parameter must be a `json` object, whereas every value of every field is considered a secret to be redacted. By default, if left unset, the implicit GitHub token is redacted.
 ```yaml
-- uses: plengauer/opentelemetry-bash/actions/instrument/job@main
+- uses: plengauer/opentelemetry-github/actions/instrument/job@main
   with:
     secrets_to_redact: '${{ toJSON(secrets) }}' # Redact all secrets from any attribute, span name, or log body.
 ```
