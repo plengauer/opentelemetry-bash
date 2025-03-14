@@ -29,6 +29,18 @@ _otel_is_docker_image_injected() {
   "$executable" run --rm --entrypoint which "$image" otel.sh 1> /dev/null 2> /dev/null
 }
 
+_otel_is_docker_image_github_input_injectable() {
+  local executable="$1"
+  local image="$2"
+  ! \[ "$GITHUB_ACTIONS" = true ] || ! \printenv | \cut -d = -f 1 | \grep -E '^INPUT_' | \grep -q - || "$executable" run --rm --entrypoint which "$image" bash 1> /dev/null 2> /dev/null
+}
+
+_otel_resolve_docker_image_shell() {
+  local executable="$1"
+  local image="$2"
+  \[ "$GITHUB_ACTIONS" = true ] && \printenv | \cut -d = -f 1 | \grep -E '^INPUT_' | \grep -q - && \echo bash || \echo sh
+}
+
 _otel_inject_docker_args() {
   # docker command
   local executable="$1"
@@ -53,9 +65,12 @@ _otel_inject_docker_args() {
   fi
   # skip more arguments
   while \[ "$#" -gt 0 ] && _otel_string_starts_with "$1" -; do
+    if _otel_string_starts_with "$1" --entrypoint=; then local entrypoint_override="${1#*=}"; fi
+    if _otel_string_starts_with "$1" --network=; then local docker_network="${1#*=}"; fi
     \echo -n ' '; _otel_escape_arg "$1"
     if ! _otel_is_boolean_docker_option "$1" && ! _otel_string_contains "$1" =; then
       if \[ "$1" = --entrypoint ]; then local entrypoint_override="$2"; fi
+      if \[ "$1" = --network ]; then local docker_network="$2"; fi
       shift
       \echo -n ' '; _otel_escape_arg "$1"
     fi
@@ -64,7 +79,7 @@ _otel_inject_docker_args() {
   if \[ "$#" = 0 ]; then return 0; fi
   # extract image
   local image="$1"
-  if _otel_is_docker_image_injectable "$executable" "$image" && ! _otel_is_docker_image_injected "$executable" "$image" && ( ! \[ "$GITHUB_ACTIONS" = true ] || ! \printenv | \cut -d = -f 1 | \grep -E '^INPUT_' | \grep -q - ); then
+  if _otel_is_docker_image_injectable "$executable" "$image" && ! _otel_is_docker_image_injected "$executable" "$image" && _otel_is_docker_image_github_input_injectable "$executable" "$image"; then
     \echo -n ' '; _otel_escape_args --env TRACEPARENT="$TRACEPARENT" --env TRACESTATE="$TRACESTATE"
     for file in $(\dpkg -L opentelemetry-shell | \grep -E '^/usr/bin/'); do \echo -n ' '; _otel_escape_args --mount type=bind,source="$file",target="$file",readonly; done
     \echo -n ' '; _otel_escape_args --mount type=bind,source=/usr/share/opentelemetry_shell,target=/usr/share/opentelemetry_shell
@@ -77,7 +92,10 @@ _otel_inject_docker_args() {
     \echo -n ' '; _otel_escape_args --mount type=bind,source="$pipes_dir",target="$pipes_dir"
     \echo -n ' '; _otel_escape_args --env OTEL_SHELL_PIPE_DIR="$pipes_dir"
     \echo -n ' '; _otel_escape_args --env OTEL_SHELL_AUTO_INJECTED=TRUE
-    \echo -n ' '; _otel_escape_args --entrypoint /bin/sh
+    if \[ -z "${docker_network:-}" ] && \[ "$GITHUB_ACTIONS" = true ]; then
+      \echo -n ' '; _otel_escape_args --network host
+    fi
+    \echo -n ' '; _otel_escape_args --entrypoint "$(_otel_resolve_docker_image_shell "$executable" "$image")"
     \echo -n ' '; _otel_escape_arg "$1"; shift
     \echo -n ' '; _otel_escape_args -c '. otel.sh
 eval _otel_inject "$(_otel_escape_args "$@")"' sh

@@ -16,7 +16,7 @@ elif [ "$1" = 'configure' ] || [ "$1" = 'triggered' ] || [ "$1" = 'reconfigure' 
     if type gcc 2> /dev/null; then # SKIP_DEPENDENCY_CHECK
       gcc -shared -fPIC -o /opt/opentelemetry_shell/libinjecthttpheader.so /usr/share/opentelemetry_shell/agent.injection.http_header.c -ldl # SKIP_DEPENDENCY_CHECK
     fi
-    if type python3 2> /dev/null && (! [ -d /opt/opentelemetry_shell/venv ] || [ "${OTEL_SHELL_CONFIG_INSTALL_ASSUME:-FALSE}" = FALSE ]); then
+    if type pip3 2> /dev/null && [ "$(pip3 --version | cut -d ' ' -f 2 | cut -d . -f 1)" -gt 21 ] && (! [ -d /opt/opentelemetry_shell/venv ] || [ "${OTEL_SHELL_CONFIG_INSTALL_ASSUME:-FALSE}" = FALSE ]); then
       python3 -m venv /opt/opentelemetry_shell/venv
       . /opt/opentelemetry_shell/venv/bin/activate
       pip3 install -r /opt/opentelemetry_shell/requirements.txt

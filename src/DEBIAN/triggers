@@ -1,6 +1,6 @@
-interest-noawait /bin/python3
-interest-noawait /usr/bin/python3
-interest-noawait /usr/local/bin/python3
+interest-noawait /bin/pip3
+interest-noawait /usr/bin/pip3
+interest-noawait /usr/local/bin/pip3
 
 interest-noawait /bin/npm
 interest-noawait /usr/bin/npm

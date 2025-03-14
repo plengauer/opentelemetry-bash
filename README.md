@@ -1,6 +1,10 @@
-This project delivers [OpenTelemetry](https://opentelemetry.io/) traces, metrics and logs from shell scripts (sh, ash, dash, bash, busybox, and many other POSIX compliant shells) as well as from GitHub actions (including node and docker actions). Compared to similar projects, it delivers not just a command-line SDK to create spans manually, but also provides automatic context propagation via HTTP (wget, wget2, curl, and netcat), auto-instrumentation of all available commands, auto-injection into child scripts and into executables using shebangs, as well as automatic log collection from stderr. Its installable via a debian or rpm package from the releases in this repository, or from the apt-repository below. This project is not officially affiliated with the CNCF project [OpenTelemetry](https://opentelemetry.io/).
+_(This repository is also available under the aliases `opentelemetry-bash`, `opentelemetry-shell`, and `opentelemetry-github`.)_
 
-[![Tests](https://github.com/plengauer/opentelemetry-bash/actions/workflows/test.yaml/badge.svg?branch=main)](https://github.com/plengauer/opentelemetry-bash/actions/workflows/test_branch.yaml)
+This project delivers [OpenTelemetry](https://opentelemetry.io/) traces, metrics and logs from shell scripts (sh, ash, dash, bash, busybox, and many other POSIX compliant shells) as well as from GitHub workflows (including shell, node, docker and composite actions). Compared to similar projects, it delivers not just a command-line SDK to create spans manually, but also provides automatic context propagation via HTTP (wget, wget2, curl, and netcat), auto-instrumentation of all available commands, auto-injection into child scripts, into executables using shebangs, and into GitHub actions, as well as automatic log collection from stderr and from GitHub action log commands. Its installable via a debian or rpm package from the releases in this repository, from the apt-repository below, and via distributable GitHub actions for workflow-level and job-level instrumentation. This project is not officially affiliated with the CNCF project [OpenTelemetry](https://opentelemetry.io/).
+
+The project is named after [Thoth](/https://en.wikipedia.org/wiki/Thoth), the Egyptian god of (among other things) wisdom, knowledge, and science (aka observability), writing and hieroglyphs (aka shell scripts), and judgment of the dead (aka troubleshooting). Thoth was also a member of the Ogdoad, a group of gods responsible for creating the world (aka probably the original GitHub CI/CD pipeline).
+
+[![Tests](https://github.com/plengauer/opentelemetry-bash/actions/workflows/test.yaml/badge.svg?branch=main)](https://github.com/plengauer/opentelemetry-bash/actions/workflows/test.yaml)
 
 # Overview
 Check out our detailed [Demos](https://github.com/plengauer/opentelemetry-bash/tree/main/demos).
@@ -102,31 +106,15 @@ A simple command like `curl http://www.google.at` on an AWS EC2 will produce a s
 }
 ```
 
-## Try For Yourself
-Install as described below. Put the following code at the start of an arbitrary script:
+## Try For Yourself Locally
+For local deployment in a shell script, install as described below. Put the following code at the start of an arbitrary script:
 ```bash
 export OTEL_METRICS_EXPORTER=console
 export OTEL_LOGS_EXPORTER=console
 export OTEL_TRACES_EXPORTER=console
 . otel.sh
 ```
-Finally, run your script and see traces, metrics, and logs printed to stderr.
-
-# Installation
-This project currently supports and is actively tested on debian-based (Debian and Ubuntu) and rpm-based (Fedora, OpenSuse, and Red Hat Enterprise Linux (RHEL)) operating systems as well as on the Windows Subsystem for Linux. The code also works on other Linux-based operating systems, however, there are no readily available installation packages for these systems. Mac-based operating systems are currently not supported.
-
-Install either via
-```bash
-wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh
-```
-or, for debian-based systems, via
-```bash
-echo "deb [arch=all] http://3.73.14.87:8000/ stable main" | sudo tee /etc/apt/sources.list.d/otel.list
-sudo apt-get update
-sudo apt-get install opentelemetry-shell
-```
-
-Note: the apt repo only acts as a facade to offer a better debian-native installation option, internally it redirects the apt client to the releases of this repository.
+Finally, run your script and see traces, metrics, and logs printed to stderr. For deployment in GitHub actions, refer to Automatic Instrumentation of GitHub Actions below.
 
 # Security
 Since version 3.43.0, this project generates artifact attestations to establish provenance for builds (<a href="https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations/using-artifact-attestations-to-establish-provenance-for-builds">link</a>) to harden against supply chain attacks. Download any build artifact from the repositories above or directly from the releases of this repository and use the following code snippet to verify that the package has indeed been built at this location.
@@ -137,7 +125,19 @@ gh attestation verify ./package.deb -R plengauer/opentelemetry-bash
 # Documentation
 You can either use the fully automatic instrumentation (recommended) or just import the API to do everything manually. In both cases, you can use the API to manually create customized spans and metrics. However, the automatic approach creates rich spans and logs fully automatically. We recommend to use the manual approach only to augment the automatic approach where necessary.
 
-## Automatic Instrumentation
+## Automatic Instrumentation of Shell Scrips
+This project currently supports and is actively tested on debian-based (Debian and Ubuntu) and rpm-based (Fedora, OpenSuse, and Red Hat Enterprise Linux (RHEL)) operating systems as well as on the Windows Subsystem for Linux. The code also works on other Linux-based operating systems, however, there are no readily available installation packages for these systems. Mac-based operating systems are currently not supported. For deployment in GitHub actions, see Automatic Instrumentation of GitHub Actions below. For deployment on other any Linux-based system, install either via
+```bash
+wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-shell/main/INSTALL.sh | sh
+```
+or, for debian-based systems, via
+```bash
+echo "deb [arch=all] http://3.73.14.87:8000/ stable main" | sudo tee /etc/apt/sources.list.d/otel.list
+sudo apt-get update
+sudo apt-get install opentelemetry-shell
+```
+Note: the apt repo only acts as a facade to offer a better debian-native installation option, internally it redirects the apt client to the releases of this repository.
+
 Import the OpenTelemetry auto instrumentation as well as the API by sourcing the `otel.sh` file. This will both import the API described below (in case you need or want to extend manually) as well as initialize the SDK and the auto instrumentation. No explicit calls to `otel_init` at the start or to `otel_shutdown` at the end of the script are necessary. You can configure the SDK as described <a href="https://opentelemetry.io/docs/languages/sdk-configuration/">here</a>. We recommend not just setting configuration variables, but also exporting them so that automatically injected children inherit the same configuration.
 ```bash
 export OTEL_SERVICE_NAME=Test
@@ -157,21 +157,13 @@ If the command represents communication to a third party service (like a HTTP re
 Finally, a single root span will be created and activated that represents the script. This span will automatically be deactivated and ended when the script ends.
 
 ## Automatic Instrumentation of GitHub Actions
-To automatically monitor your GitHub Actions on job level and to auto-inject into all individual steps, add the following step as first in every job you want to observe. You can configure the SDK as described <a href="https://opentelemetry.io/docs/languages/sdk-configuration/">here</a> by adding environment variables to the setup step. Job-level deep instrumentation can be combined arbitrarily with workflow-level monitoring below. Compared to workflow-level monitoring, job-level monitoring provides deep injection into individual steps, as well as more precise timings and log collection.
-```yaml
-- uses: plengauer/opentelemetry-bash/actions/instrument/job@main
-  env:
-    OTEL_SERVICE_NAME: 'Test'
-    # ...
-- run: ...
-```
-Depending on the actions in use, GitHub `secrets` or other sensitive information could appear in commandlines or action inputs/states which may captured as attributes on spans, metrics, or logs. To redact these secrets, use the following parameter to redact their values from any attribute. The value of the parameter must be a `json` object, whereas every value of every field is considered a secret to be redacted. By default, if left unset, the implicit GitHub token is redacted.
-```yaml
-with:
-    secrets_to_redact: '${{ toJSON(secrets) }}' # Redact all secrets from any attribute.
-```
+To automatically monitor your GitHub Actions by exporting logs, metrics and traces, this project can be used to instrument at workflow level as well as on job level. The workflow-level instrumentation is deployed as a separate workflow (see below), triggered by `workflow run` events, and uses the GitHub API to create logs, metrics, and spans based on the meta data that GitHub provides. The job-level instrumentation is deployed as the first action within a job definition (see below) and runs on the GitHub runner itself.
 
-To automatically monitor your GitHub Actions on workflow-level, use the code snippet below as a dedicated workflow to run after any other explicitly configured workflow. It will use the GitHub API to generate logs, metrics, and traces. It can be arbitrarily combined with job-level monitoring described above. Workflow-level monitoring will autoamtically fill-in the gaps where job-level monitoring is not deployed. It will also collect all job-level spans under one workflow-level root span. 
+The workflow-level instrumentation is a good starting point to get an overview of the GitHub actions of repository. It can export logs (all logs that GitHub records), metrics (count and duration metrics for workflows, jobs, steps, and actions), as well as spans for workflows, jobs, and steps. However, since it observes any signal only after the fact, it lacks depth and details. The job-level instrumentation can be deployed into any job running on a linux-based runner and exports the same logs, the same metrics for jobs, steps, and actions, and the same traces for jobs and steps. Since it is injected and running inside a job, metrics and spans are richer in details. For example, it can capture detailed input and output paramters to every step, as well as state transitions. Additionally, job-level instrumentation can actually inject into every GitHub step (no matter if its a script action, docker action, node action, or composite action) and generate detailed traces describing their internal activities. Additionally, measurements are more accurate compared to the workflow-level instrumentation.
+
+Both methods of instrumentation can be combined arbitrarily. Deploying them both at the same time, will combine their advantages without any double recording of any log, metric, trace or span.
+
+To deploy workflow-level instrumentation, use the code snippet below in a dedicated workflow to run after any other explicitly configured workflow. You can configure the SDK as described <a href="https://opentelemetry.io/docs/languages/sdk-configuration/">here</a> by adding according environment variables. Workflow-level instrumentation can be combined arbitrarily with job-level instrumentation.
 ```yaml
 name: OpenTelemetry
 on:
@@ -183,10 +175,25 @@ jobs:
   export:
     runs-on: ubuntu-latest
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/workflow@main
+      - uses: plengauer/opentelemetry-github/actions/instrument/workflow@main
         env:
           OTEL_SERVICE_NAME: ${{ secrets.SERVICE_NAME }}
           # ...
+```
+
+To deploy job-level instrumetnation, add the following step as first in every job you want to observe. You can configure the SDK as described <a href="https://opentelemetry.io/docs/languages/sdk-configuration/">here</a> by adding according environment variables to the setup step. Job-level instrumentation can be combined arbitrarily with workflow-level instrumentation.
+```yaml
+- uses: plengauer/opentelemetry-github/actions/instrument/job@main
+  env:
+    OTEL_SERVICE_NAME: 'Test'
+    # ...
+- run: ...
+```
+Depending on the actions in use, GitHub `secrets` or other sensitive information could appear in commandlines or action inputs/states which may captured as attributes on spans, metrics, or logs recorded by job-level instrumentation. To redact these secrets, use the following parameter to redact their values from any attribute. The value of the parameter must be a `json` object, whereas every value of every field is considered a secret to be redacted. By default, if left unset, the implicit GitHub token is redacted.
+```yaml
+- uses: plengauer/opentelemetry-github/actions/instrument/job@main
+  with:
+    secrets_to_redact: '${{ toJSON(secrets) }}' # Redact all secrets from any attribute, span name, or log body.
 ```
 
 ## Manual Instrumentation

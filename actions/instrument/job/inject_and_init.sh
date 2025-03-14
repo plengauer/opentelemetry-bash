@@ -120,6 +120,7 @@ $(cat $section_pipeline_metrics)
 $(cat $section_pipeline_traces)
 EOF
   if [ -n "$INPUT_DEBUG" ]; then
+    echo "$INPUT_SECRETS_TO_REDACT" | jq '. | to_entries[].value' | sed 's/[.[\(*^$+?{|]/\\\\&/g' | xargs -I '{}' echo '::add-mask::{}'    
     cat collector.yaml
   fi
 fi
@@ -228,10 +229,16 @@ root4job_end() {
 }
 export -f root4job_end
 root4job() {
-  [ -z "${OTEL_SHELL_COLLECTOR_IMAGE:-}" ] || export OTEL_SHELL_COLLECTOR_CONTAINER="$(sudo docker run --detach --network=host --mount type=bind,source="$(pwd)"/collector.yaml,target=/etc/otelcol-contrib/config.yaml "$OTEL_SHELL_COLLECTOR_IMAGE")"
+  [ -z "${OTEL_SHELL_COLLECTOR_IMAGE:-}" ] || export OTEL_SHELL_COLLECTOR_CONTAINER="$(sudo docker run --detach --restart unless-stopped --network=host --mount type=bind,source="$(pwd)"/collector.yaml,target=/etc/otelcol-contrib/config.yaml "$OTEL_SHELL_COLLECTOR_IMAGE")"
   rm /tmp/opentelemetry_shell.github.error 2> /dev/null
   traceparent_file="$1"
   . otelapi.sh
+  _otel_resource_attributes_process() {
+    :
+  }
+  _otel_resource_attributes_custom() {
+    _otel_resource_attribute string telemetry.sdk.language=github
+  }
   otel_init
   observe_rate_limit &
   observe_rate_limit_pid="$!"

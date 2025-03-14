@@ -43,14 +43,12 @@ if \[ -p "$_otel_remote_sdk_pipe" ]; then
   }
 else
   otel_init() {
-    if \[ -e /dev/stderr ] && \[ -e "$(\readlink -f /dev/stderr)" ]; then local sdk_output="$(\readlink /dev/stderr)"; else local sdk_output=/dev/null; fi
-    local sdk_output="${OTEL_SHELL_SDK_OUTPUT_REDIRECT:-$sdk_output}"
     \mkfifo "$_otel_remote_sdk_pipe"
     _otel_package_version opentelemetry-shell > /dev/null # to build the cache outside a subshell
     _otel_package_version "$_otel_shell" > /dev/null
     # several weird things going on in the next line, (1) using '((' fucks up the syntax highlighting in github while '( (' does not, and (2) &> causes weird buffering / late flushing behavior
     if \env --help 2>&1 | \grep -q 'ignore-signal'; then local extra_env_flags='--ignore-signal=INT --ignore-signal=HUP'; fi
-    ( (\env ${extra_env_flags:-} /opt/opentelemetry_shell/sdk/venv/bin/python /usr/share/opentelemetry_shell/sdk.py "shell" "$(_otel_package_version opentelemetry-shell)" < "$_otel_remote_sdk_pipe" 1> "$sdk_output" 2> "$sdk_output") &)
+    ( (\env ${extra_env_flags:-} /opt/opentelemetry_shell/sdk/venv/bin/python /usr/share/opentelemetry_shell/sdk.py "shell" "$(_otel_package_version opentelemetry-shell)" < "$_otel_remote_sdk_pipe" 1> "${OTEL_SHELL_SDK_OUTPUT_REDIRECT:-/dev/stderr}" 2> "${OTEL_SHELL_SDK_OUTPUT_REDIRECT:-/dev/stderr}") &)
     \eval "\\exec ${_otel_remote_sdk_fd}> \"$_otel_remote_sdk_pipe\""
     _otel_resource_attributes
     _otel_sdk_communicate "INIT"
@@ -349,8 +347,11 @@ otel_observe() {
   local kind="${OTEL_SHELL_SPAN_KIND_OVERRIDE:-INTERNAL}"
   local attributes="${OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE:-}"
   local command_type="${OTEL_SHELL_COMMAND_TYPE_OVERRIDE:-}"
+  local command="${OTEL_SHELL_COMMAND_OVERRIDE:-$command}"
+  unset OTEL_SHELL_COMMAND_OVERRIDE
   unset OTEL_SHELL_SPAN_ATTRIBUTES_OVERRIDE
   unset OTEL_SHELL_COMMAND_TYPE_OVERRIDE
+  unset OTEL_SHELL_COMMAND_OVERRIDE
   
   # create span, set initial attributes
   local span_handle="$(otel_span_start "$kind" "$command")"

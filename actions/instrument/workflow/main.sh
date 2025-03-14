@@ -37,6 +37,9 @@ _otel_resource_attributes_process() {
   _otel_resource_attribute string github.actions.workflow.ref="$(jq < "$workflow_json" -r .repository.owner.login)"/"$(jq < "$workflow_json" -r .repository.name)"/"$(jq < "$workflow_json" -r .path)"@/refs/heads/"$(jq < "$workflow_json" -r .head_branch)"
   _otel_resource_attribute string github.actions.workflow.sha="$(jq < "$workflow_json" -r .head_sha)"
 }
+_otel_resource_attributes_custom() {
+  _otel_resource_attribute string telemetry.sdk.language=github
+}
 workflow_run_dir="$(mktemp -d)"
 gh_artifact_download "$INPUT_WORKFLOW_RUN_ID" "$INPUT_WORKFLOW_RUN_ATTEMPT" opentelemetry_workflow_run_"$INPUT_WORKFLOW_RUN_ATTEMPT" "$workflow_run_dir" || true
 if [ -r "$workflow_run_dir"/traceparent ]; then export OTEL_ID_GENERATOR_OVERRIDE_TRACEPARENT="$(cat "$workflow_run_dir"/traceparent)"; fi
@@ -259,12 +262,6 @@ done | sed 's/\t/ /g' | while read -r TRACEPARENT job_id step_number step_conclu
     timestamp="${line%% *}"
     line="${line#* }"
     case "$line" in
-      '::'*'::'*)
-        line="${line#::}"
-        severity="${line%%::*}"
-        severity="${severity%% *}"
-        line="${line#*::}"
-        ;;
       '[command]'*)
         severity=trace
         line="${line#[command]}"
