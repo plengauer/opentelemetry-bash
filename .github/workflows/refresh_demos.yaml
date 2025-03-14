@@ -10,7 +10,7 @@ jobs:
     outputs:
       matrix: ${{ steps.demos.outputs.matrix }}
     steps:
-      - uses: plengauer/opentelemetry-thoth/actions/instrument/job@v5.8.2
+      - uses: plengauer/thoth/actions/instrument/job@v5.8.2
         env:
           OTEL_EXPORTER_OTLP_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_HEADERS: '${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}'
