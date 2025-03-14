@@ -128,7 +128,7 @@ You can either use the fully automatic instrumentation (recommended) or just imp
 ## Automatic Instrumentation of Shell Scrips
 This project currently supports and is actively tested on debian-based (Debian and Ubuntu) and rpm-based (Fedora, OpenSuse, and Red Hat Enterprise Linux (RHEL)) operating systems as well as on the Windows Subsystem for Linux. The code also works on other Linux-based operating systems, however, there are no readily available installation packages for these systems. Mac-based operating systems are currently not supported. For deployment in GitHub actions, see Automatic Instrumentation of GitHub Actions below. For deployment on other any Linux-based system, install either via
 ```bash
-wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-bash/main/INSTALL.sh | sh
+wget -O - https://raw.githubusercontent.com/plengauer/opentelemetry-shell/main/INSTALL.sh | sh
 ```
 or, for debian-based systems, via
 ```bash
@@ -183,7 +183,7 @@ jobs:
 
 To deploy job-level instrumetnation, add the following step as first in every job you want to observe. You can configure the SDK as described <a href="https://opentelemetry.io/docs/languages/sdk-configuration/">here</a> by adding according environment variables to the setup step. Job-level instrumentation can be combined arbitrarily with workflow-level instrumentation.
 ```yaml
-- uses: plengauer/opentelemetry-bash/actions/instrument/job@main
+- uses: plengauer/opentelemetry-github/actions/instrument/job@main
   env:
     OTEL_SERVICE_NAME: 'Test'
     # ...
