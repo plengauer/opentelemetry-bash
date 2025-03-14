@@ -1,9 +1,9 @@
 import java.lang.instrument.Instrumentation;
-import io.opentelemetry.api.GlobalOpenTelemetry;
-import io.opentelemetry.api.trace.SpanContext;
-import io.opentelemetry.api.trace.TraceFlags;
-import io.opentelemetry.api.trace.TraceState;
-import io.opentelemetry.context.Context;
+import io.opentelemetry.javaagent.shaded.io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.javaagent.shaded.io.opentelemetry.api.trace.SpanContext;
+import io.opentelemetry.javaagent.shaded.io.opentelemetry.api.trace.TraceFlags;
+import io.opentelemetry.javaagent.shaded.io.opentelemetry.api.trace.TraceState;
+import io.opentelemetry.javaagent.shaded.io.opentelemetry.context.Context;
 
 public class RootContextAgent {
     public static void premain(String args, Instrumentation instrumentation) {
