@@ -1,4 +1,4 @@
-This project delivers [OpenTelemetry](https://opentelemetry.io/) traces, metrics and logs from shell scripts (sh, ash, dash, bash, busybox, and many other POSIX compliant shells) as well as from GitHub workflows (including node and docker actions). Compared to similar projects, it delivers not just a command-line SDK to create spans manually, but also provides automatic context propagation via HTTP (wget, wget2, curl, and netcat), auto-instrumentation of all available commands, auto-injection into child scripts, into executables using shebangs, and into GitHub actions, as well as automatic log collection from stderr. Its installable via a debian or rpm package from the releases in this repository, from the apt-repository below, and via distributable GitHub actions for workflow-level and job-level instrumentation. This project is not officially affiliated with the CNCF project [OpenTelemetry](https://opentelemetry.io/).
+This project delivers [OpenTelemetry](https://opentelemetry.io/) traces, metrics and logs from shell scripts (sh, ash, dash, bash, busybox, and many other POSIX compliant shells) as well as from GitHub workflows (including shell, node, docker and composite actions). Compared to similar projects, it delivers not just a command-line SDK to create spans manually, but also provides automatic context propagation via HTTP (wget, wget2, curl, and netcat), auto-instrumentation of all available commands, auto-injection into child scripts, into executables using shebangs, and into GitHub actions, as well as automatic log collection from stderr and from GitHub action log commands. Its installable via a debian or rpm package from the releases in this repository, from the apt-repository below, and via distributable GitHub actions for workflow-level and job-level instrumentation. This project is not officially affiliated with the CNCF project [OpenTelemetry](https://opentelemetry.io/).
 
 [![Tests](https://github.com/plengauer/opentelemetry-bash/actions/workflows/test.yaml/badge.svg?branch=main)](https://github.com/plengauer/opentelemetry-bash/actions/workflows/test.yaml)
 
@@ -103,14 +103,14 @@ A simple command like `curl http://www.google.at` on an AWS EC2 will produce a s
 ```
 
 ## Try For Yourself Locally
-Install as described below. Put the following code at the start of an arbitrary script:
+For local deployment in a shell script, install as described below. Put the following code at the start of an arbitrary script:
 ```bash
 export OTEL_METRICS_EXPORTER=console
 export OTEL_LOGS_EXPORTER=console
 export OTEL_TRACES_EXPORTER=console
 . otel.sh
 ```
-Finally, run your script and see traces, metrics, and logs printed to stderr.
+Finally, run your script and see traces, metrics, and logs printed to stderr. For deployment in GitHub actions, refer to Automatic Instrumentation of GitHub Actions below.
 
 # Security
 Since version 3.43.0, this project generates artifact attestations to establish provenance for builds (<a href="https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations/using-artifact-attestations-to-establish-provenance-for-builds">link</a>) to harden against supply chain attacks. Download any build artifact from the repositories above or directly from the releases of this repository and use the following code snippet to verify that the package has indeed been built at this location.
