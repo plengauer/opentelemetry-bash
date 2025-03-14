@@ -14,7 +14,7 @@ jobs:
   rerun:
     runs-on: ubuntu-latest
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/job@v5.8.1
+      - uses: plengauer/thoth/actions/instrument/job@v5.8.2
         with:
           secrets_to_redact: '${{ toJSON(secrets) }}'
         env:

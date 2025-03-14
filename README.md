@@ -1,4 +1,8 @@
-This project delivers [OpenTelemetry](https://opentelemetry.io/) traces, metrics and logs from shell scripts (sh, ash, dash, bash, busybox, and many other POSIX compliant shells) as well as from GitHub workflows (including node and docker actions). Compared to similar projects, it delivers not just a command-line SDK to create spans manually, but also provides automatic context propagation via HTTP (wget, wget2, curl, and netcat), auto-instrumentation of all available commands, auto-injection into child scripts, into executables using shebangs, and into GitHub actions, as well as automatic log collection from stderr. Its installable via a debian or rpm package from the releases in this repository, from the apt-repository below, and via distributable GitHub actions for workflow-level and job-level instrumentation. This project is not officially affiliated with the CNCF project [OpenTelemetry](https://opentelemetry.io/).
+_(This repository is also available under the aliases `opentelemetry-bash`, `opentelemetry-shell`, and `opentelemetry-github`.)_
+
+This project delivers [OpenTelemetry](https://opentelemetry.io/) traces, metrics and logs from shell scripts (sh, ash, dash, bash, busybox, and many other POSIX compliant shells) as well as from GitHub workflows (including shell, node, docker and composite actions). Compared to similar projects, it delivers not just a command-line SDK to create spans manually, but also provides automatic context propagation via HTTP (wget, wget2, curl, and netcat), auto-instrumentation of all available commands, auto-injection into child scripts, into executables using shebangs, and into GitHub actions, as well as automatic log collection from stderr and from GitHub action log commands. Its installable via a debian or rpm package from the releases in this repository, from the apt-repository below, and via distributable GitHub actions for workflow-level and job-level instrumentation. This project is not officially affiliated with the CNCF project [OpenTelemetry](https://opentelemetry.io/).
+
+The project is named after [Thoth](/https://en.wikipedia.org/wiki/Thoth), the Egyptian god of (among other things) wisdom, knowledge, and science (aka observability), writing and hieroglyphs (aka shell scripts), and judgment of the dead (aka troubleshooting). Thoth was also a member of the Ogdoad, a group of gods responsible for creating the world (aka probably the original GitHub CI/CD pipeline).
 
 [![Tests](https://github.com/plengauer/opentelemetry-bash/actions/workflows/test.yaml/badge.svg?branch=main)](https://github.com/plengauer/opentelemetry-bash/actions/workflows/test.yaml)
 
@@ -103,14 +107,14 @@ A simple command like `curl http://www.google.at` on an AWS EC2 will produce a s
 ```
 
 ## Try For Yourself Locally
-Install as described below. Put the following code at the start of an arbitrary script:
+For local deployment in a shell script, install as described below. Put the following code at the start of an arbitrary script:
 ```bash
 export OTEL_METRICS_EXPORTER=console
 export OTEL_LOGS_EXPORTER=console
 export OTEL_TRACES_EXPORTER=console
 . otel.sh
 ```
-Finally, run your script and see traces, metrics, and logs printed to stderr.
+Finally, run your script and see traces, metrics, and logs printed to stderr. For deployment in GitHub actions, refer to Automatic Instrumentation of GitHub Actions below.
 
 # Security
 Since version 3.43.0, this project generates artifact attestations to establish provenance for builds (<a href="https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations/using-artifact-attestations-to-establish-provenance-for-builds">link</a>) to harden against supply chain attacks. Download any build artifact from the repositories above or directly from the releases of this repository and use the following code snippet to verify that the package has indeed been built at this location.
@@ -171,7 +175,7 @@ jobs:
   export:
     runs-on: ubuntu-latest
     steps:
-      - uses: plengauer/opentelemetry-bash/actions/instrument/workflow@main
+      - uses: plengauer/opentelemetry-github/actions/instrument/workflow@main
         env:
           OTEL_SERVICE_NAME: ${{ secrets.SERVICE_NAME }}
           # ...
@@ -187,7 +191,7 @@ To deploy job-level instrumetnation, add the following step as first in every jo
 ```
 Depending on the actions in use, GitHub `secrets` or other sensitive information could appear in commandlines or action inputs/states which may captured as attributes on spans, metrics, or logs recorded by job-level instrumentation. To redact these secrets, use the following parameter to redact their values from any attribute. The value of the parameter must be a `json` object, whereas every value of every field is considered a secret to be redacted. By default, if left unset, the implicit GitHub token is redacted.
 ```yaml
-- uses: plengauer/opentelemetry-bash/actions/instrument/job@main
+- uses: plengauer/opentelemetry-github/actions/instrument/job@main
   with:
     secrets_to_redact: '${{ toJSON(secrets) }}' # Redact all secrets from any attribute, span name, or log body.
 ```
