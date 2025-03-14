@@ -12,6 +12,19 @@
 #define XSTR(s) #s
 
 int main(int argc, char **argv) {
+    size_t total_length = 0;
+    for (int j = 0; j < argc; j++) total_length += strlen(argv[j]) + 1;
+    char *original_command = (char*) malloc(total_length);
+    original_command[0] = '\0';
+    for (int j = 0; j < argc; j++) {
+        strcat(original_command, argv[j]);
+        if (j < argc - 1) {
+            strcat(original_command, " ");
+        }
+    }
+    setenv("OTEL_SHELL_COMMAND_OVERRIDE", original_command, 1);
+    free(original_command);
+    
     int new_argc = argc;
 #ifdef ARG1
     new_argc++;
