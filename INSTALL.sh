@@ -12,7 +12,7 @@ fi
 
 package="$(mktemp -u)"."$extension"
 curl -L --no-progress-meter https://api.github.com/repos/plengauer/opentelemetry-shell/releases/latest | jq -r '.assets[].browser_download_url' | grep '.'"$extension"'$' | xargs wget -O "$package" \
- || curl -v --no-progress-meter https://github.com/plengauer/Thoth/releases/latest 2>&1 | grep location | tr -d '\r' | rev | cut -d / -f 1 | rev | cut -d v -f 2 | xargs -I '{}' wget -O "$package" https://github.com/plengauer/opentelemetry-bash/releases/latest/download/opentelemetry-shell_'{}'."$extension"
+ || curl -v --no-progress-meter https://github.com/plengauer/Thoth/releases/latest 2>&1 | grep location | tr -d '\r' | rev | cut -d / -f 1 | rev | cut -d v -f 2 | xargs -I '{}' wget -O "$package" https://github.com/plengauer/Thoth/releases/latest/download/opentelemetry-shell_'{}'."$extension"
 
 if [ "$(whoami)" = "root" ]; then
   wrapper=env
