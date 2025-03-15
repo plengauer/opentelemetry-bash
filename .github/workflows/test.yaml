@@ -322,35 +322,42 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: packages
-      - run: |
+      - env:
+          DEPENDENCY: ${{ matrix.dependency }}
+        run: |
           echo '
             if type apt-get; then
+              if [ "$DEPENDENCY" = javac ] || [ "$DEPENDENCY" = jar ]; then DEPENDENCY=default-jdk; fi
               apt-get update
-              apt-get -y remove ${{ matrix.dependency }}
+              apt-get -y remove $DEPENDENCY
               DEBIAN_FRONTEND=noninteractive apt-get -y install /root/package.deb
-              DEBIAN_FRONTEND=noninteractive apt-get -y install ${{ matrix.dependency }}
-              apt-get -y remove ${{ matrix.dependency }}
+              DEBIAN_FRONTEND=noninteractive apt-get -y install $DEPENDENCY
+              apt-get -y remove $DEPENDENCY
             elif type dnf; then
+              if [ "$DEPENDENCY" = javac ] || [ "$DEPENDENCY" = jar ]; then DEPENDENCY=java-latest-openjdk.x86_64; fi
               dnf -y upgrade --refresh
-              dnf -y remove ${{ matrix.dependency }}
+              dnf -y remove $DEPENDENCY
               dnf -y install /root/package.rpm
-              dnf -y install ${{ matrix.dependency }}
-              dnf -y remove ${{ matrix.dependency }}
+              dnf -y install $DEPENDENCY
+              dnf -y remove $DEPENDENCY
             elif type yum; then
+              if [ "$DEPENDENCY" = javac ] || [ "$DEPENDENCY" = jar ]; then DEPENDENCY=java-latest-openjdk.x86_64; fi
               yum -y update
-              yum -y remove ${{ matrix.dependency }}
+              yum -y remove $DEPENDENCY
               yum -y install /root/package.rpm
-              yum -y install ${{ matrix.dependency }}
-              yum -y remove ${{ matrix.dependency }}
+              yum -y install $DEPENDENCY
+              yum -y remove $DEPENDENCY
             elif type zypper; then
-              zypper --non-interactive remove ${{ matrix.dependency }} || true
+              if [ "$DEPENDENCY" = javac ] || [ "$DEPENDENCY" = jar ]; then DEPENDENCY=java-21-openjdk; fi
+              zypper --non-interactive remove $DEPENDENCY || true
               zypper --non-interactive install --allow-unsigned-rpm /root/package.rpm
-              zypper --non-interactive install ${{ matrix.dependency }}
-              zypper --non-interactive remove ${{ matrix.dependency }}
+              zypper --non-interactive install $DEPENDENCY
+              zypper --non-interactive remove $DEPENDENCY
             else
               exit 1
             fi
           ' | sudo docker run -v $(pwd)/package.deb:/root/package.deb -v $(pwd)/package.rpm:/root/package.rpm --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
+        
 
   install-manual-user:
     needs: [ smoke ]
