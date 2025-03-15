@@ -30,5 +30,3 @@ public class Main {
 ' > "$dir"/Main.java
 javac "$dir"/Main.java
 (cd "$dir" && java Main)
-
-exit 1
