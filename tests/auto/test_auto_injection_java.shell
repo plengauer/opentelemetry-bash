@@ -31,3 +31,4 @@ public class Main {
 javac "$dir"/Main.java
 (cd "$dir" && java Main)
 
+exit 1
