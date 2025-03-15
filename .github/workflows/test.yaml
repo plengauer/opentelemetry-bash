@@ -356,7 +356,7 @@ jobs:
             else
               exit 1
             fi
-          ' | sudo docker run -v $(pwd)/package.deb:/root/package.deb -v $(pwd)/package.rpm:/root/package.rpm --rm --network=host -i --entrypoint=/bin/sh ${{ matrix.image }} -e
+          ' | sudo docker run -v $(pwd)/package.deb:/root/package.deb -v $(pwd)/package.rpm:/root/package.rpm --rm --network=host -e DEPENDENCY -i --entrypoint=/bin/sh ${{ matrix.image }} -e
         
 
   install-manual-user:
