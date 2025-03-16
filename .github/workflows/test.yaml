@@ -341,7 +341,7 @@ jobs:
               dnf -y install $DEPENDENCY
               dnf -y remove $DEPENDENCY
             elif type yum; then
-              if [ "$DEPENDENCY" = javac ] || [ "$DEPENDENCY" = jar ]; then DEPENDENCY=java-latest-openjdk.x86_64; fi
+              if [ "$DEPENDENCY" = javac ] || [ "$DEPENDENCY" = jar ]; then DEPENDENCY=java-21-openjdk.x86_64; fi
               yum -y update
               yum -y remove $DEPENDENCY
               yum -y install /root/package.rpm
