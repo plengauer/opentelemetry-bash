@@ -326,6 +326,7 @@ jobs:
           DEPENDENCY: ${{ matrix.dependency }}
         run: |
           echo '
+            set -x
             if type apt-get; then
               if [ "$DEPENDENCY" = javac ] || [ "$DEPENDENCY" = jar ]; then DEPENDENCY=default-jdk; fi
               apt-get update
