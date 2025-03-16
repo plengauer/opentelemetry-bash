@@ -326,7 +326,6 @@ jobs:
           DEPENDENCY: ${{ matrix.dependency }}
         run: |
           echo '
-            set -x
             if type apt-get; then
               if [ "$DEPENDENCY" = javac ] || [ "$DEPENDENCY" = jar ]; then DEPENDENCY=default-jdk; fi
               apt-get update
@@ -340,7 +339,7 @@ jobs:
               dnf -y remove $DEPENDENCY
               dnf -y install /root/package.rpm
               dnf -y install $DEPENDENCY
-              dnf -y remove $DEPENDENCY
+              dnf -y remove $DEPENDENCY || ((dnf -y remove $DEPENDENCY || true) | grep 'The operation would result in removing the following protected packages')
             elif type yum; then
               if [ "$DEPENDENCY" = javac ] || [ "$DEPENDENCY" = jar ]; then DEPENDENCY=java-21-openjdk.x86_64; fi
               yum -y update
