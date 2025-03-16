@@ -334,7 +334,7 @@ jobs:
               DEBIAN_FRONTEND=noninteractive apt-get -y install $DEPENDENCY
               apt-get -y remove $DEPENDENCY
             elif type dnf; then
-              if [ "$DEPENDENCY" = javac ] || [ "$DEPENDENCY" = jar ]; then DEPENDENCY=java-latest-openjdk.x86_64; fi
+              if [ "$DEPENDENCY" = javac ] || [ "$DEPENDENCY" = jar ]; then DEPENDENCY=java-21-openjdk.x86_64; fi
               dnf -y upgrade --refresh
               dnf -y remove $DEPENDENCY
               dnf -y install /root/package.rpm
