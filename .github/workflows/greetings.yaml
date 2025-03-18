@@ -9,7 +9,7 @@ jobs:
       issues: write
       pull-requests: write
     steps:
-      - uses: plengauer/thoth/actions/instrument/job@v5.8.2
+      - uses: plengauer/thoth/actions/instrument/job@v5.9.0
         with:
           secrets_to_redact: '${{ toJSON(secrets) }}'
         env:
