@@ -36,7 +36,7 @@
           {
             "key": "vcs.commit.id",
             "value": {
-              "stringValue": "11df64051f47a639cc24d8629239ed44b1e0a5c2"
+              "stringValue": "4ffb33f2a8ad4cf9c7abd4b4c12151d2624892c1"
             }
           },
           {
@@ -48,13 +48,13 @@
           {
             "key": "github.run_id",
             "value": {
-              "stringValue": "13818901372"
+              "stringValue": "13915043667"
             }
           },
           {
             "key": "github.run_number",
             "value": {
-              "stringValue": "34"
+              "stringValue": "35"
             }
           },
           {
@@ -66,19 +66,19 @@
           {
             "key": "github.sha",
             "value": {
-              "stringValue": "11df64051f47a639cc24d8629239ed44b1e0a5c2"
+              "stringValue": "4ffb33f2a8ad4cf9c7abd4b4c12151d2624892c1"
             }
           },
           {
             "key": "github.ref",
             "value": {
-              "stringValue": "refs/tags/v5.8.2"
+              "stringValue": "refs/tags/v5.9.0"
             }
           },
           {
             "key": "process.pid",
             "value": {
-              "intValue": "7848"
+              "intValue": "7925"
             }
           },
           {
@@ -114,7 +114,7 @@
                     "stringValue": "/usr/share/opentelemetry_shell/agent.instrumentation.node.deep.instrument.js"
                   },
                   {
-                    "stringValue": "/home/runner/work/opentelemetry-bash/opentelemetry-bash/demos/injection_deep_node/index.js"
+                    "stringValue": "/home/runner/work/Thoth/Thoth/demos/injection_deep_node/index.js"
                   }
                 ]
               }
@@ -141,7 +141,7 @@
           {
             "key": "process.command",
             "value": {
-              "stringValue": "/home/runner/work/opentelemetry-bash/opentelemetry-bash/demos/injection_deep_node/index.js"
+              "stringValue": "/home/runner/work/Thoth/Thoth/demos/injection_deep_node/index.js"
             }
           },
           {
@@ -160,13 +160,13 @@
           },
           "spans": [
             {
-              "traceId": "63545befff86ab2715da00b856875e58",
-              "spanId": "6af859e73aee9ef8",
-              "parentSpanId": "f420b368c0e966dc",
+              "traceId": "611ad6400847a8dd217e3737e3bdedf8",
+              "spanId": "132a46a73b2e4c5a",
+              "parentSpanId": "432fcc5f82eaf6b2",
               "name": "GET",
               "kind": 3,
-              "startTimeUnixNano": "1741804488466000000",
-              "endTimeUnixNano": "1741804488595603875",
+              "startTimeUnixNano": "1742270270713000000",
+              "endTimeUnixNano": "1742270270945842240",
               "attributes": [
                 {
                   "key": "http.url",
@@ -201,7 +201,7 @@
                 {
                   "key": "net.peer.ip",
                   "value": {
-                    "stringValue": "23.192.228.84"
+                    "stringValue": "23.192.228.80"
                   }
                 },
                 {
@@ -241,266 +241,6 @@
                   }
                 }
               ],
-              "status": {}
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-{
-  "resourceSpans": [
-    {
-      "resource": {
-        "attributes": [
-          {
-            "key": "telemetry.sdk.language",
-            "value": {
-              "stringValue": "shell"
-            }
-          },
-          {
-            "key": "telemetry.sdk.name",
-            "value": {
-              "stringValue": "opentelemetry"
-            }
-          },
-          {
-            "key": "telemetry.sdk.version",
-            "value": {
-              "stringValue": "5.8.2"
-            }
-          },
-          {
-            "key": "service.name",
-            "value": {
-              "stringValue": "unknown_service"
-            }
-          },
-          {
-            "key": "github.repository.id",
-            "value": {
-              "stringValue": "692042935"
-            }
-          },
-          {
-            "key": "github.repository.name",
-            "value": {
-              "stringValue": "opentelemetry-bash"
-            }
-          },
-          {
-            "key": "github.repository.owner.id",
-            "value": {
-              "stringValue": "100447901"
-            }
-          },
-          {
-            "key": "github.repository.owner.name",
-            "value": {
-              "stringValue": "plengauer"
-            }
-          },
-          {
-            "key": "github.actions.workflow.ref",
-            "value": {
-              "stringValue": "plengauer/opentelemetry-bash/.github/workflows/refresh_demos.yaml@refs/tags/v5.8.2"
-            }
-          },
-          {
-            "key": "github.actions.workflow.sha",
-            "value": {
-              "stringValue": "11df64051f47a639cc24d8629239ed44b1e0a5c2"
-            }
-          },
-          {
-            "key": "github.actions.workflow.name",
-            "value": {
-              "stringValue": "Refresh Demos"
-            }
-          },
-          {
-            "key": "os.type",
-            "value": {
-              "stringValue": "linux"
-            }
-          },
-          {
-            "key": "os.version",
-            "value": {
-              "stringValue": "6.8.0-1021-azure"
-            }
-          },
-          {
-            "key": "process.pid",
-            "value": {
-              "intValue": "7082"
-            }
-          },
-          {
-            "key": "process.parent_pid",
-            "value": {
-              "intValue": "2104"
-            }
-          },
-          {
-            "key": "process.executable.name",
-            "value": {
-              "stringValue": "bash"
-            }
-          },
-          {
-            "key": "process.executable.path",
-            "value": {
-              "stringValue": "/usr/bin/bash"
-            }
-          },
-          {
-            "key": "process.command_line",
-            "value": {
-              "stringValue": "bash -e demo.sh"
-            }
-          },
-          {
-            "key": "process.command",
-            "value": {
-              "stringValue": "bash"
-            }
-          },
-          {
-            "key": "process.owner",
-            "value": {
-              "stringValue": "runner"
-            }
-          },
-          {
-            "key": "process.runtime.name",
-            "value": {
-              "stringValue": "bash"
-            }
-          },
-          {
-            "key": "process.runtime.description",
-            "value": {
-              "stringValue": "Bourne Again Shell"
-            }
-          },
-          {
-            "key": "process.runtime.version",
-            "value": {
-              "stringValue": "5.2.21-2ubuntu4"
-            }
-          },
-          {
-            "key": "process.runtime.options",
-            "value": {
-              "stringValue": "ehB"
-            }
-          },
-          {
-            "key": "service.version",
-            "value": {
-              "stringValue": ""
-            }
-          },
-          {
-            "key": "service.namespace",
-            "value": {
-              "stringValue": ""
-            }
-          },
-          {
-            "key": "service.instance.id",
-            "value": {
-              "stringValue": ""
-            }
-          }
-        ]
-      },
-      "scopeSpans": [
-        {
-          "scope": {
-            "name": "shell",
-            "version": "5.8.2"
-          },
-          "spans": [
-            {
-              "traceId": "63545befff86ab2715da00b856875e58",
-              "spanId": "f420b368c0e966dc",
-              "parentSpanId": "630541775f367100",
-              "flags": 768,
-              "name": "node index.js",
-              "kind": 1,
-              "startTimeUnixNano": "1741804486975274496",
-              "endTimeUnixNano": "1741804488615401216",
-              "attributes": [
-                {
-                  "key": "shell.command_line",
-                  "value": {
-                    "stringValue": "node index.js"
-                  }
-                },
-                {
-                  "key": "shell.command",
-                  "value": {
-                    "stringValue": "node"
-                  }
-                },
-                {
-                  "key": "shell.command.type",
-                  "value": {
-                    "stringValue": "file"
-                  }
-                },
-                {
-                  "key": "shell.command.name",
-                  "value": {
-                    "stringValue": "node"
-                  }
-                },
-                {
-                  "key": "subprocess.executable.path",
-                  "value": {
-                    "stringValue": "/usr/local/bin/node"
-                  }
-                },
-                {
-                  "key": "subprocess.executable.name",
-                  "value": {
-                    "stringValue": "node"
-                  }
-                },
-                {
-                  "key": "shell.command.exit_code",
-                  "value": {
-                    "intValue": "0"
-                  }
-                },
-                {
-                  "key": "code.filepath",
-                  "value": {
-                    "stringValue": "demo.sh"
-                  }
-                },
-                {
-                  "key": "code.lineno",
-                  "value": {
-                    "intValue": "3"
-                  }
-                }
-              ],
-              "status": {}
-            },
-            {
-              "traceId": "63545befff86ab2715da00b856875e58",
-              "spanId": "630541775f367100",
-              "parentSpanId": "",
-              "flags": 256,
-              "name": "bash -e demo.sh",
-              "kind": 2,
-              "startTimeUnixNano": "1741804486962716928",
-              "endTimeUnixNano": "1741804488615584000",
               "status": {}
             }
           ]
