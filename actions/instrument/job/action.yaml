@@ -6,7 +6,42 @@ branding:
 runs:
   using: composite
   steps:
-    - run: echo hello world
+    - name: "Checkout"
+      uses: actions/checkout@v4
+      with:
+        token: ${{ inputs.github_token }}
+    - name: "Deploy workflow-level observability"
+      shell: bash
+      run: echo hello world
+    - name: "Fix workflow-level observability triggers"
+      shell: bash
+      run: echo hello world
+    - name: "Deploy job-level observability"
+      shell: bash
+      run: echo hello world
+    - name: "Open Pull Request"
+      id: open-pr
+      uses: peter-evans/create-pull-request@v7
+      with:
+        token: ${{ inputs.github_token }}
+        branch: "deploy-otel"
+        commit-message: "Deploy OpenTelemetry"
+        title: "Deploy OpenTelemetry"
+        body: |
+          This PR deploys workflow-level and job-level OpenTelemetry instrumentation to every workflow.
+          (this PR is automatically generated)
+        delete-branch: true
+    - name: "Delay" # to let the api and PR state catch up ...
+      shell: bash
+      run: sleep 60
+      if: steps.open-pr.outputs.pull-request-number != null
+    - name: "Enable auto-merge"
+    - uses: peter-evans/enable-pull-request-automerge@v3
+      if: steps.open-pr.outputs.pull-request-number != null
+      with:
+        token: ${{ inputs.github_token }}
+        pull-request-number: ${{ steps.open-pr.outputs.pull-request-number }}
+        merge-method: squash
 inputs:
   github_token:
     description: 'A GitHub token for API access (read/write)'
