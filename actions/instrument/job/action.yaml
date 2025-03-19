@@ -9,7 +9,7 @@ runs:
     - run: echo hello world
 inputs:
   github_token:
-    description: 'A GitHub token for API access (read-only)'
+    description: 'A GitHub token for API access (read/write)'
     default: '${{ github.token }}'
   debug:
     description: 'Enable debug logging'
