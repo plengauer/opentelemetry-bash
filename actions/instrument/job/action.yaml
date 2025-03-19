@@ -4,29 +4,13 @@ branding:
   icon: 'activity'
   color: 'blue'
 runs:
-  using: 'node20'
-  pre: 'inject_and_init.js'
-  main: 'nop.js'
-  post: 'shutdown.js'
+  using: composite
+  steps:
+    - run: echo hello world
 inputs:
   github_token:
     description: 'A GitHub token for API access (read-only)'
     default: '${{ github.token }}'
-  cache:
-    description: 'Whether to use GitHub Actions Cache to cache dependencies'
-    default: true
-  collector:
-    description: 'Whether to use a collector to process data before leaving a job runner. It is used to buffer data and to redact GitHub secrets. Disabling the collector will disable these features.'
-    default: auto
   debug:
     description: 'Enable debug logging'
     default: ${{ runner.debug }}
-  secrets_to_redact:
-    description: 'A JSON object containing all secrets to redact from any attribute.'
-    default: '{ "github_token": "${{ github.token }}" }'
-  __job_status:
-    description: 'INTERNAL ONLY - DO NOT SET MANUALLY'
-    default: '${{ job.status }}'
-  __job_matrix:
-    description: 'INTERNAL ONLY - DO NOT SET MANUALLY'
-    default: '${{ toJSON(matrix) }}'
