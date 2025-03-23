@@ -6,19 +6,41 @@ branding:
 runs:
   using: composite
   steps:
+    - name: "Install dependencies"
+      shell: bash
+      run: type yq || (sudo apt-get update && sudo apt-get install yq)
     - name: "Checkout"
       uses: actions/checkout@v4
       with:
         token: ${{ inputs.github_token }}
+    - name: "Find workflow-level observability"
+      id: find-workflow-level-instrumentation
+      shell: bash
+      run: |
+        # TODO find file name of pre-existing workflow-level instrumentation and put it in output
+        echo hello world
     - name: "Deploy workflow-level observability"
+      if: steps.find-workflow-level-instrumentation.outputs.path == null
       shell: bash
-      run: echo hello world
-    - name: "Fix workflow-level observability triggers"
+      run: |
+        # TODO copy over template
+        echo hello world
+    - name: "Update workflow-level observability triggers"
+      if: steps.find-workflow-level-instrumentation.outputs.path != null
       shell: bash
-      run: echo hello world
+      run: |
+        names_file="$(mktemp)"
+        for workflow_file in .github/workflows/*.yaml .github/workflows/*.yml; do
+          cat "$workflow_file" | yq .name
+        done > "$names_file"
+        # TODO filter workflow file if it exists
+        # TODO filter workflows that are excluded
+        # TODO fill in names as array
     - name: "Deploy job-level observability"
       shell: bash
-      run: echo hello world
+      run: |
+        # TODO every workflow file, that is not workflow-level instrumentation, check if label is supported and not excluded and deploy
+        echo hello world
     - name: "Open Pull Request"
       id: open-pr
       uses: peter-evans/create-pull-request@v7
@@ -32,12 +54,13 @@ runs:
           (this PR is automatically generated)
         delete-branch: true
     - name: "Delay" # to let the api and PR state catch up ...
+      if: steps.open-pr.outputs.pull-request-number != null
       shell: bash
       run: sleep 60
       if: steps.open-pr.outputs.pull-request-number != null
     - name: "Enable auto-merge"
-    - uses: peter-evans/enable-pull-request-automerge@v3
       if: steps.open-pr.outputs.pull-request-number != null
+      uses: peter-evans/enable-pull-request-automerge@v3
       with:
         token: ${{ inputs.github_token }}
         pull-request-number: ${{ steps.open-pr.outputs.pull-request-number }}
@@ -46,6 +69,14 @@ inputs:
   github_token:
     description: 'A GitHub token for API access (read/write)'
     default: '${{ github.token }}'
+  workflows_directory:
+    default: '.github/workflows'
+  workflow_level_instrumentation_file_name:
+    default: 'observability.yaml'
+  workflow_level_instrumentation_exclude:
+    default: []
+  job_level_instrumentation_exclude:
+    default: []
   debug:
     description: 'Enable debug logging'
     default: ${{ runner.debug }}
