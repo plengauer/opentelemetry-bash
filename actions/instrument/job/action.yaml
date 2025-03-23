@@ -1,4 +1,4 @@
-name: 'OpenTelemetry Job'
+name: 'OpenTelemetry Jobs'
 description: 'Observe Github Jobs with OpenTelemetry'
 branding:
   icon: 'activity'
