@@ -1,0 +1,884 @@
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "telemetry.sdk.language",
+            "value": {
+              "stringValue": "shell"
+            }
+          },
+          {
+            "key": "telemetry.sdk.name",
+            "value": {
+              "stringValue": "opentelemetry"
+            }
+          },
+          {
+            "key": "telemetry.sdk.version",
+            "value": {
+              "stringValue": "5.10.0"
+            }
+          },
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "unknown_service"
+            }
+          },
+          {
+            "key": "github.repository.id",
+            "value": {
+              "stringValue": "692042935"
+            }
+          },
+          {
+            "key": "github.repository.name",
+            "value": {
+              "stringValue": "Thoth"
+            }
+          },
+          {
+            "key": "github.repository.owner.id",
+            "value": {
+              "stringValue": "100447901"
+            }
+          },
+          {
+            "key": "github.repository.owner.name",
+            "value": {
+              "stringValue": "plengauer"
+            }
+          },
+          {
+            "key": "github.actions.workflow.ref",
+            "value": {
+              "stringValue": "plengauer/Thoth/.github/workflows/refresh_demos.yaml@refs/tags/v5.10.0"
+            }
+          },
+          {
+            "key": "github.actions.workflow.sha",
+            "value": {
+              "stringValue": "0f1a20486810e416d03007608b9aa80f2afea04d"
+            }
+          },
+          {
+            "key": "github.actions.workflow.name",
+            "value": {
+              "stringValue": "Refresh Demos"
+            }
+          },
+          {
+            "key": "os.type",
+            "value": {
+              "stringValue": "linux"
+            }
+          },
+          {
+            "key": "os.version",
+            "value": {
+              "stringValue": "6.8.0-1021-azure"
+            }
+          },
+          {
+            "key": "process.pid",
+            "value": {
+              "intValue": "4724"
+            }
+          },
+          {
+            "key": "process.parent_pid",
+            "value": {
+              "intValue": "3847"
+            }
+          },
+          {
+            "key": "process.executable.name",
+            "value": {
+              "stringValue": "dash"
+            }
+          },
+          {
+            "key": "process.executable.path",
+            "value": {
+              "stringValue": "/usr/bin/dash"
+            }
+          },
+          {
+            "key": "process.command_line",
+            "value": {
+              "stringValue": "/bin/sh /home/runner/work/Thoth/Thoth/demos/injection_deep_gradle/gradlew build"
+            }
+          },
+          {
+            "key": "process.command",
+            "value": {
+              "stringValue": "/bin/sh"
+            }
+          },
+          {
+            "key": "process.owner",
+            "value": {
+              "stringValue": "runner"
+            }
+          },
+          {
+            "key": "process.runtime.name",
+            "value": {
+              "stringValue": "dash"
+            }
+          },
+          {
+            "key": "process.runtime.description",
+            "value": {
+              "stringValue": "Debian Almquist Shell"
+            }
+          },
+          {
+            "key": "process.runtime.version",
+            "value": {
+              "stringValue": "0.5.12-6ubuntu5"
+            }
+          },
+          {
+            "key": "process.runtime.options",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "service.version",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "service.namespace",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "service.instance.id",
+            "value": {
+              "stringValue": ""
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "shell",
+            "version": "5.10.0"
+          },
+          "spans": [
+            {
+              "traceId": "dc1ad659f78faee3e72ad6fee827dbd0",
+              "spanId": "d08ec2c5d95d5f8b",
+              "parentSpanId": "d117297b14f2d4b3",
+              "flags": 768,
+              "name": "[ -h /home/runner/work/Thoth/Thoth/demos/injection_deep_gradle/gradlew ]",
+              "kind": 1,
+              "startTimeUnixNano": "1742893551211213824",
+              "endTimeUnixNano": "1742893551228334080",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "[ -h /home/runner/work/Thoth/Thoth/demos/injection_deep_gradle/gradlew ]"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "["
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "builtin"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "["
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "1"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "/home/runner/work/Thoth/Thoth/demos/injection_deep_gradle/gradlew"
+                  }
+                }
+              ],
+              "status": {
+                "code": 2
+              }
+            },
+            {
+              "traceId": "dc1ad659f78faee3e72ad6fee827dbd0",
+              "spanId": "8c63f96d70e03ed2",
+              "parentSpanId": "d117297b14f2d4b3",
+              "flags": 768,
+              "name": "cd -P /home/runner/work/Thoth/Thoth/demos/injection_deep_gradle/",
+              "kind": 1,
+              "startTimeUnixNano": "1742893551231236352",
+              "endTimeUnixNano": "1742893551245939968",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "cd -P /home/runner/work/Thoth/Thoth/demos/injection_deep_gradle/"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "cd"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "builtin"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "cd"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "/home/runner/work/Thoth/Thoth/demos/injection_deep_gradle/gradlew"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "dc1ad659f78faee3e72ad6fee827dbd0",
+              "spanId": "9f24e827c32ba482",
+              "parentSpanId": "d117297b14f2d4b3",
+              "flags": 768,
+              "name": "printf %s",
+              "kind": 1,
+              "startTimeUnixNano": "1742893551248608256",
+              "endTimeUnixNano": "1742893551264318976",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "printf %s"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "printf"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "builtin"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "printf"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "/home/runner/work/Thoth/Thoth/demos/injection_deep_gradle/gradlew"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "dc1ad659f78faee3e72ad6fee827dbd0",
+              "spanId": "a45283f0ec422986",
+              "parentSpanId": "d117297b14f2d4b3",
+              "flags": 768,
+              "name": "uname",
+              "kind": 1,
+              "startTimeUnixNano": "1742893551267337216",
+              "endTimeUnixNano": "1742893551284195328",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "uname"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "uname"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "uname"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/uname"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "uname"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "/home/runner/work/Thoth/Thoth/demos/injection_deep_gradle/gradlew"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "dc1ad659f78faee3e72ad6fee827dbd0",
+              "spanId": "c9c300a3fc469ac2",
+              "parentSpanId": "d117297b14f2d4b3",
+              "flags": 768,
+              "name": "[ -n /usr/lib/jvm/temurin-17-jdk-amd64 ]",
+              "kind": 1,
+              "startTimeUnixNano": "1742893551287283456",
+              "endTimeUnixNano": "1742893551304055296",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "[ -n /usr/lib/jvm/temurin-17-jdk-amd64 ]"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "["
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "builtin"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "["
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "/home/runner/work/Thoth/Thoth/demos/injection_deep_gradle/gradlew"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "dc1ad659f78faee3e72ad6fee827dbd0",
+              "spanId": "163de9ab5b18270a",
+              "parentSpanId": "d117297b14f2d4b3",
+              "flags": 768,
+              "name": "[ -x /usr/lib/jvm/temurin-17-jdk-amd64/jre/sh/java ]",
+              "kind": 1,
+              "startTimeUnixNano": "1742893551306740992",
+              "endTimeUnixNano": "1742893551321208576",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "[ -x /usr/lib/jvm/temurin-17-jdk-amd64/jre/sh/java ]"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "["
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "builtin"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "["
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "1"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "/home/runner/work/Thoth/Thoth/demos/injection_deep_gradle/gradlew"
+                  }
+                }
+              ],
+              "status": {
+                "code": 2
+              }
+            },
+            {
+              "traceId": "dc1ad659f78faee3e72ad6fee827dbd0",
+              "spanId": "e24f7fd81b84eb14",
+              "parentSpanId": "d117297b14f2d4b3",
+              "flags": 768,
+              "name": "[ ! -x /usr/lib/jvm/temurin-17-jdk-amd64/bin/java ]",
+              "kind": 1,
+              "startTimeUnixNano": "1742893551324040704",
+              "endTimeUnixNano": "1742893551340677888",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "[ ! -x /usr/lib/jvm/temurin-17-jdk-amd64/bin/java ]"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "["
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "builtin"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "["
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "1"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "/home/runner/work/Thoth/Thoth/demos/injection_deep_gradle/gradlew"
+                  }
+                }
+              ],
+              "status": {
+                "code": 2
+              }
+            },
+            {
+              "traceId": "dc1ad659f78faee3e72ad6fee827dbd0",
+              "spanId": "33b7cb7d53595649",
+              "parentSpanId": "d117297b14f2d4b3",
+              "flags": 768,
+              "name": "ulimit -H -n",
+              "kind": 1,
+              "startTimeUnixNano": "1742893551343517952",
+              "endTimeUnixNano": "1742893551360798464",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "ulimit -H -n"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "ulimit"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "builtin"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "ulimit"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "/home/runner/work/Thoth/Thoth/demos/injection_deep_gradle/gradlew"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "dc1ad659f78faee3e72ad6fee827dbd0",
+              "spanId": "c8b84f28441fa9c5",
+              "parentSpanId": "d117297b14f2d4b3",
+              "flags": 768,
+              "name": "ulimit -n 65536",
+              "kind": 1,
+              "startTimeUnixNano": "1742893551363533312",
+              "endTimeUnixNano": "1742893551379699968",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "ulimit -n 65536"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "ulimit"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "builtin"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "ulimit"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "/home/runner/work/Thoth/Thoth/demos/injection_deep_gradle/gradlew"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "dc1ad659f78faee3e72ad6fee827dbd0",
+              "spanId": "2463c45c848d9e8b",
+              "parentSpanId": "d117297b14f2d4b3",
+              "flags": 768,
+              "name": "printf %s",
+              "kind": 1,
+              "startTimeUnixNano": "1742893551384813056",
+              "endTimeUnixNano": "1742893551419229440",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "printf %s"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "printf"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "builtin"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "printf"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "/home/runner/work/Thoth/Thoth/demos/injection_deep_gradle/gradlew"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "dc1ad659f78faee3e72ad6fee827dbd0",
+              "spanId": "93b393163e08e440",
+              "parentSpanId": "d117297b14f2d4b3",
+              "flags": 768,
+              "name": "xargs -n1",
+              "kind": 1,
+              "startTimeUnixNano": "1742893551385899520",
+              "endTimeUnixNano": "1742893551430533120",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "xargs -n1"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "xargs"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "xargs"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/xargs"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "xargs"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "/home/runner/work/Thoth/Thoth/demos/injection_deep_gradle/gradlew"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "dc1ad659f78faee3e72ad6fee827dbd0",
+              "spanId": "b6997f2264d90a0d",
+              "parentSpanId": "d117297b14f2d4b3",
+              "flags": 768,
+              "name": "sed  s~[^-[:alnum:]+,./:=@_]~\\&~g;",
+              "kind": 1,
+              "startTimeUnixNano": "1742893551385781760",
+              "endTimeUnixNano": "1742893551431894272",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "sed  s~[^-[:alnum:]+,./:=@_]~\\&~g;"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "sed"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "sed"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/sed"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "sed"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "/home/runner/work/Thoth/Thoth/demos/injection_deep_gradle/gradlew"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "dc1ad659f78faee3e72ad6fee827dbd0",
+              "spanId": "ddac4cb84748f3ea",
+              "parentSpanId": "d117297b14f2d4b3",
+              "flags": 768,
+              "name": "tr",
+              "kind": 1,
+              "startTimeUnixNano": "1742893551386222848",
+              "endTimeUnixNano": "1742893551433200896",
+              "attributes": [
+                {
+                  "key": "shell.command_line",
+                  "value": {
+                    "stringValue": "tr"
+                  }
+                },
+                {
+                  "key": "shell.command",
+                  "value": {
+                    "stringValue": "tr"
+                  }
+                },
+                {
+                  "key": "shell.command.type",
+                  "value": {
+                    "stringValue": "file"
+                  }
+                },
+                {
+                  "key": "shell.command.name",
+                  "value": {
+                    "stringValue": "tr"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.path",
+                  "value": {
+                    "stringValue": "/usr/bin/tr"
+                  }
+                },
+                {
+                  "key": "subprocess.executable.name",
+                  "value": {
+                    "stringValue": "tr"
+                  }
+                },
+                {
+                  "key": "shell.command.exit_code",
+                  "value": {
+                    "intValue": "0"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "/home/runner/work/Thoth/Thoth/demos/injection_deep_gradle/gradlew"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "dc1ad659f78faee3e72ad6fee827dbd0",
+              "spanId": "67015699da643d25",
+              "parentSpanId": "d117297b14f2d4b3",
+              "flags": 768,
+              "name": "exec",
+              "kind": 1,
+              "startTimeUnixNano": "1742893551435848448",
+              "endTimeUnixNano": "1742893551441854720",
+              "status": {}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
