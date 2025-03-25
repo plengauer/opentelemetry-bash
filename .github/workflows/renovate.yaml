@@ -12,7 +12,7 @@ jobs:
   renovate:
     runs-on: ubuntu-latest
     steps:
-      - uses: plengauer/thoth/actions/instrument/job@v5.9.0
+      - uses: plengauer/thoth/actions/instrument/job@v5.10.0
         with:
           secrets_to_redact: '${{ toJSON(secrets) }}'
         env:
