@@ -24,7 +24,7 @@ runs:
       if: steps.find-workflow-level-instrumentation.outputs.path == null
       shell: bash
       run: |
-        
+        echo "${{ inputs.workflow_level_instrumentation_template }}" > "${{ steps.find-workflow-level-instrumentation.outputs.path }}"
     - name: "Update workflow-level observability triggers"
       if: steps.find-workflow-level-instrumentation.outputs.path != null
       shell: bash
