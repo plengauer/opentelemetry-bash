@@ -18,7 +18,7 @@
           {
             "key": "telemetry.sdk.version",
             "value": {
-              "stringValue": "5.10.0"
+              "stringValue": "5.10.1"
             }
           },
           {
@@ -54,13 +54,13 @@
           {
             "key": "github.actions.workflow.ref",
             "value": {
-              "stringValue": "plengauer/Thoth/.github/workflows/refresh_demos.yaml@refs/tags/v5.10.0"
+              "stringValue": "plengauer/Thoth/.github/workflows/refresh_demos.yaml@refs/tags/v5.10.1"
             }
           },
           {
             "key": "github.actions.workflow.sha",
             "value": {
-              "stringValue": "0f1a20486810e416d03007608b9aa80f2afea04d"
+              "stringValue": "556e327a65f01eb9ac74a5e777b5d5c27f7e88ff"
             }
           },
           {
@@ -84,13 +84,13 @@
           {
             "key": "process.pid",
             "value": {
-              "intValue": "2316"
+              "intValue": "2365"
             }
           },
           {
             "key": "process.parent_pid",
             "value": {
-              "intValue": "2227"
+              "intValue": "2276"
             }
           },
           {
@@ -171,602 +171,591 @@
         {
           "scope": {
             "name": "shell",
-            "version": "5.10.0"
+            "version": "5.10.1"
           },
           "logRecords": [
             {
-              "timeUnixNano": "1742893532936686592",
-              "observedTimeUnixNano": "1742893532936708705",
+              "timeUnixNano": "1743190495549417216",
+              "observedTimeUnixNano": "1743190495549440244",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "Unable to find image 'renovate/renovate:latest' locally"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533161332992",
-              "observedTimeUnixNano": "1742893533161357499",
+              "timeUnixNano": "1743190495907836928",
+              "observedTimeUnixNano": "1743190495907862963",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "latest: Pulling from renovate/renovate"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533228522240",
-              "observedTimeUnixNano": "1742893533228548026",
+              "timeUnixNano": "1743190496007413504",
+              "observedTimeUnixNano": "1743190496007439609",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "5a7813e071bf: Pulling fs layer"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533229379584",
-              "observedTimeUnixNano": "1742893533229391159",
+              "timeUnixNano": "1743190496008273664",
+              "observedTimeUnixNano": "1743190496008285396",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "d4acb40c48ee: Pulling fs layer"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533230291456",
-              "observedTimeUnixNano": "1742893533230302939",
+              "timeUnixNano": "1743190496009175296",
+              "observedTimeUnixNano": "1743190496009186447",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "6ffaf90ceede: Pulling fs layer"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533231147264",
-              "observedTimeUnixNano": "1742893533231158424",
+              "timeUnixNano": "1743190496010087424",
+              "observedTimeUnixNano": "1743190496010097896",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "2019c8c65861: Pulling fs layer"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533232003072",
-              "observedTimeUnixNano": "1742893533232013219",
+              "timeUnixNano": "1743190496010960384",
+              "observedTimeUnixNano": "1743190496010971585",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "a4cb0e6fcecf: Pulling fs layer"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533232825600",
-              "observedTimeUnixNano": "1742893533232836444",
+              "timeUnixNano": "1743190496011823104",
+              "observedTimeUnixNano": "1743190496011833042",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "bdcefa553e45: Pulling fs layer"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533233920000",
-              "observedTimeUnixNano": "1742893533233931563",
+              "timeUnixNano": "1743190496012633344",
+              "observedTimeUnixNano": "1743190496012643463",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "d2931e787b99: Pulling fs layer"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533234773504",
-              "observedTimeUnixNano": "1742893533234784294",
+              "timeUnixNano": "1743190496013453312",
+              "observedTimeUnixNano": "1743190496013463182",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "0b14aef20c39: Pulling fs layer"
+                "stringValue": "e24aba8b8187: Pulling fs layer"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533235632128",
-              "observedTimeUnixNano": "1742893533235640273",
+              "timeUnixNano": "1743190496014297088",
+              "observedTimeUnixNano": "1743190496014306895",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "22966394499b: Pulling fs layer"
+                "stringValue": "603a867203eb: Pulling fs layer"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533236624896",
-              "observedTimeUnixNano": "1742893533236635431",
+              "timeUnixNano": "1743190496015126528",
+              "observedTimeUnixNano": "1743190496015137434",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "d3b3f0528df3: Pulling fs layer"
+                "stringValue": "664ab4a0f001: Pulling fs layer"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533237559808",
-              "observedTimeUnixNano": "1742893533237571600",
+              "timeUnixNano": "1743190496015954432",
+              "observedTimeUnixNano": "1743190496015967472",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "6a1dfbc1ff30: Pulling fs layer"
+                "stringValue": "f443bf083e13: Pulling fs layer"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533238429184",
-              "observedTimeUnixNano": "1742893533238439689",
+              "timeUnixNano": "1743190496016802560",
+              "observedTimeUnixNano": "1743190496016811486",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "fc31375cc1c5: Pulling fs layer"
+                "stringValue": "ed9433839477: Pulling fs layer"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533239774720",
-              "observedTimeUnixNano": "1742893533239785475",
+              "timeUnixNano": "1743190496017658624",
+              "observedTimeUnixNano": "1743190496017668614",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "4f4fb700ef54: Pulling fs layer"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533240655360",
-              "observedTimeUnixNano": "1742893533240665647",
+              "timeUnixNano": "1743190496018514432",
+              "observedTimeUnixNano": "1743190496018524801",
+              "severityText": "unspecified",
+              "body": {
+                "stringValue": "e24aba8b8187: Waiting"
+              },
+              "flags": 1,
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
+            },
+            {
+              "timeUnixNano": "1743190496019447552",
+              "observedTimeUnixNano": "1743190496019458291",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "2019c8c65861: Waiting"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533242059008",
-              "observedTimeUnixNano": "1742893533242070987",
+              "timeUnixNano": "1743190496020338944",
+              "observedTimeUnixNano": "1743190496020349193",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "a4cb0e6fcecf: Waiting"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533243083776",
-              "observedTimeUnixNano": "1742893533243095802",
+              "timeUnixNano": "1743190496021192192",
+              "observedTimeUnixNano": "1743190496021201803",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "bdcefa553e45: Waiting"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533243905280",
-              "observedTimeUnixNano": "1742893533243916953",
+              "timeUnixNano": "1743190496021993728",
+              "observedTimeUnixNano": "1743190496022005191",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "d2931e787b99: Waiting"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533244772352",
-              "observedTimeUnixNano": "1742893533244782788",
+              "timeUnixNano": "1743190496022892800",
+              "observedTimeUnixNano": "1743190496022904538",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "0b14aef20c39: Waiting"
+                "stringValue": "603a867203eb: Waiting"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533245675008",
-              "observedTimeUnixNano": "1742893533245685111",
+              "timeUnixNano": "1743190496023746560",
+              "observedTimeUnixNano": "1743190496023757618",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "22966394499b: Waiting"
+                "stringValue": "ed9433839477: Waiting"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533246554112",
-              "observedTimeUnixNano": "1742893533246565112",
+              "timeUnixNano": "1743190496024838144",
+              "observedTimeUnixNano": "1743190496024849582",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "d3b3f0528df3: Waiting"
+                "stringValue": "664ab4a0f001: Waiting"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533247423744",
-              "observedTimeUnixNano": "1742893533247435485",
+              "timeUnixNano": "1743190496025916928",
+              "observedTimeUnixNano": "1743190496025928156",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "6a1dfbc1ff30: Waiting"
+                "stringValue": "f443bf083e13: Waiting"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533248328960",
-              "observedTimeUnixNano": "1742893533248340192",
-              "severityText": "unspecified",
-              "body": {
-                "stringValue": "fc31375cc1c5: Waiting"
-              },
-              "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
-            },
-            {
-              "timeUnixNano": "1742893533249159168",
-              "observedTimeUnixNano": "1742893533249167174",
+              "timeUnixNano": "1743190496026706432",
+              "observedTimeUnixNano": "1743190496026714292",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "4f4fb700ef54: Waiting"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533309221888",
-              "observedTimeUnixNano": "1742893533309233508",
-              "severityText": "unspecified",
-              "body": {
-                "stringValue": "d4acb40c48ee: Verifying Checksum"
-              },
-              "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
-            },
-            {
-              "timeUnixNano": "1742893533310057216",
-              "observedTimeUnixNano": "1742893533310066338",
+              "timeUnixNano": "1743190496136349696",
+              "observedTimeUnixNano": "1743190496136375932",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "d4acb40c48ee: Download complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533451593984",
-              "observedTimeUnixNano": "1742893533451615476",
+              "timeUnixNano": "1743190496488519936",
+              "observedTimeUnixNano": "1743190496488547889",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "5a7813e071bf: Verifying Checksum"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533453318400",
-              "observedTimeUnixNano": "1742893533453330655",
+              "timeUnixNano": "1743190496489485056",
+              "observedTimeUnixNano": "1743190496489497670",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "5a7813e071bf: Download complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533476331776",
-              "observedTimeUnixNano": "1742893533476349630",
+              "timeUnixNano": "1743190496517779712",
+              "observedTimeUnixNano": "1743190496517801433",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "6ffaf90ceede: Verifying Checksum"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533477224192",
-              "observedTimeUnixNano": "1742893533477236534",
+              "timeUnixNano": "1743190496518939648",
+              "observedTimeUnixNano": "1743190496518950035",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "6ffaf90ceede: Download complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533590541824",
-              "observedTimeUnixNano": "1742893533590560590",
-              "severityText": "unspecified",
-              "body": {
-                "stringValue": "2019c8c65861: Verifying Checksum"
-              },
-              "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
-            },
-            {
-              "timeUnixNano": "1742893533591942144",
-              "observedTimeUnixNano": "1742893533591972763",
-              "severityText": "unspecified",
-              "body": {
-                "stringValue": "2019c8c65861: Download complete"
-              },
-              "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
-            },
-            {
-              "timeUnixNano": "1742893533681576704",
-              "observedTimeUnixNano": "1742893533681597538",
+              "timeUnixNano": "1743190496774400768",
+              "observedTimeUnixNano": "1743190496774456613",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "a4cb0e6fcecf: Verifying Checksum"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533682904064",
-              "observedTimeUnixNano": "1742893533682944244",
+              "timeUnixNano": "1743190496775444992",
+              "observedTimeUnixNano": "1743190496775457506",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "a4cb0e6fcecf: Download complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533757423360",
-              "observedTimeUnixNano": "1742893533757447058",
+              "timeUnixNano": "1743190496987795968",
+              "observedTimeUnixNano": "1743190496987822649",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "0b14aef20c39: Verifying Checksum"
+                "stringValue": "2019c8c65861: Verifying Checksum"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533758460416",
-              "observedTimeUnixNano": "1742893533758470419",
+              "timeUnixNano": "1743190496989112064",
+              "observedTimeUnixNano": "1743190496989122783",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "0b14aef20c39: Download complete"
+                "stringValue": "2019c8c65861: Download complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533781918464",
-              "observedTimeUnixNano": "1742893533781936601",
+              "timeUnixNano": "1743190497062470144",
+              "observedTimeUnixNano": "1743190497062504412",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "d2931e787b99: Verifying Checksum"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533783188224",
-              "observedTimeUnixNano": "1742893533783202086",
+              "timeUnixNano": "1743190497064100352",
+              "observedTimeUnixNano": "1743190497064114729",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "d2931e787b99: Download complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533842403328",
-              "observedTimeUnixNano": "1742893533842428892",
+              "timeUnixNano": "1743190497108619264",
+              "observedTimeUnixNano": "1743190497108648397",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "22966394499b: Download complete"
+                "stringValue": "e24aba8b8187: Verifying Checksum"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533930946048",
-              "observedTimeUnixNano": "1742893533931001192",
+              "timeUnixNano": "1743190497109581056",
+              "observedTimeUnixNano": "1743190497109595112",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "6a1dfbc1ff30: Verifying Checksum"
+                "stringValue": "e24aba8b8187: Download complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893533932333056",
-              "observedTimeUnixNano": "1742893533932350658",
+              "timeUnixNano": "1743190497165821696",
+              "observedTimeUnixNano": "1743190497165957524",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "6a1dfbc1ff30: Download complete"
+                "stringValue": "603a867203eb: Verifying Checksum"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893534020918784",
-              "observedTimeUnixNano": "1742893534020943867",
+              "timeUnixNano": "1743190497166977792",
+              "observedTimeUnixNano": "1743190497166991124",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "fc31375cc1c5: Verifying Checksum"
+                "stringValue": "603a867203eb: Download complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893534022469120",
-              "observedTimeUnixNano": "1742893534022482153",
+              "timeUnixNano": "1743190497283589376",
+              "observedTimeUnixNano": "1743190497283614463",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "fc31375cc1c5: Download complete"
+                "stringValue": "f443bf083e13: Verifying Checksum"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893534112654592",
-              "observedTimeUnixNano": "1742893534112679966",
+              "timeUnixNano": "1743190497283664896",
+              "observedTimeUnixNano": "1743190497283673664",
+              "severityText": "unspecified",
+              "body": {
+                "stringValue": "f443bf083e13: Download complete"
+              },
+              "flags": 1,
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
+            },
+            {
+              "timeUnixNano": "1743190497402870272",
+              "observedTimeUnixNano": "1743190497402899283",
+              "severityText": "unspecified",
+              "body": {
+                "stringValue": "ed9433839477: Verifying Checksum"
+              },
+              "flags": 1,
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
+            },
+            {
+              "timeUnixNano": "1743190497403892224",
+              "observedTimeUnixNano": "1743190497403904288",
+              "severityText": "unspecified",
+              "body": {
+                "stringValue": "ed9433839477: Download complete"
+              },
+              "flags": 1,
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
+            },
+            {
+              "timeUnixNano": "1743190497511401472",
+              "observedTimeUnixNano": "1743190497511427652",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "4f4fb700ef54: Verifying Checksum"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893534114534656",
-              "observedTimeUnixNano": "1742893534114548273",
+              "timeUnixNano": "1743190497512454144",
+              "observedTimeUnixNano": "1743190497512474615",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "4f4fb700ef54: Download complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893534513609728",
-              "observedTimeUnixNano": "1742893534513636792",
-              "severityText": "unspecified",
-              "body": {
-                "stringValue": "d3b3f0528df3: Verifying Checksum"
-              },
-              "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
-            },
-            {
-              "timeUnixNano": "1742893534514911232",
-              "observedTimeUnixNano": "1742893534514923932",
-              "severityText": "unspecified",
-              "body": {
-                "stringValue": "d3b3f0528df3: Download complete"
-              },
-              "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
-            },
-            {
-              "timeUnixNano": "1742893534613800960",
-              "observedTimeUnixNano": "1742893534613827856",
+              "timeUnixNano": "1743190497563100416",
+              "observedTimeUnixNano": "1743190497563126639",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "5a7813e071bf: Pull complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893534722152192",
-              "observedTimeUnixNano": "1742893534722173240",
+              "timeUnixNano": "1743190498320580352",
+              "observedTimeUnixNano": "1743190498320608044",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "d4acb40c48ee: Pull complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893535035479296",
-              "observedTimeUnixNano": "1742893535035497956",
+              "timeUnixNano": "1743190498369075456",
+              "observedTimeUnixNano": "1743190498369101556",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "bdcefa553e45: Verifying Checksum"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893535036775168",
-              "observedTimeUnixNano": "1742893535036787153",
+              "timeUnixNano": "1743190498370134528",
+              "observedTimeUnixNano": "1743190498370145855",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "bdcefa553e45: Download complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893535716044032",
-              "observedTimeUnixNano": "1742893535716069778",
+              "timeUnixNano": "1743190498406364928",
+              "observedTimeUnixNano": "1743190498406383427",
+              "severityText": "unspecified",
+              "body": {
+                "stringValue": "664ab4a0f001: Verifying Checksum"
+              },
+              "flags": 1,
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
+            },
+            {
+              "timeUnixNano": "1743190498407352576",
+              "observedTimeUnixNano": "1743190498407362455",
+              "severityText": "unspecified",
+              "body": {
+                "stringValue": "664ab4a0f001: Download complete"
+              },
+              "flags": 1,
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
+            },
+            {
+              "timeUnixNano": "1743190498789585152",
+              "observedTimeUnixNano": "1743190498789610720",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "6ffaf90ceede: Pull complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
-            },
-            {
-              "timeUnixNano": "1742893536773033472",
-              "observedTimeUnixNano": "1742893536773058525",
-              "severityText": "unspecified",
-              "body": {
-                "stringValue": "2019c8c65861: Pull complete"
-              },
-              "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             }
           ]
         }
@@ -794,7 +783,7 @@
           {
             "key": "telemetry.sdk.version",
             "value": {
-              "stringValue": "5.10.0"
+              "stringValue": "5.10.1"
             }
           },
           {
@@ -830,13 +819,13 @@
           {
             "key": "github.actions.workflow.ref",
             "value": {
-              "stringValue": "plengauer/Thoth/.github/workflows/refresh_demos.yaml@refs/tags/v5.10.0"
+              "stringValue": "plengauer/Thoth/.github/workflows/refresh_demos.yaml@refs/tags/v5.10.1"
             }
           },
           {
             "key": "github.actions.workflow.sha",
             "value": {
-              "stringValue": "0f1a20486810e416d03007608b9aa80f2afea04d"
+              "stringValue": "556e327a65f01eb9ac74a5e777b5d5c27f7e88ff"
             }
           },
           {
@@ -860,13 +849,13 @@
           {
             "key": "process.pid",
             "value": {
-              "intValue": "3130"
+              "intValue": "3178"
             }
           },
           {
             "key": "process.parent_pid",
             "value": {
-              "intValue": "3129"
+              "intValue": "3177"
             }
           },
           {
@@ -947,613 +936,602 @@
         {
           "scope": {
             "name": "shell",
-            "version": "5.10.0"
+            "version": "5.10.1"
           },
           "logRecords": [
             {
-              "timeUnixNano": "1742893532935525376",
-              "observedTimeUnixNano": "1742893532935553814",
+              "timeUnixNano": "1743190495548249600",
+              "observedTimeUnixNano": "1743190495548279787",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "Unable to find image 'renovate/renovate:latest' locally"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533160191232",
-              "observedTimeUnixNano": "1742893533160224378",
+              "timeUnixNano": "1743190495906714624",
+              "observedTimeUnixNano": "1743190495906740867",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "latest: Pulling from renovate/renovate"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533227552512",
-              "observedTimeUnixNano": "1742893533227579085",
+              "timeUnixNano": "1743190496006325504",
+              "observedTimeUnixNano": "1743190496006349637",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "5a7813e071bf: Pulling fs layer"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533228433920",
-              "observedTimeUnixNano": "1742893533228445601",
+              "timeUnixNano": "1743190496007231744",
+              "observedTimeUnixNano": "1743190496007244997",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "d4acb40c48ee: Pulling fs layer"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533229324032",
-              "observedTimeUnixNano": "1742893533229335701",
+              "timeUnixNano": "1743190496008131584",
+              "observedTimeUnixNano": "1743190496008142410",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "6ffaf90ceede: Pulling fs layer"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533230195200",
-              "observedTimeUnixNano": "1742893533230205833",
+              "timeUnixNano": "1743190496009020928",
+              "observedTimeUnixNano": "1743190496009031228",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "2019c8c65861: Pulling fs layer"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533231054080",
-              "observedTimeUnixNano": "1742893533231064775",
+              "timeUnixNano": "1743190496009930752",
+              "observedTimeUnixNano": "1743190496009940824",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "a4cb0e6fcecf: Pulling fs layer"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533231887104",
-              "observedTimeUnixNano": "1742893533231897358",
+              "timeUnixNano": "1743190496010787840",
+              "observedTimeUnixNano": "1743190496010797872",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "bdcefa553e45: Pulling fs layer"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533232737024",
-              "observedTimeUnixNano": "1742893533232747483",
+              "timeUnixNano": "1743190496011628544",
+              "observedTimeUnixNano": "1743190496011638209",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "d2931e787b99: Pulling fs layer"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533233780992",
-              "observedTimeUnixNano": "1742893533233792499",
+              "timeUnixNano": "1743190496012502272",
+              "observedTimeUnixNano": "1743190496012512660",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "0b14aef20c39: Pulling fs layer"
+                "stringValue": "e24aba8b8187: Pulling fs layer"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533234653952",
-              "observedTimeUnixNano": "1742893533234664325",
+              "timeUnixNano": "1743190496013362432",
+              "observedTimeUnixNano": "1743190496013372343",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "22966394499b: Pulling fs layer"
+                "stringValue": "603a867203eb: Pulling fs layer"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533235545088",
-              "observedTimeUnixNano": "1742893533235553624",
+              "timeUnixNano": "1743190496014253824",
+              "observedTimeUnixNano": "1743190496014264396",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "d3b3f0528df3: Pulling fs layer"
+                "stringValue": "664ab4a0f001: Pulling fs layer"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533236496896",
-              "observedTimeUnixNano": "1742893533236507142",
+              "timeUnixNano": "1743190496015117312",
+              "observedTimeUnixNano": "1743190496015126734",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "6a1dfbc1ff30: Pulling fs layer"
+                "stringValue": "f443bf083e13: Pulling fs layer"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533237472768",
-              "observedTimeUnixNano": "1742893533237483813",
+              "timeUnixNano": "1743190496015993600",
+              "observedTimeUnixNano": "1743190496016003840",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "fc31375cc1c5: Pulling fs layer"
+                "stringValue": "ed9433839477: Pulling fs layer"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533238353152",
-              "observedTimeUnixNano": "1742893533238363634",
+              "timeUnixNano": "1743190496016863488",
+              "observedTimeUnixNano": "1743190496016873481",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "4f4fb700ef54: Pulling fs layer"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533239708928",
-              "observedTimeUnixNano": "1742893533239757827",
+              "timeUnixNano": "1743190496017690368",
+              "observedTimeUnixNano": "1743190496017700564",
+              "severityText": "unspecified",
+              "body": {
+                "stringValue": "e24aba8b8187: Waiting"
+              },
+              "flags": 1,
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
+            },
+            {
+              "timeUnixNano": "1743190496018559744",
+              "observedTimeUnixNano": "1743190496018569805",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "2019c8c65861: Waiting"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533240862720",
-              "observedTimeUnixNano": "1742893533240872563",
+              "timeUnixNano": "1743190496019507200",
+              "observedTimeUnixNano": "1743190496019517752",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "a4cb0e6fcecf: Waiting"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533242224640",
-              "observedTimeUnixNano": "1742893533242234873",
+              "timeUnixNano": "1743190496020283648",
+              "observedTimeUnixNano": "1743190496020294621",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "bdcefa553e45: Waiting"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533243077632",
-              "observedTimeUnixNano": "1742893533243088756",
+              "timeUnixNano": "1743190496021141248",
+              "observedTimeUnixNano": "1743190496021151298",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "d2931e787b99: Waiting"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533243927808",
-              "observedTimeUnixNano": "1742893533243938280",
+              "timeUnixNano": "1743190496022048000",
+              "observedTimeUnixNano": "1743190496022057608",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "0b14aef20c39: Waiting"
+                "stringValue": "603a867203eb: Waiting"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533244807168",
-              "observedTimeUnixNano": "1742893533244817309",
+              "timeUnixNano": "1743190496022960128",
+              "observedTimeUnixNano": "1743190496022971032",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "22966394499b: Waiting"
+                "stringValue": "ed9433839477: Waiting"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533245680384",
-              "observedTimeUnixNano": "1742893533245690497",
+              "timeUnixNano": "1743190496023841280",
+              "observedTimeUnixNano": "1743190496023852245",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "d3b3f0528df3: Waiting"
+                "stringValue": "664ab4a0f001: Waiting"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533246569984",
-              "observedTimeUnixNano": "1742893533246579876",
+              "timeUnixNano": "1743190496024885760",
+              "observedTimeUnixNano": "1743190496024894008",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "6a1dfbc1ff30: Waiting"
+                "stringValue": "f443bf083e13: Waiting"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533247451136",
-              "observedTimeUnixNano": "1742893533247461179",
-              "severityText": "unspecified",
-              "body": {
-                "stringValue": "fc31375cc1c5: Waiting"
-              },
-              "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
-            },
-            {
-              "timeUnixNano": "1742893533248332544",
-              "observedTimeUnixNano": "1742893533248343485",
+              "timeUnixNano": "1743190496025927680",
+              "observedTimeUnixNano": "1743190496025939875",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "4f4fb700ef54: Waiting"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533308202240",
-              "observedTimeUnixNano": "1742893533308213539",
-              "severityText": "unspecified",
-              "body": {
-                "stringValue": "d4acb40c48ee: Verifying Checksum"
-              },
-              "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
-            },
-            {
-              "timeUnixNano": "1742893533309148928",
-              "observedTimeUnixNano": "1742893533309160687",
+              "timeUnixNano": "1743190496134908928",
+              "observedTimeUnixNano": "1743190496134937905",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "d4acb40c48ee: Download complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533450285056",
-              "observedTimeUnixNano": "1742893533450312218",
+              "timeUnixNano": "1743190496486991360",
+              "observedTimeUnixNano": "1743190496487020218",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "5a7813e071bf: Verifying Checksum"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533452054528",
-              "observedTimeUnixNano": "1742893533452068814",
+              "timeUnixNano": "1743190496488140800",
+              "observedTimeUnixNano": "1743190496488154302",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "5a7813e071bf: Download complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533475105536",
-              "observedTimeUnixNano": "1742893533475130143",
+              "timeUnixNano": "1743190496516517888",
+              "observedTimeUnixNano": "1743190496516542834",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "6ffaf90ceede: Verifying Checksum"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533476202496",
-              "observedTimeUnixNano": "1742893533476217243",
+              "timeUnixNano": "1743190496517585408",
+              "observedTimeUnixNano": "1743190496517598532",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "6ffaf90ceede: Download complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533589227776",
-              "observedTimeUnixNano": "1742893533589256463",
-              "severityText": "unspecified",
-              "body": {
-                "stringValue": "2019c8c65861: Verifying Checksum"
-              },
-              "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
-            },
-            {
-              "timeUnixNano": "1742893533590446080",
-              "observedTimeUnixNano": "1742893533590456546",
-              "severityText": "unspecified",
-              "body": {
-                "stringValue": "2019c8c65861: Download complete"
-              },
-              "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
-            },
-            {
-              "timeUnixNano": "1742893533680415744",
-              "observedTimeUnixNano": "1742893533680445488",
+              "timeUnixNano": "1743190496773059840",
+              "observedTimeUnixNano": "1743190496773088730",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "a4cb0e6fcecf: Verifying Checksum"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533681801216",
-              "observedTimeUnixNano": "1742893533681813270",
+              "timeUnixNano": "1743190496774454016",
+              "observedTimeUnixNano": "1743190496774467791",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "a4cb0e6fcecf: Download complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533755701760",
-              "observedTimeUnixNano": "1742893533755728136",
+              "timeUnixNano": "1743190496986037760",
+              "observedTimeUnixNano": "1743190496986078757",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "0b14aef20c39: Verifying Checksum"
+                "stringValue": "2019c8c65861: Verifying Checksum"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533756890624",
-              "observedTimeUnixNano": "1742893533756903876",
+              "timeUnixNano": "1743190496987408384",
+              "observedTimeUnixNano": "1743190496987420456",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "0b14aef20c39: Download complete"
+                "stringValue": "2019c8c65861: Download complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533780718848",
-              "observedTimeUnixNano": "1742893533780733858",
+              "timeUnixNano": "1743190497060608768",
+              "observedTimeUnixNano": "1743190497060644641",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "d2931e787b99: Verifying Checksum"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533781862912",
-              "observedTimeUnixNano": "1742893533781880845",
+              "timeUnixNano": "1743190497062780416",
+              "observedTimeUnixNano": "1743190497062795455",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "d2931e787b99: Download complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533840985856",
-              "observedTimeUnixNano": "1742893533841011091",
+              "timeUnixNano": "1743190497107028736",
+              "observedTimeUnixNano": "1743190497107057257",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "22966394499b: Download complete"
+                "stringValue": "e24aba8b8187: Verifying Checksum"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533928075776",
-              "observedTimeUnixNano": "1742893533928111626",
+              "timeUnixNano": "1743190497108166912",
+              "observedTimeUnixNano": "1743190497108181596",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "6a1dfbc1ff30: Verifying Checksum"
+                "stringValue": "e24aba8b8187: Download complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893533929555968",
-              "observedTimeUnixNano": "1742893533929574304",
+              "timeUnixNano": "1743190497164231680",
+              "observedTimeUnixNano": "1743190497164454271",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "6a1dfbc1ff30: Download complete"
+                "stringValue": "603a867203eb: Verifying Checksum"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893534019593984",
-              "observedTimeUnixNano": "1742893534019620639",
+              "timeUnixNano": "1743190497165597440",
+              "observedTimeUnixNano": "1743190497165611596",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "fc31375cc1c5: Verifying Checksum"
+                "stringValue": "603a867203eb: Download complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893534020719360",
-              "observedTimeUnixNano": "1742893534020767032",
+              "timeUnixNano": "1743190497280278784",
+              "observedTimeUnixNano": "1743190497280306708",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "fc31375cc1c5: Download complete"
+                "stringValue": "f443bf083e13: Verifying Checksum"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893534111166720",
-              "observedTimeUnixNano": "1742893534111190601",
+              "timeUnixNano": "1743190497281359872",
+              "observedTimeUnixNano": "1743190497281371744",
+              "severityText": "unspecified",
+              "body": {
+                "stringValue": "f443bf083e13: Download complete"
+              },
+              "flags": 1,
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
+            },
+            {
+              "timeUnixNano": "1743190497401588480",
+              "observedTimeUnixNano": "1743190497401617525",
+              "severityText": "unspecified",
+              "body": {
+                "stringValue": "ed9433839477: Verifying Checksum"
+              },
+              "flags": 1,
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
+            },
+            {
+              "timeUnixNano": "1743190497402694400",
+              "observedTimeUnixNano": "1743190497402733214",
+              "severityText": "unspecified",
+              "body": {
+                "stringValue": "ed9433839477: Download complete"
+              },
+              "flags": 1,
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
+            },
+            {
+              "timeUnixNano": "1743190497510047744",
+              "observedTimeUnixNano": "1743190497510078637",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "4f4fb700ef54: Verifying Checksum"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893534112665856",
-              "observedTimeUnixNano": "1742893534112679500",
+              "timeUnixNano": "1743190497511069952",
+              "observedTimeUnixNano": "1743190497511082068",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "4f4fb700ef54: Download complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893534512201728",
-              "observedTimeUnixNano": "1742893534512229830",
-              "severityText": "unspecified",
-              "body": {
-                "stringValue": "d3b3f0528df3: Verifying Checksum"
-              },
-              "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
-            },
-            {
-              "timeUnixNano": "1742893534513806080",
-              "observedTimeUnixNano": "1742893534513820711",
-              "severityText": "unspecified",
-              "body": {
-                "stringValue": "d3b3f0528df3: Download complete"
-              },
-              "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
-            },
-            {
-              "timeUnixNano": "1742893534612455424",
-              "observedTimeUnixNano": "1742893534612493049",
+              "timeUnixNano": "1743190497561586688",
+              "observedTimeUnixNano": "1743190497561615142",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "5a7813e071bf: Pull complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893534720990720",
-              "observedTimeUnixNano": "1742893534721017725",
+              "timeUnixNano": "1743190498319058176",
+              "observedTimeUnixNano": "1743190498319089067",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "d4acb40c48ee: Pull complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893535034304256",
-              "observedTimeUnixNano": "1742893535034330697",
+              "timeUnixNano": "1743190498367471616",
+              "observedTimeUnixNano": "1743190498367498827",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "bdcefa553e45: Verifying Checksum"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893535035317248",
-              "observedTimeUnixNano": "1742893535035327869",
+              "timeUnixNano": "1743190498368585216",
+              "observedTimeUnixNano": "1743190498368598555",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "bdcefa553e45: Download complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893535714895616",
-              "observedTimeUnixNano": "1742893535714924840",
+              "timeUnixNano": "1743190498405196032",
+              "observedTimeUnixNano": "1743190498405223204",
+              "severityText": "unspecified",
+              "body": {
+                "stringValue": "664ab4a0f001: Verifying Checksum"
+              },
+              "flags": 1,
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
+            },
+            {
+              "timeUnixNano": "1743190498406124800",
+              "observedTimeUnixNano": "1743190498406137469",
+              "severityText": "unspecified",
+              "body": {
+                "stringValue": "664ab4a0f001: Download complete"
+              },
+              "flags": 1,
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
+            },
+            {
+              "timeUnixNano": "1743190498788096768",
+              "observedTimeUnixNano": "1743190498788126235",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "6ffaf90ceede: Pull complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893536771758080",
-              "observedTimeUnixNano": "1742893536771785501",
+              "timeUnixNano": "1743190499852588032",
+              "observedTimeUnixNano": "1743190499852616560",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "2019c8c65861: Pull complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
-            },
-            {
-              "timeUnixNano": "1742893537621813504",
-              "observedTimeUnixNano": "1742893537621843629",
-              "severityText": "unspecified",
-              "body": {
-                "stringValue": "a4cb0e6fcecf: Pull complete"
-              },
-              "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             }
           ]
         }
@@ -1581,7 +1559,7 @@
           {
             "key": "telemetry.sdk.version",
             "value": {
-              "stringValue": "5.10.0"
+              "stringValue": "5.10.1"
             }
           },
           {
@@ -1617,13 +1595,13 @@
           {
             "key": "github.actions.workflow.ref",
             "value": {
-              "stringValue": "plengauer/Thoth/.github/workflows/refresh_demos.yaml@refs/tags/v5.10.0"
+              "stringValue": "plengauer/Thoth/.github/workflows/refresh_demos.yaml@refs/tags/v5.10.1"
             }
           },
           {
             "key": "github.actions.workflow.sha",
             "value": {
-              "stringValue": "0f1a20486810e416d03007608b9aa80f2afea04d"
+              "stringValue": "556e327a65f01eb9ac74a5e777b5d5c27f7e88ff"
             }
           },
           {
@@ -1647,13 +1625,13 @@
           {
             "key": "process.pid",
             "value": {
-              "intValue": "2316"
+              "intValue": "2365"
             }
           },
           {
             "key": "process.parent_pid",
             "value": {
-              "intValue": "2227"
+              "intValue": "2276"
             }
           },
           {
@@ -1734,19 +1712,30 @@
         {
           "scope": {
             "name": "shell",
-            "version": "5.10.0"
+            "version": "5.10.1"
           },
           "logRecords": [
             {
-              "timeUnixNano": "1742893537623098624",
-              "observedTimeUnixNano": "1742893537623119649",
+              "timeUnixNano": "1743190499853853184",
+              "observedTimeUnixNano": "1743190499853877893",
+              "severityText": "unspecified",
+              "body": {
+                "stringValue": "2019c8c65861: Pull complete"
+              },
+              "flags": 1,
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
+            },
+            {
+              "timeUnixNano": "1743190500704615680",
+              "observedTimeUnixNano": "1743190500704641946",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "a4cb0e6fcecf: Pull complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             }
           ]
         }
@@ -1774,7 +1763,7 @@
           {
             "key": "telemetry.sdk.version",
             "value": {
-              "stringValue": "5.10.0"
+              "stringValue": "5.10.1"
             }
           },
           {
@@ -1810,13 +1799,13 @@
           {
             "key": "github.actions.workflow.ref",
             "value": {
-              "stringValue": "plengauer/Thoth/.github/workflows/refresh_demos.yaml@refs/tags/v5.10.0"
+              "stringValue": "plengauer/Thoth/.github/workflows/refresh_demos.yaml@refs/tags/v5.10.1"
             }
           },
           {
             "key": "github.actions.workflow.sha",
             "value": {
-              "stringValue": "0f1a20486810e416d03007608b9aa80f2afea04d"
+              "stringValue": "556e327a65f01eb9ac74a5e777b5d5c27f7e88ff"
             }
           },
           {
@@ -1840,239 +1829,13 @@
           {
             "key": "process.pid",
             "value": {
-              "intValue": "2316"
+              "intValue": "3178"
             }
           },
           {
             "key": "process.parent_pid",
             "value": {
-              "intValue": "2227"
-            }
-          },
-          {
-            "key": "process.executable.name",
-            "value": {
-              "stringValue": "bash"
-            }
-          },
-          {
-            "key": "process.executable.path",
-            "value": {
-              "stringValue": "/usr/bin/bash"
-            }
-          },
-          {
-            "key": "process.command_line",
-            "value": {
-              "stringValue": "bash -e demo.sh"
-            }
-          },
-          {
-            "key": "process.command",
-            "value": {
-              "stringValue": "bash"
-            }
-          },
-          {
-            "key": "process.owner",
-            "value": {
-              "stringValue": "runner"
-            }
-          },
-          {
-            "key": "process.runtime.name",
-            "value": {
-              "stringValue": "bash"
-            }
-          },
-          {
-            "key": "process.runtime.description",
-            "value": {
-              "stringValue": "Bourne Again Shell"
-            }
-          },
-          {
-            "key": "process.runtime.version",
-            "value": {
-              "stringValue": "5.2.21-2ubuntu4"
-            }
-          },
-          {
-            "key": "process.runtime.options",
-            "value": {
-              "stringValue": "ehB"
-            }
-          },
-          {
-            "key": "service.version",
-            "value": {
-              "stringValue": ""
-            }
-          },
-          {
-            "key": "service.namespace",
-            "value": {
-              "stringValue": ""
-            }
-          },
-          {
-            "key": "service.instance.id",
-            "value": {
-              "stringValue": ""
-            }
-          }
-        ]
-      },
-      "scopeLogs": [
-        {
-          "scope": {
-            "name": "shell",
-            "version": "5.10.0"
-          },
-          "logRecords": [
-            {
-              "timeUnixNano": "1742893543858934528",
-              "observedTimeUnixNano": "1742893543858984692",
-              "severityText": "unspecified",
-              "body": {
-                "stringValue": "bdcefa553e45: Pull complete"
-              },
-              "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
-            },
-            {
-              "timeUnixNano": "1742893544067038464",
-              "observedTimeUnixNano": "1742893544067058467",
-              "severityText": "unspecified",
-              "body": {
-                "stringValue": "d2931e787b99: Pull complete"
-              },
-              "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
-            },
-            {
-              "timeUnixNano": "1742893544076625152",
-              "observedTimeUnixNano": "1742893544076643936",
-              "severityText": "unspecified",
-              "body": {
-                "stringValue": "0b14aef20c39: Pull complete"
-              },
-              "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
-            },
-            {
-              "timeUnixNano": "1742893544086486784",
-              "observedTimeUnixNano": "1742893544086503097",
-              "severityText": "unspecified",
-              "body": {
-                "stringValue": "22966394499b: Pull complete"
-              },
-              "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-{
-  "resourceLogs": [
-    {
-      "resource": {
-        "attributes": [
-          {
-            "key": "telemetry.sdk.language",
-            "value": {
-              "stringValue": "shell"
-            }
-          },
-          {
-            "key": "telemetry.sdk.name",
-            "value": {
-              "stringValue": "opentelemetry"
-            }
-          },
-          {
-            "key": "telemetry.sdk.version",
-            "value": {
-              "stringValue": "5.10.0"
-            }
-          },
-          {
-            "key": "service.name",
-            "value": {
-              "stringValue": "unknown_service"
-            }
-          },
-          {
-            "key": "github.repository.id",
-            "value": {
-              "stringValue": "692042935"
-            }
-          },
-          {
-            "key": "github.repository.name",
-            "value": {
-              "stringValue": "Thoth"
-            }
-          },
-          {
-            "key": "github.repository.owner.id",
-            "value": {
-              "stringValue": "100447901"
-            }
-          },
-          {
-            "key": "github.repository.owner.name",
-            "value": {
-              "stringValue": "plengauer"
-            }
-          },
-          {
-            "key": "github.actions.workflow.ref",
-            "value": {
-              "stringValue": "plengauer/Thoth/.github/workflows/refresh_demos.yaml@refs/tags/v5.10.0"
-            }
-          },
-          {
-            "key": "github.actions.workflow.sha",
-            "value": {
-              "stringValue": "0f1a20486810e416d03007608b9aa80f2afea04d"
-            }
-          },
-          {
-            "key": "github.actions.workflow.name",
-            "value": {
-              "stringValue": "Refresh Demos"
-            }
-          },
-          {
-            "key": "os.type",
-            "value": {
-              "stringValue": "linux"
-            }
-          },
-          {
-            "key": "os.version",
-            "value": {
-              "stringValue": "6.8.0-1021-azure"
-            }
-          },
-          {
-            "key": "process.pid",
-            "value": {
-              "intValue": "3130"
-            }
-          },
-          {
-            "key": "process.parent_pid",
-            "value": {
-              "intValue": "3129"
+              "intValue": "3177"
             }
           },
           {
@@ -2153,52 +1916,19 @@
         {
           "scope": {
             "name": "shell",
-            "version": "5.10.0"
+            "version": "5.10.1"
           },
           "logRecords": [
             {
-              "timeUnixNano": "1742893543857728000",
-              "observedTimeUnixNano": "1742893543857756094",
+              "timeUnixNano": "1743190500703298048",
+              "observedTimeUnixNano": "1743190500703322575",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "bdcefa553e45: Pull complete"
+                "stringValue": "a4cb0e6fcecf: Pull complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
-            },
-            {
-              "timeUnixNano": "1742893544065790720",
-              "observedTimeUnixNano": "1742893544065820166",
-              "severityText": "unspecified",
-              "body": {
-                "stringValue": "d2931e787b99: Pull complete"
-              },
-              "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
-            },
-            {
-              "timeUnixNano": "1742893544075507712",
-              "observedTimeUnixNano": "1742893544075525934",
-              "severityText": "unspecified",
-              "body": {
-                "stringValue": "0b14aef20c39: Pull complete"
-              },
-              "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
-            },
-            {
-              "timeUnixNano": "1742893544085506048",
-              "observedTimeUnixNano": "1742893544085523631",
-              "severityText": "unspecified",
-              "body": {
-                "stringValue": "22966394499b: Pull complete"
-              },
-              "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             }
           ]
         }
@@ -2226,7 +1956,7 @@
           {
             "key": "telemetry.sdk.version",
             "value": {
-              "stringValue": "5.10.0"
+              "stringValue": "5.10.1"
             }
           },
           {
@@ -2262,13 +1992,13 @@
           {
             "key": "github.actions.workflow.ref",
             "value": {
-              "stringValue": "plengauer/Thoth/.github/workflows/refresh_demos.yaml@refs/tags/v5.10.0"
+              "stringValue": "plengauer/Thoth/.github/workflows/refresh_demos.yaml@refs/tags/v5.10.1"
             }
           },
           {
             "key": "github.actions.workflow.sha",
             "value": {
-              "stringValue": "0f1a20486810e416d03007608b9aa80f2afea04d"
+              "stringValue": "556e327a65f01eb9ac74a5e777b5d5c27f7e88ff"
             }
           },
           {
@@ -2292,13 +2022,13 @@
           {
             "key": "process.pid",
             "value": {
-              "intValue": "2316"
+              "intValue": "2365"
             }
           },
           {
             "key": "process.parent_pid",
             "value": {
-              "intValue": "2227"
+              "intValue": "2276"
             }
           },
           {
@@ -2379,74 +2109,526 @@
         {
           "scope": {
             "name": "shell",
-            "version": "5.10.0"
+            "version": "5.10.1"
           },
           "logRecords": [
             {
-              "timeUnixNano": "1742893555092149760",
-              "observedTimeUnixNano": "1742893555092170239",
+              "timeUnixNano": "1743190506965889792",
+              "observedTimeUnixNano": "1743190506965919044",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "d3b3f0528df3: Pull complete"
+                "stringValue": "bdcefa553e45: Pull complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893555103315200",
-              "observedTimeUnixNano": "1742893555103332918",
+              "timeUnixNano": "1743190507176118272",
+              "observedTimeUnixNano": "1743190507176141255",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "6a1dfbc1ff30: Pull complete"
+                "stringValue": "d2931e787b99: Pull complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893555114776064",
-              "observedTimeUnixNano": "1742893555114791409",
+              "timeUnixNano": "1743190507187790080",
+              "observedTimeUnixNano": "1743190507187815454",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "fc31375cc1c5: Pull complete"
+                "stringValue": "e24aba8b8187: Pull complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893555122819840",
-              "observedTimeUnixNano": "1742893555122832831",
+              "timeUnixNano": "1743190507201870336",
+              "observedTimeUnixNano": "1743190507201897712",
+              "severityText": "unspecified",
+              "body": {
+                "stringValue": "603a867203eb: Pull complete"
+              },
+              "flags": 1,
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+{
+  "resourceLogs": [
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "telemetry.sdk.language",
+            "value": {
+              "stringValue": "shell"
+            }
+          },
+          {
+            "key": "telemetry.sdk.name",
+            "value": {
+              "stringValue": "opentelemetry"
+            }
+          },
+          {
+            "key": "telemetry.sdk.version",
+            "value": {
+              "stringValue": "5.10.1"
+            }
+          },
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "unknown_service"
+            }
+          },
+          {
+            "key": "github.repository.id",
+            "value": {
+              "stringValue": "692042935"
+            }
+          },
+          {
+            "key": "github.repository.name",
+            "value": {
+              "stringValue": "Thoth"
+            }
+          },
+          {
+            "key": "github.repository.owner.id",
+            "value": {
+              "stringValue": "100447901"
+            }
+          },
+          {
+            "key": "github.repository.owner.name",
+            "value": {
+              "stringValue": "plengauer"
+            }
+          },
+          {
+            "key": "github.actions.workflow.ref",
+            "value": {
+              "stringValue": "plengauer/Thoth/.github/workflows/refresh_demos.yaml@refs/tags/v5.10.1"
+            }
+          },
+          {
+            "key": "github.actions.workflow.sha",
+            "value": {
+              "stringValue": "556e327a65f01eb9ac74a5e777b5d5c27f7e88ff"
+            }
+          },
+          {
+            "key": "github.actions.workflow.name",
+            "value": {
+              "stringValue": "Refresh Demos"
+            }
+          },
+          {
+            "key": "os.type",
+            "value": {
+              "stringValue": "linux"
+            }
+          },
+          {
+            "key": "os.version",
+            "value": {
+              "stringValue": "6.8.0-1021-azure"
+            }
+          },
+          {
+            "key": "process.pid",
+            "value": {
+              "intValue": "3178"
+            }
+          },
+          {
+            "key": "process.parent_pid",
+            "value": {
+              "intValue": "3177"
+            }
+          },
+          {
+            "key": "process.executable.name",
+            "value": {
+              "stringValue": "bash"
+            }
+          },
+          {
+            "key": "process.executable.path",
+            "value": {
+              "stringValue": "/usr/bin/bash"
+            }
+          },
+          {
+            "key": "process.command_line",
+            "value": {
+              "stringValue": "sudo -E docker run --rm --network host --env RENOVATE_TOKEN renovate/renovate --dry-run plengauer/opentelemetry-bash"
+            }
+          },
+          {
+            "key": "process.command",
+            "value": {
+              "stringValue": "sudo"
+            }
+          },
+          {
+            "key": "process.owner",
+            "value": {
+              "stringValue": "root"
+            }
+          },
+          {
+            "key": "process.runtime.name",
+            "value": {
+              "stringValue": "bash"
+            }
+          },
+          {
+            "key": "process.runtime.description",
+            "value": {
+              "stringValue": "Bourne Again Shell"
+            }
+          },
+          {
+            "key": "process.runtime.version",
+            "value": {
+              "stringValue": "5.2.21-2ubuntu4"
+            }
+          },
+          {
+            "key": "process.runtime.options",
+            "value": {
+              "stringValue": "hBc"
+            }
+          },
+          {
+            "key": "service.version",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "service.namespace",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "service.instance.id",
+            "value": {
+              "stringValue": ""
+            }
+          }
+        ]
+      },
+      "scopeLogs": [
+        {
+          "scope": {
+            "name": "shell",
+            "version": "5.10.1"
+          },
+          "logRecords": [
+            {
+              "timeUnixNano": "1743190506964751616",
+              "observedTimeUnixNano": "1743190506964800222",
+              "severityText": "unspecified",
+              "body": {
+                "stringValue": "bdcefa553e45: Pull complete"
+              },
+              "flags": 1,
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
+            },
+            {
+              "timeUnixNano": "1743190507174910976",
+              "observedTimeUnixNano": "1743190507174939208",
+              "severityText": "unspecified",
+              "body": {
+                "stringValue": "d2931e787b99: Pull complete"
+              },
+              "flags": 1,
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
+            },
+            {
+              "timeUnixNano": "1743190507186691328",
+              "observedTimeUnixNano": "1743190507186711785",
+              "severityText": "unspecified",
+              "body": {
+                "stringValue": "e24aba8b8187: Pull complete"
+              },
+              "flags": 1,
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
+            },
+            {
+              "timeUnixNano": "1743190507200744448",
+              "observedTimeUnixNano": "1743190507200793625",
+              "severityText": "unspecified",
+              "body": {
+                "stringValue": "603a867203eb: Pull complete"
+              },
+              "flags": 1,
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+{
+  "resourceLogs": [
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "telemetry.sdk.language",
+            "value": {
+              "stringValue": "shell"
+            }
+          },
+          {
+            "key": "telemetry.sdk.name",
+            "value": {
+              "stringValue": "opentelemetry"
+            }
+          },
+          {
+            "key": "telemetry.sdk.version",
+            "value": {
+              "stringValue": "5.10.1"
+            }
+          },
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "unknown_service"
+            }
+          },
+          {
+            "key": "github.repository.id",
+            "value": {
+              "stringValue": "692042935"
+            }
+          },
+          {
+            "key": "github.repository.name",
+            "value": {
+              "stringValue": "Thoth"
+            }
+          },
+          {
+            "key": "github.repository.owner.id",
+            "value": {
+              "stringValue": "100447901"
+            }
+          },
+          {
+            "key": "github.repository.owner.name",
+            "value": {
+              "stringValue": "plengauer"
+            }
+          },
+          {
+            "key": "github.actions.workflow.ref",
+            "value": {
+              "stringValue": "plengauer/Thoth/.github/workflows/refresh_demos.yaml@refs/tags/v5.10.1"
+            }
+          },
+          {
+            "key": "github.actions.workflow.sha",
+            "value": {
+              "stringValue": "556e327a65f01eb9ac74a5e777b5d5c27f7e88ff"
+            }
+          },
+          {
+            "key": "github.actions.workflow.name",
+            "value": {
+              "stringValue": "Refresh Demos"
+            }
+          },
+          {
+            "key": "os.type",
+            "value": {
+              "stringValue": "linux"
+            }
+          },
+          {
+            "key": "os.version",
+            "value": {
+              "stringValue": "6.8.0-1021-azure"
+            }
+          },
+          {
+            "key": "process.pid",
+            "value": {
+              "intValue": "2365"
+            }
+          },
+          {
+            "key": "process.parent_pid",
+            "value": {
+              "intValue": "2276"
+            }
+          },
+          {
+            "key": "process.executable.name",
+            "value": {
+              "stringValue": "bash"
+            }
+          },
+          {
+            "key": "process.executable.path",
+            "value": {
+              "stringValue": "/usr/bin/bash"
+            }
+          },
+          {
+            "key": "process.command_line",
+            "value": {
+              "stringValue": "bash -e demo.sh"
+            }
+          },
+          {
+            "key": "process.command",
+            "value": {
+              "stringValue": "bash"
+            }
+          },
+          {
+            "key": "process.owner",
+            "value": {
+              "stringValue": "runner"
+            }
+          },
+          {
+            "key": "process.runtime.name",
+            "value": {
+              "stringValue": "bash"
+            }
+          },
+          {
+            "key": "process.runtime.description",
+            "value": {
+              "stringValue": "Bourne Again Shell"
+            }
+          },
+          {
+            "key": "process.runtime.version",
+            "value": {
+              "stringValue": "5.2.21-2ubuntu4"
+            }
+          },
+          {
+            "key": "process.runtime.options",
+            "value": {
+              "stringValue": "ehB"
+            }
+          },
+          {
+            "key": "service.version",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "service.namespace",
+            "value": {
+              "stringValue": ""
+            }
+          },
+          {
+            "key": "service.instance.id",
+            "value": {
+              "stringValue": ""
+            }
+          }
+        ]
+      },
+      "scopeLogs": [
+        {
+          "scope": {
+            "name": "shell",
+            "version": "5.10.1"
+          },
+          "logRecords": [
+            {
+              "timeUnixNano": "1743190518084781824",
+              "observedTimeUnixNano": "1743190518084807167",
+              "severityText": "unspecified",
+              "body": {
+                "stringValue": "664ab4a0f001: Pull complete"
+              },
+              "flags": 1,
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
+            },
+            {
+              "timeUnixNano": "1743190518094244352",
+              "observedTimeUnixNano": "1743190518094268768",
+              "severityText": "unspecified",
+              "body": {
+                "stringValue": "f443bf083e13: Pull complete"
+              },
+              "flags": 1,
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
+            },
+            {
+              "timeUnixNano": "1743190518105845248",
+              "observedTimeUnixNano": "1743190518105868180",
+              "severityText": "unspecified",
+              "body": {
+                "stringValue": "ed9433839477: Pull complete"
+              },
+              "flags": 1,
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
+            },
+            {
+              "timeUnixNano": "1743190518114296320",
+              "observedTimeUnixNano": "1743190518114314493",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "4f4fb700ef54: Pull complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893555127099136",
-              "observedTimeUnixNano": "1742893555127112720",
+              "timeUnixNano": "1743190518119076352",
+              "observedTimeUnixNano": "1743190518119092305",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "Digest: sha256:9a51dcca69a584e042ab749ee72f2876a2c22b55761fd9242d05939b9ffc0319"
+                "stringValue": "Digest: sha256:c06dec5a1b97a941951f937d25cca7989278055f1999d9b9046cf06d3d1354c8"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             },
             {
-              "timeUnixNano": "1742893555128630272",
-              "observedTimeUnixNano": "1742893555128639367",
+              "timeUnixNano": "1743190518120194560",
+              "observedTimeUnixNano": "1743190518120207368",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "Status: Downloaded newer image for renovate/renovate:latest"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b"
             }
           ]
         }
@@ -2474,7 +2656,7 @@
           {
             "key": "telemetry.sdk.version",
             "value": {
-              "stringValue": "5.10.0"
+              "stringValue": "5.10.1"
             }
           },
           {
@@ -2510,13 +2692,13 @@
           {
             "key": "github.actions.workflow.ref",
             "value": {
-              "stringValue": "plengauer/Thoth/.github/workflows/refresh_demos.yaml@refs/tags/v5.10.0"
+              "stringValue": "plengauer/Thoth/.github/workflows/refresh_demos.yaml@refs/tags/v5.10.1"
             }
           },
           {
             "key": "github.actions.workflow.sha",
             "value": {
-              "stringValue": "0f1a20486810e416d03007608b9aa80f2afea04d"
+              "stringValue": "556e327a65f01eb9ac74a5e777b5d5c27f7e88ff"
             }
           },
           {
@@ -2540,13 +2722,13 @@
           {
             "key": "process.pid",
             "value": {
-              "intValue": "3130"
+              "intValue": "3178"
             }
           },
           {
             "key": "process.parent_pid",
             "value": {
-              "intValue": "3129"
+              "intValue": "3177"
             }
           },
           {
@@ -2627,29 +2809,29 @@
         {
           "scope": {
             "name": "shell",
-            "version": "5.10.0"
+            "version": "5.10.1"
           },
           "spans": [
             {
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "da5296530c998b27",
-              "parentSpanId": "12f63916b1fd2a10",
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "25f30cdbeed551d9",
+              "parentSpanId": "2ed9d08c09a3be70",
               "flags": 768,
               "name": "exec",
               "kind": 1,
-              "startTimeUnixNano": "1742893556580749824",
-              "endTimeUnixNano": "1742893556589170944",
+              "startTimeUnixNano": "1743190519580118272",
+              "endTimeUnixNano": "1743190519588716288",
               "status": {}
             },
             {
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "bcaccdedd18194ee",
-              "parentSpanId": "14beedbcf6a0a77c",
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "6280ada60ea039ef",
+              "parentSpanId": "9fd197e40cd45abc",
               "flags": 768,
               "name": "exec",
               "kind": 1,
-              "startTimeUnixNano": "1742893557432985856",
-              "endTimeUnixNano": "1742893557441623296",
+              "startTimeUnixNano": "1743190520458942208",
+              "endTimeUnixNano": "1743190520467672320",
               "status": {}
             }
           ]
@@ -2678,7 +2860,7 @@
           {
             "key": "telemetry.sdk.version",
             "value": {
-              "stringValue": "5.10.0"
+              "stringValue": "5.10.1"
             }
           },
           {
@@ -2714,13 +2896,13 @@
           {
             "key": "github.actions.workflow.ref",
             "value": {
-              "stringValue": "plengauer/Thoth/.github/workflows/refresh_demos.yaml@refs/tags/v5.10.0"
+              "stringValue": "plengauer/Thoth/.github/workflows/refresh_demos.yaml@refs/tags/v5.10.1"
             }
           },
           {
             "key": "github.actions.workflow.sha",
             "value": {
-              "stringValue": "0f1a20486810e416d03007608b9aa80f2afea04d"
+              "stringValue": "556e327a65f01eb9ac74a5e777b5d5c27f7e88ff"
             }
           },
           {
@@ -2744,13 +2926,13 @@
           {
             "key": "process.pid",
             "value": {
-              "intValue": "3130"
+              "intValue": "3178"
             }
           },
           {
             "key": "process.parent_pid",
             "value": {
-              "intValue": "3129"
+              "intValue": "3177"
             }
           },
           {
@@ -2831,74 +3013,74 @@
         {
           "scope": {
             "name": "shell",
-            "version": "5.10.0"
+            "version": "5.10.1"
           },
           "logRecords": [
             {
-              "timeUnixNano": "1742893555090839296",
-              "observedTimeUnixNano": "1742893555091004415",
+              "timeUnixNano": "1743190518083570944",
+              "observedTimeUnixNano": "1743190518083600707",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "d3b3f0528df3: Pull complete"
+                "stringValue": "664ab4a0f001: Pull complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893555102159104",
-              "observedTimeUnixNano": "1742893555102176794",
+              "timeUnixNano": "1743190518093066240",
+              "observedTimeUnixNano": "1743190518093092544",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "6a1dfbc1ff30: Pull complete"
+                "stringValue": "f443bf083e13: Pull complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893555113723648",
-              "observedTimeUnixNano": "1742893555113737199",
+              "timeUnixNano": "1743190518104617728",
+              "observedTimeUnixNano": "1743190518104641364",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "fc31375cc1c5: Pull complete"
+                "stringValue": "ed9433839477: Pull complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893555121865472",
-              "observedTimeUnixNano": "1742893555121879953",
+              "timeUnixNano": "1743190518113246720",
+              "observedTimeUnixNano": "1743190518113265558",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "4f4fb700ef54: Pull complete"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893555125951232",
-              "observedTimeUnixNano": "1742893555125980120",
+              "timeUnixNano": "1743190518117698816",
+              "observedTimeUnixNano": "1743190518117714426",
               "severityText": "unspecified",
               "body": {
-                "stringValue": "Digest: sha256:9a51dcca69a584e042ab749ee72f2876a2c22b55761fd9242d05939b9ffc0319"
+                "stringValue": "Digest: sha256:c06dec5a1b97a941951f937d25cca7989278055f1999d9b9046cf06d3d1354c8"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             },
             {
-              "timeUnixNano": "1742893555127618304",
-              "observedTimeUnixNano": "1742893555127630365",
+              "timeUnixNano": "1743190518119233280",
+              "observedTimeUnixNano": "1743190518119245400",
               "severityText": "unspecified",
               "body": {
                 "stringValue": "Status: Downloaded newer image for renovate/renovate:latest"
               },
               "flags": 1,
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5"
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434"
             }
           ]
         }
@@ -2998,7 +3180,7 @@
           {
             "key": "container.id",
             "value": {
-              "stringValue": "4d9c7d594130959d9862c9cba7c2d0aacef219d1a0f6916620d6040d02238ab9"
+              "stringValue": "6294a56ca41ee0dd32bd0015ddaa167988fb684721ea302b570de38220a19ee8"
             }
           },
           {
@@ -3035,18 +3217,18 @@
           },
           "spans": [
             {
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "6bd27e1096cf8411",
-              "parentSpanId": "bd872efd3b7b2448",
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "696d441f7d50223c",
+              "parentSpanId": "3435d1db555ed15f",
               "name": "dns.lookup",
               "kind": 3,
-              "startTimeUnixNano": "1742893562919000000",
-              "endTimeUnixNano": "1742893562928144500",
+              "startTimeUnixNano": "1743190525710000000",
+              "endTimeUnixNano": "1743190525713300133",
               "attributes": [
                 {
                   "key": "peer.ipv4",
                   "value": {
-                    "stringValue": "140.82.112.6"
+                    "stringValue": "140.82.114.6"
                   }
                 }
               ],
@@ -3146,7 +3328,7 @@
           {
             "key": "container.id",
             "value": {
-              "stringValue": "4d9c7d594130959d9862c9cba7c2d0aacef219d1a0f6916620d6040d02238ab9"
+              "stringValue": "6294a56ca41ee0dd32bd0015ddaa167988fb684721ea302b570de38220a19ee8"
             }
           },
           {
@@ -3183,13 +3365,13 @@
           },
           "spans": [
             {
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "966e3f9ef593dd95",
-              "parentSpanId": "f0430aeda913d8c4",
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "6cc954b20a0b0025",
+              "parentSpanId": "4195a8417426e0c1",
               "name": "tcp.connect",
               "kind": 1,
-              "startTimeUnixNano": "1742893562917000000",
-              "endTimeUnixNano": "1742893562934521806",
+              "startTimeUnixNano": "1743190525709000000",
+              "endTimeUnixNano": "1743190525730392927",
               "attributes": [
                 {
                   "key": "net.transport",
@@ -3212,19 +3394,19 @@
                 {
                   "key": "net.peer.ip",
                   "value": {
-                    "stringValue": "140.82.112.6"
+                    "stringValue": "140.82.114.6"
                   }
                 },
                 {
                   "key": "net.host.ip",
                   "value": {
-                    "stringValue": "10.1.0.153"
+                    "stringValue": "10.1.0.152"
                   }
                 },
                 {
                   "key": "net.host.port",
                   "value": {
-                    "intValue": "43968"
+                    "intValue": "39796"
                   }
                 }
               ],
@@ -3324,7 +3506,7 @@
           {
             "key": "container.id",
             "value": {
-              "stringValue": "4d9c7d594130959d9862c9cba7c2d0aacef219d1a0f6916620d6040d02238ab9"
+              "stringValue": "6294a56ca41ee0dd32bd0015ddaa167988fb684721ea302b570de38220a19ee8"
             }
           },
           {
@@ -3361,13 +3543,13 @@
           },
           "spans": [
             {
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "f0430aeda913d8c4",
-              "parentSpanId": "bd872efd3b7b2448",
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "4195a8417426e0c1",
+              "parentSpanId": "3435d1db555ed15f",
               "name": "tls.connect",
               "kind": 1,
-              "startTimeUnixNano": "1742893562917000000",
-              "endTimeUnixNano": "1742893562945980090",
+              "startTimeUnixNano": "1743190525708000000",
+              "endTimeUnixNano": "1743190525752093943",
               "attributes": [
                 {
                   "key": "tls.protocol",
@@ -3429,11 +3611,7 @@
           ]
         }
       ]
-    }
-  ]
-}
-{
-  "resourceSpans": [
+    },
     {
       "resource": {
         "attributes": [
@@ -3524,7 +3702,7 @@
           {
             "key": "container.id",
             "value": {
-              "stringValue": "4d9c7d594130959d9862c9cba7c2d0aacef219d1a0f6916620d6040d02238ab9"
+              "stringValue": "6294a56ca41ee0dd32bd0015ddaa167988fb684721ea302b570de38220a19ee8"
             }
           },
           {
@@ -3561,13 +3739,13 @@
           },
           "spans": [
             {
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "bd872efd3b7b2448",
-              "parentSpanId": "b19542d4e6e08479",
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "3435d1db555ed15f",
+              "parentSpanId": "aeecb0f2b1202b6e",
               "name": "GET",
               "kind": 3,
-              "startTimeUnixNano": "1742893562911000000",
-              "endTimeUnixNano": "1742893563026234443",
+              "startTimeUnixNano": "1743190525703000000",
+              "endTimeUnixNano": "1743190525822137981",
               "attributes": [
                 {
                   "key": "http.url",
@@ -3602,13 +3780,13 @@
                 {
                   "key": "http.user_agent",
                   "value": {
-                    "stringValue": "RenovateBot/39.213.6 (https://github.com/renovatebot/renovate)"
+                    "stringValue": "RenovateBot/39.220.2 (https://github.com/renovatebot/renovate)"
                   }
                 },
                 {
                   "key": "net.peer.ip",
                   "value": {
-                    "stringValue": "140.82.112.6"
+                    "stringValue": "140.82.114.6"
                   }
                 },
                 {
@@ -3738,7 +3916,7 @@
           {
             "key": "container.id",
             "value": {
-              "stringValue": "4d9c7d594130959d9862c9cba7c2d0aacef219d1a0f6916620d6040d02238ab9"
+              "stringValue": "6294a56ca41ee0dd32bd0015ddaa167988fb684721ea302b570de38220a19ee8"
             }
           },
           {
@@ -3775,13 +3953,13 @@
           },
           "spans": [
             {
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "1425dbd2e05ffec5",
-              "parentSpanId": "b19542d4e6e08479",
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "5ea9d4950415e24f",
+              "parentSpanId": "aeecb0f2b1202b6e",
               "name": "GET",
               "kind": 3,
-              "startTimeUnixNano": "1742893563031000000",
-              "endTimeUnixNano": "1742893563084933053",
+              "startTimeUnixNano": "1743190525826000000",
+              "endTimeUnixNano": "1743190525873562621",
               "attributes": [
                 {
                   "key": "http.url",
@@ -3816,13 +3994,13 @@
                 {
                   "key": "http.user_agent",
                   "value": {
-                    "stringValue": "RenovateBot/39.213.6 (https://github.com/renovatebot/renovate)"
+                    "stringValue": "RenovateBot/39.220.2 (https://github.com/renovatebot/renovate)"
                   }
                 },
                 {
                   "key": "net.peer.ip",
                   "value": {
-                    "stringValue": "140.82.112.6"
+                    "stringValue": "140.82.114.6"
                   }
                 },
                 {
@@ -3863,284 +4041,6 @@
           ]
         }
       ]
-    },
-    {
-      "resource": {
-        "attributes": [
-          {
-            "key": "process.pid",
-            "value": {
-              "intValue": "5784"
-            }
-          },
-          {
-            "key": "process.executable.name",
-            "value": {
-              "stringValue": "/usr/local/renovate/node"
-            }
-          },
-          {
-            "key": "process.executable.path",
-            "value": {
-              "stringValue": "/usr/local/renovate/node"
-            }
-          },
-          {
-            "key": "process.command_args",
-            "value": {
-              "arrayValue": {
-                "values": [
-                  {
-                    "stringValue": "/usr/local/renovate/node"
-                  },
-                  {
-                    "stringValue": "--require"
-                  },
-                  {
-                    "stringValue": "/usr/share/opentelemetry_shell/agent.instrumentation.node.js"
-                  },
-                  {
-                    "stringValue": "--use-openssl-ca"
-                  },
-                  {
-                    "stringValue": "--require"
-                  },
-                  {
-                    "stringValue": "/usr/share/opentelemetry_shell/agent.instrumentation.node.deep.instrument.js"
-                  },
-                  {
-                    "stringValue": "/usr/local/renovate/dist/renovate.js"
-                  },
-                  {
-                    "stringValue": "--dry-run"
-                  },
-                  {
-                    "stringValue": "plengauer/opentelemetry-bash"
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "key": "process.runtime.version",
-            "value": {
-              "stringValue": "22.14.0"
-            }
-          },
-          {
-            "key": "process.runtime.name",
-            "value": {
-              "stringValue": "nodejs"
-            }
-          },
-          {
-            "key": "process.runtime.description",
-            "value": {
-              "stringValue": "Node.js"
-            }
-          },
-          {
-            "key": "process.command",
-            "value": {
-              "stringValue": "/usr/local/renovate/dist/renovate.js"
-            }
-          },
-          {
-            "key": "process.owner",
-            "value": {
-              "stringValue": "ubuntu"
-            }
-          },
-          {
-            "key": "container.id",
-            "value": {
-              "stringValue": "4d9c7d594130959d9862c9cba7c2d0aacef219d1a0f6916620d6040d02238ab9"
-            }
-          },
-          {
-            "key": "service.name",
-            "value": {
-              "stringValue": "unknown_service:/usr/local/renovate/node"
-            }
-          },
-          {
-            "key": "telemetry.sdk.language",
-            "value": {
-              "stringValue": "nodejs"
-            }
-          },
-          {
-            "key": "telemetry.sdk.name",
-            "value": {
-              "stringValue": "opentelemetry"
-            }
-          },
-          {
-            "key": "telemetry.sdk.version",
-            "value": {
-              "stringValue": "2.0.0"
-            }
-          }
-        ]
-      },
-      "scopeSpans": [
-        {
-          "scope": {
-            "name": "renovate"
-          },
-          "spans": [
-            {
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "b19542d4e6e08479",
-              "parentSpanId": "b034f1e86b8d8774",
-              "name": "config",
-              "kind": 1,
-              "startTimeUnixNano": "1742893562496000000",
-              "endTimeUnixNano": "1742893563108844696",
-              "status": {}
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "resource": {
-        "attributes": [
-          {
-            "key": "process.pid",
-            "value": {
-              "intValue": "5784"
-            }
-          },
-          {
-            "key": "process.executable.name",
-            "value": {
-              "stringValue": "/usr/local/renovate/node"
-            }
-          },
-          {
-            "key": "process.executable.path",
-            "value": {
-              "stringValue": "/usr/local/renovate/node"
-            }
-          },
-          {
-            "key": "process.command_args",
-            "value": {
-              "arrayValue": {
-                "values": [
-                  {
-                    "stringValue": "/usr/local/renovate/node"
-                  },
-                  {
-                    "stringValue": "--require"
-                  },
-                  {
-                    "stringValue": "/usr/share/opentelemetry_shell/agent.instrumentation.node.js"
-                  },
-                  {
-                    "stringValue": "--use-openssl-ca"
-                  },
-                  {
-                    "stringValue": "--require"
-                  },
-                  {
-                    "stringValue": "/usr/share/opentelemetry_shell/agent.instrumentation.node.deep.instrument.js"
-                  },
-                  {
-                    "stringValue": "/usr/local/renovate/dist/renovate.js"
-                  },
-                  {
-                    "stringValue": "--dry-run"
-                  },
-                  {
-                    "stringValue": "plengauer/opentelemetry-bash"
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "key": "process.runtime.version",
-            "value": {
-              "stringValue": "22.14.0"
-            }
-          },
-          {
-            "key": "process.runtime.name",
-            "value": {
-              "stringValue": "nodejs"
-            }
-          },
-          {
-            "key": "process.runtime.description",
-            "value": {
-              "stringValue": "Node.js"
-            }
-          },
-          {
-            "key": "process.command",
-            "value": {
-              "stringValue": "/usr/local/renovate/dist/renovate.js"
-            }
-          },
-          {
-            "key": "process.owner",
-            "value": {
-              "stringValue": "ubuntu"
-            }
-          },
-          {
-            "key": "container.id",
-            "value": {
-              "stringValue": "4d9c7d594130959d9862c9cba7c2d0aacef219d1a0f6916620d6040d02238ab9"
-            }
-          },
-          {
-            "key": "service.name",
-            "value": {
-              "stringValue": "unknown_service:/usr/local/renovate/node"
-            }
-          },
-          {
-            "key": "telemetry.sdk.language",
-            "value": {
-              "stringValue": "nodejs"
-            }
-          },
-          {
-            "key": "telemetry.sdk.name",
-            "value": {
-              "stringValue": "opentelemetry"
-            }
-          },
-          {
-            "key": "telemetry.sdk.version",
-            "value": {
-              "stringValue": "2.0.0"
-            }
-          }
-        ]
-      },
-      "scopeSpans": [
-        {
-          "scope": {
-            "name": "renovate"
-          },
-          "spans": [
-            {
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "527ddb4ccc2980fc",
-              "parentSpanId": "b034f1e86b8d8774",
-              "name": "discover",
-              "kind": 1,
-              "startTimeUnixNano": "1742893563110000000",
-              "endTimeUnixNano": "1742893563110183893",
-              "status": {}
-            }
-          ]
-        }
-      ]
     }
   ]
 }
@@ -4236,7 +4136,285 @@
           {
             "key": "container.id",
             "value": {
-              "stringValue": "4d9c7d594130959d9862c9cba7c2d0aacef219d1a0f6916620d6040d02238ab9"
+              "stringValue": "6294a56ca41ee0dd32bd0015ddaa167988fb684721ea302b570de38220a19ee8"
+            }
+          },
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "unknown_service:/usr/local/renovate/node"
+            }
+          },
+          {
+            "key": "telemetry.sdk.language",
+            "value": {
+              "stringValue": "nodejs"
+            }
+          },
+          {
+            "key": "telemetry.sdk.name",
+            "value": {
+              "stringValue": "opentelemetry"
+            }
+          },
+          {
+            "key": "telemetry.sdk.version",
+            "value": {
+              "stringValue": "2.0.0"
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "renovate"
+          },
+          "spans": [
+            {
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "aeecb0f2b1202b6e",
+              "parentSpanId": "7f44814da8adf257",
+              "name": "config",
+              "kind": 1,
+              "startTimeUnixNano": "1743190525290000000",
+              "endTimeUnixNano": "1743190525893710616",
+              "status": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "process.pid",
+            "value": {
+              "intValue": "5784"
+            }
+          },
+          {
+            "key": "process.executable.name",
+            "value": {
+              "stringValue": "/usr/local/renovate/node"
+            }
+          },
+          {
+            "key": "process.executable.path",
+            "value": {
+              "stringValue": "/usr/local/renovate/node"
+            }
+          },
+          {
+            "key": "process.command_args",
+            "value": {
+              "arrayValue": {
+                "values": [
+                  {
+                    "stringValue": "/usr/local/renovate/node"
+                  },
+                  {
+                    "stringValue": "--require"
+                  },
+                  {
+                    "stringValue": "/usr/share/opentelemetry_shell/agent.instrumentation.node.js"
+                  },
+                  {
+                    "stringValue": "--use-openssl-ca"
+                  },
+                  {
+                    "stringValue": "--require"
+                  },
+                  {
+                    "stringValue": "/usr/share/opentelemetry_shell/agent.instrumentation.node.deep.instrument.js"
+                  },
+                  {
+                    "stringValue": "/usr/local/renovate/dist/renovate.js"
+                  },
+                  {
+                    "stringValue": "--dry-run"
+                  },
+                  {
+                    "stringValue": "plengauer/opentelemetry-bash"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "key": "process.runtime.version",
+            "value": {
+              "stringValue": "22.14.0"
+            }
+          },
+          {
+            "key": "process.runtime.name",
+            "value": {
+              "stringValue": "nodejs"
+            }
+          },
+          {
+            "key": "process.runtime.description",
+            "value": {
+              "stringValue": "Node.js"
+            }
+          },
+          {
+            "key": "process.command",
+            "value": {
+              "stringValue": "/usr/local/renovate/dist/renovate.js"
+            }
+          },
+          {
+            "key": "process.owner",
+            "value": {
+              "stringValue": "ubuntu"
+            }
+          },
+          {
+            "key": "container.id",
+            "value": {
+              "stringValue": "6294a56ca41ee0dd32bd0015ddaa167988fb684721ea302b570de38220a19ee8"
+            }
+          },
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "unknown_service:/usr/local/renovate/node"
+            }
+          },
+          {
+            "key": "telemetry.sdk.language",
+            "value": {
+              "stringValue": "nodejs"
+            }
+          },
+          {
+            "key": "telemetry.sdk.name",
+            "value": {
+              "stringValue": "opentelemetry"
+            }
+          },
+          {
+            "key": "telemetry.sdk.version",
+            "value": {
+              "stringValue": "2.0.0"
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "renovate"
+          },
+          "spans": [
+            {
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "de9bbb0854d1ab1c",
+              "parentSpanId": "7f44814da8adf257",
+              "name": "discover",
+              "kind": 1,
+              "startTimeUnixNano": "1743190525895000000",
+              "endTimeUnixNano": "1743190525895193681",
+              "status": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "process.pid",
+            "value": {
+              "intValue": "5784"
+            }
+          },
+          {
+            "key": "process.executable.name",
+            "value": {
+              "stringValue": "/usr/local/renovate/node"
+            }
+          },
+          {
+            "key": "process.executable.path",
+            "value": {
+              "stringValue": "/usr/local/renovate/node"
+            }
+          },
+          {
+            "key": "process.command_args",
+            "value": {
+              "arrayValue": {
+                "values": [
+                  {
+                    "stringValue": "/usr/local/renovate/node"
+                  },
+                  {
+                    "stringValue": "--require"
+                  },
+                  {
+                    "stringValue": "/usr/share/opentelemetry_shell/agent.instrumentation.node.js"
+                  },
+                  {
+                    "stringValue": "--use-openssl-ca"
+                  },
+                  {
+                    "stringValue": "--require"
+                  },
+                  {
+                    "stringValue": "/usr/share/opentelemetry_shell/agent.instrumentation.node.deep.instrument.js"
+                  },
+                  {
+                    "stringValue": "/usr/local/renovate/dist/renovate.js"
+                  },
+                  {
+                    "stringValue": "--dry-run"
+                  },
+                  {
+                    "stringValue": "plengauer/opentelemetry-bash"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "key": "process.runtime.version",
+            "value": {
+              "stringValue": "22.14.0"
+            }
+          },
+          {
+            "key": "process.runtime.name",
+            "value": {
+              "stringValue": "nodejs"
+            }
+          },
+          {
+            "key": "process.runtime.description",
+            "value": {
+              "stringValue": "Node.js"
+            }
+          },
+          {
+            "key": "process.command",
+            "value": {
+              "stringValue": "/usr/local/renovate/dist/renovate.js"
+            }
+          },
+          {
+            "key": "process.owner",
+            "value": {
+              "stringValue": "ubuntu"
+            }
+          },
+          {
+            "key": "container.id",
+            "value": {
+              "stringValue": "6294a56ca41ee0dd32bd0015ddaa167988fb684721ea302b570de38220a19ee8"
             }
           },
           {
@@ -4273,13 +4451,13 @@
           },
           "spans": [
             {
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "69b85240c0402422",
-              "parentSpanId": "f17eb6deb8904d0b",
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "0cbfd58c5d3f28f8",
+              "parentSpanId": "e73716da2dbb593c",
               "name": "POST",
               "kind": 3,
-              "startTimeUnixNano": "1742893563121000000",
-              "endTimeUnixNano": "1742893563283500206",
+              "startTimeUnixNano": "1743190525906000000",
+              "endTimeUnixNano": "1743190526071270194",
               "attributes": [
                 {
                   "key": "http.url",
@@ -4314,13 +4492,13 @@
                 {
                   "key": "http.user_agent",
                   "value": {
-                    "stringValue": "RenovateBot/39.213.6 (https://github.com/renovatebot/renovate)"
+                    "stringValue": "RenovateBot/39.220.2 (https://github.com/renovatebot/renovate)"
                   }
                 },
                 {
                   "key": "net.peer.ip",
                   "value": {
-                    "stringValue": "140.82.112.6"
+                    "stringValue": "140.82.114.6"
                   }
                 },
                 {
@@ -4450,7 +4628,7 @@
           {
             "key": "container.id",
             "value": {
-              "stringValue": "4d9c7d594130959d9862c9cba7c2d0aacef219d1a0f6916620d6040d02238ab9"
+              "stringValue": "6294a56ca41ee0dd32bd0015ddaa167988fb684721ea302b570de38220a19ee8"
             }
           },
           {
@@ -4486,13 +4664,13 @@
           },
           "spans": [
             {
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "f17eb6deb8904d0b",
-              "parentSpanId": "b034f1e86b8d8774",
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "e73716da2dbb593c",
+              "parentSpanId": "7f44814da8adf257",
               "name": "repository",
               "kind": 1,
-              "startTimeUnixNano": "1742893563110000000",
-              "endTimeUnixNano": "1742893563287987154",
+              "startTimeUnixNano": "1743190525895000000",
+              "endTimeUnixNano": "1743190526076403362",
               "attributes": [
                 {
                   "key": "repository",
@@ -4597,7 +4775,7 @@
           {
             "key": "container.id",
             "value": {
-              "stringValue": "4d9c7d594130959d9862c9cba7c2d0aacef219d1a0f6916620d6040d02238ab9"
+              "stringValue": "6294a56ca41ee0dd32bd0015ddaa167988fb684721ea302b570de38220a19ee8"
             }
           },
           {
@@ -4633,13 +4811,13 @@
           },
           "spans": [
             {
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "b034f1e86b8d8774",
-              "parentSpanId": "1662bf981974bac2",
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "7f44814da8adf257",
+              "parentSpanId": "40cd4e7691206151",
               "name": "run",
               "kind": 1,
-              "startTimeUnixNano": "1742893562495000000",
-              "endTimeUnixNano": "1742893563295362217",
+              "startTimeUnixNano": "1743190525289000000",
+              "endTimeUnixNano": "1743190526083875639",
               "status": {}
             }
           ]
@@ -4668,7 +4846,7 @@
           {
             "key": "telemetry.sdk.version",
             "value": {
-              "stringValue": "5.10.0"
+              "stringValue": "5.10.1"
             }
           },
           {
@@ -4704,13 +4882,13 @@
           {
             "key": "github.actions.workflow.ref",
             "value": {
-              "stringValue": "plengauer/Thoth/.github/workflows/refresh_demos.yaml@refs/tags/v5.10.0"
+              "stringValue": "plengauer/Thoth/.github/workflows/refresh_demos.yaml@refs/tags/v5.10.1"
             }
           },
           {
             "key": "github.actions.workflow.sha",
             "value": {
-              "stringValue": "0f1a20486810e416d03007608b9aa80f2afea04d"
+              "stringValue": "556e327a65f01eb9ac74a5e777b5d5c27f7e88ff"
             }
           },
           {
@@ -4734,13 +4912,13 @@
           {
             "key": "process.pid",
             "value": {
-              "intValue": "3130"
+              "intValue": "3178"
             }
           },
           {
             "key": "process.parent_pid",
             "value": {
-              "intValue": "3129"
+              "intValue": "3177"
             }
           },
           {
@@ -4821,18 +4999,18 @@
         {
           "scope": {
             "name": "shell",
-            "version": "5.10.0"
+            "version": "5.10.1"
           },
           "spans": [
             {
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "f635884dc08bc52f",
-              "parentSpanId": "b19542d4e6e08479",
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "5be3413977b269f5",
+              "parentSpanId": "aeecb0f2b1202b6e",
               "flags": 768,
               "name": "git --version",
               "kind": 1,
-              "startTimeUnixNano": "1742893562874495232",
-              "endTimeUnixNano": "1742893562900579328",
+              "startTimeUnixNano": "1743190525665753856",
+              "endTimeUnixNano": "1743190525691682048",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -4886,14 +5064,14 @@
               "status": {}
             },
             {
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "1662bf981974bac2",
-              "parentSpanId": "58aa6c29661a48ec",
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "40cd4e7691206151",
+              "parentSpanId": "428502d6c232f0a1",
               "flags": 768,
               "name": "/usr/local/renovate/node --use-openssl-ca /usr/local/renovate/dist/renovate.js --dry-run plengauer/opentelemetry-bash",
               "kind": 1,
-              "startTimeUnixNano": "1742893558623403264",
-              "endTimeUnixNano": "1742893563330564096",
+              "startTimeUnixNano": "1743190521664928256",
+              "endTimeUnixNano": "1743190526119411456",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -4941,14 +5119,14 @@
               "status": {}
             },
             {
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "58aa6c29661a48ec",
-              "parentSpanId": "0bbbd63713ceb529",
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "428502d6c232f0a1",
+              "parentSpanId": "e16977ff782d3e3a",
               "flags": 768,
               "name": "/bin/bash /usr/local/sbin/renovate --dry-run plengauer/opentelemetry-bash",
               "kind": 1,
-              "startTimeUnixNano": "1742893558090201600",
-              "endTimeUnixNano": "1742893563333139200",
+              "startTimeUnixNano": "1743190521126434048",
+              "endTimeUnixNano": "1743190526122002944",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -5002,14 +5180,14 @@
               "status": {}
             },
             {
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "0bbbd63713ceb529",
-              "parentSpanId": "bcaccdedd18194ee",
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "e16977ff782d3e3a",
+              "parentSpanId": "6280ada60ea039ef",
               "flags": 768,
               "name": "dumb-init -- renovate --dry-run plengauer/opentelemetry-bash",
               "kind": 1,
-              "startTimeUnixNano": "1742893557768211712",
-              "endTimeUnixNano": "1742893563334585088",
+              "startTimeUnixNano": "1743190520801443328",
+              "endTimeUnixNano": "1743190526123481856",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -5063,14 +5241,14 @@
               "status": {}
             },
             {
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "14beedbcf6a0a77c",
-              "parentSpanId": "da5296530c998b27",
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "9fd197e40cd45abc",
+              "parentSpanId": "25f30cdbeed551d9",
               "flags": 768,
               "name": "/bin/bash /usr/local/sbin/docker-entrypoint.sh renovate --dry-run plengauer/opentelemetry-bash",
               "kind": 1,
-              "startTimeUnixNano": "1742893556924510976",
-              "endTimeUnixNano": "1742893563336759808",
+              "startTimeUnixNano": "1743190519941435392",
+              "endTimeUnixNano": "1743190526125687040",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -5124,14 +5302,14 @@
               "status": {}
             },
             {
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "12f63916b1fd2a10",
-              "parentSpanId": "5aeec27961c229e5",
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "2ed9d08c09a3be70",
+              "parentSpanId": "214bb89034bb7434",
               "flags": 768,
               "name": "/bin/bash /usr/local/sbin/renovate-entrypoint.sh --dry-run plengauer/opentelemetry-bash",
               "kind": 1,
-              "startTimeUnixNano": "1742893556100179456",
-              "endTimeUnixNano": "1742893563337750016",
+              "startTimeUnixNano": "1743190519096886272",
+              "endTimeUnixNano": "1743190526126671616",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -5179,14 +5357,14 @@
               "status": {}
             },
             {
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "5aeec27961c229e5",
-              "parentSpanId": "4e8589fb3ec0184f",
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "214bb89034bb7434",
+              "parentSpanId": "159ac6e005ea606b",
               "flags": 768,
               "name": "docker run --rm --network host --env RENOVATE_TOKEN renovate/renovate --dry-run plengauer/opentelemetry-bash",
               "kind": 1,
-              "startTimeUnixNano": "1742893532895910912",
-              "endTimeUnixNano": "1742893563405269248",
+              "startTimeUnixNano": "1743190495508463360",
+              "endTimeUnixNano": "1743190526194170112",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -5261,7 +5439,7 @@
           {
             "key": "telemetry.sdk.version",
             "value": {
-              "stringValue": "5.10.0"
+              "stringValue": "5.10.1"
             }
           },
           {
@@ -5297,13 +5475,13 @@
           {
             "key": "github.actions.workflow.ref",
             "value": {
-              "stringValue": "plengauer/Thoth/.github/workflows/refresh_demos.yaml@refs/tags/v5.10.0"
+              "stringValue": "plengauer/Thoth/.github/workflows/refresh_demos.yaml@refs/tags/v5.10.1"
             }
           },
           {
             "key": "github.actions.workflow.sha",
             "value": {
-              "stringValue": "0f1a20486810e416d03007608b9aa80f2afea04d"
+              "stringValue": "556e327a65f01eb9ac74a5e777b5d5c27f7e88ff"
             }
           },
           {
@@ -5327,13 +5505,13 @@
           {
             "key": "process.pid",
             "value": {
-              "intValue": "2316"
+              "intValue": "2365"
             }
           },
           {
             "key": "process.parent_pid",
             "value": {
-              "intValue": "2227"
+              "intValue": "2276"
             }
           },
           {
@@ -5414,18 +5592,18 @@
         {
           "scope": {
             "name": "shell",
-            "version": "5.10.0"
+            "version": "5.10.1"
           },
           "spans": [
             {
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "4e8589fb3ec0184f",
-              "parentSpanId": "3ebaa7062fba28da",
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "159ac6e005ea606b",
+              "parentSpanId": "16761598a562d1ca",
               "flags": 768,
               "name": "sudo -E docker run --rm --network host --env RENOVATE_TOKEN renovate/renovate --dry-run plengauer/opentelemetry-bash",
               "kind": 1,
-              "startTimeUnixNano": "1742893532243549952",
-              "endTimeUnixNano": "1742893563438844160",
+              "startTimeUnixNano": "1743190494815216896",
+              "endTimeUnixNano": "1743190526230896128",
               "attributes": [
                 {
                   "key": "shell.command_line",
@@ -5485,14 +5663,14 @@
               "status": {}
             },
             {
-              "traceId": "96d53b00d98f8935291ae196c9667a5b",
-              "spanId": "3ebaa7062fba28da",
+              "traceId": "79170c513e48283371635eaac8ab1ae9",
+              "spanId": "16761598a562d1ca",
               "parentSpanId": "",
               "flags": 256,
               "name": "bash -e demo.sh",
               "kind": 2,
-              "startTimeUnixNano": "1742893532231022848",
-              "endTimeUnixNano": "1742893563439035904",
+              "startTimeUnixNano": "1743190494802531328",
+              "endTimeUnixNano": "1743190526231063296",
               "status": {}
             }
           ]
