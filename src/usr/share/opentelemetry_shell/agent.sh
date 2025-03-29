@@ -448,9 +448,9 @@ command() {
 _otel_inject() {
   if _otel_string_contains "$1" /; then
     local path="$1"
-    if ! \which "${path##*/}" 1> /dev/null 2> /dev/null; then # in case its an absolute command that is not on the path at all, we need to make sure it is to have proper shebang resolution and the resulting instrumentation on hand
+    if ! \alias "${path##*/}" 1> /dev/null 2> /dev/null; then # in case its an absolute command that is not on the path at all, we need to make sure it is to have proper shebang resolution and the resulting instrumentation on hand
       local PATH="${path%/*}:$PATH"
-      _otel_auto_instrument "$_otel_shell_auto_instrumentation_hint"
+      _otel_auto_instrument "$path"
     fi
     local instrumentation="$(_otel_resolve_alias "${path##*/}")"
     if \[ -n "$instrumentation" ]; then
