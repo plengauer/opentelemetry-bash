@@ -31,19 +31,24 @@ runs:
       run: |
         names_file="$(mktemp)"
         for workflow_file in "${{ inputs.workflows_directory }}"/*.yaml "${{ inputs.workflows_directory }}"/*.yml; do cat "$workflow_file" | yq .name; done \
-          | ([ -n "${{ inputs.workflow_level_instrumentation_exclude }}" ] && grep -vF "$(echo "${{ inputs.workflow_level_instrumentation_exclude }}" | tr ',' '\n' | tr ':' '\n' | tr ';' '\n')" || cat) \
+          | ([ -n "${{ inputs.workflow_level_instrumentation_exclude }}" ] && grep -qvF "$(echo "${{ inputs.workflow_level_instrumentation_exclude }}" | tr ',' '\n' | tr ':' '\n' | tr ';' '\n')" || cat) \
           | grep -vF "$(cat '${{ steps.find-workflow-level-instrumentation.outputs.path }}' | yq .name)" > "$names_file"
         names=()
         while IFS= read -r line; do
           line="${line%$'\r'}"
           names+=("\"$line\"")
         done < "$names_file"
-        yq -i ".on.workflow_run.workflows = [${names[*]}]" "${{ steps.find-workflow-level-instrumentation.outputs.path }}"
+        yq -i ".on.workflow_run.workflows = [${names[*]}]" "${{ steps.find-workflow-level-instrumentation.outputs.path }}" # TODO add env
     - name: "Deploy job-level observability"
       shell: bash
       run: |
-        # TODO every workflow file, that is not workflow-level instrumentation, check if label is supported and not excluded and deploy
-        echo hello world
+        job_level_instrumentation='${{ inputs.job_level_instrumentation_template }}' # TODO add env
+        for workflow_file in "${{ inputs.workflows_directory }}"/*.yaml "${{ inputs.workflows_directory }}"/*.yml; do
+          [ -n "${{ inputs.job_level_instrumentation_exclude }}" ] && cat "$workflow_file" | yq .name | grep -qF "$(echo "${{ inputs.job_level_instrumentation_exclude }}" | tr ',' '\n' | tr ':' '\n' | tr ';' '\n')" && continue || true
+          cat "$workflow_file" | yq '.jobs | keys[]' | while read -r job_name; do
+            yq -i ".jobs.$job_name.steps |= ([{ $job_level_instrumentation }] + .)"
+          done
+        done
     - name: "Open Pull Request"
       id: open-pr
       uses: peter-evans/create-pull-request@v7
@@ -60,7 +65,6 @@ runs:
       if: steps.open-pr.outputs.pull-request-number != null
       shell: bash
       run: sleep 60
-      if: steps.open-pr.outputs.pull-request-number != null
     - name: "Enable auto-merge"
       if: steps.open-pr.outputs.pull-request-number != null
       uses: peter-evans/enable-pull-request-automerge@v3
@@ -77,9 +81,31 @@ inputs:
   workflow_level_instrumentation_file_name:
     default: 'observability.yaml'
   workflow_level_instrumentation_exclude:
+    description: 'Comma-separated list of workflow names to exclude from workflow-level instrumentation.'
     default: ''
   job_level_instrumentation_exclude:
+    description: 'Comma-separated list of workflow names to exclude from job-level instrumentation.'
     default: ''
+  workflow_level_instrumentation_template:
+    default: |
+      name: OpenTelemetry
+      on:
+        workflow_run:
+          workflows: []
+          types:
+            - completed
+      jobs:
+        export:
+          runs-on: ubuntu-latest
+          steps:
+            - uses: plengauer/opentelemetry-github/actions/instrument/workflow@v5.10.1
+              env:
+  job_level_instrumentation_template:
+    default: |
+      uses: plengauer/opentelemetry-github/actions/instrument/job@v5.10.1
+      with:
+        secrets_to_redact: '${{ toJSON(secrets) }}'
+      env:
   debug:
     description: 'Enable debug logging'
     default: ${{ runner.debug }}
