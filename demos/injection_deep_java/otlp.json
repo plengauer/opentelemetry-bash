@@ -1,220 +1,5 @@
 {
-  "resourceLogs": [
-    {
-      "resource": {
-        "attributes": [
-          {
-            "key": "telemetry.sdk.language",
-            "value": {
-              "stringValue": "shell"
-            }
-          },
-          {
-            "key": "telemetry.sdk.name",
-            "value": {
-              "stringValue": "opentelemetry"
-            }
-          },
-          {
-            "key": "telemetry.sdk.version",
-            "value": {
-              "stringValue": "5.10.0"
-            }
-          },
-          {
-            "key": "service.name",
-            "value": {
-              "stringValue": "unknown_service"
-            }
-          },
-          {
-            "key": "github.repository.id",
-            "value": {
-              "stringValue": "692042935"
-            }
-          },
-          {
-            "key": "github.repository.name",
-            "value": {
-              "stringValue": "Thoth"
-            }
-          },
-          {
-            "key": "github.repository.owner.id",
-            "value": {
-              "stringValue": "100447901"
-            }
-          },
-          {
-            "key": "github.repository.owner.name",
-            "value": {
-              "stringValue": "plengauer"
-            }
-          },
-          {
-            "key": "github.actions.workflow.ref",
-            "value": {
-              "stringValue": "plengauer/Thoth/.github/workflows/refresh_demos.yaml@refs/tags/v5.10.0"
-            }
-          },
-          {
-            "key": "github.actions.workflow.sha",
-            "value": {
-              "stringValue": "0f1a20486810e416d03007608b9aa80f2afea04d"
-            }
-          },
-          {
-            "key": "github.actions.workflow.name",
-            "value": {
-              "stringValue": "Refresh Demos"
-            }
-          },
-          {
-            "key": "os.type",
-            "value": {
-              "stringValue": "linux"
-            }
-          },
-          {
-            "key": "os.version",
-            "value": {
-              "stringValue": "6.8.0-1021-azure"
-            }
-          },
-          {
-            "key": "process.pid",
-            "value": {
-              "intValue": "3910"
-            }
-          },
-          {
-            "key": "process.parent_pid",
-            "value": {
-              "intValue": "2253"
-            }
-          },
-          {
-            "key": "process.executable.name",
-            "value": {
-              "stringValue": "bash"
-            }
-          },
-          {
-            "key": "process.executable.path",
-            "value": {
-              "stringValue": "/usr/bin/bash"
-            }
-          },
-          {
-            "key": "process.command_line",
-            "value": {
-              "stringValue": "bash -e demo.sh"
-            }
-          },
-          {
-            "key": "process.command",
-            "value": {
-              "stringValue": "bash"
-            }
-          },
-          {
-            "key": "process.owner",
-            "value": {
-              "stringValue": "runner"
-            }
-          },
-          {
-            "key": "process.runtime.name",
-            "value": {
-              "stringValue": "bash"
-            }
-          },
-          {
-            "key": "process.runtime.description",
-            "value": {
-              "stringValue": "Bourne Again Shell"
-            }
-          },
-          {
-            "key": "process.runtime.version",
-            "value": {
-              "stringValue": "5.2.21-2ubuntu4"
-            }
-          },
-          {
-            "key": "process.runtime.options",
-            "value": {
-              "stringValue": "ehB"
-            }
-          },
-          {
-            "key": "service.version",
-            "value": {
-              "stringValue": ""
-            }
-          },
-          {
-            "key": "service.namespace",
-            "value": {
-              "stringValue": ""
-            }
-          },
-          {
-            "key": "service.instance.id",
-            "value": {
-              "stringValue": ""
-            }
-          }
-        ]
-      },
-      "scopeLogs": [
-        {
-          "scope": {
-            "name": "shell",
-            "version": "5.10.0"
-          },
-          "logRecords": [
-            {
-              "timeUnixNano": "1742893541954556160",
-              "observedTimeUnixNano": "1742893541954579665",
-              "severityText": "unspecified",
-              "body": {
-                "stringValue": "Picked up JAVA_TOOL_OPTIONS:  -javaagent:/opt/opentelemetry_shell/opentelemetry-javaagent.jar -javaagent:/opt/opentelemetry_shell/rootcontextagent.jar"
-              },
-              "flags": 1,
-              "traceId": "726786c42cc0178788c97179edf98bb6",
-              "spanId": "c820f837cce1de46"
-            },
-            {
-              "timeUnixNano": "1742893542028717568",
-              "observedTimeUnixNano": "1742893542028744825",
-              "severityText": "unspecified",
-              "body": {
-                "stringValue": "OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended"
-              },
-              "flags": 1,
-              "traceId": "726786c42cc0178788c97179edf98bb6",
-              "spanId": "c820f837cce1de46"
-            },
-            {
-              "timeUnixNano": "1742893542246590464",
-              "observedTimeUnixNano": "1742893542246613293",
-              "severityText": "unspecified",
-              "body": {
-                "stringValue": "[otel.javaagent 2025-03-25 09:05:42:244 +0000] [main] INFO io.opentelemetry.javaagent.tooling.VersionLogger - opentelemetry-javaagent - version: 2.13.3"
-              },
-              "flags": 1,
-              "traceId": "726786c42cc0178788c97179edf98bb6",
-              "spanId": "c820f837cce1de46"
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-{
-  "resourceMetrics": [
+  "resourceSpans": [
     {
       "resource": {
         "attributes": [
@@ -227,7 +12,7 @@
           {
             "key": "host.name",
             "value": {
-              "stringValue": "fv-az1338-76"
+              "stringValue": "fv-az1704-417"
             }
           },
           {
@@ -266,7 +51,7 @@
           {
             "key": "process.pid",
             "value": {
-              "intValue": "4698"
+              "intValue": "4669"
             }
           },
           {
@@ -290,7 +75,194 @@
           {
             "key": "service.instance.id",
             "value": {
-              "stringValue": "33a15ccf-b53a-4050-9bce-5e9e528757bb"
+              "stringValue": "d64e04e6-32e7-485f-a534-35fea08764f0"
+            }
+          },
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "unknown_service:java"
+            }
+          },
+          {
+            "key": "telemetry.distro.name",
+            "value": {
+              "stringValue": "opentelemetry-java-instrumentation"
+            }
+          },
+          {
+            "key": "telemetry.distro.version",
+            "value": {
+              "stringValue": "2.13.3"
+            }
+          },
+          {
+            "key": "telemetry.sdk.language",
+            "value": {
+              "stringValue": "java"
+            }
+          },
+          {
+            "key": "telemetry.sdk.name",
+            "value": {
+              "stringValue": "opentelemetry"
+            }
+          },
+          {
+            "key": "telemetry.sdk.version",
+            "value": {
+              "stringValue": "1.47.0"
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "io.opentelemetry.http-url-connection",
+            "version": "2.13.3-alpha"
+          },
+          "spans": [
+            {
+              "traceId": "a42372f8fd13efc9d509074971419fa3",
+              "spanId": "05f6e644152824bf",
+              "parentSpanId": "07d063694cc0c4be",
+              "flags": 257,
+              "name": "GET",
+              "kind": 3,
+              "startTimeUnixNano": "1743514114155628949",
+              "endTimeUnixNano": "1743514114333498472",
+              "attributes": [
+                {
+                  "key": "url.full",
+                  "value": {
+                    "stringValue": "http://example.com"
+                  }
+                },
+                {
+                  "key": "thread.name",
+                  "value": {
+                    "stringValue": "main"
+                  }
+                },
+                {
+                  "key": "thread.id",
+                  "value": {
+                    "intValue": "1"
+                  }
+                },
+                {
+                  "key": "http.response.status_code",
+                  "value": {
+                    "intValue": "200"
+                  }
+                },
+                {
+                  "key": "server.address",
+                  "value": {
+                    "stringValue": "example.com"
+                  }
+                },
+                {
+                  "key": "network.protocol.version",
+                  "value": {
+                    "stringValue": "1.1"
+                  }
+                },
+                {
+                  "key": "http.request.method",
+                  "value": {
+                    "stringValue": "GET"
+                  }
+                }
+              ],
+              "status": {}
+            }
+          ]
+        }
+      ],
+      "schemaUrl": "https://opentelemetry.io/schemas/1.24.0"
+    }
+  ]
+}
+{
+  "resourceMetrics": [
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "host.arch",
+            "value": {
+              "stringValue": "amd64"
+            }
+          },
+          {
+            "key": "host.name",
+            "value": {
+              "stringValue": "fv-az1704-417"
+            }
+          },
+          {
+            "key": "os.description",
+            "value": {
+              "stringValue": "Linux 6.8.0-1021-azure"
+            }
+          },
+          {
+            "key": "os.type",
+            "value": {
+              "stringValue": "linux"
+            }
+          },
+          {
+            "key": "process.command_args",
+            "value": {
+              "arrayValue": {
+                "values": [
+                  {
+                    "stringValue": "/usr/lib/jvm/temurin-17-jdk-amd64/bin/java"
+                  },
+                  {
+                    "stringValue": "Main"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "key": "process.executable.path",
+            "value": {
+              "stringValue": "/usr/lib/jvm/temurin-17-jdk-amd64/bin/java"
+            }
+          },
+          {
+            "key": "process.pid",
+            "value": {
+              "intValue": "4669"
+            }
+          },
+          {
+            "key": "process.runtime.description",
+            "value": {
+              "stringValue": "Eclipse Adoptium OpenJDK 64-Bit Server VM 17.0.14+7"
+            }
+          },
+          {
+            "key": "process.runtime.name",
+            "value": {
+              "stringValue": "OpenJDK Runtime Environment"
+            }
+          },
+          {
+            "key": "process.runtime.version",
+            "value": {
+              "stringValue": "17.0.14+7"
+            }
+          },
+          {
+            "key": "service.instance.id",
+            "value": {
+              "stringValue": "d64e04e6-32e7-485f-a534-35fea08764f0"
             }
           },
           {
@@ -371,10 +343,10 @@
                         }
                       }
                     ],
-                    "startTimeUnixNano": "1742893543054400447",
-                    "timeUnixNano": "1742893544769962306",
+                    "startTimeUnixNano": "1743514112637258481",
+                    "timeUnixNano": "1743514114339965676",
                     "count": "1",
-                    "sum": 0.178714137,
+                    "sum": 0.171549828,
                     "bucketCounts": [
                       "0",
                       "0",
@@ -418,46 +390,17 @@
                             }
                           }
                         ],
-                        "timeUnixNano": "1742893544762000000",
-                        "asDouble": 0.178714137,
-                        "spanId": "f6e8d8a345943f24",
-                        "traceId": "726786c42cc0178788c97179edf98bb6"
+                        "timeUnixNano": "1743514114333000000",
+                        "asDouble": 0.171549828,
+                        "spanId": "05f6e644152824bf",
+                        "traceId": "a42372f8fd13efc9d509074971419fa3"
                       }
                     ],
-                    "min": 0.178714137,
-                    "max": 0.178714137
+                    "min": 0.171549828,
+                    "max": 0.171549828
                   }
                 ],
                 "aggregationTemporality": 2
-              }
-            }
-          ]
-        },
-        {
-          "scope": {
-            "name": "io.opentelemetry.sdk.logs"
-          },
-          "metrics": [
-            {
-              "name": "queueSize",
-              "description": "The number of items queued",
-              "unit": "1",
-              "gauge": {
-                "dataPoints": [
-                  {
-                    "attributes": [
-                      {
-                        "key": "processorType",
-                        "value": {
-                          "stringValue": "BatchLogRecordProcessor"
-                        }
-                      }
-                    ],
-                    "startTimeUnixNano": "1742893543054400447",
-                    "timeUnixNano": "1742893544769962306",
-                    "asInt": "0"
-                  }
-                ]
               }
             }
           ]
@@ -482,8 +425,37 @@
                         }
                       }
                     ],
-                    "startTimeUnixNano": "1742893543054400447",
-                    "timeUnixNano": "1742893544769962306",
+                    "startTimeUnixNano": "1743514112637258481",
+                    "timeUnixNano": "1743514114339965676",
+                    "asInt": "0"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "scope": {
+            "name": "io.opentelemetry.sdk.logs"
+          },
+          "metrics": [
+            {
+              "name": "queueSize",
+              "description": "The number of items queued",
+              "unit": "1",
+              "gauge": {
+                "dataPoints": [
+                  {
+                    "attributes": [
+                      {
+                        "key": "processorType",
+                        "value": {
+                          "stringValue": "BatchLogRecordProcessor"
+                        }
+                      }
+                    ],
+                    "startTimeUnixNano": "1743514112637258481",
+                    "timeUnixNano": "1743514114339965676",
                     "asInt": "0"
                   }
                 ]
