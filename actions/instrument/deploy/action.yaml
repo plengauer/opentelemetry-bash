@@ -60,6 +60,7 @@ runs:
       shell: bash
       run: |
         job_level_instrumentation='${{ inputs.job_level_instrumentation_template }}'
+        set -x
         cat "${{ steps.find-self.outputs.path }}" | yq '.jobs[].steps[].env | keys[]' | grep '^OTEL_' | while read -r key; do
           value="$(cat "${{ steps.find-self.outputs.path }}" | yq '.jobs[].steps[] | select(.uses == "*/actions/instrument/deploy*") | .env.'"$key")"
           job_level_instrumentation="$(printf '%s' "$job_level_instrumentation" | yq '.jobs[].steps[] | select(.uses == "*/actions/instrument/job*") | .env.'"$key"' = "'"$value"'"')"
