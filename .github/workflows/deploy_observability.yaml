@@ -10,7 +10,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: plengauer/thoth/actions/instrument/deploy@main
+      - uses: plengauer/thoth/actions/instrument/deploy@1365-deploy-action
         with:
           job_level_instrumentation_exclude: 'Test,Refresh Demos'
         env:
