@@ -128,8 +128,8 @@ inputs:
               env:
   job_level_instrumentation_template:
     default: |
-      uses: plengauer/opentelemetry-github/actions/instrument/job@v5.10.1
-      env:
+      "uses": "plengauer/opentelemetry-github/actions/instrument/job@v5.10.1"
+      "env":
   debug:
     description: 'Enable debug logging'
     default: ${{ runner.debug }}
