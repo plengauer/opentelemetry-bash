@@ -17,6 +17,7 @@ runs:
       id: find-self
       shell: bash
       run: |
+        set -x
         if [ -r "${{ github.workflow }}" ]; then
            echo path="${{ github.workflow }}" >> "$GITHUB_OUTPUT"
         else
