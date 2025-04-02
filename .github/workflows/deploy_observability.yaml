@@ -7,10 +7,10 @@ on:
       - .github/workflows/**
 
 jobs:
-  export:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: plengauer/thoth/actions/instrument/deploy@v5.9.0
+      - uses: plengauer/thoth/actions/instrument/deploy@main
         with:
           job_level_instrumentation_exclude: 'Test,Refresh Demos'
         env:
