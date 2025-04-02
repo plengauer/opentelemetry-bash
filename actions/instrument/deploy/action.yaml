@@ -17,7 +17,6 @@ runs:
       id: find-self
       shell: bash
       run: |
-        set -x
         if [ -r "${{ github.workflow }}" ]; then
            echo path="${{ github.workflow }}" >> "$GITHUB_OUTPUT"
         else
@@ -45,6 +44,7 @@ runs:
       if: steps.find-workflow-level-instrumentation.outputs.path != null
       shell: bash
       run: |
+        set -x
         names_file="$(mktemp)"
         (ls "${{ inputs.workflows_directory }}"/*.yaml "${{ inputs.workflows_directory }}"/*.yml || true) | while read -r workflow_file; do
           cat "$workflow_file" | yq .name || true
@@ -56,7 +56,7 @@ runs:
           line="${line%$'\r'}"
           names+=("\"$line\"")
         done < "$names_file"
-        yq -i ".on.workflow_run.workflows = [${names[*]}]" "${{ steps.find-workflow-level-instrumentation.outputs.path }}" # TODO add env
+        yq -i ".on.workflow_run.workflows = [${names[*]}]" "${{ steps.find-workflow-level-instrumentation.outputs.path }}"
     - name: "Deploy job-level observability"
       shell: bash
       run: |
