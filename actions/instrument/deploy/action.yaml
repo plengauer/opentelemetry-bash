@@ -59,7 +59,6 @@ runs:
     - name: "Deploy job-level observability"
       shell: bash
       run: |
-        set -x
         job_level_instrumentation='${{ inputs.job_level_instrumentation_template }}'
         cat "${{ steps.find-self.outputs.path }}" | yq '.jobs[].steps[].env | keys[]' | grep '^OTEL_' | while read -r key; do
           value="$(cat "${{ steps.find-self.outputs.path }}" | yq '.jobs[].steps[] | select(.uses == "*/actions/instrument/deploy*") | .env.'"$key")"
@@ -125,11 +124,9 @@ inputs:
           runs-on: ubuntu-latest
           steps:
             - uses: plengauer/opentelemetry-github/actions/instrument/workflow@v5.10.1
-              env:
   job_level_instrumentation_template:
     default: |
       "uses": "plengauer/opentelemetry-github/actions/instrument/job@v5.10.1"
-      "env":
   debug:
     description: 'Enable debug logging'
     default: ${{ runner.debug }}
