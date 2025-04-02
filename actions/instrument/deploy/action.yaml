@@ -44,7 +44,6 @@ runs:
       if: steps.find-workflow-level-instrumentation.outputs.path != null
       shell: bash
       run: |
-        set -x
         names_file="$(mktemp)"
         (ls "${{ inputs.workflows_directory }}"/*.yaml "${{ inputs.workflows_directory }}"/*.yml || true) | while read -r workflow_file; do
           cat "$workflow_file" | yq .name || true
@@ -60,6 +59,7 @@ runs:
     - name: "Deploy job-level observability"
       shell: bash
       run: |
+        set -x
         job_level_instrumentation='${{ inputs.job_level_instrumentation_template }}'
         cat "${{ steps.find-self.outputs.path }}" | yq '.jobs[].steps[].env | keys[]' | grep '^OTEL_' | while read -r key; do
           value="$(cat "${{ steps.find-self.outputs.path }}" | yq '.jobs[].steps[] | select(.uses == "*/actions/instrument/deploy*") | .env.'"$key")"
