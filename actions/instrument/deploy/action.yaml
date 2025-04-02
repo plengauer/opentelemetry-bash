@@ -127,7 +127,7 @@ inputs:
     default: |
       uses: plengauer/opentelemetry-github/actions/instrument/job@v5.10.1
       with:
-        secrets_to_redact: '${{ toJSON(secrets) }}'
+        secrets_to_redact: '\${{ toJSON(secrets) }}'
       env:
   debug:
     description: 'Enable debug logging'
