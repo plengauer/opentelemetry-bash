@@ -68,7 +68,11 @@ runs:
             yq -i ".jobs.$job_name.steps |= ([{ $job_level_instrumentation }] + .)" "$workflow_file"
           done
         done
+    - name: "Log"
+      shell: bash
+      run: git diff
     - name: "Open Pull Request"
+      if: false
       id: open-pr
       uses: peter-evans/create-pull-request@v7
       with:
