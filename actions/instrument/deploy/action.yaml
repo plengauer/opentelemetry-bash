@@ -24,7 +24,6 @@ runs:
           sed -i 's~plengauer/Thoth~${{ inputs.action_repository }}~g' "$workflow_file"
           sed -i 's~plengauer/thoth~${{ inputs.action_repository }}~g' "$workflow_file"
         done
-        git diff
     - name: "Find self"
       id: find-self
       shell: bash
@@ -80,6 +79,7 @@ runs:
               yq -i ".jobs.$job_name.steps[] | select(.uses == \"${{ inputs.action_repository }}/actions/instrument/job@*\") | .env.$key = \"$(cat "${{ steps.find-self.outputs.path }}" | yq '.jobs[].steps[] | select(.uses == "${{ inputs.action_repository }}/actions/instrument/deploy@*") | .env.'"$key")\"" "$workflow_file"
             done
           done
+          git diff "$workflow_file"
         done
     - name: "Log"
       shell: bash
