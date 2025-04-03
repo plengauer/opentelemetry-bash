@@ -13,6 +13,10 @@ runs:
       uses: actions/checkout@v4
       with:
         token: ${{ inputs.github_token }}
+    - name: Canonicalize
+      shell: bash
+      run: |
+        echo hello world # TODO bring all to the same name with a simple sed? or a complicated yq?
     - name: "Find self"
       id: find-self
       shell: bash
