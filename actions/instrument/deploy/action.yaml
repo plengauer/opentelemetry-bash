@@ -16,7 +16,6 @@ runs:
     - name: Canonicalize
       shell: bash
       run: |
-        set -x
         (ls "${{ inputs.workflows_directory }}"/*.yaml "${{ inputs.workflows_directory }}"/*.yml 2> /dev/null || true) | while read -r workflow_file; do
           sed -i 's~plengauer/opentelemetry-github~${{ inputs.action_repository }}~g' "$workflow_file"
           sed -i 's~plengauer/opentelemetry-bash~${{ inputs.action_repository }}~g' "$workflow_file"
@@ -25,6 +24,7 @@ runs:
           sed -i 's~plengauer/Thoth~${{ inputs.action_repository }}~g' "$workflow_file"
           sed -i 's~plengauer/thoth~${{ inputs.action_repository }}~g' "$workflow_file"
         done
+        git diff
     - name: "Find self"
       id: find-self
       shell: bash
