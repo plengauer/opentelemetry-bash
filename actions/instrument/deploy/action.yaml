@@ -17,11 +17,12 @@ runs:
       shell: bash
       run: |
         (ls "${{ inputs.workflows_directory }}"/*.yaml "${{ inputs.workflows_directory }}"/*.yml || true) | while read -r workflow_file; do
-          sed -i 's~plengauer/opentelemetry-bash~plengauer/opentelemetry-github~g' "$workflow_file"
-          sed -i 's~plengauer/opentelemetry-shell~plengauer/opentelemetry-github~g' "$workflow_file"
-          sed -i 's~plengauer/opentelemetry-thoth~plengauer/opentelemetry-github~g' "$workflow_file"
-          sed -i 's~plengauer/Thoth~plengauer/opentelemetry-github~g' "$workflow_file"
-          sed -i 's~plengauer/thoth~plengauer/opentelemetry-github~g' "$workflow_file"
+          sed -i 's~plengauer/opentelemetry-github~${{ inputs.action_repository }}~g' "$workflow_file"
+          sed -i 's~plengauer/opentelemetry-bash~${{ inputs.action_repository }}~g' "$workflow_file"
+          sed -i 's~plengauer/opentelemetry-shell~${{ inputs.action_repository }}~g' "$workflow_file"
+          sed -i 's~plengauer/opentelemetry-thoth~${{ inputs.action_repository }}~g' "$workflow_file"
+          sed -i 's~plengauer/Thoth~${{ inputs.action_repository }}~g' "$workflow_file"
+          sed -i 's~plengauer/thoth~${{ inputs.action_repository }}~g' "$workflow_file"
         done
     - name: "Find self"
       id: find-self
@@ -138,6 +139,8 @@ inputs:
           runs-on: ubuntu-latest
           steps:
             - uses: plengauer/opentelemetry-github/actions/instrument/workflow@v5.10.1
+  action_repository:
+    default: plengauer/opentelemetry-github
   debug:
     description: 'Enable debug logging'
     default: ${{ runner.debug }}
