@@ -36,6 +36,7 @@ runs:
             [ "$(cat "$workflow_file" | yq .name)" = "${{ github.workflow }}" ] && echo path="$workflow_file" >> "$GITHUB_OUTPUT" && break || true
           done
         fi
+        git diff
     - name: "Find workflow-level observability"
       id: find-workflow-level-instrumentation
       shell: bash
@@ -43,6 +44,7 @@ runs:
         (ls "${{ inputs.workflows_directory }}"/*.yaml "${{ inputs.workflows_directory }}"/*.yml 2> /dev/null || true) | while read -r workflow_file; do
           cat "$workflow_file" | yq .on.workflow_run.workflows 2> /dev/null | grep -qv '^null$' && cat "$workflow_file" | yq .jobs.*.steps[].uses | grep -q /actions/instrument/workflow && echo path="$workflow_file" >> "$GITHUB_OUTPUT" && break || true
         done
+        git diff
     - name: "Deploy workflow-level observability"
       if: steps.find-workflow-level-instrumentation.outputs.path == null
       shell: bash
@@ -52,6 +54,7 @@ runs:
           value="$(cat "${{ steps.find-self.outputs.path }}" | yq '.jobs[].steps[] | select(.uses == "${{ inputs.action_repository }}/actions/instrument/deploy@*") | .env.'"$key")"
           yq -i '.jobs[].steps[] | select(.uses == "${{ inputs.action_repository }}/actions/instrument/deploy@*") | .env.'"$key"' = "'"$value"'"' "${{ steps.find-workflow-level-instrumentation.outputs.path }}"
         done
+        git diff
     - name: "Update workflow-level observability triggers"
       if: steps.find-workflow-level-instrumentation.outputs.path != null
       shell: bash
@@ -68,6 +71,7 @@ runs:
           [ -n "$names" ] && names="${names}, ${line}" || names="$line"
         done < "$names_file"
         yq -i ".on.workflow_run.workflows = [${names}]" "${{ steps.find-workflow-level-instrumentation.outputs.path }}"
+        git diff
     - name: "Deploy job-level observability"
       shell: bash
       run: |
