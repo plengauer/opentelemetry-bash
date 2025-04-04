@@ -178,9 +178,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: plengauer/opentelemetry-github/actions/instrument/deploy@1365-deploy-action
-        with:
-          job_level_instrumentation_exclude: 'Test,Refresh Demos,GitHub,Workflow Example'
+      - uses: plengauer/opentelemetry-github/actions/instrument/deploy@main
         env:
           OTEL_EXPORTER_OTLP_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_HEADERS: '${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}'
