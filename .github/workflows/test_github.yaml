@@ -95,7 +95,7 @@ jobs:
         env:
           OTEL_SHELL_CONFIG_GITHUB_INJECT_ON_MAIN: 'TRUE'
           OTEL_SHELL_SDK_OUTPUT_REDIRECT: /dev/null
-      - uses: plengauer/autorerun@v0.20.0
+      - uses: plengauer/autorerun@v0.21.0
         with:
           github_token: ${{ github.token }}
 
@@ -113,7 +113,7 @@ jobs:
         env:
           OTEL_SHELL_CONFIG_GITHUB_INJECT_ON_MAIN: 'TRUE'
           OTEL_SHELL_SDK_OUTPUT_REDIRECT: /dev/null
-      - uses: renovatebot/github-action@v41.0.16 # node action with call to docker, docker flags that make injection more complicated, then call a node script via exec that already is injected with otel
+      - uses: renovatebot/github-action@v41.0.18 # node action with call to docker, docker flags that make injection more complicated, then call a node script via exec that already is injected with otel
         env:
           RENOVATE_DRY_RUN: full
           RENOVATE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -258,10 +258,11 @@ jobs:
       - id: workflow_run
         run: |
           . ./actions/instrument/shared/github.sh
-          INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} gh_workflow_runs | jq -r '.workflow_runs[] | select(.status == "completed") | select(.conclusion == "success") | select(.name == "Workflow Example") | [ .id, .run_attempt ] | @tsv' | sed 's/\t/ /g' | head -n 1 | while read -r id run_attempt; do
+          INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} gh_workflow_runs | jq --unbuffered -r '.workflow_runs[] | select(.status == "completed") | select(.conclusion == "success") | select(.name == "Workflow Example") | [ .id, .run_attempt ] | @tsv' | sed 's/\t/ /g' | {
+            read -r id run_attempt
             echo "id=$id" >> "$GITHUB_OUTPUT"
             echo "run_attempt=$run_attempt" >> "$GITHUB_OUTPUT"
-          done
+          }
       - run: |
           [ -n "${{ steps.workflow_run.outputs.id }}" ]
           [ -n "${{ steps.workflow_run.outputs.run_attempt }}" ]
