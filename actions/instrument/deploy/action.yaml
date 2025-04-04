@@ -107,6 +107,7 @@ runs:
         token: ${{ inputs.github_token }}
         pull-request-number: ${{ steps.open-pr.outputs.pull-request-number }}
         merge-method: squash
+      continue-on-error: true
 inputs:
   github_token:
     description: 'A GitHub token for API access (read/write)'
