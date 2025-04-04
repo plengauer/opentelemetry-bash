@@ -72,6 +72,7 @@ jobs:
           sudo docker start collector
           cat meta.json | jq -r .setup | (grep -v '^null$' || true) | sh
           bash -e demo.sh 1> output.stdout 2> output.stderr
+          sleep 15 # this is just a temporary check to see if the reasons the java demos dont work is because the collector is shutting down too fast
           sudo docker stop collector
           rm config.yaml
           sed -i s/$GITHUB_TOKEN/***/g otlp.json
