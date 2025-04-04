@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: plengauer/opentelemetry-github/actions/instrument/deploy@1365-deploy-action
         with:
-          job_level_instrumentation_exclude: 'Test,Refresh Demos,GitHub'
+          job_level_instrumentation_exclude: 'Test,Refresh Demos,GitHub,Workflow Example'
         env:
           OTEL_EXPORTER_OTLP_ENDPOINT: '${{ secrets.OTEL_EXPORTER_OTLP_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_HEADERS: '${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}'
