@@ -79,7 +79,6 @@ runs:
               yq -i ".jobs.$job_name.steps[0].env.$key = \"$(cat "${{ steps.find-self.outputs.path }}" | yq '.jobs[].steps[] | select(.uses == "${{ inputs.action_repository }}/actions/instrument/deploy@*") | .env.'"$key")\"" "$workflow_file"
             done
           done
-          git diff "$workflow_file" >&2
         done
     - name: "Log"
       shell: bash
