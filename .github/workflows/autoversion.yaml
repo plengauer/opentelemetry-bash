@@ -9,7 +9,7 @@ jobs:
   bump:
     runs-on: ubuntu-latest
     steps:
-      - uses: plengauer/thoth/actions/instrument/job@v5.10.1
+      - uses: plengauer/thoth/actions/instrument/job@v5.10.2
         with:
           secrets_to_redact: '${{ toJSON(secrets) }}'
         env:
