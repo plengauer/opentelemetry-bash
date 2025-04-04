@@ -83,9 +83,6 @@ runs:
             done
           done
         done
-    - name: "Log"
-      shell: bash
-      run: git diff
     - name: "Open Pull Request"
       if: false
       id: open-pr
