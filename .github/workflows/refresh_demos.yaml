@@ -72,7 +72,7 @@ jobs:
           sudo docker start collector
           cat meta.json | jq -r .setup | (grep -v '^null$' || true) | sh
           bash -e demo.sh 1> output.stdout 2> output.stderr
-          while [ "$(pgrep -f /opt/opentelemetry_shell/ | wc -l)" -gt 0 ]; then sleep 3; fi
+          while [ "$(pgrep -f /opt/opentelemetry_shell/ | wc -l)" -gt 0 ]; do sleep 3; done
           sudo docker stop collector
           rm config.yaml
           sed -i s/$GITHUB_TOKEN/***/g otlp.json
