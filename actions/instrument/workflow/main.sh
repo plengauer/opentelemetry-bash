@@ -301,4 +301,4 @@ done | sed 's/\t/ /g' | while read -r TRACEPARENT job_id step_number step_conclu
 done
 
 otel_shutdown
-while [ "$(pgrep -f /opt/opentelemetry_shell/ | wc -l)" -gt 0 ]; then sleep 1; fi
+while [ "$(pgrep -f /opt/opentelemetry_shell/ | wc -l)" -gt 0 ]; do sleep 1; done
